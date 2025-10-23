@@ -1,0 +1,1218 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>開発進捗状況 | ミセサポ</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body { 
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; 
+        margin: 24px; 
+        background: #f8fafc;
+        color: #1f2937;
+      }
+      .container { max-width: 1200px; margin: 0 auto; }
+      h1 { font-size: 2rem; margin: 0 0 8px; color: #FF679C; }
+      .new-label { 
+        background: #10b981; 
+        color: white; 
+        padding: 4px 8px; 
+        border-radius: 4px; 
+        font-size: 0.8rem; 
+        font-weight: 500; 
+        margin-left: 8px; 
+      }
+      .new-label-container {
+        text-align: center;
+        margin: 24px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+      }
+      .btn-add-new {
+        background: #FF679C;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: background-color 0.2s;
+      }
+      .btn-add-new:hover {
+        background: #e55a8a;
+      }
+      .subtitle { color: #6b7280; font-size: 1.1rem; margin-bottom: 32px; }
+      .summary { 
+        background: white; 
+        padding: 24px; 
+        border-radius: 8px; 
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin-bottom: 32px;
+      }
+      .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+      .stat-card { 
+        background: #f9fafb; 
+        padding: 16px; 
+        border-radius: 6px; 
+        text-align: center;
+        border-left: 4px solid #FF679C;
+      }
+      .stat-number { font-size: 2rem; font-weight: bold; color: #FF679C; }
+      .stat-label { color: #6b7280; font-size: 0.9rem; }
+      
+      table { 
+        border-collapse: collapse; 
+        width: 100%; 
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      }
+      th, td { 
+        border: 1px solid #e5e7eb; 
+        padding: 12px 16px; 
+        text-align: left; 
+      }
+      th { 
+        background: #f9fafb; 
+        font-weight: 600;
+        color: #374151;
+      }
+      tr:hover { background: #f9fafb; }
+      
+      .status-complete { 
+        background: #dcfce7; 
+        color: #166534; 
+        padding: 4px 8px; 
+        border-radius: 4px; 
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
+      .status-in-progress { 
+        background: #fef3c7; 
+        color: #92400e; 
+        padding: 4px 8px; 
+        border-radius: 4px; 
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
+      .status-pending { 
+        background: #f3f4f6; 
+        color: #6b7280; 
+        padding: 4px 8px; 
+        border-radius: 4px; 
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
+      
+      .category-header {
+        background: #FF679C;
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+      }
+      
+      .url-link { 
+        color: #FF679C; 
+        text-decoration: none; 
+        font-weight: 500;
+      }
+      .url-link:hover { 
+        text-decoration: underline; 
+      }
+      
+      .code { 
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; 
+        background: #f3f4f6;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 0.85rem;
+      }
+      
+      .last-updated {
+        color: #6b7280;
+        font-size: 0.9rem;
+        margin-top: 24px;
+        text-align: center;
+      }
+      
+      .last-updated {
+        color: #059669;
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+      
+      .btn-edit, .btn-update {
+        background: #FF679C;
+        color: white;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        margin: 2px;
+      }
+      
+      .btn-edit:hover, .btn-update:hover {
+        background: #E35687;
+      }
+      
+      .btn-update {
+        background: #059669;
+      }
+      
+      .btn-update:hover {
+        background: #047857;
+      }
+      
+      .edit-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+      }
+      
+      .edit-modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 24px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        min-width: 400px;
+      }
+      
+      .edit-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      
+      .edit-form input, .edit-form select, .edit-form textarea {
+        padding: 8px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        font-size: 0.9rem;
+      }
+      
+      .edit-form label {
+        font-weight: 600;
+        color: #374151;
+      }
+      
+      .modal-buttons {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        margin-top: 16px;
+      }
+      
+      .btn-save, .btn-cancel {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+      }
+      
+      .btn-save {
+        background: #FF679C;
+        color: white;
+      }
+      
+      .btn-cancel {
+        background: #6b7280;
+        color: white;
+      }
+      
+      .btn-delete {
+        background: #ef4444;
+        color: white;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-left: 4px;
+        transition: background-color 0.2s;
+      }
+      
+      .btn-delete:hover {
+        background: #dc2626;
+      }
+      
+      .delete-warning {
+        color: #ef4444;
+        font-weight: 500;
+        margin: 8px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🚀 ミセサポ 開発進捗状況</h1>
+      <p class="subtitle">定期清掃サービス Webアプリケーション - 実装状況ダッシュボード</p>
+      
+      <div class="summary">
+        <h2>📊 プロジェクト概要</h2>
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-number">19</div>
+            <div class="stat-label">実装済みページ</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">完成率</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">34</div>
+            <div class="stat-label">サービス項目</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">6</div>
+            <div class="stat-label">カテゴリ</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="new-label-container">
+        <button class="btn-add-new" onclick="openAddNewModal()">+ 新規項目を追加</button>
+        <button class="btn-add-new" onclick="openAddTableModal()" style="background: #3b82f6;">+ 新規テーブルを追加</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ページ名</th>
+            <th>URL</th>
+            <th>カテゴリ</th>
+            <th>ステータス</th>
+            <th>最終更新日</th>
+            <th>機能</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="category-header">
+            <td colspan="7">🏠 メインページ</td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/index.html" class="url-link" target="_blank">トップページ</a></td>
+            <td><code class="code">/index.html</code></td>
+            <td>メイン</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td><span class="last-updated" data-page="index">2025-10-23</span></td>
+            <td>サービス一覧・カテゴリフィルタ</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('index')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('index')">更新</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/report.html" class="url-link" target="_blank">レポート</a></td>
+            <td><code class="code">/report.html</code></td>
+            <td>メイン</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td><span class="last-updated" data-page="report">2025-10-23</span></td>
+            <td>清掃レポート表示</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('report')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('report')">更新</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/mypage.html" class="url-link" target="_blank">マイページ</a></td>
+            <td><code class="code">/mypage.html</code></td>
+            <td>メイン</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td><span class="last-updated" data-page="mypage">2025-10-23</span></td>
+            <td>ユーザー情報管理</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('mypage')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('mypage')">更新</button>
+            </td>
+          </tr>
+          
+          <tr class="category-header">
+            <td colspan="7">🔐 認証関連</td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/signin.html" class="url-link" target="_blank">ログイン</a></td>
+            <td><code class="code">/signin.html</code></td>
+            <td>認証</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td><span class="last-updated" data-page="signin">2025-10-23</span></td>
+            <td>ユーザーログイン</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('signin')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('signin')">更新</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/signup.html" class="url-link" target="_blank">新規登録</a></td>
+            <td><code class="code">/signup.html</code></td>
+            <td>認証</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td><span class="last-updated" data-page="signup">2025-10-23</span></td>
+            <td>ユーザー登録</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('signup')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('signup')">更新</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/signup2.html" class="url-link" target="_blank">新規登録2</a></td>
+            <td><code class="code">/signup2.html</code></td>
+            <td>認証</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td><span class="last-updated" data-page="signup2">2025-10-23</span></td>
+            <td>追加情報入力</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('signup2')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('signup2')">更新</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/signup3.html" class="url-link" target="_blank">新規登録3</a></td>
+            <td><code class="code">/signup3.html</code></td>
+            <td>認証</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td><span class="last-updated" data-page="signup3">2025-10-23</span></td>
+            <td>最終確認</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('signup3')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('signup3')">更新</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/reset-password.html" class="url-link" target="_blank">パスワードリセット</a></td>
+            <td><code class="code">/reset-password.html</code></td>
+            <td>認証</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td><span class="last-updated" data-page="reset-password">2025-10-23</span></td>
+            <td>パスワード再設定</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('reset-password')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('reset-password')">更新</button>
+            </td>
+          </tr>
+          
+          <tr class="category-header">
+            <td colspan="7">📋 登録関連</td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/registration/personal.html" class="url-link" target="_blank">個人登録</a></td>
+            <td><code class="code">/registration/personal.html</code></td>
+            <td>登録</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td><span class="last-updated" data-page="personal">2025-10-23</span></td>
+            <td>個人情報登録</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('personal')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('personal')">更新</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/registration/personal2.html" class="url-link" target="_blank">個人登録2</a></td>
+            <td><code class="code">/registration/personal2.html</code></td>
+            <td>登録</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td><span class="last-updated" data-page="personal2">2025-10-23</span></td>
+            <td>追加情報入力</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('personal2')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('personal2')">更新</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/registration/corporation.html" class="url-link" target="_blank">法人登録</a></td>
+            <td><code class="code">/registration/corporation.html</code></td>
+            <td>登録</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td><span class="last-updated" data-page="corporation">2025-10-23</span></td>
+            <td>法人情報登録</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('corporation')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('corporation')">更新</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/registration/corporation2.html" class="url-link" target="_blank">法人登録2</a></td>
+            <td><code class="code">/registration/corporation2.html</code></td>
+            <td>登録</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td><span class="last-updated" data-page="corporation2">2025-10-23</span></td>
+            <td>追加情報入力</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('corporation2')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('corporation2')">更新</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/registration/corporation3.html" class="url-link" target="_blank">法人登録3</a></td>
+            <td><code class="code">/registration/corporation3.html</code></td>
+            <td>登録</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td><span class="last-updated" data-page="corporation3">2025-10-23</span></td>
+            <td>最終確認</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('corporation3')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('corporation3')">更新</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/registration/complete.html" class="url-link" target="_blank">登録完了</a></td>
+            <td><code class="code">/registration/complete.html</code></td>
+            <td>登録</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td><span class="last-updated" data-page="complete">2025-10-23</span></td>
+            <td>完了通知</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('complete')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('complete')">更新</button>
+            </td>
+          </tr>
+          
+          <tr class="category-header">
+            <td colspan="7">📞 サポート</td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/inquiry/complete.html" class="url-link" target="_blank">お問い合わせ完了</a></td>
+            <td><code class="code">/inquiry/complete.html</code></td>
+            <td>サポート</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td><span class="last-updated" data-page="inquiry-complete">2025-10-23</span></td>
+            <td>完了通知</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('inquiry-complete')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('inquiry-complete')">更新</button>
+            </td>
+          </tr>
+          
+          <tr class="category-header">
+            <td colspan="7">👤 マイページ関連</td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/mypage/info.html" class="url-link" target="_blank">個人情報</a></td>
+            <td><code class="code">/mypage/info.html</code></td>
+            <td>マイページ</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td><span class="last-updated" data-page="mypage-info">2025-10-23</span></td>
+            <td>情報編集・更新</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('mypage-info')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('mypage-info')">更新</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/mypage/inquiry.html" class="url-link" target="_blank">お問い合わせ</a></td>
+            <td><code class="code">/mypage/inquiry.html</code></td>
+            <td>マイページ</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td><span class="last-updated" data-page="mypage-inquiry">2025-10-23</span></td>
+            <td>サポート問い合わせ</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('mypage-inquiry')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('mypage-inquiry')">更新</button>
+            </td>
+          </tr>
+          
+          <tr class="category-header">
+            <td colspan="7">🔧 管理画面</td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/admin/sitemap.html" class="url-link" target="_blank">サイトマップ</a></td>
+            <td><code class="code">/admin/sitemap.html</code></td>
+            <td>管理</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td><span class="last-updated" data-page="sitemap">2025-10-23</span></td>
+            <td>サイトマップ表示</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('sitemap')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('sitemap')">更新</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/admin/progress.html" class="url-link" target="_blank">開発進捗状況</a></td>
+            <td><code class="code">/admin/progress.html</code></td>
+            <td>管理</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td><span class="last-updated" data-page="progress">2025-10-23</span></td>
+            <td>進捗ダッシュボード</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('progress')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('progress')">更新</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div class="last-updated">
+        <p>最終更新: 2025年10月23日 | ローカルサーバー: http://localhost:5173</p>
+      </div>
+    </div>
+
+      <!-- 新規項目追加モーダル -->
+      <div id="addNewModal" class="edit-modal">
+        <div class="edit-modal-content">
+          <h3>新規項目を追加</h3>
+          <form class="edit-form" id="addNewForm">
+            <div>
+              <label for="newCategory">カテゴリ:</label>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <select id="newCategory" name="category" required style="flex: 1;">
+                  <option value="">カテゴリを選択</option>
+                  <option value="メイン">メイン</option>
+                  <option value="認証">認証</option>
+                  <option value="登録">登録</option>
+                  <option value="サポート">サポート</option>
+                  <option value="マイページ">マイページ</option>
+                  <option value="管理">管理</option>
+                </select>
+                <button type="button" onclick="openAddCategoryModal()" style="background: #10b981; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">+ 新規カテゴリ</button>
+              </div>
+            </div>
+            <div>
+              <label for="newPageName">ページ名:</label>
+              <input type="text" id="newPageName" name="pageName" required>
+            </div>
+            <div>
+              <label for="newUrl">URL:</label>
+              <input type="text" id="newUrl" name="url" placeholder="/path/to/page.html" required>
+            </div>
+            <div>
+              <label for="newStatus">ステータス:</label>
+              <select id="newStatus" name="status" required>
+                <option value="complete">✅ 完全実装</option>
+                <option value="in-progress">🔄 実装中</option>
+                <option value="pending">⏳ 未実装</option>
+              </select>
+            </div>
+            <div>
+              <label for="newFunction">機能説明:</label>
+              <textarea id="newFunction" name="function" rows="3" required></textarea>
+            </div>
+            <div class="modal-buttons">
+              <button type="button" class="btn-cancel" onclick="closeAddNewModal()">キャンセル</button>
+              <button type="submit" class="btn-save">追加</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- カテゴリ追加モーダル -->
+      <div id="addCategoryModal" class="edit-modal">
+        <div class="edit-modal-content">
+          <h3>新規カテゴリを追加</h3>
+          <form id="addCategoryForm">
+            <div>
+              <label for="newCategoryName">カテゴリ名:</label>
+              <input type="text" id="newCategoryName" name="categoryName" required placeholder="例: 決済、通知、設定">
+            </div>
+            <div>
+              <label for="newCategoryIcon">アイコン:</label>
+              <select id="newCategoryIcon" name="categoryIcon">
+                <option value="🏠">🏠 ホーム</option>
+                <option value="🔐">🔐 認証</option>
+                <option value="📋">📋 登録</option>
+                <option value="📞">📞 サポート</option>
+                <option value="👤">👤 マイページ</option>
+                <option value="🔧">🔧 管理</option>
+                <option value="💳">💳 決済</option>
+                <option value="🔔">🔔 通知</option>
+                <option value="⚙️">⚙️ 設定</option>
+                <option value="📊">📊 分析</option>
+                <option value="🛒">🛒 カート</option>
+                <option value="📝">📝 レポート</option>
+              </select>
+            </div>
+            <div class="modal-buttons">
+              <button type="button" class="btn-cancel" onclick="closeAddCategoryModal()">キャンセル</button>
+              <button type="submit" class="btn-save">追加</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- テーブル追加モーダル -->
+      <div id="addTableModal" class="edit-modal">
+        <div class="edit-modal-content">
+          <h3>新規テーブルを追加</h3>
+          <form id="addTableForm">
+            <div>
+              <label for="newTableName">テーブル名:</label>
+              <input type="text" id="newTableName" name="tableName" required placeholder="例: 決済管理、通知設定">
+            </div>
+            <div>
+              <label for="newTableIcon">アイコン:</label>
+              <select id="newTableIcon" name="tableIcon">
+                <option value="💳">💳 決済</option>
+                <option value="🔔">🔔 通知</option>
+                <option value="⚙️">⚙️ 設定</option>
+                <option value="📊">📊 分析</option>
+                <option value="🛒">🛒 カート</option>
+                <option value="📝">📝 レポート</option>
+                <option value="👥">👥 ユーザー</option>
+                <option value="📈">📈 統計</option>
+                <option value="🔍">🔍 検索</option>
+                <option value="📋">📋 リスト</option>
+              </select>
+            </div>
+            <div>
+              <label for="newTableDescription">説明:</label>
+              <textarea id="newTableDescription" name="tableDescription" rows="2" placeholder="このテーブルの用途を説明してください"></textarea>
+            </div>
+            <div class="modal-buttons">
+              <button type="button" class="btn-cancel" onclick="closeAddTableModal()">キャンセル</button>
+              <button type="submit" class="btn-save">追加</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- 削除確認モーダル -->
+      <div id="deleteModal" class="edit-modal">
+        <div class="edit-modal-content">
+          <h3>項目を削除</h3>
+          <p>この項目を削除してもよろしいですか？</p>
+          <p class="delete-warning">この操作は取り消せません。</p>
+          <div class="modal-buttons">
+            <button type="button" class="btn-cancel" onclick="closeDeleteModal()">キャンセル</button>
+            <button type="button" class="btn-delete" onclick="confirmDelete()">削除</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 編集モーダル -->
+      <div id="editModal" class="edit-modal">
+      <div class="edit-modal-content">
+        <h3>ページ情報を編集</h3>
+        <form class="edit-form" id="editForm">
+          <div>
+            <label for="editPageName">ページ名:</label>
+            <input type="text" id="editPageName" name="pageName" required>
+          </div>
+          <div>
+            <label for="editCategory">カテゴリ:</label>
+            <select id="editCategory" name="category">
+              <option value="メイン">メイン</option>
+              <option value="認証">認証</option>
+              <option value="登録">登録</option>
+              <option value="サポート">サポート</option>
+              <option value="マイページ">マイページ</option>
+              <option value="管理">管理</option>
+            </select>
+          </div>
+          <div>
+            <label for="editStatus">ステータス:</label>
+            <select id="editStatus" name="status">
+              <option value="complete">✅ 完全実装</option>
+              <option value="in-progress">🔄 実装中</option>
+              <option value="pending">⏳ 未実装</option>
+            </select>
+          </div>
+          <div>
+            <label for="editFunction">機能説明:</label>
+            <textarea id="editFunction" name="function" rows="3"></textarea>
+          </div>
+          <div class="modal-buttons">
+            <button type="button" class="btn-cancel" onclick="closeEditModal()">キャンセル</button>
+            <button type="submit" class="btn-save">保存</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // ページデータの管理
+      let pageData = {
+        'index': {
+          name: 'トップページ',
+          category: 'メイン',
+          status: 'complete',
+          function: 'サービス一覧・カテゴリフィルタ',
+          lastUpdated: '2025-10-23'
+        }
+      };
+
+      // 編集モーダルを開く
+      function editPage(pageId) {
+        const modal = document.getElementById('editModal');
+        const data = pageData[pageId] || {};
+        
+        document.getElementById('editPageName').value = data.name || '';
+        document.getElementById('editCategory').value = data.category || 'メイン';
+        document.getElementById('editStatus').value = data.status || 'complete';
+        document.getElementById('editFunction').value = data.function || '';
+        
+        modal.style.display = 'block';
+        modal.dataset.pageId = pageId;
+      }
+
+      // 編集モーダルを閉じる
+      function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+      }
+
+      // 新規追加モーダルを開く
+      function openAddNewModal() {
+        document.getElementById('addNewModal').style.display = 'flex';
+      }
+
+      // カテゴリ追加モーダルを開く
+      function openAddCategoryModal() {
+        document.getElementById('addCategoryModal').style.display = 'flex';
+      }
+
+      // カテゴリ追加モーダルを閉じる
+      function closeAddCategoryModal() {
+        document.getElementById('addCategoryModal').style.display = 'none';
+        document.getElementById('addCategoryForm').reset();
+      }
+
+      // テーブル追加モーダルを開く
+      function openAddTableModal() {
+        document.getElementById('addTableModal').style.display = 'flex';
+      }
+
+      // テーブル追加モーダルを閉じる
+      function closeAddTableModal() {
+        document.getElementById('addTableModal').style.display = 'none';
+        document.getElementById('addTableForm').reset();
+      }
+
+      // 新規追加モーダルを閉じる
+      function closeAddNewModal() {
+        document.getElementById('addNewModal').style.display = 'none';
+        document.getElementById('addNewForm').reset();
+      }
+
+      // カテゴリ追加フォームの処理
+      document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const categoryName = document.getElementById('newCategoryName').value;
+        const categoryIcon = document.getElementById('newCategoryIcon').value;
+        
+        // 新しいカテゴリをselectに追加
+        const newCategorySelect = document.getElementById('newCategory');
+        const newOption = document.createElement('option');
+        newOption.value = categoryName;
+        newOption.textContent = categoryName;
+        newOption.selected = true;
+        newCategorySelect.appendChild(newOption);
+        
+        // 編集モーダルのカテゴリ選択肢も更新
+        const editCategorySelect = document.getElementById('editCategory');
+        const editOption = document.createElement('option');
+        editOption.value = categoryName;
+        editOption.textContent = categoryName;
+        editCategorySelect.appendChild(editOption);
+        
+        // カテゴリマップを更新
+        categoryMap[categoryName] = `${categoryIcon} ${categoryName}`;
+        
+        // 新規追加モーダルのカテゴリ選択肢を更新
+        updateCategorySelects();
+        
+        // モーダルを閉じる
+        closeAddCategoryModal();
+        
+        // 成功メッセージ
+        alert(`カテゴリ「${categoryName}」が追加されました！`);
+      });
+
+      // テーブル追加フォームの処理
+      document.getElementById('addTableForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const tableName = document.getElementById('newTableName').value;
+        const tableIcon = document.getElementById('newTableIcon').value;
+        const tableDescription = document.getElementById('newTableDescription').value;
+        
+        // 新しいテーブルヘッダーを追加
+        const table = document.querySelector('table tbody');
+        const headerRow = document.createElement('tr');
+        headerRow.className = 'category-header';
+        headerRow.innerHTML = `<td colspan="7">${tableIcon} ${tableName}</td>`;
+        table.appendChild(headerRow);
+        
+        // 説明行を追加（オプション）
+        if (tableDescription) {
+          const descRow = document.createElement('tr');
+          descRow.className = 'table-description';
+          descRow.innerHTML = `<td colspan="7" style="padding: 8px 16px; font-style: italic; color: #6b7280; background: #f9fafb;">${tableDescription}</td>`;
+          table.appendChild(descRow);
+        }
+        
+        // モーダルを閉じる
+        closeAddTableModal();
+        
+        // 成功メッセージ
+        alert(`テーブル「${tableName}」が追加されました！`);
+      });
+
+      // カテゴリ選択肢を更新する関数
+      function updateCategorySelects() {
+        const newCategorySelect = document.getElementById('newCategory');
+        const editCategorySelect = document.getElementById('editCategory');
+        
+        // 既存のオプションをクリア（デフォルトオプション以外）
+        Array.from(newCategorySelect.options).forEach(option => {
+          if (option.value !== '') {
+            option.remove();
+          }
+        });
+        
+        Array.from(editCategorySelect.options).forEach(option => {
+          if (option.value !== '') {
+            option.remove();
+          }
+        });
+        
+        // カテゴリマップから選択肢を再構築
+        Object.keys(categoryMap).forEach(category => {
+          // 新規追加モーダル
+          const newOption = document.createElement('option');
+          newOption.value = category;
+          newOption.textContent = category;
+          newCategorySelect.appendChild(newOption);
+          
+          // 編集モーダル
+          const editOption = document.createElement('option');
+          editOption.value = category;
+          editOption.textContent = category;
+          editCategorySelect.appendChild(editOption);
+        });
+      }
+
+      // 削除モーダルを開く
+      function deletePage(pageId) {
+        document.getElementById('deleteModal').style.display = 'flex';
+        document.getElementById('deleteModal').dataset.pageId = pageId;
+      }
+
+      // 削除モーダルを閉じる
+      function closeDeleteModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+      }
+
+      // 削除を確認
+      function confirmDelete() {
+        const pageId = document.getElementById('deleteModal').dataset.pageId;
+        
+        // データから削除
+        delete pageData[pageId];
+        
+        // ローカルストレージに保存
+        localStorage.setItem('pageData', JSON.stringify(pageData));
+        
+        // テーブルから行を削除
+        const row = document.querySelector(`[data-page="${pageId}"]`);
+        if (row) {
+          row.closest('tr').remove();
+        }
+        
+        // 統計情報を更新
+        updateStats();
+        
+        // モーダルを閉じる
+        closeDeleteModal();
+      }
+
+      // テーブルに新しい行を動的に追加
+      function addNewRowToTable(pageId, pageData) {
+        const table = document.querySelector('table tbody');
+        const category = pageData.category;
+        
+        // ステータスの表示テキストとクラスを取得
+        const statusText = getStatusText(pageData.status);
+        const statusClass = getStatusClass(pageData.status);
+        
+        // 新しい行を作成
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+          <td><a href="http://localhost:5173${pageData.url}" class="url-link" target="_blank">${pageData.name}</a></td>
+          <td><code class="code">${pageData.url}</code></td>
+          <td>${category}</td>
+          <td><span class="${statusClass}">${statusText}</span></td>
+          <td><span class="last-updated" data-page="${pageId}">${pageData.lastUpdated}</span></td>
+          <td>${pageData.function}</td>
+          <td>
+            <button class="btn-edit" onclick="editPage('${pageId}')">編集</button>
+            <button class="btn-update" onclick="updateTimestamp('${pageId}')">更新</button>
+            <button class="btn-delete" onclick="deletePage('${pageId}')">削除</button>
+          </td>
+        `;
+        
+        // カテゴリに応じて適切な位置に追加
+        insertRowByCategory(table, newRow, category);
+      }
+
+      // ステータステキストを取得
+      function getStatusText(status) {
+        const statusMap = {
+          'complete': '✅ 完全実装',
+          'in-progress': '🔄 実装中',
+          'pending': '⏳ 未実装'
+        };
+        return statusMap[status] || status;
+      }
+
+      // ステータスクラスを取得
+      function getStatusClass(status) {
+        const statusClassMap = {
+          'complete': 'status-complete',
+          'in-progress': 'status-in-progress',
+          'pending': 'status-pending'
+        };
+        return statusClassMap[status] || 'status-complete';
+      }
+
+      // カテゴリに応じて新規項目を適切な位置に配置
+      function insertRowByCategory(table, newRow, category) {
+        let categoryMap = {
+          'メイン': '🏠 メインページ',
+          '認証': '🔐 認証関連',
+          '登録': '📋 登録関連',
+          'サポート': '📞 サポート',
+          'マイページ': '👤 マイページ関連',
+          '管理': '🔧 管理画面'
+        };
+        
+        const categoryHeader = categoryMap[category];
+        const rows = Array.from(table.querySelectorAll('tr'));
+        
+        // カテゴリヘッダーを見つける
+        let categoryHeaderIndex = -1;
+        for (let i = 0; i < rows.length; i++) {
+          const row = rows[i];
+          if (row.classList.contains('category-header') && row.textContent.includes(categoryHeader)) {
+            categoryHeaderIndex = i;
+            break;
+          }
+        }
+        
+        if (categoryHeaderIndex === -1) {
+          // カテゴリヘッダーが見つからない場合は新しいヘッダーを作成
+          const headerRow = document.createElement('tr');
+          headerRow.className = 'category-header';
+          headerRow.innerHTML = `<td colspan="7">${categoryHeader}</td>`;
+          table.appendChild(headerRow);
+          table.appendChild(newRow);
+          return;
+        }
+        
+        // カテゴリの最後の項目を見つける
+        let lastItemIndex = categoryHeaderIndex;
+        for (let i = categoryHeaderIndex + 1; i < rows.length; i++) {
+          const row = rows[i];
+          if (row.classList.contains('category-header')) {
+            // 次のカテゴリヘッダーに到達したら終了
+            break;
+          }
+          lastItemIndex = i;
+        }
+        
+        // カテゴリの最後の項目の次の位置に挿入
+        const insertIndex = lastItemIndex + 1;
+        const nextRow = table.children[insertIndex];
+        if (nextRow) {
+          table.insertBefore(newRow, nextRow);
+        } else {
+          table.appendChild(newRow);
+        }
+      }
+
+      // 統計情報を更新
+      function updateStats() {
+        const totalPages = Object.keys(pageData).length;
+        const statNumbers = document.querySelectorAll('.stat-number');
+        
+        // 実装済みページ数を更新
+        if (statNumbers.length > 0) {
+          statNumbers[0].textContent = totalPages;
+        }
+        
+        // 完成率を計算（完全実装の項目数 / 総項目数 * 100）
+        const completePages = Object.values(pageData).filter(page => page.status === 'complete').length;
+        const completionRate = totalPages > 0 ? Math.round((completePages / totalPages) * 100) : 0;
+        
+        // 完成率を更新
+        if (statNumbers.length > 1) {
+          statNumbers[1].textContent = completionRate + '%';
+        }
+      }
+
+      // タイムスタンプを更新
+      function updateTimestamp(pageId) {
+        const today = new Date().toISOString().split('T')[0];
+        const element = document.querySelector(`[data-page="${pageId}"]`);
+        if (element) {
+          element.textContent = today;
+        }
+        
+        // データも更新
+        if (pageData[pageId]) {
+          pageData[pageId].lastUpdated = today;
+        }
+        
+        // ローカルストレージに保存
+        localStorage.setItem('pageData', JSON.stringify(pageData));
+      }
+
+      // フォーム送信処理
+      document.getElementById('editForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const pageId = document.getElementById('editModal').dataset.pageId;
+        const formData = new FormData(this);
+        
+        // データを更新
+        pageData[pageId] = {
+          name: formData.get('pageName'),
+          category: formData.get('category'),
+          status: formData.get('status'),
+          function: formData.get('function'),
+          lastUpdated: new Date().toISOString().split('T')[0]
+        };
+        
+        // ローカルストレージに保存
+        localStorage.setItem('pageData', JSON.stringify(pageData));
+        
+        // モーダルを閉じる
+        closeEditModal();
+        
+        // ページをリロードして変更を反映
+        location.reload();
+      });
+
+      // 新規項目追加フォーム送信処理
+      document.getElementById('addNewForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        
+        // 新しいページIDを生成
+        const newPageId = 'new_' + Date.now();
+        
+        // 新しいデータを作成
+        const newPageData = {
+          name: formData.get('pageName'),
+          url: formData.get('url'),
+          category: formData.get('category'),
+          status: formData.get('status'),
+          function: formData.get('function'),
+          lastUpdated: new Date().toISOString().split('T')[0]
+        };
+        
+        // データに追加
+        pageData[newPageId] = newPageData;
+        
+        // ローカルストレージに保存
+        localStorage.setItem('pageData', JSON.stringify(pageData));
+        
+        // テーブルに新しい行を動的に追加
+        addNewRowToTable(newPageId, newPageData);
+        
+        // 統計情報を更新
+        updateStats();
+        
+        // モーダルを閉じる
+        closeAddNewModal();
+      });
+
+      // ページ読み込み時にデータを復元
+      window.addEventListener('load', function() {
+        const savedData = localStorage.getItem('pageData');
+        if (savedData) {
+          pageData = JSON.parse(savedData);
+        }
+        
+        // 新規追加された項目を復元
+        Object.keys(pageData).forEach(pageId => {
+          if (pageId.startsWith('new_')) {
+            const data = pageData[pageId];
+            // テーブルに既に存在するかチェック
+            const existingRow = document.querySelector(`[data-page="${pageId}"]`);
+            if (!existingRow) {
+              addNewRowToTable(pageId, data);
+            }
+          } else {
+            // 既存のデータを復元
+            const data = pageData[pageId];
+            const element = document.querySelector(`[data-page="${pageId}"]`);
+            if (element && data.lastUpdated) {
+              element.textContent = data.lastUpdated;
+            }
+          }
+        });
+        
+        // 統計情報を更新
+        updateStats();
+        
+        // 初期統計情報を設定
+        initializeStats();
+        
+        // カテゴリ選択肢を初期化
+        updateCategorySelects();
+      });
+
+      // 初期統計情報を設定
+      function initializeStats() {
+        // 既存のページデータから統計を計算
+        const existingPages = document.querySelectorAll('table tbody tr:not(.category-header)');
+        const totalExistingPages = existingPages.length;
+        
+        // 既存の完全実装ページ数を計算
+        const completeExistingPages = Array.from(existingPages).filter(row => {
+          const statusSpan = row.querySelector('.status-complete');
+          return statusSpan && statusSpan.textContent.includes('✅ 完全実装');
+        }).length;
+        
+        // 統計情報を更新
+        const statNumbers = document.querySelectorAll('.stat-number');
+        if (statNumbers.length > 0) {
+          statNumbers[0].textContent = totalExistingPages;
+        }
+        if (statNumbers.length > 1) {
+          const completionRate = totalExistingPages > 0 ? Math.round((completeExistingPages / totalExistingPages) * 100) : 0;
+          statNumbers[1].textContent = completionRate + '%';
+        }
+      }
+
+      // モーダル外クリックで閉じる
+      document.getElementById('editModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          closeEditModal();
+        }
+      });
+
+      // 新規追加モーダル外クリックで閉じる
+      document.getElementById('addNewModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          closeAddNewModal();
+        }
+      });
+
+      // 削除モーダル外クリックで閉じる
+      document.getElementById('deleteModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          closeDeleteModal();
+        }
+      });
+    </script>
+  </body>
+</html>
