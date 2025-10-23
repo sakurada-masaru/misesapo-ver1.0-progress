@@ -385,11 +385,11 @@
         <h2>📊 プロジェクト概要</h2>
         <div class="stats">
           <div class="stat-card">
-            <div class="stat-number">18</div>
+            <div class="stat-number">24</div>
             <div class="stat-label">実装済みページ</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number">100%</div>
+            <div class="stat-number">63%</div>
             <div class="stat-label">完成率</div>
           </div>
           <div class="stat-card">
@@ -397,7 +397,7 @@
             <div class="stat-label">サービス項目</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number">4</div>
+            <div class="stat-number">7</div>
             <div class="stat-label">カテゴリ</div>
           </div>
         </div>
@@ -646,6 +646,122 @@
           </tr>
           
           <tr class="category-header">
+            <td colspan="7">🛒 カート</td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/cart.html" class="url-link" target="_blank">カート一覧</a></td>
+            <td><code class="code">/cart.html</code></td>
+            <td>カート</td>
+            <td><span class="status-in-progress">🔄 実装中</span></td>
+            <td><span class="last-updated" data-page="cart">2025-01-27</span></td>
+            <td>サービス選択・数量指定</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('cart')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('cart')">更新</button>
+              <button class="btn-delete" onclick="deletePage('cart')">削除</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/cart/confirm.html" class="url-link" target="_blank">カート確認</a></td>
+            <td><code class="code">/cart/confirm.html</code></td>
+            <td>カート</td>
+            <td><span class="status-pending">⏳ 未実装</span></td>
+            <td><span class="last-updated" data-page="cart-confirm">2025-01-27</span></td>
+            <td>注文内容確認</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('cart-confirm')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('cart-confirm')">更新</button>
+              <button class="btn-delete" onclick="deletePage('cart-confirm')">削除</button>
+            </td>
+          </tr>
+          
+          <tr class="category-header">
+            <td colspan="7">💳 レジ</td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/checkout.html" class="url-link" target="_blank">決済画面</a></td>
+            <td><code class="code">/checkout.html</code></td>
+            <td>レジ</td>
+            <td><span class="status-pending">⏳ 未実装</span></td>
+            <td><span class="last-updated" data-page="checkout">2025-01-27</span></td>
+            <td>支払い方法選択</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('checkout')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('checkout')">更新</button>
+              <button class="btn-delete" onclick="deletePage('checkout')">削除</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/checkout/payment.html" class="url-link" target="_blank">支払い処理</a></td>
+            <td><code class="code">/checkout/payment.html</code></td>
+            <td>レジ</td>
+            <td><span class="status-pending">⏳ 未実装</span></td>
+            <td><span class="last-updated" data-page="payment">2025-01-27</span></td>
+            <td>クレジットカード決済</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('payment')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('payment')">更新</button>
+              <button class="btn-delete" onclick="deletePage('payment')">削除</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/checkout/complete.html" class="url-link" target="_blank">決済完了</a></td>
+            <td><code class="code">/checkout/complete.html</code></td>
+            <td>レジ</td>
+            <td><span class="status-pending">⏳ 未実装</span></td>
+            <td><span class="last-updated" data-page="checkout-complete">2025-01-27</span></td>
+            <td>注文完了通知</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('checkout-complete')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('checkout-complete')">更新</button>
+              <button class="btn-delete" onclick="deletePage('checkout-complete')">削除</button>
+            </td>
+          </tr>
+          
+          <tr class="category-header">
+            <td colspan="7">📊 レポート</td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/reports/dashboard.html" class="url-link" target="_blank">レポートダッシュボード</a></td>
+            <td><code class="code">/reports/dashboard.html</code></td>
+            <td>レポート</td>
+            <td><span class="status-pending">⏳ 未実装</span></td>
+            <td><span class="last-updated" data-page="reports-dashboard">2025-01-27</span></td>
+            <td>売上・利用状況分析</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('reports-dashboard')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('reports-dashboard')">更新</button>
+              <button class="btn-delete" onclick="deletePage('reports-dashboard')">削除</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/reports/sales.html" class="url-link" target="_blank">売上レポート</a></td>
+            <td><code class="code">/reports/sales.html</code></td>
+            <td>レポート</td>
+            <td><span class="status-pending">⏳ 未実装</span></td>
+            <td><span class="last-updated" data-page="sales-report">2025-01-27</span></td>
+            <td>月次・年次売上分析</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('sales-report')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('sales-report')">更新</button>
+              <button class="btn-delete" onclick="deletePage('sales-report')">削除</button>
+            </td>
+          </tr>
+          <tr>
+            <td><a href="http://localhost:5173/reports/usage.html" class="url-link" target="_blank">利用状況レポート</a></td>
+            <td><code class="code">/reports/usage.html</code></td>
+            <td>レポート</td>
+            <td><span class="status-pending">⏳ 未実装</span></td>
+            <td><span class="last-updated" data-page="usage-report">2025-01-27</span></td>
+            <td>サービス利用統計</td>
+            <td>
+              <button class="btn-edit" onclick="editPage('usage-report')">編集</button>
+              <button class="btn-update" onclick="updateTimestamp('usage-report')">更新</button>
+              <button class="btn-delete" onclick="deletePage('usage-report')">削除</button>
+            </td>
+          </tr>
+          
+          <tr class="category-header">
             <td colspan="7">🔧 管理画面</td>
           </tr>
           <tr>
@@ -658,6 +774,7 @@
             <td>
               <button class="btn-edit" onclick="editPage('sitemap')">編集</button>
               <button class="btn-update" onclick="updateTimestamp('sitemap')">更新</button>
+              <button class="btn-delete" onclick="deletePage('sitemap')">削除</button>
             </td>
           </tr>
           <tr>
@@ -670,6 +787,7 @@
             <td>
               <button class="btn-edit" onclick="editPage('progress')">編集</button>
               <button class="btn-update" onclick="updateTimestamp('progress')">更新</button>
+              <button class="btn-delete" onclick="deletePage('progress')">削除</button>
             </td>
           </tr>
         </tbody>
@@ -692,20 +810,23 @@
             </div>
             <div>
               <label for="newUrl">URL:</label>
-              <input type="text" id="newUrl" name="url" placeholder="/path/to/page.html" required>
+              <input type="text" id="newUrl" name="url" placeholder="/path/to/page.html (未実装の場合は空白可)">
             </div>
-            <div>
-              <label for="newCategory">カテゴリ:</label>
-              <select id="newCategory" name="category" required>
-                <option value="">カテゴリを選択</option>
-                <option value="メイン">メイン</option>
-                <option value="認証">認証</option>
-                <option value="登録">登録</option>
-                <option value="サポート">サポート</option>
-                <option value="マイページ">マイページ</option>
-                <option value="管理">管理</option>
-              </select>
-            </div>
+             <div>
+               <label for="newCategory">カテゴリ:</label>
+               <select id="newCategory" name="category" required>
+                 <option value="">カテゴリを選択</option>
+                 <option value="メイン">メイン</option>
+                 <option value="認証">認証</option>
+                 <option value="登録">登録</option>
+                 <option value="サポート">サポート</option>
+                 <option value="マイページ">マイページ</option>
+                 <option value="カート">カート</option>
+                 <option value="レジ">レジ</option>
+                 <option value="レポート">レポート</option>
+                 <option value="管理">管理</option>
+               </select>
+             </div>
             <div>
               <label for="newStatus">ステータス:</label>
               <select id="newStatus" name="status" required>
@@ -749,6 +870,10 @@
             <input type="text" id="editPageName" name="pageName" required>
           </div>
           <div>
+            <label for="editUrl">URL:</label>
+            <input type="text" id="editUrl" name="url" placeholder="/path/to/page.html">
+          </div>
+          <div>
             <label for="editCategory">カテゴリ:</label>
             <select id="editCategory" name="category">
               <option value="メイン">メイン</option>
@@ -756,6 +881,9 @@
               <option value="登録">登録</option>
               <option value="サポート">サポート</option>
               <option value="マイページ">マイページ</option>
+              <option value="カート">カート</option>
+              <option value="レジ">レジ</option>
+              <option value="レポート">レポート</option>
               <option value="管理">管理</option>
             </select>
           </div>
@@ -797,6 +925,7 @@
         const data = pageData[pageId] || {};
         
         document.getElementById('editPageName').value = data.name || '';
+        document.getElementById('editUrl').value = data.url || '';
         document.getElementById('editCategory').value = data.category || 'メイン';
         document.getElementById('editStatus').value = data.status || 'complete';
         document.getElementById('editFunction').value = data.function || '';
@@ -864,21 +993,24 @@
         const statusText = getStatusText(pageData.status);
         const statusClass = getStatusClass(pageData.status);
         
-        // 新しい行を作成
-        const newRow = document.createElement('tr');
-        newRow.innerHTML = `
-          <td><a href="http://localhost:5173${pageData.url}" class="url-link" target="_blank">${pageData.name}</a></td>
-          <td><code class="code">${pageData.url}</code></td>
-          <td>${category}</td>
-          <td><span class="${statusClass}">${statusText}</span></td>
-          <td><span class="last-updated" data-page="${pageId}">${pageData.lastUpdated}</span></td>
-          <td>${pageData.function}</td>
-          <td>
-            <button class="btn-edit" onclick="editPage('${pageId}')">編集</button>
-            <button class="btn-update" onclick="updateTimestamp('${pageId}')">更新</button>
-            <button class="btn-delete" onclick="deletePage('${pageId}')">削除</button>
-          </td>
-        `;
+           // 新しい行を作成
+           const newRow = document.createElement('tr');
+           const urlDisplay = pageData.url ? pageData.url : '未設定';
+           const linkDisplay = pageData.url ? `<a href="http://localhost:5173${pageData.url}" class="url-link" target="_blank">${pageData.name}</a>` : pageData.name;
+           
+           newRow.innerHTML = `
+             <td>${linkDisplay}</td>
+             <td><code class="code">${urlDisplay}</code></td>
+             <td>${category}</td>
+             <td><span class="${statusClass}">${statusText}</span></td>
+             <td><span class="last-updated" data-page="${pageId}">${pageData.lastUpdated}</span></td>
+             <td>${pageData.function}</td>
+             <td>
+               <button class="btn-edit" onclick="editPage('${pageId}')">編集</button>
+               <button class="btn-update" onclick="updateTimestamp('${pageId}')">更新</button>
+               <button class="btn-delete" onclick="deletePage('${pageId}')">削除</button>
+             </td>
+           `;
         
         // カテゴリに応じて適切な位置に追加
         insertRowByCategory(table, newRow, category);
@@ -904,16 +1036,19 @@
         return statusClassMap[status] || 'status-complete';
       }
 
-      // カテゴリに応じて新規項目を適切な位置に配置
-      function insertRowByCategory(table, newRow, category) {
-        const categoryMap = {
-          'メイン': '🏠 メインページ',
-          '認証': '🔐 認証関連',
-          '登録': '📋 登録関連',
-          'サポート': '📞 サポート',
-          'マイページ': '👤 マイページ関連',
-          '管理': '🔧 管理画面'
-        };
+         // カテゴリに応じて新規項目を適切な位置に配置
+         function insertRowByCategory(table, newRow, category) {
+           const categoryMap = {
+             'メイン': '🏠 メインページ',
+             '認証': '🔐 認証関連',
+             '登録': '📋 登録関連',
+             'サポート': '📞 サポート',
+             'マイページ': '👤 マイページ関連',
+             'カート': '🛒 カート',
+             'レジ': '💳 レジ',
+             'レポート': '📊 レポート',
+             '管理': '🔧 管理画面'
+           };
         
         const categoryHeader = categoryMap[category];
         const rows = Array.from(table.querySelectorAll('tr'));
@@ -1002,6 +1137,7 @@
         // データを更新
         pageData[pageId] = {
           name: formData.get('pageName'),
+          url: formData.get('url') || '',
           category: formData.get('category'),
           status: formData.get('status'),
           function: formData.get('function'),
@@ -1026,15 +1162,15 @@
         // 新しいページIDを生成
         const newPageId = 'new_' + Date.now();
         
-        // 新しいデータを作成
-        const newPageData = {
-          name: formData.get('pageName'),
-          url: formData.get('url'),
-          category: formData.get('category'),
-          status: formData.get('status'),
-          function: formData.get('function'),
-          lastUpdated: new Date().toISOString().split('T')[0]
-        };
+           // 新しいデータを作成
+           const newPageData = {
+             name: formData.get('pageName'),
+             url: formData.get('url') || '',
+             category: formData.get('category'),
+             status: formData.get('status'),
+             function: formData.get('function'),
+             lastUpdated: new Date().toISOString().split('T')[0]
+           };
         
         // データに追加
         pageData[newPageId] = newPageData;
