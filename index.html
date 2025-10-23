@@ -5,71 +5,156 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ミセサポ開発進捗ダッシュボード</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
             margin: 0;
-            padding: 40px 20px;
+            padding: 20px 16px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
         }
+        
         .container {
             background: white;
             border-radius: 12px;
-            padding: 40px;
+            padding: 24px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             text-align: center;
             max-width: 600px;
             width: 100%;
         }
+        
         h1 {
             color: #FF679C;
-            font-size: 2.5rem;
-            margin-bottom: 16px;
+            font-size: 2rem;
+            margin-bottom: 12px;
+            line-height: 1.2;
         }
+        
         .subtitle {
             color: #6b7280;
-            font-size: 1.2rem;
-            margin-bottom: 32px;
+            font-size: 1rem;
+            margin-bottom: 24px;
         }
+        
         .btn {
             display: inline-block;
             background: #FF679C;
             color: white;
             text-decoration: none;
-            padding: 12px 24px;
+            padding: 14px 28px;
             border-radius: 8px;
             font-weight: 500;
-            font-size: 1.1rem;
+            font-size: 1rem;
             transition: all 0.3s ease;
-            margin: 8px;
+            margin: 8px 4px;
+            width: 100%;
+            max-width: 280px;
         }
+        
         .btn:hover {
             background: #e55a8a;
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(255, 103, 156, 0.3);
         }
+        
         .description {
             color: #4b5563;
             line-height: 1.6;
-            margin-bottom: 32px;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
         }
+        
         .features {
             text-align: left;
-            margin: 24px 0;
+            margin: 20px 0;
         }
+        
         .features h3 {
             color: #374151;
             margin-bottom: 12px;
+            font-size: 1.1rem;
         }
+        
         .features ul {
             color: #6b7280;
-            padding-left: 20px;
+            padding-left: 16px;
+            font-size: 0.9rem;
         }
+        
         .features li {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+        }
+        
+        .footer {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .footer p {
+            color: #9ca3af;
+            font-size: 0.85rem;
+            margin: 4px 0;
+        }
+        
+        /* タブレット用 */
+        @media (min-width: 768px) {
+            body {
+                padding: 40px 20px;
+            }
+            
+            .container {
+                padding: 40px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+                margin-bottom: 16px;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+                margin-bottom: 32px;
+            }
+            
+            .btn {
+                width: auto;
+                padding: 12px 24px;
+                font-size: 1.1rem;
+                margin: 8px;
+            }
+            
+            .description {
+                font-size: 1rem;
+                margin-bottom: 32px;
+            }
+            
+            .features {
+                margin: 24px 0;
+            }
+            
+            .features h3 {
+                font-size: 1.2rem;
+            }
+            
+            .features ul {
+                font-size: 1rem;
+            }
+        }
+        
+        /* デスクトップ用 */
+        @media (min-width: 1024px) {
+            .btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 12px 24px rgba(255, 103, 156, 0.4);
+            }
         }
     </style>
 </head>
@@ -96,11 +181,9 @@
 
         <a href="progress.html" class="btn">📈 進捗ダッシュボードを開く</a>
         
-        <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
-            <p style="color: #9ca3af; font-size: 0.9rem;">
-                🚀 GitHub Pages でホストされています<br>
-                📅 最終更新: 2025-01-27
-            </p>
+        <div class="footer">
+            <p>🚀 GitHub Pages でホストされています</p>
+            <p>📅 最終更新: 2025-01-27</p>
         </div>
     </div>
 </body>
