@@ -10,15 +10,16 @@
       import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
       import { getDatabase, ref, set, get, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
       
-      // Firebase設定（実際の値に置き換えてください）
+      // Firebase設定
       const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-        databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_PROJECT_ID.appspot.com",
-        messagingSenderId: "YOUR_SENDER_ID",
-        appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyDi2_U6INLm7sb-02GsdWzDl2qaFBe8US4",
+        authDomain: "misesapo-progress.firebaseapp.com",
+        databaseURL: "https://misesapo-progress-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "misesapo-progress",
+        storageBucket: "misesapo-progress.firebasestorage.app",
+        messagingSenderId: "926808186549",
+        appId: "1:926808186549:web:91ce8534877c4ecf2e28fc",
+        measurementId: "G-5JS29JLL13"
       };
       
       // Firebase初期化
@@ -32,7 +33,6 @@
       window.firebaseGet = get;
       window.firebaseOnValue = onValue;
     </script>
-    
     <style>
       :root { color-scheme: light dark; }
       
@@ -120,6 +120,75 @@
       }
       .stat-number { font-size: 2rem; font-weight: bold; color: #FF679C; }
       .stat-label { color: #6b7280; font-size: 0.9rem; }
+      
+      /* プログレスバー */
+      .progress-container {
+        background: #f3f4f6;
+        border-radius: 8px;
+        padding: 16px;
+        margin: 16px 0;
+        border-left: 4px solid #FF679C;
+      }
+      
+      .progress-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+      
+      .progress-label {
+        font-weight: 600;
+        color: #374151;
+        font-size: 0.9rem;
+      }
+      
+      .progress-percentage {
+        font-weight: bold;
+        color: #FF679C;
+        font-size: 1.1rem;
+      }
+      
+      .progress-bar {
+        width: 100%;
+        height: 12px;
+        background: #e5e7eb;
+        border-radius: 6px;
+        overflow: hidden;
+        position: relative;
+      }
+      
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #FF679C 0%, #e55a8a 100%);
+        border-radius: 6px;
+        transition: width 0.5s ease-in-out;
+        position: relative;
+      }
+      
+      .progress-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+        animation: shimmer 2s infinite;
+      }
+      
+      @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+      }
+      
+      .progress-stats {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 8px;
+        font-size: 0.8rem;
+        color: #6b7280;
+      }
       
       .table-container {
         overflow-x: auto;
@@ -402,6 +471,49 @@
           padding: 6px 12px;
           font-size: 0.85rem;
         }
+        
+        .progress-container {
+          padding: 20px;
+        }
+        
+        .progress-header {
+          margin-bottom: 12px;
+        }
+        
+        .progress-bar {
+          height: 16px;
+        }
+      }
+      
+      /* スマホ用プログレスバー */
+      @media (max-width: 767px) {
+        .progress-container {
+          padding: 12px;
+          margin: 12px 0;
+        }
+        
+        .progress-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 4px;
+        }
+        
+        .progress-label {
+          font-size: 0.85rem;
+        }
+        
+        .progress-percentage {
+          font-size: 1rem;
+        }
+        
+        .progress-bar {
+          height: 10px;
+        }
+        
+        .progress-stats {
+          font-size: 0.75rem;
+          margin-top: 6px;
+        }
       }
     </style>
   </head>
@@ -418,16 +530,26 @@
             <div class="stat-label">実装済みページ</div>
           </div>
           <div class="stat-card">
-            <div class="stat-number">63%</div>
-            <div class="stat-label">完成率</div>
-          </div>
-          <div class="stat-card">
             <div class="stat-number">34</div>
             <div class="stat-label">サービス項目</div>
           </div>
           <div class="stat-card">
             <div class="stat-number">7</div>
             <div class="stat-label">カテゴリ</div>
+          </div>
+        </div>
+        
+        <!-- プログレスバー -->
+        <div class="progress-container">
+          <div class="progress-header">
+            <span class="progress-label">📊 プロジェクト完成率</span>
+            <span class="progress-percentage" id="progressPercentage">63%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 63%"></div>
+          </div>
+          <div class="progress-stats">
+            <span id="completedCount">15</span> / <span id="totalCount">24</span> ページ完了
           </div>
         </div>
       </div>
@@ -678,8 +800,8 @@
             <td colspan="7">🛒 カート</td>
           </tr>
           <tr>
-            <td><a href="http://localhost:5173/cart.html" class="url-link" target="_blank">カート一覧</a></td>
-            <td><code class="code">/cart.html</code></td>
+            <td>カート一覧</td>
+            <td><code class="code">未定</code></td>
             <td>カート</td>
             <td><span class="status-in-progress">🔄 実装中</span></td>
             <td><span class="last-updated" data-page="cart">2025-01-27</span></td>
@@ -691,8 +813,8 @@
             </td>
           </tr>
           <tr>
-            <td><a href="http://localhost:5173/cart/confirm.html" class="url-link" target="_blank">カート確認</a></td>
-            <td><code class="code">/cart/confirm.html</code></td>
+            <td>カート確認</td>
+            <td><code class="code">未定</code></td>
             <td>カート</td>
             <td><span class="status-pending">⏳ 未実装</span></td>
             <td><span class="last-updated" data-page="cart-confirm">2025-01-27</span></td>
@@ -708,8 +830,8 @@
             <td colspan="7">💳 レジ</td>
           </tr>
           <tr>
-            <td><a href="http://localhost:5173/checkout.html" class="url-link" target="_blank">決済画面</a></td>
-            <td><code class="code">/checkout.html</code></td>
+            <td>決済画面</td>
+            <td><code class="code">未定</code></td>
             <td>レジ</td>
             <td><span class="status-pending">⏳ 未実装</span></td>
             <td><span class="last-updated" data-page="checkout">2025-01-27</span></td>
@@ -721,8 +843,8 @@
             </td>
           </tr>
           <tr>
-            <td><a href="http://localhost:5173/checkout/payment.html" class="url-link" target="_blank">支払い処理</a></td>
-            <td><code class="code">/checkout/payment.html</code></td>
+            <td>支払い処理</td>
+            <td><code class="code">未定</code></td>
             <td>レジ</td>
             <td><span class="status-pending">⏳ 未実装</span></td>
             <td><span class="last-updated" data-page="payment">2025-01-27</span></td>
@@ -734,8 +856,8 @@
             </td>
           </tr>
           <tr>
-            <td><a href="http://localhost:5173/checkout/complete.html" class="url-link" target="_blank">決済完了</a></td>
-            <td><code class="code">/checkout/complete.html</code></td>
+            <td>決済完了</td>
+            <td><code class="code">未定</code></td>
             <td>レジ</td>
             <td><span class="status-pending">⏳ 未実装</span></td>
             <td><span class="last-updated" data-page="checkout-complete">2025-01-27</span></td>
@@ -751,8 +873,8 @@
             <td colspan="7">📊 レポート</td>
           </tr>
           <tr>
-            <td><a href="http://localhost:5173/reports/dashboard.html" class="url-link" target="_blank">レポートダッシュボード</a></td>
-            <td><code class="code">/reports/dashboard.html</code></td>
+            <td>レポートダッシュボード</td>
+            <td><code class="code">未定</code></td>
             <td>レポート</td>
             <td><span class="status-pending">⏳ 未実装</span></td>
             <td><span class="last-updated" data-page="reports-dashboard">2025-01-27</span></td>
@@ -764,8 +886,8 @@
             </td>
           </tr>
           <tr>
-            <td><a href="http://localhost:5173/reports/sales.html" class="url-link" target="_blank">売上レポート</a></td>
-            <td><code class="code">/reports/sales.html</code></td>
+            <td>売上レポート</td>
+            <td><code class="code">未定</code></td>
             <td>レポート</td>
             <td><span class="status-pending">⏳ 未実装</span></td>
             <td><span class="last-updated" data-page="sales-report">2025-01-27</span></td>
@@ -777,8 +899,8 @@
             </td>
           </tr>
           <tr>
-            <td><a href="http://localhost:5173/reports/usage.html" class="url-link" target="_blank">利用状況レポート</a></td>
-            <td><code class="code">/reports/usage.html</code></td>
+            <td>利用状況レポート</td>
+            <td><code class="code">未定</code></td>
             <td>レポート</td>
             <td><span class="status-pending">⏳ 未実装</span></td>
             <td><span class="last-updated" data-page="usage-report">2025-01-27</span></td>
@@ -894,25 +1016,22 @@
       <div class="edit-modal-content">
         <h3>ページ情報を編集</h3>
         <form class="edit-form" id="editForm">
-          <div>
-            <label for="editPageName">ページ名:</label>
-            <input type="text" id="editPageName" name="pageName" required>
-          </div>
-          <div>
-            <label for="editUrl">URL:</label>
-            <input type="text" id="editUrl" name="url" placeholder="/path/to/page.html">
-          </div>
-          <div>
-            <label for="editCategory">カテゴリ:</label>
+            <div>
+              <label for="editPageName">ページ名:</label>
+              <input type="text" id="editPageName" name="pageName" required>
+            </div>
+            <div>
+              <label for="editUrl">URL:</label>
+              <input type="text" id="editUrl" name="url" placeholder="/path/to/page.html (未実装の場合は空白可)">
+            </div>
+            <div>
+              <label for="editCategory">カテゴリ:</label>
             <select id="editCategory" name="category">
               <option value="メイン">メイン</option>
               <option value="認証">認証</option>
               <option value="登録">登録</option>
               <option value="サポート">サポート</option>
               <option value="マイページ">マイページ</option>
-              <option value="カート">カート</option>
-              <option value="レジ">レジ</option>
-              <option value="レポート">レポート</option>
               <option value="管理">管理</option>
             </select>
           </div>
@@ -953,11 +1072,11 @@
         const modal = document.getElementById('editModal');
         const data = pageData[pageId] || {};
         
-        document.getElementById('editPageName').value = data.name || '';
-        document.getElementById('editUrl').value = data.url || '';
-        document.getElementById('editCategory').value = data.category || 'メイン';
-        document.getElementById('editStatus').value = data.status || 'complete';
-        document.getElementById('editFunction').value = data.function || '';
+         document.getElementById('editPageName').value = data.name || '';
+         document.getElementById('editUrl').value = data.url || '';
+         document.getElementById('editCategory').value = data.category || 'メイン';
+         document.getElementById('editStatus').value = data.status || 'complete';
+         document.getElementById('editFunction').value = data.function || '';
         
         modal.style.display = 'block';
         modal.dataset.pageId = pageId;
@@ -997,8 +1116,8 @@
         // データから削除
         delete pageData[pageId];
         
-        // Firebaseに保存
-        saveToFirebase();
+         // Firebaseに保存
+         saveToFirebase();
         
         // テーブルから行を削除
         const row = document.querySelector(`[data-page="${pageId}"]`);
@@ -1013,20 +1132,23 @@
         closeDeleteModal();
       }
 
-      // テーブルに新しい行を動的に追加
-      function addNewRowToTable(pageId, pageData) {
-        const table = document.querySelector('table tbody');
-        const category = pageData.category;
-        
-        // ステータスの表示テキストとクラスを取得
-        const statusText = getStatusText(pageData.status);
-        const statusClass = getStatusClass(pageData.status);
-        
+         // テーブルに新しい行を動的に追加
+         function addNewRowToTable(pageId, pageData) {
+           const table = document.querySelector('table tbody');
+           const category = pageData.category;
+           
+           // ステータスの表示テキストとクラスを取得
+           const statusText = getStatusText(pageData.status);
+           const statusClass = getStatusClass(pageData.status);
+           
+           // URL表示を決定
+           const urlDisplay = pageData.url || '未定';
+           const linkDisplay = pageData.url ? 
+             `<a href="http://localhost:5173${pageData.url}" class="url-link" target="_blank">${pageData.name}</a>` : 
+             pageData.name;
+           
            // 新しい行を作成
            const newRow = document.createElement('tr');
-           const urlDisplay = pageData.url ? pageData.url : '未設定';
-           const linkDisplay = pageData.url ? `<a href="http://localhost:5173${pageData.url}" class="url-link" target="_blank">${pageData.name}</a>` : pageData.name;
-           
            newRow.innerHTML = `
              <td>${linkDisplay}</td>
              <td><code class="code">${urlDisplay}</code></td>
@@ -1119,25 +1241,47 @@
         }
       }
 
-      // 統計情報を更新
-      function updateStats() {
-        const totalPages = Object.keys(pageData).length;
-        const statNumbers = document.querySelectorAll('.stat-number');
-        
-        // 実装済みページ数を更新
-        if (statNumbers.length > 0) {
-          statNumbers[0].textContent = totalPages;
-        }
-        
-        // 完成率を計算（完全実装の項目数 / 総項目数 * 100）
-        const completePages = Object.values(pageData).filter(page => page.status === 'complete').length;
-        const completionRate = totalPages > 0 ? Math.round((completePages / totalPages) * 100) : 0;
-        
-        // 完成率を更新
-        if (statNumbers.length > 1) {
-          statNumbers[1].textContent = completionRate + '%';
-        }
-      }
+         // 統計情報を更新
+         function updateStats() {
+           const totalPages = Object.keys(pageData).length;
+           const statNumbers = document.querySelectorAll('.stat-number');
+           
+           // 実装済みページ数を更新
+           if (statNumbers.length > 0) {
+             statNumbers[0].textContent = totalPages;
+           }
+           
+           // 完成率を計算（完全実装の項目数 / 総項目数 * 100）
+           const completePages = Object.values(pageData).filter(page => page.status === 'complete').length;
+           const completionRate = totalPages > 0 ? Math.round((completePages / totalPages) * 100) : 0;
+           
+           // プログレスバーを更新
+           updateProgressBar(completePages, totalPages, completionRate);
+         }
+         
+         // プログレスバーを更新
+         function updateProgressBar(completed, total, percentage) {
+           const progressFill = document.getElementById('progressFill');
+           const progressPercentage = document.getElementById('progressPercentage');
+           const completedCount = document.getElementById('completedCount');
+           const totalCount = document.getElementById('totalCount');
+           
+           if (progressFill) {
+             progressFill.style.width = percentage + '%';
+           }
+           
+           if (progressPercentage) {
+             progressPercentage.textContent = percentage + '%';
+           }
+           
+           if (completedCount) {
+             completedCount.textContent = completed;
+           }
+           
+           if (totalCount) {
+             totalCount.textContent = total;
+           }
+         }
 
       // タイムスタンプを更新
       function updateTimestamp(pageId) {
@@ -1152,8 +1296,8 @@
           pageData[pageId].lastUpdated = today;
         }
         
-        // Firebaseに保存
-        saveToFirebase();
+         // Firebaseに保存
+         saveToFirebase();
       }
 
       // フォーム送信処理
@@ -1163,18 +1307,18 @@
         const pageId = document.getElementById('editModal').dataset.pageId;
         const formData = new FormData(this);
         
-        // データを更新
-        pageData[pageId] = {
-          name: formData.get('pageName'),
-          url: formData.get('url') || '',
-          category: formData.get('category'),
-          status: formData.get('status'),
-          function: formData.get('function'),
-          lastUpdated: new Date().toISOString().split('T')[0]
-        };
+         // データを更新
+         pageData[pageId] = {
+           name: formData.get('pageName'),
+           url: formData.get('url') || '',
+           category: formData.get('category'),
+           status: formData.get('status'),
+           function: formData.get('function'),
+           lastUpdated: new Date().toISOString().split('T')[0]
+         };
         
-        // Firebaseに保存
-        saveToFirebase();
+         // Firebaseに保存
+         saveToFirebase();
         
         // モーダルを閉じる
         closeEditModal();
@@ -1191,21 +1335,21 @@
         // 新しいページIDを生成
         const newPageId = 'new_' + Date.now();
         
-           // 新しいデータを作成
-           const newPageData = {
-             name: formData.get('pageName'),
-             url: formData.get('url') || '',
-             category: formData.get('category'),
-             status: formData.get('status'),
-             function: formData.get('function'),
-             lastUpdated: new Date().toISOString().split('T')[0]
-           };
+        // 新しいデータを作成
+        const newPageData = {
+          name: formData.get('pageName'),
+          url: formData.get('url'),
+          category: formData.get('category'),
+          status: formData.get('status'),
+          function: formData.get('function'),
+          lastUpdated: new Date().toISOString().split('T')[0]
+        };
         
         // データに追加
         pageData[newPageId] = newPageData;
         
-        // Firebaseに保存
-        saveToFirebase();
+         // Firebaseに保存
+         saveToFirebase();
         
         // テーブルに新しい行を動的に追加
         addNewRowToTable(newPageId, newPageData);
@@ -1217,52 +1361,9 @@
         closeAddNewModal();
       });
 
-      // Firebaseに保存する関数
-      async function saveToFirebase() {
-        try {
-          if (window.firebaseSet && window.firebaseRef && window.firebaseDatabase) {
-            await window.firebaseSet(window.firebaseRef(window.firebaseDatabase, 'pageData'), pageData);
-            console.log('Firebaseに保存しました');
-          } else {
-            // Firebaseが利用できない場合はローカルストレージに保存
-            localStorage.setItem('pageData', JSON.stringify(pageData));
-            console.log('ローカルストレージに保存しました');
-          }
-        } catch (error) {
-          console.error('保存エラー:', error);
-          // エラーの場合はローカルストレージに保存
-          localStorage.setItem('pageData', JSON.stringify(pageData));
-        }
-      }
-
-      // Firebaseからデータを読み込む関数
-      async function loadFromFirebase() {
-        try {
-          if (window.firebaseGet && window.firebaseRef && window.firebaseDatabase) {
-            const snapshot = await window.firebaseGet(window.firebaseRef(window.firebaseDatabase, 'pageData'));
-            if (snapshot.exists()) {
-              pageData = snapshot.val();
-              console.log('Firebaseから読み込みました');
-              return true;
-            }
-          }
-        } catch (error) {
-          console.error('読み込みエラー:', error);
-        }
-        
-        // Firebaseが利用できない場合はローカルストレージから読み込み
-        const savedData = localStorage.getItem('pageData');
-        if (savedData) {
-          pageData = JSON.parse(savedData);
-          console.log('ローカルストレージから読み込みました');
-          return true;
-        }
-        return false;
-      }
-
-      // ページ読み込み時にデータを復元
-      window.addEventListener('load', async function() {
-        await loadFromFirebase();
+       // ページ読み込み時にデータを復元
+       window.addEventListener('load', async function() {
+         await loadFromFirebase();
         
         // 新規追加された項目を復元
         Object.keys(pageData).forEach(pageId => {
@@ -1290,28 +1391,71 @@
         initializeStats();
       });
 
-      // 初期統計情報を設定
-      function initializeStats() {
-        // 既存のページデータから統計を計算
-        const existingPages = document.querySelectorAll('table tbody tr:not(.category-header)');
-        const totalExistingPages = existingPages.length;
-        
-        // 既存の完全実装ページ数を計算
-        const completeExistingPages = Array.from(existingPages).filter(row => {
-          const statusSpan = row.querySelector('.status-complete');
-          return statusSpan && statusSpan.textContent.includes('✅ 完全実装');
-        }).length;
-        
-        // 統計情報を更新
-        const statNumbers = document.querySelectorAll('.stat-number');
-        if (statNumbers.length > 0) {
-          statNumbers[0].textContent = totalExistingPages;
-        }
-        if (statNumbers.length > 1) {
-          const completionRate = totalExistingPages > 0 ? Math.round((completeExistingPages / totalExistingPages) * 100) : 0;
-          statNumbers[1].textContent = completionRate + '%';
-        }
-      }
+         // 初期統計情報を設定
+         function initializeStats() {
+           // 既存のページデータから統計を計算
+           const existingPages = document.querySelectorAll('table tbody tr:not(.category-header)');
+           const totalExistingPages = existingPages.length;
+           
+           // 既存の完全実装ページ数を計算
+           const completeExistingPages = Array.from(existingPages).filter(row => {
+             const statusSpan = row.querySelector('.status-complete');
+             return statusSpan && statusSpan.textContent.includes('✅ 完全実装');
+           }).length;
+           
+           // 統計情報を更新
+           const statNumbers = document.querySelectorAll('.stat-number');
+           if (statNumbers.length > 0) {
+             statNumbers[0].textContent = totalExistingPages;
+           }
+           
+           // プログレスバーを更新
+           const completionRate = totalExistingPages > 0 ? Math.round((completeExistingPages / totalExistingPages) * 100) : 0;
+           updateProgressBar(completeExistingPages, totalExistingPages, completionRate);
+         }
+
+         // Firebaseに保存する関数
+         async function saveToFirebase() {
+           try {
+             if (window.firebaseSet && window.firebaseRef && window.firebaseDatabase) {
+               await window.firebaseSet(window.firebaseRef(window.firebaseDatabase, 'pageData'), pageData);
+               console.log('Firebaseに保存しました');
+             } else {
+               // Firebaseが利用できない場合はローカルストレージに保存
+               localStorage.setItem('pageData', JSON.stringify(pageData));
+               console.log('ローカルストレージに保存しました');
+             }
+           } catch (error) {
+             console.error('保存エラー:', error);
+             // エラーの場合はローカルストレージに保存
+             localStorage.setItem('pageData', JSON.stringify(pageData));
+           }
+         }
+
+         // Firebaseからデータを読み込む関数
+         async function loadFromFirebase() {
+           try {
+             if (window.firebaseGet && window.firebaseRef && window.firebaseDatabase) {
+               const snapshot = await window.firebaseGet(window.firebaseRef(window.firebaseDatabase, 'pageData'));
+               if (snapshot.exists()) {
+                 pageData = snapshot.val();
+                 console.log('Firebaseから読み込みました');
+                 return true;
+               }
+             }
+           } catch (error) {
+             console.error('読み込みエラー:', error);
+           }
+           
+           // Firebaseが利用できない場合はローカルストレージから読み込み
+           const savedData = localStorage.getItem('pageData');
+           if (savedData) {
+             pageData = JSON.parse(savedData);
+             console.log('ローカルストレージから読み込みました');
+             return true;
+           }
+           return false;
+         }
 
       // モーダル外クリックで閉じる
       document.getElementById('editModal').addEventListener('click', function(e) {
