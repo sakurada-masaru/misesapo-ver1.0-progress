@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>プロジェクト進捗状況 | ミセサポ</title>
-    <!-- Firebase SDK を一時的に無効化 -->
-    <!--
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    -->
     <script>
         // 基本的なJavaScriptテスト
         console.log('JavaScript動作確認');
@@ -856,8 +854,7 @@
     </div>
 
     <script>
-        // Firebase設定を一時的に無効化
-        /*
+        // Firebase設定
         const firebaseConfig = {
             apiKey: "AIzaSyDi2_U6INLm7sb-02GsdWzDl2qaFBe8US4",
             authDomain: "misesapo-progress.firebaseapp.com",
@@ -868,13 +865,22 @@
             appId: "1:926808186549:web:91ce8534877c4ecf2e28fc",
             measurementId: "G-5JS29JLL13"
         };
-        */
+
+        // Firebase初期化
+        console.log('Firebase初期化開始');
+        try {
+            firebase.initializeApp(firebaseConfig);
+            const db = firebase.firestore();
+            const auth = firebase.auth();
+            console.log('Firebase初期化成功');
+        } catch (error) {
+            console.error('Firebase初期化エラー:', error);
+        }
 
         // 認証なしでオープンアクセス
         let isAuthenticated = true;
 
-        // Firebaseデータベース操作を一時的に無効化
-        /*
+        // Firebaseデータベース操作
         function loadDataFromFirebase() {
             console.log('Firebaseデータ読み込み開始');
             db.collection('projectData').doc('main').get()
@@ -912,7 +918,6 @@
                     renderCategorySections();
                 });
         }
-        */
 
         // データ管理
         let projectData = {
@@ -1102,11 +1107,11 @@
             updateStats();
         }
 
-        // 初期化（ローカルデータのみ）
+        // 初期化（Firebase連携）
         console.log('アプリ初期化開始');
         console.log('projectData:', projectData);
         console.log('renderCategorySections関数を呼び出し');
-        renderCategorySections();
+        loadDataFromFirebase();
         console.log('初期化完了');
 
         // カテゴリセクションを描画
@@ -1283,6 +1288,9 @@
         function saveData() {
             localStorage.setItem('projectData', JSON.stringify(projectData));
             console.log('データをローカルストレージに保存');
+            if (isAuthenticated) {
+                saveDataToFirebase();
+            }
         }
 
         // カテゴリ選択のイベントハンドラー
