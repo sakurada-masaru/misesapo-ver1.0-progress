@@ -163,6 +163,7 @@
         .table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: fixed;
         }
 
         .table th,
@@ -170,36 +171,82 @@
             padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid #e5e7eb;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* 列幅を固定 */
+        .table th:nth-child(1),
+        .table td:nth-child(1) {
+            width: 20%; /* ページ名 */
+        }
+
+        .table th:nth-child(2),
+        .table td:nth-child(2) {
+            width: 25%; /* URL */
+        }
+
+        .table th:nth-child(3),
+        .table td:nth-child(3) {
+            width: 12%; /* ステータス */
+        }
+
+        .table th:nth-child(4),
+        .table td:nth-child(4) {
+            width: 28%; /* 機能 */
+        }
+
+        .table th:nth-child(5),
+        .table td:nth-child(5) {
+            width: 10%; /* 最終更新日 */
+        }
+
+        .table th:nth-child(6),
+        .table td:nth-child(6) {
+            width: 5%; /* 操作 */
         }
 
         .table th {
             background-color: #f9fafb;
             font-weight: 600;
             color: #374151;
+            border-bottom: 2px solid #e5e7eb;
         }
 
         .table tr:hover {
             background-color: #f9fafb;
         }
 
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
         .status-complete {
             color: #10b981;
             font-weight: 500;
+            white-space: nowrap;
         }
 
         .status-in-progress {
             color: #f59e0b;
             font-weight: 500;
+            white-space: nowrap;
         }
 
         .status-pending {
             color: #ef4444;
             font-weight: 500;
+            white-space: nowrap;
         }
 
         .url-link {
             color: #3b82f6;
             text-decoration: none;
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .url-link:hover {
@@ -208,7 +255,9 @@
 
         .action-buttons {
             display: flex;
-            gap: 5px;
+            gap: 4px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         .btn-edit,
@@ -217,8 +266,10 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 500;
+            min-width: 50px;
+            text-align: center;
         }
 
         .btn-edit {
@@ -346,15 +397,21 @@
             background: #4b5563;
         }
 
-        /* レスポンシブ */
-        /* iPhone用のレスポンシブデザイン */
+        /* ========================================
+           スマホ版レスポンシブデザイン (768px以下)
+           ======================================== */
         @media (max-width: 768px) {
+            /* コンテナ・レイアウト */
             .container {
-                padding: 8px;
+                padding: 4px;
                 margin: 0;
                 border-radius: 0;
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
             }
 
+            /* ヘッダー・ロゴ */
             .logo {
                 width: 45px;
                 height: 45px;
@@ -378,6 +435,7 @@
                 margin-bottom: 20px;
             }
 
+            /* 統計カード */
             .stats {
                 grid-template-columns: 1fr 1fr 1fr;
                 gap: 8px;
@@ -401,8 +459,13 @@
                 line-height: 1.2;
             }
 
+            /* カテゴリセクション */
             .category-section {
                 margin-bottom: 20px;
+                width: 100%;
+                max-width: 100%;
+                margin-left: 0;
+                margin-right: 0;
             }
 
             .category-header {
@@ -420,52 +483,119 @@
                 border-radius: 4px;
             }
 
+            /* テーブルレイアウト */
             .table {
                 font-size: 0.8rem;
-                overflow-x: auto;
                 display: block;
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            .table thead {
+                display: none;
+            }
+
+            .table tbody {
+                display: block;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            .table tr {
+                display: block;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+                margin-bottom: 8px;
+                padding: 8px;
+                background: #f9fafb;
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+                margin-left: 0;
+                margin-right: 0;
+            }
+
+            .table td {
+                display: block;
+                padding: 4px 0;
+                border: none;
+                text-align: left;
+                width: 100%;
+                box-sizing: border-box;
+                white-space: nowrap;
+                min-width: 0;
+            }
+
+            .table td:before {
+                content: attr(data-label) ": ";
+                font-weight: bold;
+                color: #374151;
+                display: inline;
+                font-size: 0.8rem;
+            }
+
+            .table td > *:not(:before) {
+                display: inline;
                 white-space: nowrap;
             }
 
-            .table thead,
-            .table tbody,
-            .table tr {
-                display: block;
+
+            .table td:first-child:before {
+                content: "ページ名: ";
             }
 
-            .table th,
-            .table td {
-                padding: 6px 8px;
-                display: inline-block;
-                width: auto;
-                min-width: 80px;
-                text-align: center;
-                border: none;
-                border-bottom: 1px solid #e5e7eb;
+            .table td:nth-child(2):before {
+                content: "URL: ";
             }
 
-            .table th:first-child,
-            .table td:first-child {
-                min-width: 120px;
-                text-align: left;
+            .table td:nth-child(3):before {
+                content: "ステータス: ";
             }
 
-            .table th:last-child,
-            .table td:last-child {
-                min-width: 100px;
+            .table td:nth-child(4):before {
+                content: "機能: ";
+            }
+
+            /* テーブルコンテンツ */
+            .table td:nth-child(3) {
+                white-space: nowrap;
+            }
+
+            .table td:nth-child(2) .url-link {
+                color: #3b82f6;
+                text-decoration: none;
+                display: inline;
+                white-space: nowrap;
+            }
+
+            .table td:nth-child(2) .url-link:hover {
+                text-decoration: underline;
+            }
+
+            .table td:nth-child(5),
+            .table td:nth-child(6) {
+                display: none;
             }
 
             .action-buttons {
-                flex-direction: column;
-                gap: 4px;
+                display: none;
             }
 
+            .add-button {
+                display: none;
+            }
+
+            /* ボタン・フォーム */
             .btn {
                 padding: 6px 12px;
                 font-size: 0.75rem;
                 margin: 2px 0;
             }
 
+            /* モーダル */
             .modal {
                 padding: 15px;
                 margin: 10px;
@@ -548,6 +678,8 @@
             .table td {
                 padding: 4px 6px;
                 min-width: 70px;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
 
             .table th:first-child,
@@ -563,7 +695,7 @@
         <div class="header">
             <img src="../images/logo_144x144.png" alt="ミセサポ" class="logo">
             <h1>プロジェクト進捗状況</h1>
-            <p>ミセサポ Webアプリケーション - 開発状況ダッシュボード</p>
+            <p>ミセサポVer1.0 開発進捗状況ダッシュボード</p>
         </div>
 
         <!-- 統計情報 -->
@@ -637,8 +769,8 @@
                     <label for="addStatus">ステータス:</label>
                     <select id="addStatus" required>
                         <option value="complete">✅ 完了</option>
-                        <option value="in-progress">🔄 実装中</option>
-                        <option value="pending">⏳ 未実装</option>
+                        <option value="in-progress">🔄 進行中</option>
+                        <option value="pending">⏳ 未着手</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -689,7 +821,7 @@
                     <label for="editStatus">ステータス:</label>
                     <select id="editStatus" required>
                         <option value="complete">✅ 完了</option>
-                        <option value="in-progress">🔄 実装中</option>
+                        <option value="in-progress">🔄 進行中</option>
                         <option value="pending">⏳ 未実装</option>
                     </select>
                 </div>
@@ -932,7 +1064,7 @@
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span>${categoryMap[category] || category}</span>
                         <span style="font-size: 0.9rem; font-weight: normal;">
-                            総数: ${totalCount} | 完了: ${completedCount} | 実装中: ${inProgressCount} | 未実装: ${pendingCount}
+                            総数: ${totalCount} | ✅ 完了: ${completedCount} | 🔄 進行中: ${inProgressCount} | ⏳ 未着手: ${pendingCount}
                         </span>
                     </div>
                 `;
@@ -960,12 +1092,12 @@
                 categories[category].forEach(item => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${item.pageName}</td>
-                        <td><a href="http://localhost:5174/${item.url}" class="url-link" target="_blank">${item.url}</a></td>
-                        <td><span class="status-${item.status}">${getStatusText(item.status)}</span></td>
-                        <td>${item.function}</td>
-                        <td>${item.lastUpdated}</td>
-                        <td>
+                        <td data-label="ページ名">${item.pageName}</td>
+                        <td data-label="URL"><a href="http://localhost:5174/${item.url}" class="url-link" target="_blank">${item.url}</a></td>
+                        <td data-label="ステータス"><span class="status-${item.status}">${getStatusText(item.status)}</span></td>
+                        <td data-label="機能">${item.function}</td>
+                        <td data-label="最終更新日">${item.lastUpdated}</td>
+                        <td data-label="操作">
                             <div class="action-buttons">
                                 <button class="btn-edit" onclick="editItem('${item.id}')">編集</button>
                                 <button class="btn-delete" onclick="deleteItem('${item.id}')">削除</button>
@@ -984,8 +1116,8 @@
         function getStatusText(status) {
             const statusMap = {
                 'complete': '✅ 完了',
-                'in-progress': '🔄 実装中',
-                'pending': '⏳ 未実装'
+                'in-progress': '🔄 進行中',
+                'pending': '⏳ 未着手'
             };
             return statusMap[status] || status;
         }
