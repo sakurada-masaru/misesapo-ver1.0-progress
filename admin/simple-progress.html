@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プロジェクト進捗状況 | ミセサポ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .logo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .header h1 {
+            color: #FF679C;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #FF679C;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .progress-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .progress-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #374151;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF679C, #e55a8a);
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        .add-button {
+            background: #FF679C;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 30px;
+            transition: background-color 0.2s;
+        }
+
+        .add-button:hover {
+            background: #e55a8a;
+        }
+
+        .category-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .category-header {
+            background: #FF679C;
+            color: white;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .category-header .stats {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .table th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .table tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .status-complete {
+            color: #10b981;
+            font-weight: 500;
+        }
+
+        .status-in-progress {
+            color: #f59e0b;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            color: #ef4444;
+            font-weight: 500;
+        }
+
+        .url-link {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+
+        .url-link:hover {
+            text-decoration: underline;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-edit,
+        .btn-delete {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .btn-edit {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #2563eb;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+
+        /* モーダル */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn-save,
+        .btn-cancel {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-save {
+            background: #FF679C;
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #e55a8a;
+        }
+
+        .btn-cancel:hover {
+            background: #4b5563;
+        }
+
+        /* レスポンシブ */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .logo {
+                width: 50px;
+                height: 50px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .stats {
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 12px;
+                text-align: center;
+            }
+
+            .stat-card h3 {
+                font-size: 1.4rem;
+                margin-bottom: 5px;
+            }
+
+            .stat-card p {
+                font-size: 0.8rem;
+                margin: 0;
+            }
+
+            .table {
+                font-size: 0.9rem;
+            }
+
+            .table th,
+            .table td {
+                padding: 8px 10px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .category-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .category-header .stats {
+                font-size: 0.8rem;
+                padding: 2px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ヘッダー -->
+        <div class="header">
+            <img src="../images/logo_144x144.png" alt="ミセサポ" class="logo">
+            <h1>プロジェクト進捗状況</h1>
+            <p>ミセサポ Webアプリケーション - 開発状況ダッシュボード</p>
+        </div>
+
+        <!-- 統計情報 -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalPages">19</div>
+                <div class="stat-label">HTMLファイル総数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="completedPages">19</div>
+                <div class="stat-label">完了ページ</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="categoryCount">6</div>
+                <div class="stat-label">カテゴリ数</div>
+            </div>
+        </div>
+
+        <!-- 完成率プログレスバー -->
+        <div class="progress-container">
+            <div class="progress-title">完成率</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 100%"></div>
+            </div>
+            <div class="progress-text" id="progressText">100% (19/19 ページ完了)</div>
+        </div>
+
+        <!-- 新規追加ボタン -->
+        <button class="add-button" onclick="openAddModal()">+ 新規項目を追加</button>
+
+        <!-- カテゴリごとのテーブル -->
+        <div id="categorySections">
+            <!-- カテゴリセクションはJavaScriptで動的に生成 -->
+        </div>
+    </div>
+
+    <!-- 新規追加モーダル -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">新規項目を追加</h3>
+                <span class="close" onclick="closeAddModal()">&times;</span>
+            </div>
+            <form id="addForm">
+                <div class="form-group">
+                    <label for="addCategory">カテゴリ:</label>
+                    <select id="addCategory" required>
+                        <option value="">カテゴリを選択</option>
+                        <option value="メイン">メイン</option>
+                        <option value="認証">認証</option>
+                        <option value="登録">登録</option>
+                        <option value="サポート">サポート</option>
+                        <option value="マイページ">マイページ</option>
+                        <option value="管理">管理</option>
+                        <option value="__ADD_CATEGORY__">+ カテゴリを追加する</option>
+                    </select>
+                </div>
+                <div class="form-group" id="newCategoryGroup" style="display: none;">
+                    <label for="newCategoryName">新しいカテゴリ名:</label>
+                    <input type="text" id="newCategoryName" placeholder="例: 決済、通知、設定">
+                </div>
+                <div class="form-group">
+                    <label for="addPageName">ページ名:</label>
+                    <input type="text" id="addPageName" required>
+                </div>
+                <div class="form-group">
+                    <label for="addUrl">URL:</label>
+                    <input type="text" id="addUrl" placeholder="/path/to/page.html" required>
+                </div>
+                <div class="form-group">
+                    <label for="addStatus">ステータス:</label>
+                    <select id="addStatus" required>
+                        <option value="complete">✅ 完了</option>
+                        <option value="in-progress">🔄 実装中</option>
+                        <option value="pending">⏳ 未実装</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="addFunction">機能:</label>
+                    <textarea id="addFunction" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="addLastUpdated">最終更新日:</label>
+                    <input type="date" id="addLastUpdated" required>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn-cancel" onclick="closeAddModal()">キャンセル</button>
+                    <button type="submit" class="btn-save">追加</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 編集モーダル -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">項目を編集</h3>
+                <span class="close" onclick="closeEditModal()">&times;</span>
+            </div>
+            <form id="editForm">
+                <input type="hidden" id="editId">
+                <div class="form-group">
+                    <label for="editCategory">カテゴリ:</label>
+                    <select id="editCategory" required>
+                        <option value="メイン">メイン</option>
+                        <option value="認証">認証</option>
+                        <option value="登録">登録</option>
+                        <option value="サポート">サポート</option>
+                        <option value="マイページ">マイページ</option>
+                        <option value="管理">管理</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editPageName">ページ名:</label>
+                    <input type="text" id="editPageName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editUrl">URL:</label>
+                    <input type="text" id="editUrl" required>
+                </div>
+                <div class="form-group">
+                    <label for="editStatus">ステータス:</label>
+                    <select id="editStatus" required>
+                        <option value="complete">✅ 完了</option>
+                        <option value="in-progress">🔄 実装中</option>
+                        <option value="pending">⏳ 未実装</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editFunction">機能:</label>
+                    <textarea id="editFunction" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editLastUpdated">最終更新日:</label>
+                    <input type="date" id="editLastUpdated" required>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn-cancel" onclick="closeEditModal()">キャンセル</button>
+                    <button type="submit" class="btn-save">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // データ管理
+        let projectData = {
+            'index': {
+                category: 'メイン',
+                pageName: 'トップページ',
+                url: 'index.html',
+                status: 'complete',
+                function: 'サービス一覧・カテゴリフィルタ',
+                lastUpdated: '2025-01-27'
+            },
+            'report': {
+                category: 'メイン',
+                pageName: 'レポート',
+                url: 'report.html',
+                status: 'complete',
+                function: '清掃レポート表示',
+                lastUpdated: '2025-01-27'
+            },
+            'mypage': {
+                category: 'メイン',
+                pageName: 'マイページ',
+                url: 'mypage.html',
+                status: 'complete',
+                function: 'ユーザー情報管理',
+                lastUpdated: '2025-01-27'
+            },
+            'signin': {
+                category: '認証',
+                pageName: 'ログイン',
+                url: 'signin.html',
+                status: 'complete',
+                function: 'ユーザーログイン',
+                lastUpdated: '2025-01-27'
+            },
+            'signup': {
+                category: '認証',
+                pageName: '新規登録',
+                url: 'signup.html',
+                status: 'complete',
+                function: 'ユーザー登録',
+                lastUpdated: '2025-01-27'
+            },
+            'signup2': {
+                category: '認証',
+                pageName: '新規登録2',
+                url: 'signup2.html',
+                status: 'complete',
+                function: '追加情報入力',
+                lastUpdated: '2025-01-27'
+            },
+            'signup3': {
+                category: '認証',
+                pageName: '新規登録3',
+                url: 'signup3.html',
+                status: 'complete',
+                function: '最終確認',
+                lastUpdated: '2025-01-27'
+            },
+            'reset-password': {
+                category: '認証',
+                pageName: 'パスワードリセット',
+                url: 'reset-password.html',
+                status: 'complete',
+                function: 'パスワード再設定',
+                lastUpdated: '2025-01-27'
+            },
+            'personal': {
+                category: '登録',
+                pageName: '個人登録',
+                url: 'registration/personal.html',
+                status: 'complete',
+                function: '個人情報登録',
+                lastUpdated: '2025-01-27'
+            },
+            'personal2': {
+                category: '登録',
+                pageName: '個人登録2',
+                url: 'registration/personal2.html',
+                status: 'complete',
+                function: '追加情報入力',
+                lastUpdated: '2025-01-27'
+            },
+            'corporation': {
+                category: '登録',
+                pageName: '法人登録',
+                url: 'registration/corporation.html',
+                status: 'complete',
+                function: '法人情報登録',
+                lastUpdated: '2025-01-27'
+            },
+            'corporation2': {
+                category: '登録',
+                pageName: '法人登録2',
+                url: 'registration/corporation2.html',
+                status: 'complete',
+                function: '追加情報入力',
+                lastUpdated: '2025-01-27'
+            },
+            'corporation3': {
+                category: '登録',
+                pageName: '法人登録3',
+                url: 'registration/corporation3.html',
+                status: 'complete',
+                function: '最終確認',
+                lastUpdated: '2025-01-27'
+            },
+            'complete': {
+                category: '登録',
+                pageName: '登録完了',
+                url: 'registration/complete.html',
+                status: 'complete',
+                function: '完了通知',
+                lastUpdated: '2025-01-27'
+            },
+            'inquiry-complete': {
+                category: 'サポート',
+                pageName: 'お問い合わせ完了',
+                url: 'inquiry/complete.html',
+                status: 'complete',
+                function: '完了通知',
+                lastUpdated: '2025-01-27'
+            },
+            'mypage-info': {
+                category: 'マイページ',
+                pageName: '個人情報',
+                url: 'mypage/info.html',
+                status: 'complete',
+                function: '情報編集・更新',
+                lastUpdated: '2025-01-27'
+            },
+            'mypage-inquiry': {
+                category: 'マイページ',
+                pageName: 'お問い合わせ',
+                url: 'mypage/inquiry.html',
+                status: 'complete',
+                function: 'サポート問い合わせ',
+                lastUpdated: '2025-01-27'
+            },
+            'sitemap': {
+                category: '管理',
+                pageName: 'サイトマップ',
+                url: 'admin/sitemap.html',
+                status: 'complete',
+                function: 'サイトマップ表示',
+                lastUpdated: '2025-01-27'
+            },
+            'progress': {
+                category: '管理',
+                pageName: '開発進捗状況',
+                url: 'admin/progress.html',
+                status: 'complete',
+                function: '進捗ダッシュボード',
+                lastUpdated: '2025-01-27'
+            }
+        };
+
+        // カテゴリマップ
+        const categoryMap = {
+            'メイン': '🏠 メインページ',
+            '認証': '🔐 認証関連',
+            '登録': '📋 登録関連',
+            'サポート': '📞 サポート',
+            'マイページ': '👤 マイページ関連',
+            '管理': '🔧 管理画面'
+        };
+
+        // ページ読み込み時の初期化
+        window.addEventListener('load', function() {
+            // ローカルストレージからデータを復元
+            const savedData = localStorage.getItem('projectData');
+            if (savedData) {
+                projectData = JSON.parse(savedData);
+            }
+            
+            // 今日の日付を設定
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('addLastUpdated').value = today;
+            
+            // ページを描画
+            renderPage();
+        });
+
+        // ページを描画
+        function renderPage() {
+            renderCategorySections();
+            updateStats();
+        }
+
+        // カテゴリセクションを描画
+        function renderCategorySections() {
+            const container = document.getElementById('categorySections');
+            container.innerHTML = '';
+
+            // カテゴリごとにデータをグループ化
+            const categories = {};
+            Object.keys(projectData).forEach(id => {
+                const data = projectData[id];
+                if (!categories[data.category]) {
+                    categories[data.category] = [];
+                }
+                categories[data.category].push({ id, ...data });
+            });
+
+            // カテゴリごとにセクションを作成
+            Object.keys(categories).forEach(category => {
+                const section = document.createElement('div');
+                section.className = 'category-section';
+                
+                const header = document.createElement('div');
+                header.className = 'category-header';
+                
+                // カテゴリの統計情報を計算
+                const categoryItems = categories[category];
+                const totalCount = categoryItems.length;
+                const completedCount = categoryItems.filter(item => item.status === 'complete').length;
+                const inProgressCount = categoryItems.filter(item => item.status === 'in-progress').length;
+                const pendingCount = categoryItems.filter(item => item.status === 'pending').length;
+                
+                header.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>${categoryMap[category] || category}</span>
+                        <span style="font-size: 0.9rem; font-weight: normal;">
+                            総数: ${totalCount} | 完了: ${completedCount} | 実装中: ${inProgressCount} | 未実装: ${pendingCount}
+                        </span>
+                    </div>
+                `;
+                section.appendChild(header);
+
+                const table = document.createElement('table');
+                table.className = 'table';
+                
+                // テーブルヘッダー
+                const thead = document.createElement('thead');
+                thead.innerHTML = `
+                    <tr>
+                        <th>ページ名</th>
+                        <th>URL</th>
+                        <th>ステータス</th>
+                        <th>機能</th>
+                        <th>最終更新日</th>
+                        <th>操作</th>
+                    </tr>
+                `;
+                table.appendChild(thead);
+
+                // テーブルボディ
+                const tbody = document.createElement('tbody');
+                categories[category].forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.pageName}</td>
+                        <td><a href="http://localhost:5174/${item.url}" class="url-link" target="_blank">${item.url}</a></td>
+                        <td><span class="status-${item.status}">${getStatusText(item.status)}</span></td>
+                        <td>${item.function}</td>
+                        <td>${item.lastUpdated}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-edit" onclick="editItem('${item.id}')">編集</button>
+                                <button class="btn-delete" onclick="deleteItem('${item.id}')">削除</button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                table.appendChild(tbody);
+                section.appendChild(table);
+                container.appendChild(section);
+            });
+        }
+
+        // ステータステキストを取得
+        function getStatusText(status) {
+            const statusMap = {
+                'complete': '✅ 完了',
+                'in-progress': '🔄 実装中',
+                'pending': '⏳ 未実装'
+            };
+            return statusMap[status] || status;
+        }
+
+        // 統計情報を更新
+        function updateStats() {
+            const totalPages = Object.keys(projectData).length;
+            const completedPages = Object.values(projectData).filter(item => item.status === 'complete').length;
+            const categories = [...new Set(Object.values(projectData).map(item => item.category))].length;
+            const completionRate = totalPages > 0 ? Math.round((completedPages / totalPages) * 100) : 0;
+
+            document.getElementById('totalPages').textContent = totalPages;
+            document.getElementById('completedPages').textContent = completedPages;
+            document.getElementById('categoryCount').textContent = categories;
+            document.getElementById('progressFill').style.width = `${completionRate}%`;
+            document.getElementById('progressText').textContent = `${completionRate}% (${completedPages}/${totalPages} ページ完了)`;
+        }
+
+        // 新規追加モーダルを開く
+        function openAddModal() {
+            document.getElementById('addModal').style.display = 'block';
+            updateCategorySelects();
+        }
+
+        // 新規追加モーダルを閉じる
+        function closeAddModal() {
+            document.getElementById('addModal').style.display = 'none';
+            document.getElementById('addForm').reset();
+            document.getElementById('newCategoryGroup').style.display = 'none';
+        }
+
+        // 編集モーダルを開く
+        function editItem(id) {
+            const data = projectData[id];
+            if (!data) return;
+
+            document.getElementById('editId').value = id;
+            document.getElementById('editCategory').value = data.category;
+            document.getElementById('editPageName').value = data.pageName;
+            document.getElementById('editUrl').value = data.url;
+            document.getElementById('editStatus').value = data.status;
+            document.getElementById('editFunction').value = data.function;
+            document.getElementById('editLastUpdated').value = data.lastUpdated;
+            
+            // カテゴリ選択肢を更新
+            updateCategorySelects();
+            
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        // 編集モーダルを閉じる
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        // 項目を削除
+        function deleteItem(id) {
+            if (confirm('この項目を削除してもよろしいですか？')) {
+                delete projectData[id];
+                saveData();
+                renderPage();
+            }
+        }
+
+        // データを保存
+        function saveData() {
+            localStorage.setItem('projectData', JSON.stringify(projectData));
+        }
+
+        // カテゴリ選択のイベントハンドラー
+        document.getElementById('addCategory').addEventListener('change', function() {
+            const newCategoryGroup = document.getElementById('newCategoryGroup');
+            if (this.value === '__ADD_CATEGORY__') {
+                newCategoryGroup.style.display = 'block';
+                document.getElementById('newCategoryName').focus();
+            } else {
+                newCategoryGroup.style.display = 'none';
+            }
+        });
+
+        // 新しいカテゴリ名の入力イベント
+        document.getElementById('newCategoryName').addEventListener('input', function() {
+            const categorySelect = document.getElementById('addCategory');
+            if (this.value.trim()) {
+                // 新しいカテゴリを選択肢に追加
+                const existingOption = Array.from(categorySelect.options).find(option => option.value === this.value.trim());
+                if (!existingOption) {
+                    const newOption = document.createElement('option');
+                    newOption.value = this.value.trim();
+                    newOption.textContent = this.value.trim();
+                    newOption.selected = true;
+                    // 「カテゴリを追加する」オプションの前に挿入
+                    const addCategoryOption = categorySelect.querySelector('option[value="__ADD_CATEGORY__"]');
+                    categorySelect.insertBefore(newOption, addCategoryOption);
+                }
+            }
+        });
+
+        // カテゴリ選択肢を更新
+        function updateCategorySelects() {
+            const addCategorySelect = document.getElementById('addCategory');
+            const editCategorySelect = document.getElementById('editCategory');
+            
+            // 既存のカテゴリを取得
+            const existingCategories = [...new Set(Object.values(projectData).map(item => item.category))];
+            
+            // 新規追加モーダルの選択肢を更新
+            updateSelectOptions(addCategorySelect, existingCategories);
+            
+            // 編集モーダルの選択肢を更新
+            updateSelectOptions(editCategorySelect, existingCategories);
+        }
+
+        // セレクトオプションを更新
+        function updateSelectOptions(selectElement, categories) {
+            // 既存のオプションをクリア（デフォルトオプションと「カテゴリを追加する」オプション以外）
+            const optionsToRemove = Array.from(selectElement.options).filter(option => 
+                option.value !== '' && option.value !== '__ADD_CATEGORY__'
+            );
+            optionsToRemove.forEach(option => option.remove());
+            
+            // カテゴリを追加
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                selectElement.appendChild(option);
+            });
+        }
+
+        // 新規追加フォームの処理
+        document.getElementById('addForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            let selectedCategory = document.getElementById('addCategory').value;
+            
+            // 新しいカテゴリが入力されている場合
+            if (selectedCategory === '__ADD_CATEGORY__') {
+                const newCategoryName = document.getElementById('newCategoryName').value.trim();
+                if (!newCategoryName) {
+                    alert('新しいカテゴリ名を入力してください。');
+                    return;
+                }
+                selectedCategory = newCategoryName;
+                
+                // カテゴリマップに追加
+                categoryMap[newCategoryName] = `📁 ${newCategoryName}`;
+            }
+            
+            const id = 'new_' + Date.now();
+            const data = {
+                category: selectedCategory,
+                pageName: document.getElementById('addPageName').value,
+                url: document.getElementById('addUrl').value,
+                status: document.getElementById('addStatus').value,
+                function: document.getElementById('addFunction').value,
+                lastUpdated: document.getElementById('addLastUpdated').value
+            };
+            
+            projectData[id] = data;
+            saveData();
+            renderPage();
+            closeAddModal();
+        });
+
+        // 編集フォームの処理
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('editId').value;
+            const data = {
+                category: document.getElementById('editCategory').value,
+                pageName: document.getElementById('editPageName').value,
+                url: document.getElementById('editUrl').value,
+                status: document.getElementById('editStatus').value,
+                function: document.getElementById('editFunction').value,
+                lastUpdated: document.getElementById('editLastUpdated').value
+            };
+            
+            projectData[id] = data;
+            saveData();
+            renderPage();
+            closeEditModal();
+        });
+
+        // モーダル外クリックで閉じる
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                closeAddModal();
+                closeEditModal();
+            }
+        });
+    </script>
+</body>
+</html>
