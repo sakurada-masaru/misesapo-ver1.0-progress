@@ -1119,21 +1119,28 @@
                 return;
             }
             container.innerHTML = '';
+            console.log('container.innerHTMLをクリア');
 
             // カテゴリごとにデータをグループ化
             const categories = {};
+            console.log('projectDataのキー:', Object.keys(projectData));
             Object.keys(projectData).forEach(id => {
                 const data = projectData[id];
+                console.log('処理中のデータ:', id, data);
                 if (!categories[data.category]) {
                     categories[data.category] = [];
                 }
                 categories[data.category].push({ id, ...data });
             });
+            console.log('グループ化されたカテゴリ:', categories);
 
             // カテゴリごとにセクションを作成
+            console.log('カテゴリのキー:', Object.keys(categories));
             Object.keys(categories).forEach(category => {
+                console.log('カテゴリ処理中:', category);
                 const section = document.createElement('div');
                 section.className = 'category-section';
+                console.log('セクション要素作成:', section);
                 
                 const header = document.createElement('div');
                 header.className = 'category-header';
