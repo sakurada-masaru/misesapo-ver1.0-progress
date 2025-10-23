@@ -868,10 +868,11 @@
 
         // Firebase初期化
         console.log('Firebase初期化開始');
+        let db, auth;
         try {
             firebase.initializeApp(firebaseConfig);
-            const db = firebase.firestore();
-            const auth = firebase.auth();
+            db = firebase.firestore();
+            auth = firebase.auth();
             console.log('Firebase初期化成功');
         } catch (error) {
             console.error('Firebase初期化エラー:', error);
@@ -883,6 +884,12 @@
         // Firebaseデータベース操作
         function loadDataFromFirebase() {
             console.log('Firebaseデータ読み込み開始');
+            if (!db) {
+                console.error('Firebase db が初期化されていません');
+                console.log('ローカルデータを使用');
+                renderCategorySections();
+                return;
+            }
             db.collection('projectData').doc('main').get()
                 .then((doc) => {
                     console.log('Firebaseデータ取得完了');
@@ -906,6 +913,12 @@
 
         function saveDataToFirebase() {
             console.log('Firebaseにデータ保存開始');
+            if (!db) {
+                console.error('Firebase db が初期化されていません');
+                console.log('ローカルデータを使用');
+                renderCategorySections();
+                return;
+            }
             db.collection('projectData').doc('main').set(projectData)
                 .then(() => {
                     console.log('データ保存成功');
