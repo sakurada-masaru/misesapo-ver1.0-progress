@@ -4,6 +4,35 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>開発進捗状況 | ミセサポ</title>
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+      import { getDatabase, ref, set, get, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+      
+      // Firebase設定（実際の値に置き換えてください）
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID"
+      };
+      
+      // Firebase初期化
+      const app = initializeApp(firebaseConfig);
+      const database = getDatabase(app);
+      
+      // グローバル変数として設定
+      window.firebaseDatabase = database;
+      window.firebaseRef = ref;
+      window.firebaseSet = set;
+      window.firebaseGet = get;
+      window.firebaseOnValue = onValue;
+    </script>
+    
     <style>
       :root { color-scheme: light dark; }
       
@@ -302,6 +331,153 @@
         margin: 8px 0;
       }
       
+      /* プログレスバー用CSS */
+      .progress-section {
+        background: white;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 24px;
+      }
+      
+      .progress-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .progress-overview {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr;
+        gap: 20px;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      
+      .progress-stats {
+        text-align: center;
+      }
+      
+      .progress-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #FF679C;
+        margin-bottom: 4px;
+      }
+      
+      .progress-label {
+        color: #6b7280;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+      
+      .progress-bar-container {
+        position: relative;
+        background: #f3f4f6;
+        border-radius: 12px;
+        height: 24px;
+        overflow: hidden;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+      }
+      
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #FF679C, #e55a8a, #d946ef);
+        border-radius: 12px;
+        transition: width 0.8s ease-in-out;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .progress-bar::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        animation: shimmer 2s infinite;
+      }
+      
+      @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+      }
+      
+      .progress-text {
+        text-align: center;
+        font-weight: 600;
+        color: #374151;
+        font-size: 1.1rem;
+      }
+      
+      .progress-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 16px;
+        margin-top: 20px;
+      }
+      
+      .progress-detail-item {
+        text-align: center;
+        padding: 12px;
+        background: #f9fafb;
+        border-radius: 8px;
+        border-left: 4px solid #e5e7eb;
+      }
+      
+      .progress-detail-item.complete {
+        border-left-color: #10b981;
+        background: #f0fdf4;
+      }
+      
+      .progress-detail-item.in-progress {
+        border-left-color: #3b82f6;
+        background: #eff6ff;
+      }
+      
+      .progress-detail-item.pending {
+        border-left-color: #f59e0b;
+        background: #fffbeb;
+      }
+      
+      .detail-number {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 4px;
+      }
+      
+      .detail-number.complete { color: #10b981; }
+      .detail-number.in-progress { color: #3b82f6; }
+      .detail-number.pending { color: #f59e0b; }
+      
+      .detail-label {
+        font-size: 0.85rem;
+        color: #6b7280;
+        font-weight: 500;
+      }
+      
+      /* モバイル対応 */
+      @media (max-width: 768px) {
+        .progress-overview {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+        
+        .progress-details {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .progress-number {
+          font-size: 2rem;
+        }
+      }
+      
       /* タブレット用 */
       @media (min-width: 768px) {
         body {
@@ -403,6 +579,43 @@
         </div>
       </div>
       
+      <!-- プログレスバーセクション -->
+      <div class="progress-section">
+        <h2 class="progress-title">📊 プロジェクト進行状況</h2>
+        
+        <div class="progress-overview">
+          <div class="progress-stats">
+            <div class="progress-number" id="progressPercentage">0%</div>
+            <div class="progress-label">完成率</div>
+          </div>
+          
+          <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+          </div>
+          
+          <div class="progress-text" id="progressText">0 / 0 ページ完了</div>
+        </div>
+        
+        <div class="progress-details">
+          <div class="progress-detail-item complete">
+            <div class="detail-number complete" id="completeCount">0</div>
+            <div class="detail-label">✅ 完了</div>
+          </div>
+          <div class="progress-detail-item in-progress">
+            <div class="detail-number in-progress" id="inProgressCount">0</div>
+            <div class="detail-label">🔄 実装中</div>
+          </div>
+          <div class="progress-detail-item pending">
+            <div class="detail-number pending" id="pendingCount">0</div>
+            <div class="detail-label">⏳ 未実装</div>
+          </div>
+          <div class="progress-detail-item">
+            <div class="detail-number" id="totalCount">0</div>
+            <div class="detail-label">📄 総ページ数</div>
+          </div>
+        </div>
+      </div>
+
       <div class="new-label-container">
         <button class="btn-add-new" onclick="openAddNewModal()">+ 新規項目を追加</button>
       </div>
@@ -968,8 +1181,8 @@
         // データから削除
         delete pageData[pageId];
         
-        // ローカルストレージに保存
-        localStorage.setItem('pageData', JSON.stringify(pageData));
+        // Firebaseに保存
+        saveToFirebase();
         
         // テーブルから行を削除
         const row = document.querySelector(`[data-page="${pageId}"]`);
@@ -1108,6 +1321,54 @@
         if (statNumbers.length > 1) {
           statNumbers[1].textContent = completionRate + '%';
         }
+        
+        // プログレスバーを更新
+        updateProgressBar();
+      }
+
+      // プログレスバーを更新
+      function updateProgressBar() {
+        const totalPages = Object.keys(pageData).length;
+        const completePages = Object.values(pageData).filter(page => page.status === 'complete').length;
+        const inProgressPages = Object.values(pageData).filter(page => page.status === 'in-progress').length;
+        const pendingPages = Object.values(pageData).filter(page => page.status === 'pending').length;
+        
+        // 完成率を計算
+        const completionRate = totalPages > 0 ? Math.round((completePages / totalPages) * 100) : 0;
+        
+        // プログレスバーの幅を更新
+        const progressBar = document.getElementById('progressBar');
+        if (progressBar) {
+          progressBar.style.width = completionRate + '%';
+        }
+        
+        // 完成率の数値を更新
+        const progressPercentage = document.getElementById('progressPercentage');
+        if (progressPercentage) {
+          progressPercentage.textContent = completionRate + '%';
+        }
+        
+        // 進捗テキストを更新
+        const progressText = document.getElementById('progressText');
+        if (progressText) {
+          progressText.textContent = `${completePages} / ${totalPages} ページ完了`;
+        }
+        
+        // 詳細統計を更新
+        const completeCount = document.getElementById('completeCount');
+        const inProgressCount = document.getElementById('inProgressCount');
+        const pendingCount = document.getElementById('pendingCount');
+        const totalCount = document.getElementById('totalCount');
+        
+        if (completeCount) completeCount.textContent = completePages;
+        if (inProgressCount) inProgressCount.textContent = inProgressPages;
+        if (pendingCount) pendingCount.textContent = pendingPages;
+        if (totalCount) totalCount.textContent = totalPages;
+        
+        // プログレスバーにアニメーション効果を追加
+        if (progressBar) {
+          progressBar.style.transition = 'width 0.8s ease-in-out';
+        }
       }
 
       // タイムスタンプを更新
@@ -1123,8 +1384,8 @@
           pageData[pageId].lastUpdated = today;
         }
         
-        // ローカルストレージに保存
-        localStorage.setItem('pageData', JSON.stringify(pageData));
+        // Firebaseに保存
+        saveToFirebase();
       }
 
       // フォーム送信処理
@@ -1144,8 +1405,8 @@
           lastUpdated: new Date().toISOString().split('T')[0]
         };
         
-        // ローカルストレージに保存
-        localStorage.setItem('pageData', JSON.stringify(pageData));
+        // Firebaseに保存
+        saveToFirebase();
         
         // モーダルを閉じる
         closeEditModal();
@@ -1175,8 +1436,8 @@
         // データに追加
         pageData[newPageId] = newPageData;
         
-        // ローカルストレージに保存
-        localStorage.setItem('pageData', JSON.stringify(pageData));
+        // Firebaseに保存
+        saveToFirebase();
         
         // テーブルに新しい行を動的に追加
         addNewRowToTable(newPageId, newPageData);
@@ -1188,12 +1449,52 @@
         closeAddNewModal();
       });
 
-      // ページ読み込み時にデータを復元
-      window.addEventListener('load', function() {
+      // Firebaseに保存する関数
+      async function saveToFirebase() {
+        try {
+          if (window.firebaseSet && window.firebaseRef && window.firebaseDatabase) {
+            await window.firebaseSet(window.firebaseRef(window.firebaseDatabase, 'pageData'), pageData);
+            console.log('Firebaseに保存しました');
+          } else {
+            // Firebaseが利用できない場合はローカルストレージに保存
+            localStorage.setItem('pageData', JSON.stringify(pageData));
+            console.log('ローカルストレージに保存しました');
+          }
+        } catch (error) {
+          console.error('保存エラー:', error);
+          // エラーの場合はローカルストレージに保存
+          localStorage.setItem('pageData', JSON.stringify(pageData));
+        }
+      }
+
+      // Firebaseからデータを読み込む関数
+      async function loadFromFirebase() {
+        try {
+          if (window.firebaseGet && window.firebaseRef && window.firebaseDatabase) {
+            const snapshot = await window.firebaseGet(window.firebaseRef(window.firebaseDatabase, 'pageData'));
+            if (snapshot.exists()) {
+              pageData = snapshot.val();
+              console.log('Firebaseから読み込みました');
+              return true;
+            }
+          }
+        } catch (error) {
+          console.error('読み込みエラー:', error);
+        }
+        
+        // Firebaseが利用できない場合はローカルストレージから読み込み
         const savedData = localStorage.getItem('pageData');
         if (savedData) {
           pageData = JSON.parse(savedData);
+          console.log('ローカルストレージから読み込みました');
+          return true;
         }
+        return false;
+      }
+
+      // ページ読み込み時にデータを復元
+      window.addEventListener('load', async function() {
+        await loadFromFirebase();
         
         // 新規追加された項目を復元
         Object.keys(pageData).forEach(pageId => {
@@ -1219,6 +1520,9 @@
         
         // 初期統計情報を設定
         initializeStats();
+        
+        // プログレスバーを初期化
+        updateProgressBar();
       });
 
       // 初期統計情報を設定
