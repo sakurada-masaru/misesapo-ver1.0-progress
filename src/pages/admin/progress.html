@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>開発進捗状況 | ミセサポ</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body { 
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; 
+        margin: 24px; 
+        background: #f8fafc;
+        color: #1f2937;
+      }
+      .container { max-width: 1200px; margin: 0 auto; }
+      h1 { font-size: 2rem; margin: 0 0 8px; color: #FF679C; }
+      .subtitle { color: #6b7280; font-size: 1.1rem; margin-bottom: 32px; }
+      .summary { 
+        background: white; 
+        padding: 24px; 
+        border-radius: 8px; 
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin-bottom: 32px;
+      }
+      .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+      .stat-card { 
+        background: #f9fafb; 
+        padding: 16px; 
+        border-radius: 6px; 
+        text-align: center;
+        border-left: 4px solid #FF679C;
+      }
+      .stat-number { font-size: 2rem; font-weight: bold; color: #FF679C; }
+      .stat-label { color: #6b7280; font-size: 0.9rem; }
+      
+      table { 
+        border-collapse: collapse; 
+        width: 100%; 
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      }
+      th, td { 
+        border: 1px solid #e5e7eb; 
+        padding: 12px 16px; 
+        text-align: left; 
+      }
+      th { 
+        background: #f9fafb; 
+        font-weight: 600;
+        color: #374151;
+      }
+      tr:hover { background: #f9fafb; }
+      
+      .status-complete { 
+        background: #dcfce7; 
+        color: #166534; 
+        padding: 4px 8px; 
+        border-radius: 4px; 
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
+      .status-in-progress { 
+        background: #fef3c7; 
+        color: #92400e; 
+        padding: 4px 8px; 
+        border-radius: 4px; 
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
+      .status-pending { 
+        background: #f3f4f6; 
+        color: #6b7280; 
+        padding: 4px 8px; 
+        border-radius: 4px; 
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
+      
+      .category-header {
+        background: #FF679C;
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+      }
+      
+      .url-link { 
+        color: #FF679C; 
+        text-decoration: none; 
+        font-weight: 500;
+      }
+      .url-link:hover { 
+        text-decoration: underline; 
+      }
+      
+      .code { 
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; 
+        background: #f3f4f6;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 0.85rem;
+      }
+      
+      .last-updated {
+        color: #6b7280;
+        font-size: 0.9rem;
+        margin-top: 24px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🚀 ミセサポ 開発進捗状況</h1>
+      <p class="subtitle">定期清掃サービス Webアプリケーション - 実装状況ダッシュボード</p>
+      
+      <div class="summary">
+        <h2>📊 プロジェクト概要</h2>
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-number">18</div>
+            <div class="stat-label">実装済みページ</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">完成率</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">34</div>
+            <div class="stat-label">サービス項目</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">4</div>
+            <div class="stat-label">カテゴリ</div>
+          </div>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ページ名</th>
+            <th>URL</th>
+            <th>カテゴリ</th>
+            <th>ステータス</th>
+            <th>機能</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="category-header">
+            <td colspan="5">🏠 メインページ</td>
+          </tr>
+          <tr>
+            <td><a href="/index.html" class="url-link">トップページ</a></td>
+            <td><code class="code">/index.html</code></td>
+            <td>メイン</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td>サービス一覧・カテゴリフィルタ</td>
+          </tr>
+          <tr>
+            <td><a href="/report.html" class="url-link">レポート</a></td>
+            <td><code class="code">/report.html</code></td>
+            <td>メイン</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td>清掃レポート表示</td>
+          </tr>
+          <tr>
+            <td><a href="/mypage.html" class="url-link">マイページ</a></td>
+            <td><code class="code">/mypage.html</code></td>
+            <td>メイン</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td>ユーザー情報管理</td>
+          </tr>
+          
+          <tr class="category-header">
+            <td colspan="5">🔐 認証関連</td>
+          </tr>
+          <tr>
+            <td><a href="/signin.html" class="url-link">ログイン</a></td>
+            <td><code class="code">/signin.html</code></td>
+            <td>認証</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td>ユーザーログイン</td>
+          </tr>
+          <tr>
+            <td><a href="/signup.html" class="url-link">新規登録</a></td>
+            <td><code class="code">/signup.html</code></td>
+            <td>認証</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td>ユーザー登録</td>
+          </tr>
+          <tr>
+            <td><a href="/signup2.html" class="url-link">新規登録2</a></td>
+            <td><code class="code">/signup2.html</code></td>
+            <td>認証</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td>追加情報入力</td>
+          </tr>
+          <tr>
+            <td><a href="/signup3.html" class="url-link">新規登録3</a></td>
+            <td><code class="code">/signup3.html</code></td>
+            <td>認証</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td>最終確認</td>
+          </tr>
+          <tr>
+            <td><a href="/reset-password.html" class="url-link">パスワードリセット</a></td>
+            <td><code class="code">/reset-password.html</code></td>
+            <td>認証</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td>パスワード再設定</td>
+          </tr>
+          
+          <tr class="category-header">
+            <td colspan="5">📋 登録関連</td>
+          </tr>
+          <tr>
+            <td><a href="/registration/personal.html" class="url-link">個人登録</a></td>
+            <td><code class="code">/registration/personal.html</code></td>
+            <td>登録</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td>個人情報登録</td>
+          </tr>
+          <tr>
+            <td><a href="/registration/personal2.html" class="url-link">個人登録2</a></td>
+            <td><code class="code">/registration/personal2.html</code></td>
+            <td>登録</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td>追加情報入力</td>
+          </tr>
+          <tr>
+            <td><a href="/registration/corporation.html" class="url-link">法人登録</a></td>
+            <td><code class="code">/registration/corporation.html</code></td>
+            <td>登録</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td>法人情報登録</td>
+          </tr>
+          <tr>
+            <td><a href="/registration/corporation2.html" class="url-link">法人登録2</a></td>
+            <td><code class="code">/registration/corporation2.html</code></td>
+            <td>登録</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td>追加情報入力</td>
+          </tr>
+          <tr>
+            <td><a href="/registration/corporation3.html" class="url-link">法人登録3</a></td>
+            <td><code class="code">/registration/corporation3.html</code></td>
+            <td>登録</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td>最終確認</td>
+          </tr>
+          <tr>
+            <td><a href="/registration/complete.html" class="url-link">登録完了</a></td>
+            <td><code class="code">/registration/complete.html</code></td>
+            <td>登録</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td>完了通知</td>
+          </tr>
+          
+          <tr class="category-header">
+            <td colspan="5">📞 サポート</td>
+          </tr>
+          <tr>
+            <td><a href="/inquiry/complete.html" class="url-link">お問い合わせ完了</a></td>
+            <td><code class="code">/inquiry/complete.html</code></td>
+            <td>サポート</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td>完了通知</td>
+          </tr>
+          
+          <tr class="category-header">
+            <td colspan="5">👤 マイページ関連</td>
+          </tr>
+          <tr>
+            <td><a href="/mypage/info.html" class="url-link">個人情報</a></td>
+            <td><code class="code">/mypage/info.html</code></td>
+            <td>マイページ</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td>情報編集・更新</td>
+          </tr>
+          <tr>
+            <td><a href="/mypage/inquiry.html" class="url-link">お問い合わせ</a></td>
+            <td><code class="code">/mypage/inquiry.html</code></td>
+            <td>マイページ</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td>サポート問い合わせ</td>
+          </tr>
+          
+          <tr class="category-header">
+            <td colspan="5">🔧 管理画面</td>
+          </tr>
+          <tr>
+            <td><a href="/admin/sitemap.html" class="url-link">サイトマップ</a></td>
+            <td><code class="code">/admin/sitemap.html</code></td>
+            <td>管理</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td>サイトマップ表示</td>
+          </tr>
+          <tr>
+            <td><a href="/admin/progress.html" class="url-link">開発進捗状況</a></td>
+            <td><code class="code">/admin/progress.html</code></td>
+            <td>管理</td>
+            <td><span class="status-complete">✅ 完全実装</span></td>
+            <td>進捗ダッシュボード</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div class="last-updated">
+        <p>最終更新: 2025年10月23日 | ローカルサーバー: http://localhost:5173</p>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ログイン - ミセサポ</title>
+    @include('partials.head-links')
+    <style>:root{--bg:#ffffff;}</style>
+  </head>
+  <body class="theme-pink">
+    <main class="container" style="max-width: 720px;">
+      <div class="text-center" style="margin: 24px 0 8px;">
+        <img src="/images/logo_144x144.png" alt="ミセサポ" style="height:48px; width:auto;" />
+        <h2 style="font-weight: 700; font-size: 20px; color: #1f2937; margin-top: 16px;">ログイン</h2>
+      </div>
+      <hr class="divider" />
+
+      <section class="card" style="padding: 24px;">
+        <p class="small text-center" style="margin-bottom: 16px;">
+          メールアドレスとパスワードを入力してください。
+        </p>
+
+        <form action="#" method="post" class="stack lg" style="margin-top: 8px;">
+          <div>
+            <label for="email" class="label">
+              メールアドレス
+              <span class="pill pill-required" style="margin-left: 8px;">必須</span>
+            </label>
+            <input type="email" id="email" name="email" class="input" placeholder="name@example.com" autocomplete="username" />
+          </div>
+
+          <div>
+            <label for="password" class="label">
+              パスワード
+              <span class="pill pill-required" style="margin-left: 8px;">必須</span>
+            </label>
+            <div class="field">
+              <input type="password" id="password" name="password" class="input" autocomplete="current-password" />
+              <button type="button" class="toggle-visibility" aria-label="パスワードを表示" onclick="togglePasswordVisibility('password')">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <button type="submit" class="btn btn-primary btn-round" style="width: 100%; font-size: 16px; font-weight: 700; height: 44px;">ログイン</button>
+          </div>
+        </form>
+
+        <p class="small text-center" style="margin-top: 16px;">
+          パスワードをお忘れの方は <a href="/reset-password.html" style="color: var(--primary); font-weight: 600;">こちら</a>
+        </p>
+      </section>
+
+      <p class="small text-center" style="margin: 16px 0 24px;">
+        アカウントをお持ちでない方は
+        <a href="/signup.html" style="color: var(--primary); font-weight: 600;">新規登録</a>
+      </p>
+    </main>
+
+    @include('partials.footer')
+
+    <script>
+      function togglePasswordVisibility(id) {
+        const input = document.getElementById(id);
+        const icon = input && input.parentElement && input.parentElement.querySelector('i');
+        if (!input || !icon) return;
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.classList.remove('fa-eye');
+          icon.classList.add('fa-eye-slash');
+        } else {
+          input.type = 'password';
+          icon.classList.remove('fa-eye-slash');
+          icon.classList.add('fa-eye');
+        }
+      }
+    </script>
+  </body>
+  </html>
