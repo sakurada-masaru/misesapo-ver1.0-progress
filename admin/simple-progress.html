@@ -1063,11 +1063,16 @@
                 const pendingCount = categoryItems.filter(item => item.status === 'pending').length;
                 
                 header.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
                         <span>${categoryMap[category] || category}</span>
-                        <span style="font-size: 0.9rem; font-weight: normal;">
-                            総数: ${totalCount} | ✅ 完了: ${completedCount} | 🔄 進行中: ${inProgressCount} | ⏳ 未着手: ${pendingCount}
-                        </span>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+                            <span style="font-size: 0.7rem; font-weight: normal;">
+                                総数: ${totalCount}
+                            </span>
+                            <span style="font-size: 0.7rem; font-weight: normal;">
+                                ✅ 完了: ${completedCount} | 🔄 進行中: ${inProgressCount} | ⏳ 未着手: ${pendingCount}
+                            </span>
+                        </div>
                     </div>
                 `;
                 section.appendChild(header);
