@@ -896,7 +896,7 @@
                     if (doc.exists) {
                         console.log('既存データを読み込み');
                         projectData = doc.data();
-                        renderCategorySections();
+                        renderPage();
                     } else {
                         // 初期データをFirebaseに保存
                         console.log('初期データをFirebaseに保存中...');
@@ -907,7 +907,7 @@
                     console.error('データ読み込みエラー:', error);
                     // エラーの場合はローカルデータを使用
                     console.log('ローカルデータを使用');
-                    renderCategorySections();
+                    renderPage();
                 });
         }
 
@@ -916,19 +916,19 @@
             if (!db) {
                 console.error('Firebase db が初期化されていません');
                 console.log('ローカルデータを使用');
-                renderCategorySections();
+                renderPage();
                 return;
             }
             db.collection('projectData').doc('main').set(projectData)
                 .then(() => {
                     console.log('データ保存成功');
-                    renderCategorySections();
+                    renderPage();
                 })
                 .catch((error) => {
                     console.error('データ保存エラー:', error);
                     // エラーの場合はローカルデータを使用
                     console.log('ローカルデータを使用');
-                    renderCategorySections();
+                    renderPage();
                 });
         }
 
@@ -1116,8 +1116,10 @@
 
         // ページを描画
         function renderPage() {
+            console.log('ページ描画開始');
             renderCategorySections();
             updateStats();
+            console.log('ページ描画完了');
         }
 
         // 初期化（Firebase連携）
@@ -1239,16 +1241,23 @@
 
         // 統計情報を更新
         function updateStats() {
+            console.log('統計情報更新開始');
             const totalPages = Object.keys(projectData).length;
             const completedPages = Object.values(projectData).filter(item => item.status === 'complete').length;
+            const inProgressPages = Object.values(projectData).filter(item => item.status === 'in-progress').length;
+            const pendingPages = Object.values(projectData).filter(item => item.status === 'pending').length;
             const categories = [...new Set(Object.values(projectData).map(item => item.category))].length;
             const completionRate = totalPages > 0 ? Math.round((completedPages / totalPages) * 100) : 0;
+
+            console.log('統計情報:', { totalPages, completedPages, inProgressPages, pendingPages, categories, completionRate });
 
             document.getElementById('totalPages').textContent = totalPages;
             document.getElementById('completedPages').textContent = completedPages;
             document.getElementById('categoryCount').textContent = categories;
             document.getElementById('progressFill').style.width = `${completionRate}%`;
             document.getElementById('progressText').textContent = `${completionRate}% (${completedPages}/${totalPages} ページ完了)`;
+            
+            console.log('統計情報更新完了');
         }
 
         // 新規追加モーダルを開く
