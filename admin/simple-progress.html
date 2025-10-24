@@ -713,16 +713,24 @@
         <!-- 統計情報 -->
         <div class="stats">
             <div class="stat-card">
-                <div class="stat-number" id="totalPages">19</div>
-                <div class="stat-label">HTMLファイル総数</div>
+                <div class="stat-number" id="completedPages">19</div>
+                <div class="stat-label">✅ 完了</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="completedPages">19</div>
-                <div class="stat-label">完了ページ</div>
+                <div class="stat-number" id="inProgressPages">0</div>
+                <div class="stat-label">🔄 進行中</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number" id="pendingPages">0</div>
-                <div class="stat-label">未着手</div>
+                <div class="stat-label">⏳ 未着手</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="unknownPages">0</div>
+                <div class="stat-label">❓ 不明</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="waitingPages">0</div>
+                <div class="stat-label">⏸️ 待機中</div>
             </div>
         </div>
 
@@ -783,6 +791,8 @@
                         <option value="complete">✅ 完了</option>
                         <option value="in-progress">🔄 進行中</option>
                         <option value="pending">⏳ 未着手</option>
+                        <option value="unknown">❓ 不明</option>
+                        <option value="waiting">⏸️ 待機中</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -834,7 +844,9 @@
                     <select id="editStatus" required>
                         <option value="complete">✅ 完了</option>
                         <option value="in-progress">🔄 進行中</option>
-                        <option value="pending">⏳ 未実装</option>
+                        <option value="pending">⏳ 未着手</option>
+                        <option value="unknown">❓ 不明</option>
+                        <option value="waiting">⏸️ 待機中</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -1171,6 +1183,8 @@
                 const completedCount = categoryItems.filter(item => item.status === 'complete').length;
                 const inProgressCount = categoryItems.filter(item => item.status === 'in-progress').length;
                 const pendingCount = categoryItems.filter(item => item.status === 'pending').length;
+                const unknownCount = categoryItems.filter(item => item.status === 'unknown').length;
+                const waitingCount = categoryItems.filter(item => item.status === 'waiting').length;
                 
                 header.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
@@ -1180,7 +1194,7 @@
                                 総数: ${totalCount}
                             </span>
                             <span style="font-size: 0.7rem; font-weight: normal;">
-                                ✅ 完了: ${completedCount} | 🔄 進行中: ${inProgressCount} | ⏳ 未着手: ${pendingCount}
+                                ✅ 完了: ${completedCount} | 🔄 進行中: ${inProgressCount} | ⏳ 未着手: ${pendingCount} | ❓ 不明: ${unknownCount} | ⏸️ 待機中: ${waitingCount}
                             </span>
                         </div>
                     </div>
@@ -1234,7 +1248,9 @@
             const statusMap = {
                 'complete': '✅ 完了',
                 'in-progress': '🔄 進行中',
-                'pending': '⏳ 未着手'
+                'pending': '⏳ 未着手',
+                'unknown': '❓ 不明',
+                'waiting': '⏸️ 待機中'
             };
             return statusMap[status] || status;
         }
@@ -1246,14 +1262,18 @@
             const completedPages = Object.values(projectData).filter(item => item.status === 'complete').length;
             const inProgressPages = Object.values(projectData).filter(item => item.status === 'in-progress').length;
             const pendingPages = Object.values(projectData).filter(item => item.status === 'pending').length;
+            const unknownPages = Object.values(projectData).filter(item => item.status === 'unknown').length;
+            const waitingPages = Object.values(projectData).filter(item => item.status === 'waiting').length;
             const categories = [...new Set(Object.values(projectData).map(item => item.category))].length;
             const completionRate = totalPages > 0 ? Math.round((completedPages / totalPages) * 100) : 0;
 
-            console.log('統計情報:', { totalPages, completedPages, inProgressPages, pendingPages, categories, completionRate });
+            console.log('統計情報:', { totalPages, completedPages, inProgressPages, pendingPages, unknownPages, waitingPages, categories, completionRate });
 
-            document.getElementById('totalPages').textContent = totalPages;
             document.getElementById('completedPages').textContent = completedPages;
+            document.getElementById('inProgressPages').textContent = inProgressPages;
             document.getElementById('pendingPages').textContent = pendingPages;
+            document.getElementById('unknownPages').textContent = unknownPages;
+            document.getElementById('waitingPages').textContent = waitingPages;
             document.getElementById('progressFill').style.width = `${completionRate}%`;
             document.getElementById('progressText').textContent = `${completionRate}% (${completedPages}/${totalPages} ページ完了)`;
             
