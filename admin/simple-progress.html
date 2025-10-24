@@ -721,8 +721,8 @@
                 <div class="stat-label">完了ページ</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="categoryCount">6</div>
-                <div class="stat-label">カテゴリ数</div>
+                <div class="stat-number" id="pendingPages">0</div>
+                <div class="stat-label">未着手</div>
             </div>
         </div>
 
@@ -1253,7 +1253,7 @@
 
             document.getElementById('totalPages').textContent = totalPages;
             document.getElementById('completedPages').textContent = completedPages;
-            document.getElementById('categoryCount').textContent = categories;
+            document.getElementById('pendingPages').textContent = pendingPages;
             document.getElementById('progressFill').style.width = `${completionRate}%`;
             document.getElementById('progressText').textContent = `${completionRate}% (${completedPages}/${totalPages} ページ完了)`;
             
