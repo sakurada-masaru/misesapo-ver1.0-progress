@@ -1,23 +1,67 @@
-# ミセサポ開発進捗ダッシュボード
+# ミセサポ プロジェクト進捗管理システム
 
-## 📊 プロジェクト概要
-ミセサポVer1.0の開発進捗状況を管理・表示するダッシュボードです。
+## 概要
+ミセサポ2025プロジェクトの進捗管理とタスク管理を行うWebアプリケーションです。
 
-## 🌐 アクセス方法
-- **メインページ**: [https://sakurada-masaru.github.io/misesapo-ver1.0-progress/](https://sakurada-masaru.github.io/misesapo-ver1.0-progress/)
-- **進捗ページ**: [https://sakurada-masaru.github.io/misesapo-ver1.0-progress/admin/simple-progress.html](https://sakurada-masaru.github.io/misesapo-ver1.0-progress/admin/simple-progress.html)
+## 機能
+- **進捗管理**: プロジェクトの進捗状況を視覚的に管理
+- **タスクマーケット**: タスクの投稿・受領・管理
+- **スケジュール可視化**: プロジェクトスケジュールの表示
+- **モバイル対応**: スマートフォンでの操作に最適化
 
-## ✨ 主な機能
-- 📊 プロジェクト進捗の可視化
-- 📝 項目の追加・編集・削除
-- ⏰ 最終更新日の自動更新
-- 📱 レスポンシブデザイン
-- 💾 ローカルストレージでのデータ永続化
+## アクセス方法
 
-## 🚀 使用方法
-1. メインページから「📈 進捗ダッシュボードを開く」をクリック
-2. 進捗ページで項目の管理が可能
-3. 新規追加、編集、削除機能を利用
+### GitHub Pages
+- **メインページ**: [進捗管理](https://your-username.github.io/MisesapoRenewal/admin/simple-progress.html)
+- **タスクマーケット**: [タスク管理](https://your-username.github.io/MisesapoRenewal/admin/task-market.html)
+- **スケジュール**: [スケジュール可視化](https://your-username.github.io/MisesapoRenewal/admin/schedule-visualization.html)
 
-## 📅 最終更新
-2025-01-28
+### 外部リンク
+- **Figmaデザイン**: [ミセサポ2025デザインファイル](https://www.figma.com/design/GWPufW1ofPkygNZN3r6vdr/%E3%83%9F%E3%82%BB%E3%82%B5%E3%83%9D2025?node-id=8133-18454&p=f&t=ai2JLv0Fye2amTFC-0)
+- **マインドマップ**: [MindMeisterマインドマップ](https://www.mindmeister.com/app/map/3844614049)
+
+## 技術仕様
+- **フロントエンド**: HTML5, CSS3, JavaScript (ES6+)
+- **データベース**: Firebase Firestore
+- **認証**: Firebase Authentication
+- **ホスティング**: GitHub Pages
+- **レスポンシブデザイン**: モバイルファースト
+
+## ファイル構成
+```
+github-pages/
+├── admin/                    # 管理画面
+│   ├── images/              # アイコン画像
+│   ├── simple-progress.html # 進捗管理ページ
+│   ├── task-market.html     # タスクマーケット
+│   └── schedule-visualization.html # スケジュール可視化
+├── images/                  # 共通画像
+└── index.html              # トップページ
+```
+
+## 使用方法
+
+### 進捗管理
+1. プロジェクトの進捗状況を確認
+2. 新しい項目を追加
+3. ステータスを更新
+4. フィルター機能で絞り込み
+
+### タスクマーケット
+1. 新しいタスクを投稿
+2. 担当者にタスクを割り当て
+3. ドラッグ&ドロップでタスクを移動
+4. 完了したタスクを管理
+
+## モバイル対応
+- フローティングナビゲーション
+- タッチ操作対応
+- レスポンシブレイアウト
+
+## 更新履歴
+- 2025/10/28: モバイルフローティングナビゲーション追加
+- 2025/10/28: タスクマーケット機能実装
+- 2025/10/28: 開発プロセスセクション削除
+
+## ライセンス
+このプロジェクトはミセサポ2025プロジェクトの一部です。

@@ -999,55 +999,6 @@
             font-size: 1.1rem;
         }
 
-        /* 開発プロセス */
-        .development-process {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e5e7eb;
-        }
-
-        .development-process h2 {
-            color: #1f2937;
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .process-link {
-            display: flex;
-            justify-content: center;
-        }
-
-        .figma-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 20px;
-            background: #f8fafc;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            text-decoration: none;
-            color: #374151;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .figma-link:hover {
-            background: #f0f9ff;
-            border-color: #3b82f6;
-            color: #1e40af;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-        }
-
-        .figma-logo {
-            width: 24px;
-            height: 24px;
-        }
-
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -1488,6 +1439,71 @@
             background: #4b5563;
         }
 
+        /* モバイル用フローティングナビゲーション */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #e5e7eb;
+            padding: 10px;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mobile-nav-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 100%;
+        }
+        
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #6b7280;
+            font-size: 0.7rem;
+            padding: 5px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            min-width: 60px;
+            cursor: pointer;
+        }
+        
+        .mobile-nav-item:hover,
+        .mobile-nav-item.active {
+            color: #FF679C;
+            background: rgba(255, 103, 156, 0.1);
+        }
+        
+        .mobile-nav-icon {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .mobile-nav-icon img {
+            border-radius: 4px;
+        }
+        
+        .mobile-nav-label {
+            font-size: 0.6rem;
+            text-align: center;
+            line-height: 1.2;
+        }
+        
+        /* モバイル用のボディパディング調整 */
+        .mobile-body-padding {
+            padding-bottom: 80px;
+        }
+
         /* ========================================
            スマホ版レスポンシブデザイン (768px以下)
            ======================================== */
@@ -1500,6 +1516,16 @@
                 width: 100%;
                 max-width: 100%;
                 box-sizing: border-box;
+                padding-bottom: 80px; /* フローティングナビのスペース */
+            }
+            
+            /* タブを非表示にしてフローティングナビを表示 */
+            .tab-container {
+                display: none;
+            }
+            
+            .mobile-nav {
+                display: block;
             }
 
             /* ヘッダー・ロゴ */
@@ -1835,17 +1861,6 @@
                 <div class="progress-fill" id="progressFill" style="width: 100%"></div>
             </div>
             <div class="progress-text" id="progressText">100% (19/19 ページ完了)</div>
-        </div>
-
-        <!-- 開発プロセス -->
-        <div class="development-process">
-            <h2>開発プロセス</h2>
-            <div class="process-link">
-                <a href="https://www.figma.com/design/GWPufW1ofPkygNZN3r6vdr/%E3%83%9F%E3%82%BB%E3%82%B5%E3%83%9D2025?node-id=8133-18454&p=f&t=maJ95yGRdhm00dCc-0" target="_blank" class="figma-link">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjRjI0QzE1Ii8+Cjwvc3ZnPgo=" alt="Figma" class="figma-logo">
-                    <span>Figma デザインファイル</span>
-                </a>
-            </div>
         </div>
 
         <!-- 新規追加ボタンとフィルター -->
@@ -2691,8 +2706,21 @@
                 tab.classList.remove('active');
             });
             
+            // モバイルナビのアクティブ状態も更新
+            document.querySelectorAll('.mobile-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
             // 選択されたタブをアクティブ
-            event.target.classList.add('active');
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+            
+            // モバイルナビの対応するアイテムもアクティブにする
+            const mobileNavItem = document.querySelector(`[onclick="showTab('${tabName}')"]`);
+            if (mobileNavItem) {
+                mobileNavItem.classList.add('active');
+            }
             
             // 対応するコンテンツを表示
             document.getElementById(tabName + '-view').style.display = 'block';
@@ -3387,5 +3415,27 @@
             }
         });
     </script>
+    
+    <!-- モバイル用フローティングナビゲーション -->
+    <div class="mobile-nav">
+        <div class="mobile-nav-container">
+            <div class="mobile-nav-item active" onclick="showTab('progress')">
+                <div class="mobile-nav-icon"><img src="images/graph.png" alt="進捗" style="width: 20px; height: 20px;"></div>
+                <div class="mobile-nav-label">進捗</div>
+            </div>
+            <a href="https://www.figma.com/design/GWPufW1ofPkygNZN3r6vdr/%E3%83%9F%E3%82%BB%E3%82%B5%E3%83%9D2025?node-id=8133-18454&p=f&t=ai2JLv0Fye2amTFC-0" target="_blank" class="mobile-nav-item">
+                <div class="mobile-nav-icon"><img src="images/figma.png" alt="Figma" style="width: 20px; height: 20px;"></div>
+                <div class="mobile-nav-label">Figma</div>
+            </a>
+            <a href="https://www.mindmeister.com/app/map/3844614049" target="_blank" class="mobile-nav-item">
+                <div class="mobile-nav-icon"><img src="images/Mind.webp" alt="MindMeister" style="width: 20px; height: 20px;"></div>
+                <div class="mobile-nav-label">マインド</div>
+            </a>
+            <a href="task-market.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon"><img src="images/TASK.png" alt="タスク" style="width: 20px; height: 20px;"></div>
+                <div class="mobile-nav-label">タスク</div>
+            </a>
+        </div>
+    </div>
 </body>
 </html>
