@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V1.0 プロトタイプ スケジュール可視化</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8fafc;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-left: 4px solid #3b82f6;
+        }
+
+        .summary-card h3 {
+            color: #1e40af;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .summary-card .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3b82f6;
+            margin-bottom: 5px;
+        }
+
+        .summary-card .label {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .gantt-container {
+            padding: 30px;
+        }
+
+        .gantt-title {
+            font-size: 1.8rem;
+            color: #1e40af;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .gantt-chart {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .gantt-header {
+            background: #1e40af;
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .gantt-body {
+            padding: 20px;
+        }
+
+        .phase {
+            margin-bottom: 30px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .phase-header {
+            background: #f3f4f6;
+            padding: 15px;
+            font-weight: bold;
+            color: #374151;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .phase-content {
+            padding: 20px;
+        }
+
+        .task-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .task-row:last-child {
+            border-bottom: none;
+        }
+
+        .task-name {
+            flex: 1;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .task-hours {
+            width: 80px;
+            text-align: center;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+
+        .task-progress {
+            flex: 2;
+            margin: 0 20px;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .timeline {
+            margin-top: 30px;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .timeline-title {
+            font-size: 1.5rem;
+            color: #1e40af;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .timeline-phase {
+            font-weight: bold;
+            color: #1e40af;
+            width: 150px;
+        }
+
+        .timeline-duration {
+            color: #6b7280;
+            width: 100px;
+        }
+
+        .timeline-hours {
+            color: #3b82f6;
+            font-weight: bold;
+            width: 80px;
+        }
+
+        .timeline-description {
+            flex: 1;
+            color: #374151;
+        }
+
+        .alert-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 10px;
+        }
+
+        .alert-title {
+            color: #dc2626;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .alert-content {
+            color: #991b1b;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .summary-cards {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            
+            .gantt-container {
+                padding: 20px;
+            }
+            
+            .task-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .task-progress {
+                width: 100%;
+                margin: 0;
+            }
+            
+            .timeline-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .timeline-phase,
+            .timeline-duration,
+            .timeline-hours {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>V1.0 プロトタイプ スケジュール可視化</h1>
+            <p>Gemini工数算出に基づく現実的な開発スケジュール</p>
+        </div>
+
+        <div class="summary-cards">
+            <div class="summary-card">
+                <h3>総工数</h3>
+                <div class="number">436</div>
+                <div class="label">時間</div>
+            </div>
+            <div class="summary-card">
+                <h3>実装済み</h3>
+                <div class="number">19</div>
+                <div class="label">ページ</div>
+            </div>
+            <div class="summary-card">
+                <h3>残り工数</h3>
+                <div class="number">417</div>
+                <div class="label">時間</div>
+            </div>
+            <div class="summary-card">
+                <h3>残り営業日</h3>
+                <div class="number">52.1</div>
+                <div class="label">営業日</div>
+            </div>
+        </div>
+
+        <div class="gantt-container">
+            <h2 class="gantt-title">段階別開発スケジュール</h2>
+            <div class="gantt-chart">
+                <div class="gantt-header">
+                    プロジェクト進行状況
+                </div>
+                <div class="gantt-body">
+                    <div class="phase">
+                        <div class="phase-header">
+                            🎯 第1段階: 営業マン機能 (154時間) - 未実装
+                        </div>
+                        <div class="phase-content">
+                            <div class="task-row">
+                                <div class="task-name">営業マンTOP/KPI</div>
+                                <div class="task-hours">20h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                        <div class="progress-text">未着手</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">新規注文/リードリスト</div>
+                                <div class="task-hours">20h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                        <div class="progress-text">未着手</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">リード/顧客情報詳細</div>
+                                <div class="task-hours">20h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                        <div class="progress-text">未着手</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">見積もり作成フォーム</div>
+                                <div class="task-hours">17h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                        <div class="progress-text">未着手</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">見積もりプレビュー/金額確定</div>
+                                <div class="task-hours">17h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                        <div class="progress-text">未着手</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">見積もり蓄積/完了</div>
+                                <div class="task-hours">17h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                        <div class="progress-text">未着手</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">顧客管理リスト</div>
+                                <div class="task-hours">20h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                        <div class="progress-text">未着手</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">契約/履歴管理</div>
+                                <div class="task-hours">20h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                        <div class="progress-text">未着手</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="phase">
+                        <div class="phase-header">
+                            🔐 第2段階: 公開・認証フロー (158時間) - 一部実装済み
+                        </div>
+                        <div class="phase-content">
+                            <div class="task-row">
+                                <div class="task-name">トップページ</div>
+                                <div class="task-hours">20h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 100%"></div>
+                                        <div class="progress-text">完了</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">ログイン</div>
+                                <div class="task-hours">17h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 100%"></div>
+                                        <div class="progress-text">完了</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">新規登録（ロール選択）</div>
+                                <div class="task-hours">17h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 100%"></div>
+                                        <div class="progress-text">完了</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">新規登録：個人（2ステップ）</div>
+                                <div class="task-hours">17h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 100%"></div>
+                                        <div class="progress-text">完了</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">新規登録：法人（3ステップ）</div>
+                                <div class="task-hours">17h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 100%"></div>
+                                        <div class="progress-text">完了</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">登録完了</div>
+                                <div class="task-hours">15h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 100%"></div>
+                                        <div class="progress-text">完了</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">パスワードリセット</div>
+                                <div class="task-hours">17h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 100%"></div>
+                                        <div class="progress-text">完了</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">サービス一覧/検索</div>
+                                <div class="task-hours">20h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                        <div class="progress-text">未着手</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">ゲスト注文完了</div>
+                                <div class="task-hours">15h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                        <div class="progress-text">未着手</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="phase">
+                        <div class="phase-header">
+                            👥 第3段階: 顧客・清掃員・管理者領域 (114時間) - 一部実装済み
+                        </div>
+                        <div class="phase-content">
+                            <div class="task-row">
+                                <div class="task-name">マイページTOP</div>
+                                <div class="task-hours">20h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 100%"></div>
+                                        <div class="progress-text">完了</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">レポート表示/情報編集</div>
+                                <div class="task-hours">20h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 100%"></div>
+                                        <div class="progress-text">完了</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">清掃員ダッシュボード</div>
+                                <div class="task-hours">20h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                        <div class="progress-text">未着手</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">作業報告フォーム</div>
+                                <div class="task-hours">17h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                        <div class="progress-text">未着手</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">管理画面TOP</div>
+                                <div class="task-hours">20h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 100%"></div>
+                                        <div class="progress-text">完了</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">サイト設定/コンテンツ管理</div>
+                                <div class="task-hours">17h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                        <div class="progress-text">未着手</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="phase">
+                        <div class="phase-header">
+                            📄 第4段階: リーガル・サポート領域 (14時間) - 未実装
+                        </div>
+                        <div class="phase-content">
+                            <div class="task-row">
+                                <div class="task-name">利用規約</div>
+                                <div class="task-hours">3h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                        <div class="progress-text">未着手</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">プライバシーポリシー</div>
+                                <div class="task-hours">3h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                        <div class="progress-text">未着手</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">特定商取引法に基づく表記</div>
+                                <div class="task-hours">3h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                        <div class="progress-text">未着手</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-row">
+                                <div class="task-name">会社概要/お問い合わせフォーム</div>
+                                <div class="task-hours">5h</div>
+                                <div class="task-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                        <div class="progress-text">未着手</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline">
+            <h2 class="timeline-title">現実的なスケジュール提案（実装済み考慮）</h2>
+            <div class="timeline-item">
+                <div class="timeline-phase">第1段階</div>
+                <div class="timeline-duration">3-4週間</div>
+                <div class="timeline-hours">154h</div>
+                <div class="timeline-description">営業マン機能の実装（最優先・未実装）</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-phase">第2段階</div>
+                <div class="timeline-duration">1-2週間</div>
+                <div class="timeline-hours">35h</div>
+                <div class="timeline-description">残り公開・認証フロー（7ページ完了済み）</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-phase">第3段階</div>
+                <div class="timeline-duration">2-3週間</div>
+                <div class="timeline-hours">74h</div>
+                <div class="timeline-description">残り顧客・管理機能（3ページ完了済み）</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-phase">第4段階</div>
+                <div class="timeline-duration">1週間</div>
+                <div class="timeline-hours">14h</div>
+                <div class="timeline-description">リーガル・サポートページ（未実装）</div>
+            </div>
+        </div>
+
+        <div class="alert-section">
+            <div class="alert-title">📊 実装状況サマリー</div>
+            <div class="alert-content">
+                <p><strong>実装済みページ（19ページ）:</strong></p>
+                <ul>
+                    <li>✅ トップページ、ログイン、新規登録関連（7ページ）</li>
+                    <li>✅ 個人・法人登録フロー（6ページ）</li>
+                    <li>✅ マイページ、レポート、管理画面（3ページ）</li>
+                    <li>✅ サポート、サイトマップ（2ページ）</li>
+                    <li>✅ 進捗管理システム（1ページ）</li>
+                </ul>
+                <p><strong>残り工数: 417時間（52.1営業日）</strong></p>
+                <p><strong>推奨アクション:</strong></p>
+                <ul>
+                    <li>第1段階（営業マン機能）に集中 - これが最重要</li>
+                    <li>第2段階は既に大部分完了しているため短期間で完了可能</li>
+                    <li>MVP（最小実行可能プロダクト）として営業マン機能を優先</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // プログレスバーのアニメーション
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressBars = document.querySelectorAll('.progress-fill');
+            
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 500);
+            });
+        });
+
+        // レスポンシブ対応
+        function adjustLayout() {
+            const isMobile = window.innerWidth <= 768;
+            const taskRows = document.querySelectorAll('.task-row');
+            
+            taskRows.forEach(row => {
+                if (isMobile) {
+                    row.style.flexDirection = 'column';
+                    row.style.alignItems = 'flex-start';
+                    row.style.gap = '10px';
+                } else {
+                    row.style.flexDirection = 'row';
+                    row.style.alignItems = 'center';
+                    row.style.gap = '0';
+                }
+            });
+        }
+
+        window.addEventListener('resize', adjustLayout);
+        adjustLayout();
+    </script>
+</body>
+</html>
