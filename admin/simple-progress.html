@@ -841,62 +841,6 @@
             color: #6b7280;
         }
 
-        /* 負荷分析 */
-        .workload-analysis {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .workload-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .workload-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 15px;
-        }
-
-        .workload-bar {
-            background: #e5e7eb;
-            border-radius: 10px;
-            height: 20px;
-            margin-bottom: 10px;
-            overflow: hidden;
-        }
-
-        .workload-fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.3s ease;
-        }
-
-        .workload-fill.low {
-            background: #10b981;
-        }
-
-        .workload-fill.medium {
-            background: #f59e0b;
-        }
-
-        .workload-fill.high {
-            background: #ef4444;
-        }
-
-        .workload-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9rem;
-            color: #6b7280;
-        }
-
         /* アラート */
         .alert {
             background: #fef2f2;
@@ -956,10 +900,6 @@
             }
 
             .kanban-board {
-                grid-template-columns: 1fr;
-            }
-            
-            .workload-analysis {
                 grid-template-columns: 1fr;
             }
             
@@ -1820,8 +1760,6 @@
         <!-- タブ切り替え -->
         <div class="tab-container">
             <button class="tab active" onclick="showTab('progress')">進捗管理</button>
-            <button class="tab" onclick="showTab('workload')">開発ウェイト</button>
-            <button class="tab" onclick="showTab('settings')">設定</button>
             <a href="task-market.html" class="tab">タスクマーケット</a>
         </div>
 
@@ -1915,80 +1853,6 @@
             </div>
         </div>
 
-        <!-- 開発ウェイトタブ -->
-        <div id="workload-view" class="tab-content" style="display: none;">
-            <div class="workload-analysis">
-                <div class="workload-card">
-                    <div class="workload-title">デザイナー負荷</div>
-                    <div class="workload-bar">
-                        <div class="workload-fill" id="designer-workload"></div>
-                    </div>
-                    <div class="workload-info">
-                        <span>作業量: <span id="designer-hours">0</span>時間</span>
-                        <span id="designer-status">軽負荷</span>
-                    </div>
-                </div>
-
-                <div class="workload-card">
-                    <div class="workload-title">フロントエンジニア負荷</div>
-                    <div class="workload-bar">
-                        <div class="workload-fill" id="frontend-workload"></div>
-                    </div>
-                    <div class="workload-info">
-                        <span>作業量: <span id="frontend-hours">0</span>時間</span>
-                        <span id="frontend-status">軽負荷</span>
-                    </div>
-                </div>
-
-                <div class="workload-card">
-                    <div class="workload-title">バックエンジニア負荷</div>
-                    <div class="workload-bar">
-                        <div class="workload-fill" id="backend-workload"></div>
-                    </div>
-                    <div class="workload-info">
-                        <span>作業量: <span id="backend-hours">0</span>時間</span>
-                        <span id="backend-status">軽負荷</span>
-                    </div>
-                </div>
-
-                <div class="workload-card">
-                    <div class="workload-title">メディア負荷</div>
-                    <div class="workload-bar">
-                        <div class="workload-fill" id="media-workload"></div>
-                    </div>
-                    <div class="workload-info">
-                        <span>作業量: <span id="media-hours">0</span>時間</span>
-                        <span id="media-status">軽負荷</span>
-                    </div>
-                </div>
-
-                <div class="workload-card">
-                    <div class="workload-title">ディレクション負荷</div>
-                    <div class="workload-bar">
-                        <div class="workload-fill" id="direction-workload"></div>
-                    </div>
-                    <div class="workload-info">
-                        <span>作業量: <span id="direction-hours">0</span>時間</span>
-                        <span id="direction-status">軽負荷</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 設定タブ -->
-        <div id="settings-view" class="tab-content" style="display: none;">
-            <div class="workload-card">
-                <div class="workload-title">WIP制限設定</div>
-                <p>各担当者の同時作業可能数を設定します。</p>
-                <div style="margin-top: 15px;">
-                    <label>デザイナー: <input type="number" id="designer-limit" value="3" min="1" max="10"></label>
-                    <label>フロントエンジニア: <input type="number" id="frontend-limit" value="4" min="1" max="10"></label>
-                    <label>バックエンジニア: <input type="number" id="backend-limit" value="3" min="1" max="10"></label>
-                    <label>メディア: <input type="number" id="media-limit" value="2" min="1" max="10"></label>
-                    <label>ディレクション: <input type="number" id="direction-limit" value="2" min="1" max="10"></label>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- 新規追加モーダル -->
@@ -2162,28 +2026,29 @@
             if (!db) {
                 console.error('Firebase db が初期化されていません');
                 console.log('ローカルデータを使用');
-                renderCategorySections();
-                return;
+                renderPage();
+                return Promise.resolve();
             }
-            db.collection('projectData').doc('main').get()
-                .then((doc) => {
-                    console.log('Firebaseデータ取得完了');
-                    if (doc.exists) {
-                        console.log('既存データを読み込み');
-                        projectData = doc.data();
-                        renderPage();
-                    } else {
-                        // 初期データをFirebaseに保存
-                        console.log('初期データをFirebaseに保存中...');
-                        saveDataToFirebase();
-                    }
-                })
-                .catch((error) => {
-                    console.error('データ読み込みエラー:', error);
-                    // エラーの場合はローカルデータを使用
-                    console.log('ローカルデータを使用');
-                    renderPage();
-                });
+            
+            // ローカルデータを優先して使用（Eコマースカテゴリを含む最新データ）
+            console.log('ローカルデータを優先使用（Eコマースカテゴリを含む）');
+            renderPage();
+            
+            // バックグラウンドでFirebaseに同期（古いデータを上書き）
+            setTimeout(() => {
+                if (isAuthenticated && db) {
+                    console.log('Firebaseに最新データを同期中...');
+                    db.collection('projectData').doc('main').set(projectData)
+                        .then(() => {
+                            console.log('Firebaseに最新データを同期完了');
+                        })
+                        .catch((error) => {
+                            console.error('Firebase同期エラー:', error);
+                        });
+                }
+            }, 1000);
+            
+            return Promise.resolve();
         }
 
         function saveDataToFirebase() {
@@ -2242,7 +2107,8 @@
                 url: 'signin.html',
                 status: 'complete',
                 function: 'ユーザーログイン',
-                lastUpdated: '2025-01-27'
+                lastUpdated: '2025-01-27',
+                assignee: 'frontend'
             },
             'signup': {
                 category: '認証',
@@ -2250,7 +2116,8 @@
                 url: 'signup.html',
                 status: 'complete',
                 function: 'ユーザー登録',
-                lastUpdated: '2025-01-27'
+                lastUpdated: '2025-01-27',
+                assignee: 'frontend'
             },
             'signup2': {
                 category: '認証',
@@ -2258,7 +2125,8 @@
                 url: 'signup2.html',
                 status: 'complete',
                 function: '追加情報入力',
-                lastUpdated: '2025-01-27'
+                lastUpdated: '2025-01-27',
+                assignee: 'frontend'
             },
             'signup3': {
                 category: '認証',
@@ -2266,7 +2134,8 @@
                 url: 'signup3.html',
                 status: 'complete',
                 function: '最終確認',
-                lastUpdated: '2025-01-27'
+                lastUpdated: '2025-01-27',
+                assignee: 'frontend'
             },
             'reset-password': {
                 category: '認証',
@@ -2274,7 +2143,8 @@
                 url: 'reset-password.html',
                 status: 'complete',
                 function: 'パスワード再設定',
-                lastUpdated: '2025-01-27'
+                lastUpdated: '2025-01-27',
+                assignee: 'frontend'
             },
             'personal': {
                 category: '登録',
@@ -2282,7 +2152,8 @@
                 url: 'registration/personal.html',
                 status: 'complete',
                 function: '個人情報登録',
-                lastUpdated: '2025-01-27'
+                lastUpdated: '2025-01-27',
+                assignee: 'frontend'
             },
             'personal2': {
                 category: '登録',
@@ -2290,7 +2161,8 @@
                 url: 'registration/personal2.html',
                 status: 'complete',
                 function: '追加情報入力',
-                lastUpdated: '2025-01-27'
+                lastUpdated: '2025-01-27',
+                assignee: 'frontend'
             },
             'corporation': {
                 category: '登録',
@@ -2298,7 +2170,8 @@
                 url: 'registration/corporation.html',
                 status: 'complete',
                 function: '法人情報登録',
-                lastUpdated: '2025-01-27'
+                lastUpdated: '2025-01-27',
+                assignee: 'frontend'
             },
             'corporation2': {
                 category: '登録',
@@ -2306,7 +2179,8 @@
                 url: 'registration/corporation2.html',
                 status: 'complete',
                 function: '追加情報入力',
-                lastUpdated: '2025-01-27'
+                lastUpdated: '2025-01-27',
+                assignee: 'frontend'
             },
             'corporation3': {
                 category: '登録',
@@ -2314,7 +2188,8 @@
                 url: 'registration/corporation3.html',
                 status: 'complete',
                 function: '最終確認',
-                lastUpdated: '2025-01-27'
+                lastUpdated: '2025-01-27',
+                assignee: 'frontend'
             },
             'complete': {
                 category: '登録',
@@ -2331,7 +2206,8 @@
                 url: 'inquiry/complete.html',
                 status: 'complete',
                 function: '完了通知',
-                lastUpdated: '2025-01-27'
+                lastUpdated: '2025-01-27',
+                assignee: 'frontend'
             },
             'mypage-info': {
                 category: 'マイページ',
@@ -2339,7 +2215,8 @@
                 url: 'mypage/info.html',
                 status: 'complete',
                 function: '情報編集・更新',
-                lastUpdated: '2025-01-27'
+                lastUpdated: '2025-01-27',
+                assignee: 'frontend'
             },
             'mypage-inquiry': {
                 category: 'マイページ',
@@ -2347,7 +2224,8 @@
                 url: 'mypage/inquiry.html',
                 status: 'complete',
                 function: 'サポート問い合わせ',
-                lastUpdated: '2025-01-27'
+                lastUpdated: '2025-01-27',
+                assignee: 'frontend'
             },
             'sitemap': {
                 category: '管理',
@@ -2355,7 +2233,8 @@
                 url: 'admin/sitemap.html',
                 status: 'complete',
                 function: 'サイトマップ表示',
-                lastUpdated: '2025-01-27'
+                lastUpdated: '2025-01-27',
+                assignee: 'frontend'
             },
             'cart': {
                 category: 'Eコマース',
@@ -2390,6 +2269,15 @@
                 url: 'order-complete.html',
                 status: 'complete',
                 function: '注文完了通知',
+                lastUpdated: '2025-01-27',
+                assignee: 'frontend'
+            },
+            'reports-detail': {
+                category: 'メイン',
+                pageName: 'レポート詳細',
+                url: 'reports/[id].html',
+                status: 'complete',
+                function: '動的レポート詳細表示',
                 lastUpdated: '2025-01-27',
                 assignee: 'frontend'
             }
@@ -2427,7 +2315,6 @@
             console.log('ページ描画開始');
             renderCategorySections();
             updateStats();
-            updateWorkloadAnalysis();
             updateAlerts();
             console.log('ページ描画完了');
         }
@@ -2435,9 +2322,27 @@
         // 初期化（Firebase連携）
         console.log('アプリ初期化開始');
         console.log('projectData:', projectData);
-        console.log('renderCategorySections関数を呼び出し');
-        // loadDataFromFirebase(); // 一時的にFirebase読み込みを無効化
-        renderPage(); // ローカルデータを直接使用
+        console.log('renderPage関数を呼び出し');
+        
+        // Firebase読み込み後に現在のデータを強制保存
+        loadDataFromFirebase().then(() => {
+            // 初期化完了後に現在のデータをFirebaseに強制保存
+            setTimeout(() => {
+                console.log('初期化完了後、現在のデータをFirebaseに強制保存');
+                if (isAuthenticated && db) {
+                    // 現在のprojectDataをFirebaseに強制上書き
+                    db.collection('projectData').doc('main').set(projectData)
+                        .then(() => {
+                            console.log('現在のprojectDataをFirebaseに強制保存完了');
+                            console.log('Eコマースカテゴリを含む全データが保存されました');
+                        })
+                        .catch((error) => {
+                            console.error('Firebase強制保存エラー:', error);
+                        });
+                }
+            }, 3000); // 3秒後に実行
+        });
+        
         console.log('初期化完了');
 
         // カテゴリセクションを描画
@@ -2722,12 +2627,9 @@
                 mobileNavItem.classList.add('active');
             }
             
-            // 対応するコンテンツを表示
-            document.getElementById(tabName + '-view').style.display = 'block';
-            
-            // 開発ウェイトタブの場合は更新
-            if (tabName === 'workload') {
-                updateWorkloadAnalysis();
+            // 対応するコンテンツを表示（進捗管理のみ）
+            if (tabName === 'progress') {
+                document.getElementById('progress-view').style.display = 'block';
             }
         }
 
@@ -3175,40 +3077,6 @@
             document.getElementById('kanbanOverdueTodos').textContent = overdueTodos;
         }
 
-        // 負荷分析を更新（5分野対応）
-        function updateWorkloadAnalysis() {
-            const categorized = categorizeTasksByAssignee();
-            
-            ['designer', 'frontend', 'backend', 'media', 'direction'].forEach(assignee => {
-                const tasks = categorized[assignee];
-                const totalHours = tasks.reduce((sum, task) => sum + task.estimatedHours, 0);
-                const maxHours = 40; // 最大工数（調整可能）
-                const percentage = Math.min((totalHours / maxHours) * 100, 100);
-                
-                // 負荷レベルを決定
-                let workloadClass = 'low';
-                let statusText = '軽負荷';
-                
-                if (percentage > 80) {
-                    workloadClass = 'high';
-                    statusText = '重負荷';
-                } else if (percentage > 50) {
-                    workloadClass = 'medium';
-                    statusText = '中負荷';
-                }
-                
-                // UIを更新
-                const workloadFill = document.getElementById(assignee + '-workload');
-                const hoursElement = document.getElementById(assignee + '-hours');
-                const statusElement = document.getElementById(assignee + '-status');
-                
-                workloadFill.style.width = percentage + '%';
-                workloadFill.className = `workload-fill ${workloadClass}`;
-                hoursElement.textContent = totalHours;
-                statusElement.textContent = statusText;
-            });
-        }
-
         // アラートを更新（5分野対応）
         function updateAlerts() {
             const alertsContainer = document.getElementById('alerts');
@@ -3280,11 +3148,31 @@
             }
         }
 
+        // 現在のデータをFirebaseに強制保存
+        function forceSaveToFirebase() {
+            console.log('現在のデータをFirebaseに強制保存開始');
+            if (!db) {
+                console.error('Firebase db が初期化されていません');
+                return;
+            }
+            
+            // 現在のprojectDataをFirebaseに保存
+            db.collection('projectData').doc('main').set(projectData)
+                .then(() => {
+                    console.log('現在のデータをFirebaseに保存完了');
+                    alert('現在のデータをFirebaseに保存しました');
+                })
+                .catch((error) => {
+                    console.error('Firebase保存エラー:', error);
+                    alert('Firebase保存に失敗しました: ' + error.message);
+                });
+        }
+
         // データを保存
         function saveData() {
             localStorage.setItem('projectData', JSON.stringify(projectData));
             console.log('データをローカルストレージに保存');
-            if (isAuthenticated) {
+            if (isAuthenticated && db) {
                 saveDataToFirebase();
             }
         }
@@ -3401,10 +3289,26 @@
                 lastUpdated: document.getElementById('editLastUpdated').value
             };
             
+            // データを更新
             projectData[id] = data;
-            saveData();
+            
+            // ローカルストレージに即座に保存
+            localStorage.setItem('projectData', JSON.stringify(projectData));
+            console.log('編集データをローカルストレージに保存:', data);
+            
+            // Firebaseに保存（認証されている場合）
+            if (isAuthenticated && db) {
+                saveDataToFirebase();
+            }
+            
+            // 表示を更新
             renderPage();
+            
+            // モーダルを閉じる
             closeEditModal();
+            
+            // 成功メッセージ
+            console.log('項目を編集しました:', data);
         });
 
         // モーダル外クリックで閉じる

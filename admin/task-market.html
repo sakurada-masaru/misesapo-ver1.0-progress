@@ -1225,6 +1225,18 @@
             }
         }
 
+        // カテゴリから担当者IDを取得
+        function getAssigneeIdFromCategory(category) {
+            const categoryMap = {
+                'デザイナー': 'designer',
+                'フロントエンド': 'frontend',
+                'バックエンド': 'backend',
+                'メディア': 'media',
+                'プロダクション': 'production'
+            };
+            return categoryMap[category] || null;
+        }
+
         // 新規タスクを追加
         function addNewTask() {
             const title = document.getElementById('taskTitle').value;
@@ -1247,8 +1259,24 @@
                 createdAt: new Date().toISOString().split('T')[0]
             };
             
-            newTasks.push(newTask);
-            taskMarketData.availableTasks.push(newTask);
+            // カテゴリに基づいて自動で担当者に割り当て
+            const assigneeId = getAssigneeIdFromCategory(category);
+            if (assigneeId) {
+                // 担当者に直接割り当て
+                if (!taskMarketData.assignedTasks[assigneeId]) {
+                    taskMarketData.assignedTasks[assigneeId] = [];
+                }
+                newTask.assignedTo = assigneeId;
+                newTask.status = 'assigned';
+                newTask.assignedAt = new Date().toISOString();
+                taskMarketData.assignedTasks[assigneeId].push(newTask);
+                
+                console.log(`タスク「${title}」を${category}担当者に自動割り当てしました`);
+            } else {
+                // 利用可能タスクとして追加
+                newTasks.push(newTask);
+                taskMarketData.availableTasks.push(newTask);
+            }
             
             updateDisplay();
             
