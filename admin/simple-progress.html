@@ -1092,6 +1092,42 @@
             background: #e55a8a;
         }
 
+        /* CSVダウンロードボタン */
+        .download-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            margin-left: 10px;
+        }
+
+        .download-button:hover {
+            background: #218838;
+        }
+
+        /* アップロードボタン */
+        .upload-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            margin-left: 10px;
+        }
+
+        .upload-button:hover {
+            background: #0056b3;
+        }
+
         .category-section {
             background: white;
             border-radius: 8px;
@@ -1768,8 +1804,8 @@
 
         <!-- 進捗管理タブ -->
         <div id="progress-view" class="tab-content">
-            <!-- 統計情報 -->
-            <div class="stats">
+        <!-- 統計情報 -->
+        <div class="stats">
             <div class="stat-card">
                 <div class="stat-number" id="completedPages">19</div>
                 <div class="stat-label">✅ 完了</div>
@@ -1804,6 +1840,12 @@
         <!-- 新規追加ボタンとフィルター -->
         <div class="controls-container">
             <button class="add-button" onclick="openAddModal()">+ 新規項目を追加</button>
+            <button class="download-button" onclick="downloadCSV()" title="リストダウンロード">
+                <img src="images/download.png" alt="ダウンロード" style="width: 20px; height: 20px;">
+            </button>
+            <button class="upload-button" onclick="openUploadModal()" title="リストアップロード">
+                <img src="images/upload.png" alt="アップロード" style="width: 20px; height: 20px;">
+            </button>
             
             <div class="filter-container">
                 <div class="filter-group">
@@ -1847,10 +1889,10 @@
             </div>
         </div>
 
-            <!-- カテゴリごとのテーブル -->
-            <div id="categorySections">
-                <!-- カテゴリセクションはJavaScriptで動的に生成 -->
-            </div>
+        <!-- カテゴリごとのテーブル -->
+        <div id="categorySections">
+            <!-- カテゴリセクションはJavaScriptで動的に生成 -->
+        </div>
         </div>
 
     </div>
@@ -1865,7 +1907,7 @@
             <form id="addForm">
                 <div class="form-group">
                     <label for="addCategory">カテゴリ:</label>
-                    <select id="addCategory" required>
+                    <select id="addCategory" required onchange="handleCategoryChange(this)">
                         <option value="">カテゴリを選択</option>
                         <option value="メイン">メイン</option>
                         <option value="認証">認証</option>
@@ -1879,7 +1921,7 @@
                 </div>
                 <div class="form-group" id="newCategoryGroup" style="display: none;">
                     <label for="newCategoryName">新しいカテゴリ名:</label>
-                    <input type="text" id="newCategoryName" placeholder="例: 決済、通知、設定">
+                    <input type="text" id="newCategoryName" placeholder="例: 決済、通知、設定" onblur="handleNewCategoryBlur(this)">
                 </div>
                 <div class="form-group">
                     <label for="addPageName">ページ名:</label>
@@ -1920,7 +1962,7 @@
                 </div>
                 <div class="modal-buttons">
                     <button type="button" class="btn-cancel" onclick="closeAddModal()">キャンセル</button>
-                    <button type="submit" class="btn-save">追加</button>
+                    <button type="button" class="btn-save" onclick="handleAddFormSubmit()">追加</button>
                 </div>
             </form>
         </div>
@@ -1986,7 +2028,31 @@
                 </div>
                 <div class="modal-buttons">
                     <button type="button" class="btn-cancel" onclick="closeEditModal()">キャンセル</button>
-                    <button type="submit" class="btn-save">保存</button>
+                    <button type="button" class="btn-save" onclick="handleEditFormSubmit()">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- アップロードモーダル -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">リストアップロード</h3>
+                <span class="close" onclick="closeUploadModal()">&times;</span>
+            </div>
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label for="uploadPassword">パスワード:</label>
+                    <input type="password" id="uploadPassword" required placeholder="パスワードを入力">
+                </div>
+                <div class="form-group">
+                    <label for="uploadFile">CSVファイル:</label>
+                    <input type="file" id="uploadFile" accept=".csv" required>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn-cancel" onclick="closeUploadModal()">キャンセル</button>
+                    <button type="button" class="btn-save" onclick="handleUploadSubmit()">アップロード</button>
                 </div>
             </form>
         </div>
@@ -2072,214 +2138,214 @@
                 });
         }
 
-        // データ管理
+        // データ管理（スプレッドシートから読み込み）
         let projectData = {
-            'index': {
+            'item_1': {
                 category: 'メイン',
                 pageName: 'トップページ',
                 url: 'index.html',
                 status: 'complete',
+                assignee: 'frontend',
                 function: 'サービス一覧・カテゴリフィルタ・カート連携',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
+                lastUpdated: '2025-01-27'
             },
-            'report': {
+            'item_2': {
                 category: 'メイン',
                 pageName: 'レポート',
                 url: 'report.html',
                 status: 'complete',
+                assignee: 'frontend',
                 function: '動的レポート一覧・ページネーション機能',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
+                lastUpdated: '2025-01-27'
             },
-            'mypage': {
+            'item_3': {
                 category: 'メイン',
                 pageName: 'マイページ',
                 url: 'mypage.html',
                 status: 'complete',
+                assignee: 'frontend',
                 function: 'ユーザー情報管理・清掃予定表示',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
+                lastUpdated: '2025-01-27'
             },
-            'signin': {
-                category: '認証',
-                pageName: 'ログイン',
-                url: 'signin.html',
-                status: 'complete',
-                function: 'ユーザーログイン',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
-            },
-            'signup': {
-                category: '認証',
-                pageName: '新規登録',
-                url: 'signup.html',
-                status: 'complete',
-                function: 'ユーザー登録',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
-            },
-            'signup2': {
-                category: '認証',
-                pageName: '新規登録2',
-                url: 'signup2.html',
-                status: 'complete',
-                function: '追加情報入力',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
-            },
-            'signup3': {
-                category: '認証',
-                pageName: '新規登録3',
-                url: 'signup3.html',
-                status: 'complete',
-                function: '最終確認',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
-            },
-            'reset-password': {
-                category: '認証',
-                pageName: 'パスワードリセット',
-                url: 'reset-password.html',
-                status: 'complete',
-                function: 'パスワード再設定',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
-            },
-            'personal': {
-                category: '登録',
-                pageName: '個人登録',
-                url: 'registration/personal.html',
-                status: 'complete',
-                function: '個人情報登録',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
-            },
-            'personal2': {
-                category: '登録',
-                pageName: '個人登録2',
-                url: 'registration/personal2.html',
-                status: 'complete',
-                function: '追加情報入力',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
-            },
-            'corporation': {
-                category: '登録',
-                pageName: '法人登録',
-                url: 'registration/corporation.html',
-                status: 'complete',
-                function: '法人情報登録',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
-            },
-            'corporation2': {
-                category: '登録',
-                pageName: '法人登録2',
-                url: 'registration/corporation2.html',
-                status: 'complete',
-                function: '追加情報入力',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
-            },
-            'corporation3': {
-                category: '登録',
-                pageName: '法人登録3',
-                url: 'registration/corporation3.html',
-                status: 'complete',
-                function: '最終確認',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
-            },
-            'complete': {
-                category: '登録',
-                pageName: '登録完了',
-                url: 'registration/complete.html',
-                status: 'complete',
-                function: '完了通知・カート連携',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
-            },
-            'inquiry-complete': {
-                category: 'サポート',
-                pageName: 'お問い合わせ完了',
-                url: 'inquiry/complete.html',
-                status: 'complete',
-                function: '完了通知',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
-            },
-            'mypage-info': {
-                category: 'マイページ',
-                pageName: '個人情報',
-                url: 'mypage/info.html',
-                status: 'complete',
-                function: '情報編集・更新',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
-            },
-            'mypage-inquiry': {
-                category: 'マイページ',
-                pageName: 'お問い合わせ',
-                url: 'mypage/inquiry.html',
-                status: 'complete',
-                function: 'サポート問い合わせ',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
-            },
-            'sitemap': {
-                category: '管理',
-                pageName: 'サイトマップ',
-                url: 'admin/sitemap.html',
-                status: 'complete',
-                function: 'サイトマップ表示',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
-            },
-            'cart': {
-                category: 'Eコマース',
-                pageName: 'カート',
-                url: 'cart.html',
-                status: 'complete',
-                function: 'ショッピングカート機能',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
-            },
-            'checkout': {
-                category: 'Eコマース',
-                pageName: 'チェックアウト',
-                url: 'checkout.html',
-                status: 'complete',
-                function: '決済・注文処理',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
-            },
-            'order-confirm': {
-                category: 'Eコマース',
-                pageName: '注文確認',
-                url: 'order-confirm.html',
-                status: 'complete',
-                function: '注文内容確認',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
-            },
-            'order-complete': {
-                category: 'Eコマース',
-                pageName: '注文完了',
-                url: 'order-complete.html',
-                status: 'complete',
-                function: '注文完了通知',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
-            },
-            'reports-detail': {
+            'item_4': {
                 category: 'メイン',
                 pageName: 'レポート詳細',
                 url: 'reports/[id].html',
                 status: 'complete',
+                assignee: 'frontend',
                 function: '動的レポート詳細表示',
-                lastUpdated: '2025-01-27',
-                assignee: 'frontend'
+                lastUpdated: '2025-01-27'
+            },
+            'item_5': {
+                category: '認証',
+                pageName: 'ログイン',
+                url: 'signin.html',
+                status: 'complete',
+                assignee: 'frontend',
+                function: 'ユーザーログイン',
+                lastUpdated: '2025-01-27'
+            },
+            'item_6': {
+                category: '認証',
+                pageName: '新規登録',
+                url: 'signup.html',
+                status: 'complete',
+                assignee: 'frontend',
+                function: 'ユーザー登録',
+                lastUpdated: '2025-01-27'
+            },
+            'item_7': {
+                category: '認証',
+                pageName: '新規登録2',
+                url: 'signup2.html',
+                status: 'complete',
+                assignee: 'frontend',
+                function: '追加情報入力',
+                lastUpdated: '2025-01-27'
+            },
+            'item_8': {
+                category: '認証',
+                pageName: '新規登録3',
+                url: 'signup3.html',
+                status: 'complete',
+                assignee: 'frontend',
+                function: '最終確認',
+                lastUpdated: '2025-01-27'
+            },
+            'item_9': {
+                category: '認証',
+                pageName: 'パスワードリセット',
+                url: 'reset-password.html',
+                status: 'complete',
+                assignee: 'frontend',
+                function: 'パスワード再設定',
+                lastUpdated: '2025-01-27'
+            },
+            'item_10': {
+                category: '登録',
+                pageName: '個人登録',
+                url: 'registration/personal.html',
+                status: 'complete',
+                assignee: 'frontend',
+                function: '個人情報登録',
+                lastUpdated: '2025-01-27'
+            },
+            'item_11': {
+                category: '登録',
+                pageName: '個人登録2',
+                url: 'registration/personal2.html',
+                status: 'complete',
+                assignee: 'frontend',
+                function: '追加情報入力',
+                lastUpdated: '2025-01-27'
+            },
+            'item_12': {
+                category: '登録',
+                pageName: '法人登録',
+                url: 'registration/corporation.html',
+                status: 'complete',
+                assignee: 'frontend',
+                function: '法人情報登録',
+                lastUpdated: '2025-01-27'
+            },
+            'item_13': {
+                category: '登録',
+                pageName: '法人登録2',
+                url: 'registration/corporation2.html',
+                status: 'complete',
+                assignee: 'frontend',
+                function: '追加情報入力',
+                lastUpdated: '2025-01-27'
+            },
+            'item_14': {
+                category: '登録',
+                pageName: '法人登録3',
+                url: 'registration/corporation3.html',
+                status: 'complete',
+                assignee: 'frontend',
+                function: '最終確認',
+                lastUpdated: '2025-01-27'
+            },
+            'item_15': {
+                category: '登録',
+                pageName: '登録完了',
+                url: 'registration/complete.html',
+                status: 'complete',
+                assignee: 'frontend',
+                function: '完了通知・カート連携',
+                lastUpdated: '2025-01-27'
+            },
+            'item_16': {
+                category: 'サポート',
+                pageName: 'お問い合わせ完了',
+                url: 'inquiry/complete.html',
+                status: 'complete',
+                assignee: 'frontend',
+                function: '完了通知',
+                lastUpdated: '2025-01-27'
+            },
+            'item_17': {
+                category: 'マイページ',
+                pageName: '個人情報',
+                url: 'mypage/info.html',
+                status: 'complete',
+                assignee: 'frontend',
+                function: '情報編集・更新',
+                lastUpdated: '2025-01-27'
+            },
+            'item_18': {
+                category: 'マイページ',
+                pageName: 'お問い合わせ',
+                url: 'mypage/inquiry.html',
+                status: 'complete',
+                assignee: 'frontend',
+                function: 'サポート問い合わせ',
+                lastUpdated: '2025-01-27'
+            },
+            'item_19': {
+                category: '管理',
+                pageName: 'サイトマップ',
+                url: 'admin/sitemap.html',
+                status: 'complete',
+                assignee: 'frontend',
+                function: 'サイトマップ表示',
+                lastUpdated: '2025-01-27'
+            },
+            'item_20': {
+                category: 'Eコマース',
+                pageName: 'カート',
+                url: 'cart.html',
+                status: 'complete',
+                assignee: 'frontend',
+                function: 'ショッピングカート機能',
+                lastUpdated: '2025-01-27'
+            },
+            'item_21': {
+                category: 'Eコマース',
+                pageName: 'チェックアウト',
+                url: 'checkout.html',
+                status: 'complete',
+                assignee: 'frontend',
+                function: '決済・注文処理',
+                lastUpdated: '2025-01-27'
+            },
+            'item_22': {
+                category: 'Eコマース',
+                pageName: '注文確認',
+                url: 'order-confirm.html',
+                status: 'complete',
+                assignee: 'frontend',
+                function: '注文内容確認',
+                lastUpdated: '2025-01-27'
+            },
+            'item_23': {
+                category: 'Eコマース',
+                pageName: '注文完了',
+                url: 'order-complete.html',
+                status: 'complete',
+                assignee: 'frontend',
+                function: '注文完了通知',
+                lastUpdated: '2025-01-27'
             }
         };
 
@@ -2294,21 +2360,339 @@
             'Eコマース': '🛒 Eコマース機能'
         };
 
+        // CSVファイルにデータを追加する関数
+        function addToCSV(data) {
+            const csvRow = `${data.category},${data.pageName},${data.url},${data.status},${data.assignee},${data.function},${data.lastUpdated}`;
+            
+            // ローカルストレージから現在のCSVを取得
+            let currentCSV = localStorage.getItem('projectDataCSV');
+            
+            if (!currentCSV) {
+                // CSVが存在しない場合は新しいCSVを作成
+                currentCSV = 'カテゴリ,ページ名,URL,ステータス,担当者,機能,最終更新日\n';
+            }
+            
+            // 新しい行を追加
+            const updatedCSV = currentCSV.trim() + '\n' + csvRow;
+            
+            // ローカルストレージに保存
+            localStorage.setItem('projectDataCSV', updatedCSV);
+            console.log('CSVファイルに新しい行を追加:', csvRow);
+            
+            // Firebaseに保存
+            saveCSVToFirebase(updatedCSV);
+        }
+
+        // CSVファイルをFirebaseに保存する関数
+        function saveCSVToFirebase(csvContent) {
+            if (!isAuthenticated || !db) {
+                console.log('Firebaseが利用できません');
+                return Promise.resolve();
+            }
+            
+            return db.collection('csvFiles').doc('project-data').set({
+                content: csvContent,
+                lastUpdated: new Date().toISOString(),
+                timestamp: Date.now()
+            })
+            .then(() => {
+                console.log('CSVファイルをFirebaseに保存完了');
+            })
+            .catch((error) => {
+                console.error('CSVファイルのFirebase保存エラー:', error);
+            });
+        }
+
+        // FirebaseからCSVファイルを読み込む関数
+        function loadCSVFromFirebase() {
+            if (!isAuthenticated || !db) {
+                console.log('Firebaseが利用できません');
+                return Promise.resolve(null);
+            }
+            
+            return db.collection('csvFiles').doc('project-data').get()
+            .then((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    console.log('FirebaseからCSVファイルを読み込み完了');
+                    return data.content;
+                } else {
+                    console.log('FirebaseにCSVファイルが存在しません');
+                    return null;
+                }
+            })
+            .catch((error) => {
+                console.error('CSVファイルのFirebase読み込みエラー:', error);
+                return null;
+            });
+        }
+
+        // CSVファイルを更新する関数（編集・削除用）
+        function updateCSV() {
+            // projectDataからCSVを再構築
+            let csvContent = 'カテゴリ,ページ名,URL,ステータス,担当者,機能,最終更新日\n';
+            
+            Object.keys(projectData).forEach(id => {
+                const data = projectData[id];
+                const csvRow = `${data.category},${data.pageName},${data.url},${data.status},${data.assignee},${data.function},${data.lastUpdated}`;
+                csvContent += csvRow + '\n';
+            });
+            
+            // ローカルストレージに保存
+            localStorage.setItem('projectDataCSV', csvContent);
+            console.log('CSVファイルを更新');
+            
+            // Firebaseに保存
+            saveCSVToFirebase(csvContent);
+        }
+
+        // CSVファイルをダウンロードする関数
+        function downloadCSV() {
+            const csvContent = localStorage.getItem('projectDataCSV');
+            if (!csvContent) {
+                alert('CSVデータが見つかりません');
+                return;
+            }
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'project-data-updated.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            console.log('CSVファイルをダウンロードしました');
+        }
+
+
         // ページ読み込み時の初期化
         window.addEventListener('load', function() {
-            // ローカルストレージからデータを復元（一時的に無効化）
-            // const savedData = localStorage.getItem('projectData');
-            // if (savedData) {
-            //     projectData = JSON.parse(savedData);
-            // }
+            // FirebaseからCSVファイルを読み込み
+            loadCSVFromFirebase().then(csvContent => {
+                if (csvContent) {
+                    // FirebaseからCSVを読み込んだ場合、projectDataを再構築
+                    parseCSVToProjectData(csvContent);
+                    console.log('FirebaseからCSVを読み込み、projectDataを再構築');
+                } else {
+            // ローカルストレージからデータを復元
+            const savedData = localStorage.getItem('projectData');
+            if (savedData) {
+                        try {
+                            const parsedData = JSON.parse(savedData);
+                            if (Object.keys(parsedData).length > 0) {
+                                console.log('ローカルストレージからデータを復元');
+                                projectData = parsedData;
+                            }
+                        } catch (error) {
+                            console.error('ローカルストレージのデータ解析エラー:', error);
+                        }
+                    }
+            }
             
             // 今日の日付を設定
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('addLastUpdated').value = today;
+                
+                // カテゴリ選択肢を更新
+                updateCategorySelects();
             
             // ページを描画
             renderPage();
+            });
         });
+
+        // カテゴリ選択の変更ハンドラー（グローバル関数）
+        function handleCategoryChange(selectElement) {
+            console.log('handleCategoryChangeが呼び出されました:', selectElement.value);
+            const newCategoryGroup = document.getElementById('newCategoryGroup');
+            console.log('newCategoryGroup要素:', newCategoryGroup);
+            
+            if (selectElement.value === '__ADD_CATEGORY__') {
+                console.log('カテゴリ追加モードに切り替え');
+                newCategoryGroup.style.display = 'block';
+                document.getElementById('newCategoryName').focus();
+            } else {
+                console.log('通常のカテゴリ選択モード');
+                newCategoryGroup.style.display = 'none';
+            }
+        }
+
+        // 新しいカテゴリ名の入力完了ハンドラー（グローバル関数）
+        function handleNewCategoryBlur(inputElement) {
+            console.log('handleNewCategoryBlurが呼び出されました:', inputElement.value);
+            if (inputElement.value.trim()) {
+                const categorySelect = document.getElementById('addCategory');
+                // 既に同じカテゴリが存在するかチェック
+                const existingOption = categorySelect.querySelector(`option[value="${inputElement.value.trim()}"]`);
+                if (!existingOption) {
+                    console.log('新しいカテゴリを追加:', inputElement.value.trim());
+                    const newOption = document.createElement('option');
+                    newOption.value = inputElement.value.trim();
+                    newOption.textContent = inputElement.value.trim();
+                    newOption.selected = true;
+                    // 「カテゴリを追加する」オプションの前に挿入
+                    const addCategoryOption = categorySelect.querySelector('option[value="__ADD_CATEGORY__"]');
+                    categorySelect.insertBefore(newOption, addCategoryOption);
+                } else {
+                    console.log('既に存在するカテゴリです:', inputElement.value.trim());
+                }
+            }
+        }
+        function parseCSVToProjectData(csvContent) {
+            const lines = csvContent.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            
+            projectData = {};
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+
+                const values = line.split(',').map(v => v.trim());
+                if (values.length < headers.length) continue;
+
+                const id = 'item_' + i;
+                projectData[id] = {
+                    category: values[headers.indexOf('カテゴリ')] || '',
+                    pageName: values[headers.indexOf('ページ名')] || '',
+                    url: values[headers.indexOf('URL')] || '',
+                    status: values[headers.indexOf('ステータス')] || 'pending',
+                    assignee: values[headers.indexOf('担当者')] || 'frontend',
+                    function: values[headers.indexOf('機能')] || '',
+                    lastUpdated: values[headers.indexOf('最終更新日')] || new Date().toISOString().split('T')[0]
+                };
+            }
+            
+            // ローカルストレージに保存
+            localStorage.setItem('projectData', JSON.stringify(projectData));
+            localStorage.setItem('projectDataCSV', csvContent);
+            console.log('CSVからprojectDataを再構築完了:', Object.keys(projectData).length, '項目');
+        }
+
+        // 新規追加フォームの処理関数（グローバルスコープ）
+        function handleAddFormSubmit() {
+            console.log('handleAddFormSubmit関数が呼び出されました');
+            
+            let selectedCategory = document.getElementById('addCategory').value;
+            console.log('選択されたカテゴリ:', selectedCategory);
+            
+            // 新しいカテゴリが入力されている場合
+            if (selectedCategory === '__ADD_CATEGORY__') {
+                const newCategoryName = document.getElementById('newCategoryName').value.trim();
+                if (!newCategoryName) {
+                    alert('新しいカテゴリ名を入力してください。');
+                    return;
+                }
+                selectedCategory = newCategoryName;
+                
+                // カテゴリマップに追加
+                categoryMap[newCategoryName] = `📁 ${newCategoryName}`;
+            }
+            
+            const id = 'new_' + Date.now();
+            const data = {
+                category: selectedCategory,
+                pageName: document.getElementById('addPageName').value,
+                url: document.getElementById('addUrl').value,
+                status: document.getElementById('addStatus').value,
+                assignee: document.getElementById('addAssignee').value,
+                function: document.getElementById('addFunction').value,
+                lastUpdated: document.getElementById('addLastUpdated').value
+            };
+            
+            console.log('追加するデータ:', data);
+            console.log('追加前のprojectData:', Object.keys(projectData).length, '項目');
+            
+            projectData[id] = data;
+            
+            console.log('追加後のprojectData:', Object.keys(projectData).length, '項目');
+            
+            // ローカルストレージに即座に保存
+            localStorage.setItem('projectData', JSON.stringify(projectData));
+            console.log('新規データをローカルストレージに保存:', data);
+            
+            // CSVファイルに追加
+            addToCSV(data);
+            
+            // アナウンスを表示してからモーダルを閉じる
+            alert('新規項目を追加しました。');
+            
+            // アナウンスが閉じられた後にモーダルを閉じる
+            setTimeout(() => {
+                closeAddModal();
+                renderPage();
+            }, 100);
+            
+            console.log('新しい項目を追加しました:', data);
+            
+            // Firebaseに保存（バックグラウンドで実行）
+            if (isAuthenticated && db) {
+                setTimeout(() => {
+                    db.collection('projectData').doc('main').set(projectData)
+                        .then(() => {
+                            console.log('新規データをFirebaseに保存完了');
+                        })
+                        .catch((error) => {
+                            console.error('Firebase保存エラー:', error);
+                            console.log('ローカルデータは保持されています');
+                        });
+                }, 500); // 0.5秒後に実行
+            }
+        }
+
+        // 編集フォームの処理関数（グローバルスコープ）
+        function handleEditFormSubmit() {
+            console.log('handleEditFormSubmit関数が呼び出されました');
+            
+            const id = document.getElementById('editId').value;
+            const data = {
+                category: document.getElementById('editCategory').value,
+                pageName: document.getElementById('editPageName').value,
+                url: document.getElementById('editUrl').value,
+                status: document.getElementById('editStatus').value,
+                assignee: document.getElementById('editAssignee').value,
+                function: document.getElementById('editFunction').value,
+                lastUpdated: document.getElementById('editLastUpdated').value
+            };
+            
+            console.log('編集するデータ:', data);
+            
+            // データを更新
+            projectData[id] = data;
+            
+            // ローカルストレージに即座に保存
+            localStorage.setItem('projectData', JSON.stringify(projectData));
+            console.log('編集データをローカルストレージに保存:', data);
+            
+            // CSVファイルを更新
+            updateCSV();
+            
+            // アナウンスを表示してからモーダルを閉じる
+            alert('項目を編集しました。');
+            
+            // アナウンスが閉じられた後にモーダルを閉じる
+            setTimeout(() => {
+                closeEditModal();
+                renderPage();
+            }, 100);
+            
+            console.log('項目を編集しました:', data);
+            
+            // Firebaseに保存（バックグラウンドで実行）
+            if (isAuthenticated && db) {
+                setTimeout(() => {
+                    db.collection('projectData').doc('main').set(projectData)
+                        .then(() => {
+                            console.log('編集データをFirebaseに保存完了');
+                        })
+                        .catch((error) => {
+                            console.error('Firebase保存エラー:', error);
+                            console.log('ローカルデータは保持されています');
+                        });
+                }, 500); // 0.5秒後に実行
+            }
+        }
 
         // ページを描画
         function renderPage() {
@@ -2360,6 +2744,7 @@
             // カテゴリごとにデータをグループ化
             const categories = {};
             console.log('projectDataのキー:', Object.keys(projectData));
+            console.log('Eコマース項目の確認:', Object.keys(projectData).filter(key => projectData[key].category === 'Eコマース'));
             Object.keys(projectData).forEach(id => {
                 const data = projectData[id];
                 console.log('処理中のデータ:', id, data);
@@ -2369,6 +2754,7 @@
                 categories[data.category].push({ id, ...data });
             });
             console.log('グループ化されたカテゴリ:', categories);
+            console.log('Eコマースカテゴリの項目数:', categories['Eコマース'] ? categories['Eコマース'].length : 0);
 
             // カテゴリごとにセクションを作成
             console.log('カテゴリのキー:', Object.keys(categories));
@@ -2399,7 +2785,7 @@
                             </span>
                             <span style="font-size: 0.7rem; font-weight: normal;">
                                 ✅ 完了: ${completedCount} | 🔄 進行中: ${inProgressCount} | ⏳ 未着手: ${pendingCount} | ❓ 不明: ${unknownCount} | ⏸️ 待機中: ${waitingCount}
-                            </span>
+                        </span>
                         </div>
                     </div>
                 `;
@@ -3103,15 +3489,19 @@
 
         // 新規追加モーダルを開く
         function openAddModal() {
+            console.log('新規追加モーダルを開く');
             document.getElementById('addModal').style.display = 'block';
             updateCategorySelects();
+            console.log('新規追加モーダルが開かれました');
         }
 
         // 新規追加モーダルを閉じる
         function closeAddModal() {
+            console.log('新規追加モーダルを閉じる');
             document.getElementById('addModal').style.display = 'none';
             document.getElementById('addForm').reset();
             document.getElementById('newCategoryGroup').style.display = 'none';
+            console.log('新規追加モーダルが閉じられました');
         }
 
         // 編集モーダルを開く
@@ -3139,12 +3529,61 @@
             document.getElementById('editModal').style.display = 'none';
         }
 
+        // アップロードモーダル関連の関数
+        function openUploadModal() {
+            document.getElementById('uploadModal').style.display = 'block';
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadModal').style.display = 'none';
+            document.getElementById('uploadForm').reset();
+        }
+
+        function handleUploadSubmit() {
+            const password = document.getElementById('uploadPassword').value;
+            const file = document.getElementById('uploadFile').files[0];
+
+            if (password !== 'misesapo') {
+                alert('パスワードが正しくありません。');
+                return;
+            }
+
+            if (!file) {
+                alert('ファイルを選択してください。');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                parseCSVToProjectData(content);
+                alert('リストをアップロードしました！');
+                closeUploadModal();
+            };
+            reader.readAsText(file, 'UTF-8');
+        }
+
         // 項目を削除
         function deleteItem(id) {
             if (confirm('この項目を削除してもよろしいですか？')) {
                 delete projectData[id];
-                saveData();
+                
+                // ローカルストレージに保存
+                localStorage.setItem('projectData', JSON.stringify(projectData));
+                console.log('項目を削除:', id);
+                
+                // CSVファイルを更新
+                updateCSV();
+                
+                // アナウンスを表示してから表示を更新
+                alert('項目を削除しました。');
+                
+                // アナウンスが閉じられた後に表示を更新
+                setTimeout(() => {
                 renderPage();
+                }, 100);
+                
+                console.log('項目を削除しました');
             }
         }
 
@@ -3176,35 +3615,6 @@
                 saveDataToFirebase();
             }
         }
-
-        // カテゴリ選択のイベントハンドラー
-        document.getElementById('addCategory').addEventListener('change', function() {
-            const newCategoryGroup = document.getElementById('newCategoryGroup');
-            if (this.value === '__ADD_CATEGORY__') {
-                newCategoryGroup.style.display = 'block';
-                document.getElementById('newCategoryName').focus();
-            } else {
-                newCategoryGroup.style.display = 'none';
-            }
-        });
-
-        // 新しいカテゴリ名の入力イベント
-        document.getElementById('newCategoryName').addEventListener('input', function() {
-            const categorySelect = document.getElementById('addCategory');
-            if (this.value.trim()) {
-                // 新しいカテゴリを選択肢に追加
-                const existingOption = Array.from(categorySelect.options).find(option => option.value === this.value.trim());
-                if (!existingOption) {
-                    const newOption = document.createElement('option');
-                    newOption.value = this.value.trim();
-                    newOption.textContent = this.value.trim();
-                    newOption.selected = true;
-                    // 「カテゴリを追加する」オプションの前に挿入
-                    const addCategoryOption = categorySelect.querySelector('option[value="__ADD_CATEGORY__"]');
-                    categorySelect.insertBefore(newOption, addCategoryOption);
-                }
-            }
-        });
 
         // カテゴリ選択肢を更新
         function updateCategorySelects() {
@@ -3238,116 +3648,43 @@
             });
         }
 
-        // 新規追加フォームの処理
-        document.getElementById('addForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // DOMContentLoadedイベントでイベントリスナーを設定
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOMContentLoaded: イベントリスナーを設定中');
             
-            let selectedCategory = document.getElementById('addCategory').value;
-            
-            // 新しいカテゴリが入力されている場合
-            if (selectedCategory === '__ADD_CATEGORY__') {
-                const newCategoryName = document.getElementById('newCategoryName').value.trim();
-                if (!newCategoryName) {
-                    alert('新しいカテゴリ名を入力してください。');
-                    return;
-                }
-                selectedCategory = newCategoryName;
-                
-                // カテゴリマップに追加
-                categoryMap[newCategoryName] = `📁 ${newCategoryName}`;
+            // カテゴリ選択の変更イベント（新規追加用）
+            const addCategorySelect = document.getElementById('addCategory');
+            if (addCategorySelect) {
+                addCategorySelect.addEventListener('change', function() {
+                    const newCategoryGroup = document.getElementById('newCategoryGroup');
+                    if (this.value === '__ADD_CATEGORY__') {
+                        newCategoryGroup.style.display = 'block';
+                        document.getElementById('newCategoryName').focus();
+                    } else {
+                        newCategoryGroup.style.display = 'none';
+                    }
+                });
             }
             
-            const id = 'new_' + Date.now();
-            const data = {
-                category: selectedCategory,
-                pageName: document.getElementById('addPageName').value,
-                url: document.getElementById('addUrl').value,
-                status: document.getElementById('addStatus').value,
-                assignee: document.getElementById('addAssignee').value,
-                function: document.getElementById('addFunction').value,
-                lastUpdated: document.getElementById('addLastUpdated').value
-            };
-            
-            projectData[id] = data;
-            
-            // ローカルストレージに即座に保存
-            localStorage.setItem('projectData', JSON.stringify(projectData));
-            console.log('新規データをローカルストレージに保存:', data);
-            
-            // Firebaseに保存（認証されている場合）
-            if (isAuthenticated && db) {
-                // Firebaseの保存が完了してから表示を更新
-                db.collection('projectData').doc('main').set(projectData)
-                    .then(() => {
-                        console.log('新規データをFirebaseに保存完了');
-                        // 表示を更新
-                        renderPage();
-                        // モーダルを閉じる
-                        closeAddModal();
-                        console.log('新しい項目を追加しました:', data);
-                    })
-                    .catch((error) => {
-                        console.error('Firebase保存エラー:', error);
-                        // エラーでもローカルデータは保存されているので表示を更新
-                        renderPage();
-                        closeAddModal();
-                        console.log('新しい項目を追加しました（ローカルのみ）:', data);
-                    });
-            } else {
-                // Firebaseが利用できない場合はローカルデータのみで更新
-                renderPage();
-                closeAddModal();
-                console.log('新しい項目を追加しました（ローカルのみ）:', data);
-            }
-        });
-
-        // 編集フォームの処理
-        document.getElementById('editForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const id = document.getElementById('editId').value;
-            const data = {
-                category: document.getElementById('editCategory').value,
-                pageName: document.getElementById('editPageName').value,
-                url: document.getElementById('editUrl').value,
-                status: document.getElementById('editStatus').value,
-                assignee: document.getElementById('editAssignee').value,
-                function: document.getElementById('editFunction').value,
-                lastUpdated: document.getElementById('editLastUpdated').value
-            };
-            
-            // データを更新
-            projectData[id] = data;
-            
-            // ローカルストレージに即座に保存
-            localStorage.setItem('projectData', JSON.stringify(projectData));
-            console.log('編集データをローカルストレージに保存:', data);
-            
-            // Firebaseに保存（認証されている場合）
-            if (isAuthenticated && db) {
-                // Firebaseの保存が完了してから表示を更新
-                db.collection('projectData').doc('main').set(projectData)
-                    .then(() => {
-                        console.log('編集データをFirebaseに保存完了');
-                        // 表示を更新
-                        renderPage();
-                        // モーダルを閉じる
-                        closeEditModal();
-                        // 成功メッセージ
-                        console.log('項目を編集しました:', data);
-                    })
-                    .catch((error) => {
-                        console.error('Firebase保存エラー:', error);
-                        // エラーでもローカルデータは保存されているので表示を更新
-                        renderPage();
-                        closeEditModal();
-                        console.log('項目を編集しました（ローカルのみ）:', data);
-                    });
-            } else {
-                // Firebaseが利用できない場合はローカルデータのみで更新
-                renderPage();
-                closeEditModal();
-                console.log('項目を編集しました（ローカルのみ）:', data);
+            // 新しいカテゴリ名の入力イベント
+            const newCategoryNameInput = document.getElementById('newCategoryName');
+            if (newCategoryNameInput) {
+                newCategoryNameInput.addEventListener('blur', function() {
+                    if (this.value.trim()) {
+                        const categorySelect = document.getElementById('addCategory');
+                        // 既に同じカテゴリが存在するかチェック
+                        const existingOption = categorySelect.querySelector(`option[value="${this.value.trim()}"]`);
+                        if (!existingOption) {
+                            const newOption = document.createElement('option');
+                            newOption.value = this.value.trim();
+                            newOption.textContent = this.value.trim();
+                            newOption.selected = true;
+                            // 「カテゴリを追加する」オプションの前に挿入
+                            const addCategoryOption = categorySelect.querySelector('option[value="__ADD_CATEGORY__"]');
+                            categorySelect.insertBefore(newOption, addCategoryOption);
+                        }
+                    }
+                });
             }
         });
 
