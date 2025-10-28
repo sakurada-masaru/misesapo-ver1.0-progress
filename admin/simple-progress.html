@@ -602,10 +602,7 @@
             border: 2px solid #e5e7eb;
         }
 
-        .swim-lane.overloaded {
-            border-color: #ef4444;
-            background: #fef2f2;
-        }
+        
 
         .swim-lane-header {
             display: flex;
@@ -631,9 +628,7 @@
             font-weight: 600;
         }
 
-        .task-count.overloaded {
-            background: #ef4444;
-        }
+        
 
         .task-card {
             background: #f9fafb;
@@ -2040,7 +2035,8 @@
                 <input type="hidden" id="editId">
                 <div class="form-group">
                     <label for="editCategory">カテゴリ:</label>
-                    <select id="editCategory" required>
+                    <select id="editCategory" required onchange="handleCategoryChange(this)">
+                        <option value="">カテゴリを選択</option>
                         <option value="メイン">メイン</option>
                         <option value="認証">認証</option>
                         <option value="登録">登録</option>
@@ -2048,7 +2044,12 @@
                         <option value="マイページ">マイページ</option>
                         <option value="管理">管理</option>
                         <option value="Eコマース">Eコマース</option>
+                        <option value="__ADD_CATEGORY__">+ カテゴリを追加する</option>
                     </select>
+                    <div id="editNewCategoryGroup" class="form-group" style="display: none;">
+                        <label for="editNewCategoryName">新しいカテゴリ名:</label>
+                        <input type="text" id="editNewCategoryName" placeholder="カテゴリ名を入力" onblur="handleNewCategoryName(this)">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="editPageName">ページ名:</label>
@@ -2958,8 +2959,8 @@
                         <td data-label="最終更新日">${item.lastUpdated}</td>
                         <td data-label="操作">
                             <div class="action-buttons">
-                                <button class="btn-edit" onclick="console.log('編集ボタンがクリックされました:', '${item.id}'); window.editItem('${item.id}')">編集</button>
-                                <button class="btn-delete" onclick="console.log('削除ボタンがクリックされました:', '${item.id}'); window.deleteItem('${item.id}')">削除</button>
+                                <button class="btn-edit" data-id="${item.id}" onclick="console.log('編集ボタンがクリックされました:', '${item.id}'); window.editItem('${item.id}')">編集</button>
+                                <button class="btn-delete" data-id="${item.id}" onclick="console.log('削除ボタンがクリックされました:', '${item.id}'); window.deleteItem('${item.id}')">削除</button>
                             </div>
                         </td>
                     `;
@@ -3375,14 +3376,7 @@
             }
         };
 
-        // WIP制限（5分野対応）
-        let wipLimits = {
-            designer: 3,
-            frontend: 4,
-            backend: 3,
-            media: 2,
-            direction: 2
-        };
+        
 
         // 優先度の色を取得
         function getPriorityClass(priority) {
@@ -3646,7 +3640,7 @@
                 <div class="task-card-actions">
                     ${task.status === 'pending' ? `<button class="btn-task-action btn-start" onclick="startTask('${task.id}')">開始</button>` : ''}
                     ${task.status === 'in-progress' ? `<button class="btn-task-action btn-complete" onclick="completeTask('${task.id}')">完了</button>` : ''}
-                    <button class="btn-task-action btn-edit-task" onclick="editItem('${task.id}')">編集</button>
+                    <button class="btn-task-action btn-edit-task" onclick="window.editItem('${task.id}')">編集</button>
                 </div>
             `;
             return taskCard;
@@ -3681,28 +3675,7 @@
         }
 
         // アラートを更新（5分野対応）
-        function updateAlerts() {
-            const alertsContainer = document.getElementById('alerts');
-            alertsContainer.innerHTML = '';
-            
-            const categorized = categorizeTasksByAssignee();
-            
-            // 過負荷チェック
-            ['designer', 'frontend', 'backend', 'media', 'direction'].forEach(assignee => {
-                const tasks = categorized[assignee];
-                const limit = wipLimits[assignee];
-                
-                if (tasks.length > limit) {
-                    const alert = document.createElement('div');
-                    alert.className = 'alert';
-                    alert.innerHTML = `
-                        <div class="alert-title">⚠️ ${assignee.toUpperCase()} 過負荷警告</div>
-                        <div class="alert-message">作業数が制限値（${limit}）を超えています。現在: ${tasks.length}件</div>
-                    `;
-                    alertsContainer.appendChild(alert);
-                }
-            });
-        }
+        
 
         // 新規追加モーダルを開く
         function openAddModal() {
@@ -3776,8 +3749,14 @@
             console.log('Edit modal element:', editModal);
             if (editModal) {
                 editModal.style.display = 'block';
+                editModal.style.visibility = 'visible';
+                editModal.style.opacity = '1';
+                editModal.style.zIndex = '9999';
                 console.log('Edit modal opened successfully');
                 console.log('モーダルの表示スタイル:', editModal.style.display);
+                console.log('モーダルの可視性:', editModal.style.visibility);
+                console.log('モーダルの透明度:', editModal.style.opacity);
+                console.log('モーダルのz-index:', editModal.style.zIndex);
             } else {
                 console.error('Edit modal element not found!');
             }
@@ -3787,9 +3766,28 @@
         window.editItem = editItem;
         window.deleteItem = deleteItem;
 
+        // イベントデリゲーションで編集・削除ボタンのクリックを処理
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-edit')) {
+                const id = e.target.getAttribute('data-id') || e.target.onclick?.toString().match(/'([^']+)'/)?.[1];
+                console.log('編集ボタンクリック（イベントデリゲーション）:', id);
+                if (id) {
+                    editItem(id);
+                }
+            } else if (e.target.classList.contains('btn-delete')) {
+                const id = e.target.getAttribute('data-id') || e.target.onclick?.toString().match(/'([^']+)'/)?.[1];
+                console.log('削除ボタンクリック（イベントデリゲーション）:', id);
+                if (id) {
+                    deleteItem(id);
+                }
+            }
+        });
+
         // 編集モーダルを閉じる
         function closeEditModal() {
             document.getElementById('editModal').style.display = 'none';
+            document.getElementById('editNewCategoryGroup').style.display = 'none';
+            console.log('編集モーダルが閉じられました');
         }
 
         // アップロードモーダル関連の関数
