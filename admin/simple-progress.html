@@ -2030,17 +2030,17 @@
                 return Promise.resolve();
             }
             
-            // ローカルデータを優先して使用（Eコマースカテゴリを含む最新データ）
-            console.log('ローカルデータを優先使用（Eコマースカテゴリを含む）');
+            // ローカルデータを優先して使用（編集内容を保持）
+            console.log('ローカルデータを優先使用（編集内容を保持）');
             renderPage();
             
-            // バックグラウンドでFirebaseに同期（古いデータを上書き）
+            // バックグラウンドでFirebaseに同期（編集内容を上書き）
             setTimeout(() => {
                 if (isAuthenticated && db) {
-                    console.log('Firebaseに最新データを同期中...');
+                    console.log('Firebaseに編集済みデータを同期中...');
                     db.collection('projectData').doc('main').set(projectData)
                         .then(() => {
-                            console.log('Firebaseに最新データを同期完了');
+                            console.log('Firebaseに編集済みデータを同期完了');
                         })
                         .catch((error) => {
                             console.error('Firebase同期エラー:', error);
@@ -3269,9 +3269,36 @@
             };
             
             projectData[id] = data;
-            saveData();
-            renderPage();
-            closeAddModal();
+            
+            // ローカルストレージに即座に保存
+            localStorage.setItem('projectData', JSON.stringify(projectData));
+            console.log('新規データをローカルストレージに保存:', data);
+            
+            // Firebaseに保存（認証されている場合）
+            if (isAuthenticated && db) {
+                // Firebaseの保存が完了してから表示を更新
+                db.collection('projectData').doc('main').set(projectData)
+                    .then(() => {
+                        console.log('新規データをFirebaseに保存完了');
+                        // 表示を更新
+                        renderPage();
+                        // モーダルを閉じる
+                        closeAddModal();
+                        console.log('新しい項目を追加しました:', data);
+                    })
+                    .catch((error) => {
+                        console.error('Firebase保存エラー:', error);
+                        // エラーでもローカルデータは保存されているので表示を更新
+                        renderPage();
+                        closeAddModal();
+                        console.log('新しい項目を追加しました（ローカルのみ）:', data);
+                    });
+            } else {
+                // Firebaseが利用できない場合はローカルデータのみで更新
+                renderPage();
+                closeAddModal();
+                console.log('新しい項目を追加しました（ローカルのみ）:', data);
+            }
         });
 
         // 編集フォームの処理
@@ -3298,17 +3325,30 @@
             
             // Firebaseに保存（認証されている場合）
             if (isAuthenticated && db) {
-                saveDataToFirebase();
+                // Firebaseの保存が完了してから表示を更新
+                db.collection('projectData').doc('main').set(projectData)
+                    .then(() => {
+                        console.log('編集データをFirebaseに保存完了');
+                        // 表示を更新
+                        renderPage();
+                        // モーダルを閉じる
+                        closeEditModal();
+                        // 成功メッセージ
+                        console.log('項目を編集しました:', data);
+                    })
+                    .catch((error) => {
+                        console.error('Firebase保存エラー:', error);
+                        // エラーでもローカルデータは保存されているので表示を更新
+                        renderPage();
+                        closeEditModal();
+                        console.log('項目を編集しました（ローカルのみ）:', data);
+                    });
+            } else {
+                // Firebaseが利用できない場合はローカルデータのみで更新
+                renderPage();
+                closeEditModal();
+                console.log('項目を編集しました（ローカルのみ）:', data);
             }
-            
-            // 表示を更新
-            renderPage();
-            
-            // モーダルを閉じる
-            closeEditModal();
-            
-            // 成功メッセージ
-            console.log('項目を編集しました:', data);
         });
 
         // モーダル外クリックで閉じる
