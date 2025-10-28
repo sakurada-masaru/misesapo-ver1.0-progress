@@ -2946,6 +2946,7 @@
                 // テーブルボディ
                 const tbody = document.createElement('tbody');
                 categories[category].forEach(item => {
+                    console.log('テーブル行生成中:', item.id, item);
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td data-label="ページ名">${item.pageName}</td>
@@ -2957,8 +2958,8 @@
                         <td data-label="最終更新日">${item.lastUpdated}</td>
                         <td data-label="操作">
                             <div class="action-buttons">
-                                <button class="btn-edit" onclick="editItem('${item.id}')">編集</button>
-                                <button class="btn-delete" onclick="deleteItem('${item.id}')">削除</button>
+                                <button class="btn-edit" onclick="console.log('編集ボタンがクリックされました:', '${item.id}'); window.editItem('${item.id}')">編集</button>
+                                <button class="btn-delete" onclick="console.log('削除ボタンがクリックされました:', '${item.id}'); window.deleteItem('${item.id}')">削除</button>
                             </div>
                         </td>
                     `;
@@ -3722,24 +3723,69 @@
 
         // 編集モーダルを開く
         function editItem(id) {
+            console.log('=== editItem関数が呼ばれました ===');
+            console.log('editItem called with id:', id);
+            console.log('projectData:', projectData);
+            console.log('projectData[id]:', projectData[id]);
+            
             const data = projectData[id];
-            if (!data) return;
+            if (!data) {
+                console.error('Data not found for id:', id);
+                alert('データが見つかりません: ' + id);
+                return;
+            }
 
-            document.getElementById('editId').value = id;
-            document.getElementById('editCategory').value = data.category;
-            document.getElementById('editPageName').value = data.pageName;
-            document.getElementById('editUrl').value = data.url;
-            document.getElementById('editPCStatus').value = data.pcStatus || 'pending';
-            document.getElementById('editSPStatus').value = data.spStatus || 'pending';
-            document.getElementById('editAssignee').value = data.assignee || '';
-            document.getElementById('editFunction').value = data.function;
-            document.getElementById('editLastUpdated').value = data.lastUpdated;
+            console.log('データが見つかりました:', data);
+
+            // フォーム要素の存在確認
+            const editId = document.getElementById('editId');
+            const editCategory = document.getElementById('editCategory');
+            const editPageName = document.getElementById('editPageName');
+            const editUrl = document.getElementById('editUrl');
+            const editPCStatus = document.getElementById('editPCStatus');
+            const editSPStatus = document.getElementById('editSPStatus');
+            const editAssignee = document.getElementById('editAssignee');
+            const editFunction = document.getElementById('editFunction');
+            const editLastUpdated = document.getElementById('editLastUpdated');
+
+            console.log('フォーム要素の確認:');
+            console.log('editId:', editId);
+            console.log('editCategory:', editCategory);
+            console.log('editPageName:', editPageName);
+
+            if (editId) editId.value = id;
+            if (editCategory) editCategory.value = data.category;
+            if (editPageName) editPageName.value = data.pageName;
+            if (editUrl) editUrl.value = data.url;
+            if (editPCStatus) {
+                editPCStatus.value = data.pcStatus || data.status || 'pending';
+                console.log('PCステータス設定:', data.pcStatus || data.status || 'pending');
+            }
+            if (editSPStatus) {
+                editSPStatus.value = data.spStatus || data.status || 'pending';
+                console.log('SPステータス設定:', data.spStatus || data.status || 'pending');
+            }
+            if (editAssignee) editAssignee.value = data.assignee || '';
+            if (editFunction) editFunction.value = data.function;
+            if (editLastUpdated) editLastUpdated.value = data.lastUpdated;
             
             // カテゴリ選択肢を更新
             updateCategorySelects();
             
-            document.getElementById('editModal').style.display = 'block';
+            const editModal = document.getElementById('editModal');
+            console.log('Edit modal element:', editModal);
+            if (editModal) {
+                editModal.style.display = 'block';
+                console.log('Edit modal opened successfully');
+                console.log('モーダルの表示スタイル:', editModal.style.display);
+            } else {
+                console.error('Edit modal element not found!');
+            }
         }
+
+        // グローバルスコープに設定
+        window.editItem = editItem;
+        window.deleteItem = deleteItem;
 
         // 編集モーダルを閉じる
         function closeEditModal() {
