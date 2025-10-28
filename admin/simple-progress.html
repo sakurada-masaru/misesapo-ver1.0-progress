@@ -1128,6 +1128,72 @@
             background: #0056b3;
         }
 
+        /* カテゴリ管理 */
+        .category-management {
+            margin: 20px 0;
+        }
+
+        .category-list {
+            margin-top: 20px;
+        }
+
+        .category-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+
+        .category-name {
+            font-weight: 500;
+        }
+
+        .category-count {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .delete-category-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+
+        .delete-category-btn:hover {
+            background: #c82333;
+        }
+
+        .delete-category-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        /* カテゴリ管理ボタン */
+        .category-button {
+            background: #6f42c1;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            margin-left: 10px;
+        }
+
+        .category-button:hover {
+            background: #5a32a3;
+        }
+
         .category-section {
             background: white;
             border-radius: 8px;
@@ -1155,18 +1221,47 @@
             width: 100%;
             border-collapse: collapse;
             table-layout: fixed;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .table th,
         .table td {
-            padding: 8px 6px;
+            padding: 6px 4px;
             text-align: left;
             border-bottom: 1px solid #e5e7eb;
             word-wrap: break-word;
             overflow-wrap: break-word;
             vertical-align: top;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
+
+        .table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* テーブル列幅の最適化 */
+        .table th:nth-child(1), .table td:nth-child(1) { width: 12% !important; } /* ページ名 */
+        .table th:nth-child(2), .table td:nth-child(2) { width: 6% !important; } /* URL */
+        .table th:nth-child(3), .table td:nth-child(3) { width: 5% !important; } /* PCステータス */
+        .table th:nth-child(4), .table td:nth-child(4) { width: 5% !important; } /* SPステータス */
+        .table th:nth-child(5), .table td:nth-child(5) { 
+            width: 1% !important; 
+            text-align: center; 
+        }  /* 業務担当 */
+        .table th:nth-child(6), .table td:nth-child(6) { width: 55% !important; } /* 機能 */
+        .table th:nth-child(7), .table td:nth-child(7) { width: 10% !important; } /* 最終更新日 */
+        .table th:nth-child(8), .table td:nth-child(8) { width: 6% !important; }  /* 操作 */
 
         .table th {
             background: #f9fafb;
@@ -1177,48 +1272,6 @@
             padding: 10px 6px;
         }
 
-        /* 列幅を固定 */
-        .table th:nth-child(1),
-        .table td:nth-child(1) {
-            width: 18%; /* ページ名 */
-        }
-
-        .table th:nth-child(2),
-        .table td:nth-child(2) {
-            width: 22%; /* URL */
-        }
-
-        .table th:nth-child(3),
-        .table td:nth-child(3) {
-            width: 10%; /* ステータス */
-        }
-
-        .table th:nth-child(4),
-        .table td:nth-child(4) {
-            width: 8%; /* 業務担当 */
-        }
-
-        .table th:nth-child(5),
-        .table td:nth-child(5) {
-            width: 24%; /* 機能 */
-        }
-
-        .table th:nth-child(6),
-        .table td:nth-child(6) {
-            width: 10%; /* 最終更新日 */
-        }
-
-        .table th:nth-child(7),
-        .table td:nth-child(7) {
-            width: 8%; /* 操作 */
-        }
-
-        .table th {
-            background-color: #f9fafb;
-            font-weight: 600;
-            color: #374151;
-            border-bottom: 2px solid #e5e7eb;
-        }
 
         .table tr:hover {
             background-color: #f9fafb;
@@ -1771,10 +1824,11 @@
 
             .table th,
             .table td {
-                padding: 4px 6px;
-                min-width: 70px;
+                padding: 3px 4px;
+                min-width: 60px;
                 word-wrap: break-word;
                 overflow-wrap: break-word;
+                font-size: 0.7rem;
             }
 
             .table th:first-child,
@@ -1839,12 +1893,15 @@
 
         <!-- 新規追加ボタンとフィルター -->
         <div class="controls-container">
-            <button class="add-button" onclick="openAddModal()">+ 新規項目を追加</button>
+        <button class="add-button" onclick="openAddModal()">+ 新規項目を追加</button>
             <button class="download-button" onclick="downloadCSV()" title="リストダウンロード">
                 <img src="images/download.png" alt="ダウンロード" style="width: 20px; height: 20px;">
             </button>
             <button class="upload-button" onclick="openUploadModal()" title="リストアップロード">
                 <img src="images/upload.png" alt="アップロード" style="width: 20px; height: 20px;">
+            </button>
+            <button class="category-button" onclick="openCategoryModal()" title="カテゴリ管理">
+                📁 カテゴリ管理
             </button>
             
             <div class="filter-container">
@@ -1939,6 +1996,26 @@
                         <option value="pending">⏳ 未着手</option>
                         <option value="unknown">❓ 不明</option>
                         <option value="waiting">⏸️ 待機中</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="addPCStatus">PC版開発状況:</label>
+                    <select id="addPCStatus" required>
+                        <option value="complete">✅ PC完了</option>
+                        <option value="in-progress">🔄 PC進行中</option>
+                        <option value="pending">⏳ PC未着手</option>
+                        <option value="unknown">❓ PC不明</option>
+                        <option value="waiting">⏸️ PC待機中</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="addSPStatus">SP版開発状況:</label>
+                    <select id="addSPStatus" required>
+                        <option value="complete">✅ SP完了</option>
+                        <option value="in-progress">🔄 SP進行中</option>
+                        <option value="pending">⏳ SP未着手</option>
+                        <option value="unknown">❓ SP不明</option>
+                        <option value="waiting">⏸️ SP待機中</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -2055,6 +2132,30 @@
                     <button type="button" class="btn-save" onclick="handleUploadSubmit()">アップロード</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- カテゴリ管理モーダル -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">カテゴリ管理</h3>
+                <span class="close" onclick="closeCategoryModal()">&times;</span>
+            </div>
+            <div class="category-management">
+                <div class="form-group">
+                    <label for="newCategoryInput">新しいカテゴリ名:</label>
+                    <input type="text" id="newCategoryInput" placeholder="カテゴリ名を入力">
+                    <button type="button" class="btn-save" onclick="addNewCategory()">カテゴリ追加</button>
+                </div>
+                <div class="category-list">
+                    <h4>既存のカテゴリ:</h4>
+                    <div id="categoryList"></div>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="btn-cancel" onclick="closeCategoryModal()">閉じる</button>
+            </div>
         </div>
     </div>
 
@@ -2357,7 +2458,8 @@
             'サポート': '📞 サポート',
             'マイページ': '👤 マイページ関連',
             '管理': '🔧 管理画面',
-            'Eコマース': '🛒 Eコマース機能'
+            'Eコマース': '🛒 Eコマース機能',
+            '未設定': '❓ 未設定'
         };
 
         // CSVファイルにデータを追加する関数
@@ -2489,7 +2591,10 @@
                             console.error('ローカルストレージのデータ解析エラー:', error);
                         }
                     }
-            }
+                }
+                
+                // カテゴリがない項目を「未設定」に移動
+                moveUncategorizedItems();
             
             // 今日の日付を設定
             const today = new Date().toISOString().split('T')[0];
@@ -2800,7 +2905,8 @@
                     <tr>
                         <th>ページ名</th>
                         <th>URL</th>
-                        <th>ステータス</th>
+                        <th>PC</th>
+                        <th>SP</th>
                         <th>業務担当</th>
                         <th>機能</th>
                         <th>最終更新日</th>
@@ -2816,7 +2922,8 @@
                     row.innerHTML = `
                         <td data-label="ページ名">${item.pageName}</td>
                         <td data-label="URL"><a href="http://localhost:5174/${item.url}" class="url-link" target="_blank">${item.url}</a></td>
-                        <td data-label="ステータス"><span class="status-${item.status}">${getStatusText(item.status)}</span></td>
+                        <td data-label="PC"><span class="status-${item.pcStatus || item.status}">${getPCStatusText(item.pcStatus || item.status)}</span></td>
+                        <td data-label="SP"><span class="status-${item.spStatus || item.status}">${getSPStatusText(item.spStatus || item.status)}</span></td>
                         <td data-label="業務担当"><span class="assignee assignee-${item.assignee || 'unknown'}">${getAssigneeText(item.assignee)}</span></td>
                         <td data-label="機能">${item.function}</td>
                         <td data-label="最終更新日">${item.lastUpdated}</td>
@@ -2845,6 +2952,30 @@
                 'waiting': '⏸️ 待機中'
             };
             return statusMap[status] || status;
+        }
+
+        // PCステータステキストを取得
+        function getPCStatusText(status) {
+            const statusMap = {
+                'complete': '✅ 完了',
+                'in-progress': '🔄 進行中',
+                'pending': '⏳ 未着手',
+                'unknown': '❓ 不明',
+                'waiting': '⏸️ 待機中'
+            };
+            return statusMap[status] || '❓ 不明';
+        }
+
+        // SPステータステキストを取得
+        function getSPStatusText(status) {
+            const statusMap = {
+                'complete': '✅ 完了',
+                'in-progress': '🔄 進行中',
+                'pending': '⏳ 未着手',
+                'unknown': '❓ 不明',
+                'waiting': '⏸️ 待機中'
+            };
+            return statusMap[status] || '❓ 不明';
         }
 
         // 担当者テキストを取得
@@ -3561,6 +3692,121 @@
                 closeUploadModal();
             };
             reader.readAsText(file, 'UTF-8');
+        }
+
+        // カテゴリ管理モーダル関連の関数
+        function openCategoryModal() {
+            document.getElementById('categoryModal').style.display = 'block';
+            updateCategoryList();
+        }
+
+        function closeCategoryModal() {
+            document.getElementById('categoryModal').style.display = 'none';
+            document.getElementById('newCategoryInput').value = '';
+        }
+
+        function addNewCategory() {
+            const categoryName = document.getElementById('newCategoryInput').value.trim();
+            if (!categoryName) {
+                alert('カテゴリ名を入力してください。');
+                return;
+            }
+
+            if (categoryMap[categoryName]) {
+                alert('このカテゴリは既に存在します。');
+                return;
+            }
+
+            categoryMap[categoryName] = `📁 ${categoryName}`;
+            updateCategorySelects();
+            updateCategoryList();
+            document.getElementById('newCategoryInput').value = '';
+            alert(`カテゴリ「${categoryName}」を追加しました。`);
+        }
+
+        function deleteCategory(categoryName) {
+            if (categoryName === '未設定') {
+                alert('「未設定」カテゴリは削除できません。');
+                return;
+            }
+
+            // このカテゴリを使用している項目を確認
+            const itemsInCategory = Object.values(projectData).filter(item => item.category === categoryName);
+            
+            if (itemsInCategory.length > 0) {
+                if (confirm(`カテゴリ「${categoryName}」には${itemsInCategory.length}個の項目があります。\n削除すると、これらの項目は「未設定」カテゴリに移動されます。\n削除しますか？`)) {
+                    // 項目を「未設定」に移動
+                    Object.keys(projectData).forEach(id => {
+                        if (projectData[id].category === categoryName) {
+                            projectData[id].category = '未設定';
+                        }
+                    });
+                    
+                    // カテゴリを削除
+                    delete categoryMap[categoryName];
+                    
+                    // データを保存
+                    localStorage.setItem('projectData', JSON.stringify(projectData));
+                    updateCSV();
+                    
+                    // UIを更新
+                    updateCategorySelects();
+                    updateCategoryList();
+                    renderPage();
+                    
+                    alert(`カテゴリ「${categoryName}」を削除し、${itemsInCategory.length}個の項目を「未設定」に移動しました。`);
+                }
+            } else {
+                if (confirm(`カテゴリ「${categoryName}」を削除しますか？`)) {
+                    delete categoryMap[categoryName];
+                    updateCategorySelects();
+                    updateCategoryList();
+                    alert(`カテゴリ「${categoryName}」を削除しました。`);
+                }
+            }
+        }
+
+        function updateCategoryList() {
+            const categoryListDiv = document.getElementById('categoryList');
+            categoryListDiv.innerHTML = '';
+
+            Object.keys(categoryMap).forEach(categoryName => {
+                const count = Object.values(projectData).filter(item => item.category === categoryName).length;
+                const categoryItem = document.createElement('div');
+                categoryItem.className = 'category-item';
+                
+                const canDelete = categoryName !== '未設定';
+                
+                categoryItem.innerHTML = `
+                    <div>
+                        <span class="category-name">${categoryMap[categoryName]}</span>
+                        <span class="category-count">(${count}項目)</span>
+                    </div>
+                    <button class="delete-category-btn" ${!canDelete ? 'disabled' : ''} onclick="deleteCategory('${categoryName}')">
+                        ${canDelete ? '削除' : '削除不可'}
+                    </button>
+                `;
+                
+                categoryListDiv.appendChild(categoryItem);
+            });
+        }
+
+        // カテゴリがない項目を「未設定」に移動する関数
+        function moveUncategorizedItems() {
+            let movedCount = 0;
+            Object.keys(projectData).forEach(id => {
+                const item = projectData[id];
+                if (!item.category || item.category.trim() === '') {
+                    item.category = '未設定';
+                    movedCount++;
+                }
+            });
+            
+            if (movedCount > 0) {
+                console.log(`${movedCount}個の項目を「未設定」カテゴリに移動しました`);
+                localStorage.setItem('projectData', JSON.stringify(projectData));
+                updateCSV();
+            }
         }
 
         // 項目を削除
