@@ -1006,7 +1006,6 @@
         /* コントロールコンテナ */
         .controls-container {
             display: flex;
-            justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
             gap: 20px;
@@ -1094,38 +1093,53 @@
 
         /* CSVダウンロードボタン */
         .download-button {
-            background: #28a745;
-            color: white;
+            background: none;
             border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
+            padding: 8px;
             cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: background-color 0.2s;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin-left: 10px;
         }
 
         .download-button:hover {
-            background: #218838;
+            opacity: 0.7;
         }
 
         /* アップロードボタン */
         .upload-button {
-            background: #007bff;
-            color: white;
+            background: none;
             border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
+            padding: 8px;
             cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: background-color 0.2s;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin-left: 10px;
         }
 
         .upload-button:hover {
-            background: #0056b3;
+            opacity: 0.7;
+        }
+
+        /* カテゴリ管理ボタン */
+        .category-button {
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+        }
+
+        .category-button:hover {
+            opacity: 0.7;
         }
 
         /* カテゴリ管理 */
@@ -1865,16 +1879,16 @@
                 <div class="stat-label">✅ 完了</div>
             </div>
             <div class="stat-card">
+                <div class="stat-number" id="spPendingPages">0</div>
+                <div class="stat-label">📱 SP未対応</div>
+            </div>
+            <div class="stat-card">
                 <div class="stat-number" id="inProgressPages">0</div>
                 <div class="stat-label">🔄 進行中</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number" id="pendingPages">0</div>
                 <div class="stat-label">⏳ 未着手</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="unknownPages">0</div>
-                <div class="stat-label">❓ 不明</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number" id="waitingPages">0</div>
@@ -1894,14 +1908,14 @@
         <!-- 新規追加ボタンとフィルター -->
         <div class="controls-container">
         <button class="add-button" onclick="openAddModal()">+ 新規項目を追加</button>
-            <button class="download-button" onclick="downloadCSV()" title="リストダウンロード">
-                <img src="images/download.png" alt="ダウンロード" style="width: 20px; height: 20px;">
-            </button>
-            <button class="upload-button" onclick="openUploadModal()" title="リストアップロード">
-                <img src="images/upload.png" alt="アップロード" style="width: 20px; height: 20px;">
-            </button>
+              <button class="download-button" onclick="downloadCSV()" title="リストダウンロード">
+                  <img src="images/ダウンロード.svg" alt="ダウンロード" style="width: 20px; height: 20px;">
+              </button>
+              <button class="upload-button" onclick="openUploadModal()" title="リストアップロード">
+                  <img src="images/アップロード.svg" alt="アップロード" style="width: 20px; height: 20px;">
+              </button>
             <button class="category-button" onclick="openCategoryModal()" title="カテゴリ管理">
-                📁 カテゴリ管理
+                <img src="images/ギアアイコン.svg" alt="カテゴリ管理" style="width: 20px; height: 20px;">
             </button>
             
             <div class="filter-container">
@@ -1987,16 +2001,6 @@
                 <div class="form-group">
                     <label for="addUrl">URL:</label>
                     <input type="text" id="addUrl" placeholder="/path/to/page.html" required>
-                </div>
-                <div class="form-group">
-                    <label for="addStatus">ステータス:</label>
-                    <select id="addStatus" required>
-                        <option value="complete">✅ 完了</option>
-                        <option value="in-progress">🔄 進行中</option>
-                        <option value="pending">⏳ 未着手</option>
-                        <option value="unknown">❓ 不明</option>
-                        <option value="waiting">⏸️ 待機中</option>
-                    </select>
                 </div>
                 <div class="form-group">
                     <label for="addPCStatus">PC版開発状況:</label>
@@ -2239,7 +2243,18 @@
                 });
         }
 
-        // データ管理（スプレッドシートから読み込み）
+        // 既存データのstatusをpcStatus/spStatusに変換
+        function convertStatusToPcSp() {
+            Object.keys(projectData).forEach(key => {
+                const item = projectData[key];
+                if (item.status && !item.pcStatus) {
+                    item.pcStatus = item.status;
+                    item.spStatus = item.status === 'complete' ? 'pending' : item.status;
+                    delete item.status;
+                }
+            });
+            console.log('データ変換完了:', Object.keys(projectData).length, '項目を変換');
+        }
         let projectData = {
             'item_1': {
                 category: 'メイン',
@@ -2571,6 +2586,9 @@
 
         // ページ読み込み時の初期化
         window.addEventListener('load', function() {
+            // 既存データのstatusをpcStatus/spStatusに変換
+            convertStatusToPcSp();
+            
             // FirebaseからCSVファイルを読み込み
             loadCSVFromFirebase().then(csvContent => {
                 if (csvContent) {
@@ -2700,7 +2718,8 @@
                 category: selectedCategory,
                 pageName: document.getElementById('addPageName').value,
                 url: document.getElementById('addUrl').value,
-                status: document.getElementById('addStatus').value,
+                pcStatus: document.getElementById('addPCStatus').value,
+                spStatus: document.getElementById('addSPStatus').value,
                 assignee: document.getElementById('addAssignee').value,
                 function: document.getElementById('addFunction').value,
                 lastUpdated: document.getElementById('addLastUpdated').value
@@ -2755,7 +2774,8 @@
                 category: document.getElementById('editCategory').value,
                 pageName: document.getElementById('editPageName').value,
                 url: document.getElementById('editUrl').value,
-                status: document.getElementById('editStatus').value,
+                pcStatus: document.getElementById('editPCStatus').value,
+                spStatus: document.getElementById('editSPStatus').value,
                 assignee: document.getElementById('editAssignee').value,
                 function: document.getElementById('editFunction').value,
                 lastUpdated: document.getElementById('editLastUpdated').value
@@ -2872,14 +2892,42 @@
                 const header = document.createElement('div');
                 header.className = 'category-header';
                 
-                // カテゴリの統計情報を計算
+                // カテゴリの統計情報を計算（PC/SPステータス別）
                 const categoryItems = categories[category];
                 const totalCount = categoryItems.length;
-                const completedCount = categoryItems.filter(item => item.status === 'complete').length;
-                const inProgressCount = categoryItems.filter(item => item.status === 'in-progress').length;
-                const pendingCount = categoryItems.filter(item => item.status === 'pending').length;
-                const unknownCount = categoryItems.filter(item => item.status === 'unknown').length;
-                const waitingCount = categoryItems.filter(item => item.status === 'waiting').length;
+                
+                // PC完了数を計算
+                const completedCount = categoryItems.filter(item => {
+                    const pcStatus = item.pcStatus || item.status;
+                    return pcStatus === 'complete';
+                }).length;
+                
+                // SP未対応数を計算
+                const spPendingCount = categoryItems.filter(item => {
+                    const spStatus = item.spStatus || item.status;
+                    return spStatus !== 'complete';
+                }).length;
+                
+                // 進行中数を計算
+                const inProgressCount = categoryItems.filter(item => {
+                    const pcStatus = item.pcStatus || item.status;
+                    const spStatus = item.spStatus || item.status;
+                    return pcStatus === 'in-progress' || spStatus === 'in-progress';
+                }).length;
+                
+                // 未着手数を計算
+                const pendingCount = categoryItems.filter(item => {
+                    const pcStatus = item.pcStatus || item.status;
+                    const spStatus = item.spStatus || item.status;
+                    return pcStatus === 'pending' && spStatus === 'pending';
+                }).length;
+                
+                // 待機中数を計算
+                const waitingCount = categoryItems.filter(item => {
+                    const pcStatus = item.pcStatus || item.status;
+                    const spStatus = item.spStatus || item.status;
+                    return pcStatus === 'waiting' || spStatus === 'waiting';
+                }).length;
                 
                 header.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
@@ -2889,7 +2937,7 @@
                                 総数: ${totalCount}
                             </span>
                             <span style="font-size: 0.7rem; font-weight: normal;">
-                                ✅ 完了: ${completedCount} | 🔄 進行中: ${inProgressCount} | ⏳ 未着手: ${pendingCount} | ❓ 不明: ${unknownCount} | ⏸️ 待機中: ${waitingCount}
+                                ✅ 完了: ${completedCount} | 📱 SP未対応: ${spPendingCount} | 🔄 進行中: ${inProgressCount} | ⏳ 未着手: ${pendingCount} | ⏸️ 待機中: ${waitingCount}
                         </span>
                         </div>
                     </div>
@@ -2990,27 +3038,84 @@
             return assigneeMap[assignee] || '未設定';
         }
 
+        // テーブルから直接統計を計算
+        function calculateStatsFromTable() {
+            console.log('テーブルから統計計算開始');
+            
+            const pcCells = document.querySelectorAll('.table td:nth-child(3)'); // PC列
+            const spCells = document.querySelectorAll('.table td:nth-child(4)'); // SP列
+            
+            let completedPages = 0;
+            let spPendingPages = 0;
+            let inProgressPages = 0;
+            let pendingPages = 0;
+            let waitingPages = 0;
+            
+            pcCells.forEach((pcCell, index) => {
+                const pcText = pcCell.textContent.trim();
+                const spText = spCells[index] ? spCells[index].textContent.trim() : '';
+                
+                console.log(`行${index + 1}: PC="${pcText}", SP="${spText}"`);
+                
+                // PC完了をカウント
+                if (pcText.includes('完了')) {
+                    completedPages++;
+                }
+                
+                // SP未完了をカウント
+                if (!spText.includes('完了')) {
+                    spPendingPages++;
+                }
+                
+                // 進行中をカウント
+                if (pcText.includes('進行中') || spText.includes('進行中')) {
+                    inProgressPages++;
+                }
+                
+                // 未着手をカウント
+                if (pcText.includes('未着手') && spText.includes('未着手')) {
+                    pendingPages++;
+                }
+                
+                // 待機中をカウント
+                if (pcText.includes('待機中') || spText.includes('待機中')) {
+                    waitingPages++;
+                }
+            });
+            
+            const totalPages = pcCells.length;
+            const completionRate = totalPages > 0 ? Math.round((completedPages / totalPages) * 100) : 0;
+            
+            console.log('テーブル統計結果:', { 
+                totalPages, completedPages, spPendingPages, 
+                inProgressPages, pendingPages, waitingPages, completionRate 
+            });
+            
+            return {
+                totalPages,
+                completedPages,
+                spPendingPages,
+                inProgressPages,
+                pendingPages,
+                waitingPages,
+                completionRate
+            };
+        }
+
         // 統計情報を更新
         function updateStats() {
             console.log('統計情報更新開始');
-            const totalPages = Object.keys(projectData).length;
-            const completedPages = Object.values(projectData).filter(item => item.status === 'complete').length;
-            const inProgressPages = Object.values(projectData).filter(item => item.status === 'in-progress').length;
-            const pendingPages = Object.values(projectData).filter(item => item.status === 'pending').length;
-            const unknownPages = Object.values(projectData).filter(item => item.status === 'unknown').length;
-            const waitingPages = Object.values(projectData).filter(item => item.status === 'waiting').length;
-            const categories = [...new Set(Object.values(projectData).map(item => item.category))].length;
-            const completionRate = totalPages > 0 ? Math.round((completedPages / totalPages) * 100) : 0;
-
-            console.log('統計情報:', { totalPages, completedPages, inProgressPages, pendingPages, unknownPages, waitingPages, categories, completionRate });
-
-            document.getElementById('completedPages').textContent = completedPages;
-            document.getElementById('inProgressPages').textContent = inProgressPages;
-            document.getElementById('pendingPages').textContent = pendingPages;
-            document.getElementById('unknownPages').textContent = unknownPages;
-            document.getElementById('waitingPages').textContent = waitingPages;
-            document.getElementById('progressFill').style.width = `${completionRate}%`;
-            document.getElementById('progressText').textContent = `${completionRate}% (${completedPages}/${totalPages} ページ完了)`;
+            
+            // テーブルから直接統計を計算
+            const stats = calculateStatsFromTable();
+            
+            document.getElementById('completedPages').textContent = stats.completedPages;
+            document.getElementById('spPendingPages').textContent = stats.spPendingPages;
+            document.getElementById('inProgressPages').textContent = stats.inProgressPages;
+            document.getElementById('pendingPages').textContent = stats.pendingPages;
+            document.getElementById('waitingPages').textContent = stats.waitingPages;
+            document.getElementById('progressFill').style.width = `${stats.completionRate}%`;
+            document.getElementById('progressText').textContent = `${stats.completionRate}% (${stats.completedPages}/${stats.totalPages} ページ完了)`;
             
             console.log('統計情報更新完了');
         }
@@ -3644,7 +3749,8 @@
             document.getElementById('editCategory').value = data.category;
             document.getElementById('editPageName').value = data.pageName;
             document.getElementById('editUrl').value = data.url;
-            document.getElementById('editStatus').value = data.status;
+            document.getElementById('editPCStatus').value = data.pcStatus || 'pending';
+            document.getElementById('editSPStatus').value = data.spStatus || 'pending';
             document.getElementById('editAssignee').value = data.assignee || '';
             document.getElementById('editFunction').value = data.function;
             document.getElementById('editLastUpdated').value = data.lastUpdated;
