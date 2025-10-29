@@ -2397,11 +2397,57 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
             await saveData();
         }
 
+        // CSVファイルに保存する関数
+        async function saveToCSV() {
+            console.log('📄 CSVファイルに保存開始');
+            try {
+                const csvData = convertProjectDataToCSV(projectData);
+                const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'project-data-updated.csv');
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                console.log('✅ CSVファイルに保存完了');
+            } catch (error) {
+                console.error('❌ CSVファイル保存失敗:', error);
+            }
+        }
+
+        // プロジェクトデータをCSV形式に変換
+        function convertProjectDataToCSV(data) {
+            const headers = ['ID', 'カテゴリ', 'ページ名', 'URL', 'PC版開発状況', 'SP版開発状況', '業務担当', '機能', '最終更新日'];
+            const rows = [headers.join(',')];
+            
+            Object.values(data).forEach(item => {
+                if (item.id && item.pageName) {
+                    const row = [
+                        item.id,
+                        item.category || '',
+                        item.pageName || '',
+                        item.url || '',
+                        item.pcStatus || '',
+                        item.spStatus || '',
+                        item.assignee || '',
+                        item.function || '',
+                        item.lastUpdated || ''
+                    ];
+                    rows.push(row.join(','));
+                }
+            });
+            
+            return rows.join('\n');
+        }
+
         // 強制保存関数（更新ボタン用）
         async function forceSaveData() {
             console.log('💾 強制保存開始');
             try {
                 await saveData();
+                await saveToCSV(); // CSVファイルにも保存
                 alert('✅ データを保存しました！');
                 console.log('✅ 強制保存完了');
             } catch (error) {
@@ -2924,13 +2970,20 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
                 console.log('✅ 削除確認済み');
                 delete projectData[id];
                 console.log('📊 プロジェクトデータから削除後:', projectData);
+                console.log('🔍 削除されたIDが存在するか:', projectData.hasOwnProperty(id));
+                console.log('📈 現在のデータ数:', Object.keys(projectData).length);
                 
                 // 削除後は即座に保存
                 try {
                     await saveData();
+                    await saveToCSV(); // CSVファイルにも保存
                     console.log('✅ 削除データを保存しました');
                     updateDisplay();
                     console.log('✅ 表示更新完了');
+                    
+                    // 保存後の確認
+                    console.log('🔍 保存後のデータ数:', Object.keys(projectData).length);
+                    console.log('🔍 削除されたIDがまだ存在するか:', projectData.hasOwnProperty(id));
                 } catch (error) {
                     console.error('❌ 削除データ保存失敗:', error);
                     updateDisplay();
