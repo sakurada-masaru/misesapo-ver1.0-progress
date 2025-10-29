@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Market - ミセサポ進捗管理</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -1000,6 +1005,38 @@
     </div>
 
     <script>
+        // Firebase設定
+        const firebaseConfig = {
+            apiKey: "AIzaSyDi2_U6INLm7sb-02GsdWzDl2qaFBe8US4",
+            authDomain: "misesapo-progress.firebaseapp.com",
+            databaseURL: "https://misesapo-progress-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "misesapo-progress",
+            storageBucket: "misesapo-progress.firebasestorage.app",
+            messagingSenderId: "926808186549",
+            appId: "1:926808186549:web:91ce8534877c4ecf2e28fc",
+            measurementId: "G-5JS29JLL13"
+        };
+
+        // Firebase初期化
+        let firebaseInitialized = false;
+        let db;
+        
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                firebaseInitialized = true;
+                console.log('Firebase初期化成功');
+            } else {
+                db = firebase.firestore();
+                firebaseInitialized = true;
+                console.log('Firebase既に初期化済み');
+            }
+        } catch (error) {
+            console.error('Firebase初期化エラー:', error);
+            firebaseInitialized = false;
+        }
+
         // タスクマーケット専用のデータ管理
         let taskMarketData = {
             availableTasks: [], // 受注可能なタスク
@@ -1019,8 +1056,8 @@
         // ページ読み込み時の初期化
         document.addEventListener('DOMContentLoaded', function() {
             console.log('タスクマーケットページ読み込み完了');
+            loadTaskData();
             setupEventListeners();
-            updateDisplay();
         });
 
         // イベントリスナーの設定
@@ -1237,8 +1274,81 @@
             return categoryMap[category] || null;
         }
 
+        // データ読み込み
+        async function loadTaskData() {
+            console.log('📊 タスクデータ読み込み開始');
+            
+            // 1) Firestore 最優先
+            if (firebaseInitialized) {
+                try {
+                    const doc = await db.collection('taskMarketData').doc('main').get();
+                    if (doc.exists) {
+                        const data = doc.data();
+                        taskMarketData = data.taskMarketData || taskMarketData;
+                        newTasks = data.newTasks || [];
+                        console.log('Firebaseからタスクデータを読み込みました:', taskMarketData);
+                        updateDisplay();
+                        return;
+                    }
+                } catch (e) {
+                    console.warn('Firebase読み込みに失敗:', e);
+                }
+            }
+
+            // 2) localStorage フォールバック
+            try {
+                const localData = localStorage.getItem('taskMarketData');
+                if (localData) {
+                    const data = JSON.parse(localData);
+                    taskMarketData = data.taskMarketData || taskMarketData;
+                    newTasks = data.newTasks || [];
+                    console.log('localStorageからタスクデータを読み込みました:', taskMarketData);
+                    updateDisplay();
+                    return;
+                }
+            } catch (e) {
+                console.warn('localStorage読み込みに失敗:', e);
+            }
+
+            // 3) 初期表示
+            updateDisplay();
+        }
+
+        // データ保存
+        async function saveTaskData() {
+            console.log('💾 タスクデータ保存開始');
+            
+            const dataToSave = {
+                taskMarketData: taskMarketData,
+                newTasks: newTasks,
+                _updatedAt: Date.now()
+            };
+            
+            try {
+                if (firebaseInitialized && db) {
+                    console.log('🔥 Firebaseにタスクデータを保存中...');
+                    await db.collection('taskMarketData').doc('main').set(dataToSave, { merge: true });
+                    console.log('✅ タスクデータをFirebaseに保存しました');
+                } else {
+                    console.warn('⚠️ Firebase not initialized, saving to localStorage only');
+                    localStorage.setItem('taskMarketData', JSON.stringify(dataToSave));
+                    console.log('✅ localStorageにタスクデータを保存しました');
+                }
+            } catch (error) {
+                console.error('❌ タスクデータ保存エラー:', error);
+                // フォールバック: localStorageに保存
+                try {
+                    localStorage.setItem('taskMarketData', JSON.stringify(dataToSave));
+                    console.log('✅ フォールバック: localStorageにタスクデータを保存しました');
+                } catch (fallbackError) {
+                    console.error('❌ フォールバック保存も失敗:', fallbackError);
+                }
+            }
+        }
+
         // 新規タスクを追加
-        function addNewTask() {
+        async function addNewTask() {
+            console.log('➕ 新規タスク追加開始');
             const title = document.getElementById('taskTitle').value;
             const category = document.getElementById('taskCategory').value;
             const description = document.getElementById('taskDescription').value;
@@ -1259,6 +1369,8 @@
                 createdAt: new Date().toISOString().split('T')[0]
             };
             
+            console.log('📝 新しいタスク:', newTask);
+            
             // カテゴリに基づいて自動で担当者に割り当て
             const assigneeId = getAssigneeIdFromCategory(category);
             if (assigneeId) {
@@ -1278,12 +1390,19 @@
                 taskMarketData.availableTasks.push(newTask);
             }
             
-            updateDisplay();
-            
-            // フォームをリセット
-            document.getElementById('newTaskForm').reset();
-            
-            console.log('新しいタスクを追加:', newTask);
+            try {
+                await saveTaskData();
+                console.log('✅ タスクデータ保存完了');
+                updateDisplay();
+                
+                // フォームをリセット
+                document.getElementById('newTaskForm').reset();
+                
+                console.log('✅ 新しいタスクを追加しました:', newTask);
+            } catch (error) {
+                console.error('❌ タスク追加失敗:', error);
+                alert('タスクの保存に失敗しました。コンソールを確認してください。');
+            }
         }
 
         // 表示を更新
@@ -1351,11 +1470,18 @@
         }
 
         // 新規タスクを削除
-        function deleteNewTask(taskId) {
+        async function deleteNewTask(taskId) {
             if (confirm('このタスクを削除しますか？')) {
                 newTasks = newTasks.filter(t => t.id !== taskId);
                 taskMarketData.availableTasks = taskMarketData.availableTasks.filter(t => t.id !== taskId);
-                updateDisplay();
+                
+                try {
+                    await saveTaskData();
+                    updateDisplay();
+                    console.log('✅ タスクを削除しました:', taskId);
+                } catch (error) {
+                    console.error('❌ タスク削除失敗:', error);
+                }
             }
         }
 
@@ -1435,7 +1561,7 @@
         }
 
         // タスクを完了
-        function completeTask(taskId) {
+        async function completeTask(taskId) {
             if (confirm('このタスクを完了としてマークしますか？')) {
                 // 全担当者から該当タスクを検索
                 let completedTask = null;
@@ -1454,13 +1580,18 @@
                     taskMarketData.completedTasks.push(completedTask);
                 }
                 
-                updateDisplay();
-                console.log('タスクを完了:', taskId);
+                try {
+                    await saveTaskData();
+                    updateDisplay();
+                    console.log('✅ タスクを完了しました:', taskId);
+                } catch (error) {
+                    console.error('❌ タスク完了処理失敗:', error);
+                }
             }
         }
 
         // 割り当て済みタスクを削除
-        function removeAssignedTask(taskId) {
+        async function removeAssignedTask(taskId) {
             if (confirm('このタスクを削除しますか？')) {
                 // 全担当者から該当タスクを検索して削除
                 Object.keys(taskMarketData.assignedTasks).forEach(assigneeKey => {
@@ -1470,8 +1601,13 @@
                     }
                 });
                 
-                updateDisplay();
-                console.log('割り当て済みタスクを削除:', taskId);
+                try {
+                    await saveTaskData();
+                    updateDisplay();
+                    console.log('✅ 割り当て済みタスクを削除しました:', taskId);
+                } catch (error) {
+                    console.error('❌ タスク削除失敗:', error);
+                }
             }
         }
 
@@ -1526,7 +1662,7 @@
         }
 
         // タスクを担当者に割り当て
-        function assignTaskToAssignee(taskId, assignee) {
+        async function assignTaskToAssignee(taskId, assignee) {
             const task = newTasks.find(t => t.id === taskId);
             if (!task) return;
             
@@ -1537,9 +1673,13 @@
             newTasks = newTasks.filter(t => t.id !== taskId);
             taskMarketData.availableTasks = taskMarketData.availableTasks.filter(t => t.id !== taskId);
             
-            updateDisplay();
-            
-            console.log('タスクを割り当て:', task.title, '→', assignee);
+            try {
+                await saveTaskData();
+                updateDisplay();
+                console.log('✅ タスクを割り当てました:', task.title, '→', assignee);
+            } catch (error) {
+                console.error('❌ タスク割り当て失敗:', error);
+            }
         }
 
         // 完了タスクの表示を更新
@@ -1604,11 +1744,17 @@
         }
 
         // 完了タスクを削除
-        function deleteCompletedTask(taskId) {
+        async function deleteCompletedTask(taskId) {
             if (confirm('この完了タスクを削除しますか？')) {
                 taskMarketData.completedTasks = taskMarketData.completedTasks.filter(t => t.id !== taskId);
-                updateCompletedTasksDisplay();
-                console.log('完了タスクを削除:', taskId);
+                
+                try {
+                    await saveTaskData();
+                    updateCompletedTasksDisplay();
+                    console.log('✅ 完了タスクを削除しました:', taskId);
+                } catch (error) {
+                    console.error('❌ 完了タスク削除失敗:', error);
+                }
             }
         }
     </script>

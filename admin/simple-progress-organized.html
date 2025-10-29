@@ -2161,7 +2161,7 @@
         document.addEventListener('DOMContentLoaded', async function() {
             console.log('ページ読み込み完了');
             await loadData();
-            subscribeRealtime();
+            // subscribeRealtime(); // リアルタイム購読を完全に無効化
             setupEventListeners();
             
             // エラー監視
@@ -2249,10 +2249,10 @@
             updateDisplay();
         }
 
-        // Firestoreリアルタイム購読（一時的に無効化）
+        // Firestoreリアルタイム購読（完全に無効化）
         function subscribeRealtime() {
-            console.log('⚠️ リアルタイム購読を一時的に無効化しています（データ上書き問題のため）');
-            // リアルタイム購読を無効化（データ上書き問題のため）
+            console.log('⚠️ リアルタイム購読を完全に無効化しています（データ上書き問題のため）');
+            // リアルタイム購読を完全に無効化（データ上書き問題のため）
             return;
             
             if (!firebaseInitialized || !db) return;
