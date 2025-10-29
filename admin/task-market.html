@@ -1508,24 +1508,35 @@
                 const countElement = document.getElementById(assignee + '-count');
                 const tasksContainer = document.getElementById(assignee + '-tasks');
                 
+                // 要素の存在チェック
+                if (!countElement) {
+                    console.warn(`要素が見つかりません: ${assignee}-count`);
+                    return;
+                }
+                
                 const tasks = taskMarketData.assignedTasks[assignee];
                 countElement.textContent = tasks.length;
                 
-                tasksContainer.innerHTML = '';
-                
-                if (tasks.length === 0) {
-                    tasksContainer.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-state-icon">📋</div>
-                            <h4>タスクがありません</h4>
-                            <p>ドラッグ&ドロップでタスクを割り当ててください</p>
-                        </div>
-                    `;
+                // tasksContainerが存在する場合のみ処理
+                if (tasksContainer) {
+                    tasksContainer.innerHTML = '';
+                    
+                    if (tasks.length === 0) {
+                        tasksContainer.innerHTML = `
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📋</div>
+                                <h4>タスクがありません</h4>
+                                <p>ドラッグ&ドロップでタスクを割り当ててください</p>
+                            </div>
+                        `;
+                    } else {
+                        tasks.forEach(task => {
+                            const taskCard = createAssignedTaskCard(task);
+                            tasksContainer.appendChild(taskCard);
+                        });
+                    }
                 } else {
-                    tasks.forEach(task => {
-                        const taskCard = createAssignedTaskCard(task);
-                        tasksContainer.appendChild(taskCard);
-                    });
+                    console.warn(`要素が見つかりません: ${assignee}-tasks`);
                 }
             });
         }

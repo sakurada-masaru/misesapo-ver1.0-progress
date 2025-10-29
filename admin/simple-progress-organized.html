@@ -2586,7 +2586,7 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
                                     <td data-label="最終更新日">${item.lastUpdated || ''}</td>
                                     <td data-label="操作">
                                         <button class="btn btn-edit" data-id="${item.id}" onclick="editItem('${item.id}')">編集</button>
-                                        <button class="btn btn-delete" data-id="${item.id}" onclick="deleteItem('${item.id}')">削除</button>
+                                        <button class="btn btn-delete" data-id="${item.id}" onclick="console.log('削除ボタンクリック:', '${item.id}'); deleteItem('${item.id}')">削除</button>
                                     </td>
                                 </tr>
                             `).join('')}
@@ -2892,7 +2892,10 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
         // 項目削除
         async function deleteItem(id) {
             console.log('🗑️ deleteItem() 開始, ID:', id);
-            if (confirm('この項目を削除しますか？')) {
+            console.log('削除対象のID:', id);
+            console.log('削除前のプロジェクトデータ:', projectData);
+            
+            if (confirm(`⚠️ 警告: この項目を完全に削除しますか？\n\n項目ID: ${id}\n\n削除後は復元できません。\n\n「OK」を押すと削除されます。`)) {
                 console.log('✅ 削除確認済み');
                 delete projectData[id];
                 console.log('📊 プロジェクトデータから削除後:', projectData);
