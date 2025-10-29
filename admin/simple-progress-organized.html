@@ -2511,6 +2511,8 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
             console.log('Firebase初期化状態:', firebaseInitialized);
             console.log('DB接続状態:', !!db);
             console.log('保存するデータ:', projectData);
+            console.log('📈 保存するデータの項目数:', Object.keys(projectData).length);
+            console.log('🔍 保存するデータにID 36が存在するか:', projectData.hasOwnProperty('36'));
             
             try {
                 if (firebaseInitialized && db) {
@@ -2523,8 +2525,24 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
                         try {
                             const payload = Object.assign({}, projectData, { _updatedAt: Date.now() });
                             console.log('Firebase送信データ:', payload);
-                            await db.collection('projectData').doc('main').set(payload, { merge: true });
+                            console.log('📈 Firebase送信データの項目数:', Object.keys(payload).length);
+                            console.log('🔍 Firebase送信データにID 36が存在するか:', payload.hasOwnProperty('36'));
+                            
+                            await db.collection('projectData').doc('main').set(payload, { merge: false });
                             console.log('✅ データをFirebaseに保存しました');
+                            
+                            // 保存直後にFirebaseから読み込んで確認
+                            try {
+                                const doc = await db.collection('projectData').doc('main').get();
+                                if (doc.exists) {
+                                    const savedData = doc.data();
+                                    console.log('🔄 保存直後のFirebase確認:', savedData);
+                                    console.log('📈 保存直後のFirebaseデータ数:', Object.keys(savedData).length);
+                                    console.log('🔍 保存直後のFirebaseにID 36が存在するか:', savedData.hasOwnProperty('36'));
+                                }
+                            } catch (e) {
+                                console.warn('保存直後のFirebase確認失敗:', e);
+                            }
                             return; // 成功したら終了
                         } catch (firebaseError) {
                             retryCount++;
