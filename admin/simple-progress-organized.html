@@ -2920,14 +2920,22 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
             console.log('削除対象のID:', id);
             console.log('削除前のプロジェクトデータ:', projectData);
             
-            if (confirm(`⚠️ 警告: この項目を完全に削除しますか？\n\n項目ID: ${id}\n\n削除後は復元できません。\n\n削除後は「更新ボタン」を押してください。`)) {
+            if (confirm(`⚠️ 警告: この項目を完全に削除しますか？\n\n項目ID: ${id}\n\n削除後は復元できません。\n\n「OK」を押すと削除されます。`)) {
                 console.log('✅ 削除確認済み');
                 delete projectData[id];
                 console.log('📊 プロジェクトデータから削除後:', projectData);
                 
-                // 削除後は自動保存せず、更新ボタンで手動保存
-                updateDisplay();
-                console.log('✅ 表示更新完了（更新ボタンで保存してください）');
+                // 削除後は即座に保存
+                try {
+                    await saveData();
+                    console.log('✅ 削除データを保存しました');
+                    updateDisplay();
+                    console.log('✅ 表示更新完了');
+                } catch (error) {
+                    console.error('❌ 削除データ保存失敗:', error);
+                    updateDisplay();
+                    console.log('⚠️ 表示更新完了（更新ボタンで保存してください）');
+                }
             } else {
                 console.log('❌ 削除キャンセル');
             }
