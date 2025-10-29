@@ -2528,11 +2528,34 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
                             console.log('📈 Firebase送信データの項目数:', Object.keys(payload).length);
                             console.log('🔍 Firebase送信データにID 36が存在するか:', payload.hasOwnProperty('36'));
                             
-                            // FieldValue.delete()を使用してID 36を確実に削除
+                            // 削除されたIDを動的に削除
                             const FieldValue = firebase.firestore.FieldValue;
-                            await db.collection('projectData').doc('main').update({
-                                '36': FieldValue.delete()
-                            });
+                            
+                            // 現在のFirebaseデータを取得
+                            const currentDoc = await db.collection('projectData').doc('main').get();
+                            if (currentDoc.exists) {
+                                const currentData = currentDoc.data();
+                                
+                                // 削除されたIDを特定
+                                const deletedIds = [];
+                                Object.keys(currentData).forEach(key => {
+                                    if (key !== '_updatedAt' && !payload.hasOwnProperty(key)) {
+                                        deletedIds.push(key);
+                                    }
+                                });
+                                
+                                console.log('🗑️ 削除対象のID:', deletedIds);
+                                
+                                // 削除されたIDをFirebaseから削除
+                                if (deletedIds.length > 0) {
+                                    const deleteUpdate = {};
+                                    deletedIds.forEach(id => {
+                                        deleteUpdate[id] = FieldValue.delete();
+                                    });
+                                    await db.collection('projectData').doc('main').update(deleteUpdate);
+                                    console.log('✅ Firebaseから削除されたID:', deletedIds);
+                                }
+                            }
                             
                             // その後、新しいデータで更新
                             await db.collection('projectData').doc('main').set(payload, { merge: true });
