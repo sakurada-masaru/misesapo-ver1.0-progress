@@ -2528,9 +2528,14 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
                             console.log('📈 Firebase送信データの項目数:', Object.keys(payload).length);
                             console.log('🔍 Firebase送信データにID 36が存在するか:', payload.hasOwnProperty('36'));
                             
-                            // 既存のドキュメントを完全に削除してから新しく作成
-                            await db.collection('projectData').doc('main').delete();
-                            await db.collection('projectData').doc('main').set(payload);
+                            // FieldValue.delete()を使用してID 36を確実に削除
+                            const FieldValue = firebase.firestore.FieldValue;
+                            await db.collection('projectData').doc('main').update({
+                                '36': FieldValue.delete()
+                            });
+                            
+                            // その後、新しいデータで更新
+                            await db.collection('projectData').doc('main').set(payload, { merge: true });
                             console.log('✅ データをFirebaseに保存しました');
                             
                             // 保存直後にFirebaseから読み込んで確認
