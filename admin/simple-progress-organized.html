@@ -2491,7 +2491,6 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
             console.log('💾 強制保存開始');
             try {
                 await saveData();
-                await saveToCSV(); // CSVファイルにも保存
                 alert('✅ データを保存しました！');
                 console.log('✅ 強制保存完了');
             } catch (error) {
@@ -3020,7 +3019,6 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
                 // 削除後は即座に保存
                 try {
                     await saveData();
-                    await saveToCSV(); // CSVファイルにも保存
                     console.log('✅ 削除データを保存しました');
                     updateDisplay();
                     console.log('✅ 表示更新完了');
