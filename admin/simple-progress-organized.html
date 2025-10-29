@@ -485,6 +485,13 @@
             gap: var(--spacing-md);
         }
 
+        .action-buttons-row {
+            display: flex;
+            gap: var(--spacing-md);
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
         .add-button {
             background: var(--color-primary);
             color: white;
@@ -1750,7 +1757,12 @@
 
             <!-- 新規追加ボタンとフィルター -->
             <div class="controls-container">
-                <button class="add-button" onclick="openAddModal()">新規項目を追加</button>
+                <div class="action-buttons-row">
+                    <button class="add-button" onclick="openAddModal()">新規項目を追加</button>
+                    <button class="btn btn-save" onclick="forceSaveData()" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500;">
+                        更新
+                    </button>
+                </div>
                 
                 <div class="filters-row">
                     <div class="filter-group">
@@ -2385,6 +2397,19 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
             await saveData();
         }
 
+        // 強制保存関数（更新ボタン用）
+        async function forceSaveData() {
+            console.log('💾 強制保存開始');
+            try {
+                await saveData();
+                alert('✅ データを保存しました！');
+                console.log('✅ 強制保存完了');
+            } catch (error) {
+                console.error('❌ 強制保存失敗:', error);
+                alert('❌ 保存に失敗しました。コンソールを確認してください。');
+            }
+        }
+
         // データ保存
         async function saveData() {
             console.log('💾 saveData() 開始');
@@ -2895,20 +2920,14 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
             console.log('削除対象のID:', id);
             console.log('削除前のプロジェクトデータ:', projectData);
             
-            if (confirm(`⚠️ 警告: この項目を完全に削除しますか？\n\n項目ID: ${id}\n\n削除後は復元できません。\n\n「OK」を押すと削除されます。`)) {
+            if (confirm(`⚠️ 警告: この項目を完全に削除しますか？\n\n項目ID: ${id}\n\n削除後は復元できません。\n\n削除後は「更新ボタン」を押してください。`)) {
                 console.log('✅ 削除確認済み');
                 delete projectData[id];
                 console.log('📊 プロジェクトデータから削除後:', projectData);
                 
-                try {
-                    await saveData();
-                    console.log('✅ データ保存完了');
-                    updateDisplay();
-                    console.log('✅ 表示更新完了');
-                } catch (error) {
-                    console.error('❌ 削除処理失敗:', error);
-                    alert('削除処理に失敗しました。コンソールを確認してください。');
-                }
+                // 削除後は自動保存せず、更新ボタンで手動保存
+                updateDisplay();
+                console.log('✅ 表示更新完了（更新ボタンで保存してください）');
             } else {
                 console.log('❌ 削除キャンセル');
             }
