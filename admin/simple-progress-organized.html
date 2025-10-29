@@ -2249,8 +2249,12 @@
             updateDisplay();
         }
 
-        // Firestoreリアルタイム購読
+        // Firestoreリアルタイム購読（一時的に無効化）
         function subscribeRealtime() {
+            console.log('⚠️ リアルタイム購読を一時的に無効化しています（データ上書き問題のため）');
+            // リアルタイム購読を無効化（データ上書き問題のため）
+            return;
+            
             if (!firebaseInitialized || !db) return;
             try {
                 window._unsubscribeProject = db.collection('projectData').doc('main').onSnapshot((doc) => {
@@ -2383,8 +2387,14 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
 
         // データ保存
         async function saveData() {
+            console.log('💾 saveData() 開始');
+            console.log('Firebase初期化状態:', firebaseInitialized);
+            console.log('DB接続状態:', !!db);
+            console.log('保存するデータ:', projectData);
+            
             try {
                 if (firebaseInitialized && db) {
+                    console.log('🔥 Firebaseに保存を試行中...');
                     // Firebase書き込み（リトライ機能付き）
                     let retryCount = 0;
                     const maxRetries = 3;
@@ -2392,12 +2402,18 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
                     while (retryCount < maxRetries) {
                         try {
                             const payload = Object.assign({}, projectData, { _updatedAt: Date.now() });
+                            console.log('Firebase送信データ:', payload);
                             await db.collection('projectData').doc('main').set(payload, { merge: true });
-                            console.log('データをFirebaseに保存しました');
+                            console.log('✅ データをFirebaseに保存しました');
                             return; // 成功したら終了
                         } catch (firebaseError) {
                             retryCount++;
-                            console.warn(`Firebase保存失敗 (試行 ${retryCount}/${maxRetries}):`, firebaseError);
+                            console.error(`❌ Firebase保存失敗 (試行 ${retryCount}/${maxRetries}):`, firebaseError);
+                            console.error('エラー詳細:', {
+                                code: firebaseError.code,
+                                message: firebaseError.message,
+                                stack: firebaseError.stack
+                            });
                             
                             if (retryCount >= maxRetries) {
                                 throw firebaseError; // 最大リトライ回数に達したらエラーを投げる
@@ -2408,8 +2424,9 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
                         }
                     }
                 } else {
-                    console.warn('Firebase not initialized, saving to localStorage only');
+                    console.warn('⚠️ Firebase not initialized, saving to localStorage only');
                     localStorage.setItem('projectData', JSON.stringify(projectData));
+                    console.log('✅ localStorageに保存しました');
                 }
             } catch (error) {
                 console.error('データ保存エラー:', error);
@@ -2816,7 +2833,7 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
 
         // 新規項目追加
         async function addNewItem() {
-            console.log('addNewItem called');
+            console.log('➕ addNewItem() 開始');
             const id = Date.now().toString();
             const newItem = {
                 id: id,
@@ -2830,14 +2847,20 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
                 lastUpdated: document.getElementById('addLastUpdated').value || new Date().toISOString().split('T')[0]
             };
 
-            console.log('New item:', newItem);
+            console.log('📝 新しいアイテム:', newItem);
             projectData[id] = newItem;
-            console.log('Project data updated:', projectData);
+            console.log('📊 プロジェクトデータ更新後:', projectData);
             
-            await saveData();
-            updateDisplay();
-            closeAddModal();
-            console.log('Item added successfully');
+            try {
+                await saveData();
+                console.log('✅ データ保存完了');
+                updateDisplay();
+                closeAddModal();
+                console.log('✅ アイテム追加成功');
+            } catch (error) {
+                console.error('❌ アイテム追加失敗:', error);
+                alert('データの保存に失敗しました。コンソールを確認してください。');
+            }
         }
 
         // 項目更新
@@ -2868,10 +2891,23 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
 
         // 項目削除
         async function deleteItem(id) {
+            console.log('🗑️ deleteItem() 開始, ID:', id);
             if (confirm('この項目を削除しますか？')) {
+                console.log('✅ 削除確認済み');
                 delete projectData[id];
-                await saveData();
-                updateDisplay();
+                console.log('📊 プロジェクトデータから削除後:', projectData);
+                
+                try {
+                    await saveData();
+                    console.log('✅ データ保存完了');
+                    updateDisplay();
+                    console.log('✅ 表示更新完了');
+                } catch (error) {
+                    console.error('❌ 削除処理失敗:', error);
+                    alert('削除処理に失敗しました。コンソールを確認してください。');
+                }
+            } else {
+                console.log('❌ 削除キャンセル');
             }
         }
 
