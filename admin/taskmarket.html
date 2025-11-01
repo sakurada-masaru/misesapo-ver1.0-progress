@@ -2272,10 +2272,15 @@
             badgeElement.setAttribute('draggable', 'true');
         }
         
-        // ゴミ箱のドロップ処理を設定
+        // ゴミ箱のドロップ処理を設定（重複登録を防ぐ）
+        let trashBinHandlerSet = false;
         function setupTrashBinDrop() {
             const trashBin = document.getElementById('trashBin');
             if (!trashBin) return;
+            
+            // 既に設定済みの場合は何もしない
+            if (trashBinHandlerSet) return;
+            trashBinHandlerSet = true;
             
             // ゴミ箱の上でのドラッグオーバー
             trashBin.addEventListener('dragover', function(e) {
@@ -2290,11 +2295,16 @@
                 this.classList.remove('drag-over');
             });
             
-            // ゴミ箱にドロップ
+            // ゴミ箱にドロップ（一度だけ処理されるようにフラグを使用）
+            let isProcessing = false;
             trashBin.addEventListener('drop', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 this.classList.remove('drag-over');
+                
+                // 既に処理中の場合は何もしない
+                if (isProcessing) return;
+                isProcessing = true;
                 
                 // タスクカードがドロップされた場合
                 const taskGrid = document.getElementById('taskGrid');
@@ -2303,6 +2313,8 @@
                     const taskIdNum = parseInt(draggedCard.dataset.taskId);
                     if (taskIdNum && !isNaN(taskIdNum)) {
                         deleteTask(taskIdNum);
+                        // 処理完了後にフラグをリセット
+                        setTimeout(() => { isProcessing = false; }, 100);
                         return;
                     }
                 }
@@ -2312,17 +2324,29 @@
                 if (badgeId) {
                     deleteBadge(parseInt(badgeId));
                 }
+                
+                // 処理完了後にフラグをリセット
+                setTimeout(() => { isProcessing = false; }, 100);
             });
         }
         
-        // タスクを削除
+        // タスクを削除（重複実行を防ぐ）
+        let isDeletingTask = false;
         function deleteTask(taskId) {
+            // 既に削除処理中の場合は何もしない
+            if (isDeletingTask) return;
+            
             const task = tasks.find(t => t.id === taskId);
             if (!task) return;
+            
+            // 削除フラグを設定
+            isDeletingTask = true;
             
             // 削除確認ダイアログ
             const taskTitle = task.title || '無題のタスク';
             if (!confirm(`「${taskTitle}」を削除してもよろしいですか？\nこの操作は取り消せません。`)) {
+                // キャンセル時もフラグをリセット
+                isDeletingTask = false;
                 return;
             }
             
@@ -2344,6 +2368,9 @@
             updateTaskGrid();
             
             console.log('タスクを削除しました:', taskId);
+            
+            // 削除処理完了後にフラグをリセット
+            isDeletingTask = false;
         }
         
         // バッジを削除
