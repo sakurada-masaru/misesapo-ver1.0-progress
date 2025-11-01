@@ -381,11 +381,45 @@
             border-radius: var(--border-radius-md);
             transition: var(--transition-normal);
             line-height: 1;
+            position: relative; /* ツールチップの基準点 */
         }
 
         .detail-edit-button:hover {
             background: var(--color-primary-hover);
             transform: scale(1.05);
+        }
+
+        .detail-edit-icon {
+            width: 20px;
+            height: 20px;
+            filter: brightness(0) invert(1); /* SVGを白に変換 */
+            transition: transform 0.3s ease;
+        }
+
+        .detail-edit-button:hover .detail-edit-icon {
+            transform: rotate(180deg); /* ホバー時に回転 */
+        }
+
+        /* 詳細パネルの修正ボタンのツールチップ */
+        .detail-edit-button .tooltip-text {
+            left: auto;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-left: 0;
+            margin-right: 8px;
+        }
+        
+        .detail-edit-button .tooltip-text::before {
+            left: 100%;
+            right: auto;
+            border-left-color: rgba(0, 0, 0, 0.85);
+            border-right-color: transparent;
+        }
+
+        .detail-edit-button:hover .tooltip-text {
+            opacity: 1;
+            visibility: visible;
         }
 
         /* 新規追加ボタン（タスクグリッド内左下に固定・円形デザイン） */
@@ -1371,10 +1405,13 @@
             <div class="detail-board-header">
                 <div>
                     <h2 class="detail-title">タスク詳細</h2>
-                    <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm); margin: 0;">タスクを選択して詳細を表示</p>
+                    <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm); margin: 0;">モード切り替えボタンで詳細の「編集」が行えます。</p>
                 </div>
                 <div style="display: flex; gap: var(--spacing-sm); align-items: center;">
-                    <button class="detail-edit-button" id="detailEditButton" onclick="toggleTaskEditMode()" style="display: none;" title="修正">✏️</button>
+                    <button class="detail-edit-button" id="detailEditButton" onclick="toggleTaskEditMode()" style="display: none;">
+                        <img src="images/リロードアイコン.svg" alt="編集" class="detail-edit-icon">
+                        <span class="tooltip-text">タスク情報の編集はこちらから</span>
+                    </button>
                     <button class="detail-board-close-button" onclick="closeDetailBoard()" title="閉じる">×</button>
                 </div>
             </div>
@@ -2856,11 +2893,9 @@
             if (isEditMode) {
                 // 編集モードから表示モードに戻す
                 renderTaskDetailView(task);
-                editButton.textContent = '✏️';
             } else {
                 // 表示モードから編集モードに切り替え
                 renderTaskDetailEdit(task);
-                editButton.textContent = '👁️';
             }
         }
 
@@ -2872,8 +2907,6 @@
             if (!task) return;
             
             renderTaskDetailView(task);
-            const editButton = document.getElementById('detailEditButton');
-            editButton.textContent = '✏️';
         }
 
         // タスク編集を保存
@@ -2899,10 +2932,6 @@
             // 詳細パネルの表示を更新
             renderTaskDetailView(task);
             
-            // 編集ボタンを元に戻す
-            const editButton = document.getElementById('detailEditButton');
-            editButton.textContent = '✏️';
-            
             console.log('タスクを更新しました:', task);
         }
 
@@ -2913,7 +2942,9 @@
             const editButton = document.getElementById('detailEditButton');
             
             // 編集モードの場合は表示モードに戻す
-            if (editButton && editButton.textContent === '👁️') {
+            const detailContent = document.getElementById('detailContent');
+            const isEditMode = detailContent && detailContent.querySelector('#taskEditForm');
+            if (isEditMode) {
                 cancelTaskEdit();
             }
             
