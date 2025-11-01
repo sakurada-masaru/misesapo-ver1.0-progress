@@ -2741,20 +2741,6 @@
         // }
 
         // メインボードの幅を動的に調整（詳細ボードはカラムではなくなったため削除）
-        function updateMainBoardWidth() {
-            const dashboard = document.querySelector('.dashboard-column');
-            const mainBoard = document.querySelector('.main-board');
-            
-            const dashboardHidden = dashboard.classList.contains('hidden');
-            
-            if (dashboardHidden) {
-                // ダッシュボード非表示 → メインボード100%
-                mainBoard.style.width = '100%';
-            } else {
-                // ダッシュボード表示 → メインボード95%（65% + 30%）
-                mainBoard.style.width = '95%';
-            }
-        }
 
         // スプラッシュスクリーンの非表示処理
         window.addEventListener('load', function() {
