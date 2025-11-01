@@ -228,11 +228,15 @@
 
         /* トグルボタン */
         .dashboard-toggle-btn {
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             padding: 0;
             background: var(--color-background);
             border: 2px solid var(--color-border);
@@ -241,11 +245,14 @@
             transition: var(--transition-normal);
             font-size: 12px;
             color: var(--color-text-primary);
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
         }
 
         .dashboard-toggle-btn:hover {
             background: var(--color-primary-light);
             border-color: var(--color-primary);
+            box-shadow: var(--shadow-md);
         }
 
         .dashboard-toggle-btn.active {
@@ -262,6 +269,55 @@
             display: inline-block;
             transition: transform 0.3s ease;
             font-size: 10px;
+        }
+
+        /* ツールチップ（吹き出し） */
+        .tooltip-text {
+            position: absolute;
+            padding: 6px 10px;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            font-size: 11px;
+            white-space: nowrap;
+            border-radius: var(--border-radius-sm);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .tooltip-text::before {
+            content: '';
+            position: absolute;
+            border: 6px solid transparent;
+        }
+        
+        /* 左側ボタン（ダッシュボードトグル・左パネル）のツールチップ */
+        .dashboard-toggle-btn .tooltip-text,
+        .slide-panel-handle .tooltip-text {
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-left: 8px;
+        }
+        
+        .dashboard-toggle-btn .tooltip-text::before,
+        .slide-panel-handle .tooltip-text::before {
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border-right-color: rgba(0, 0, 0, 0.85);
+        }
+
+        /* ツールチップ表示（ホバー時） */
+        .dashboard-toggle-btn:hover .tooltip-text,
+        .add-task-button:hover .tooltip-text,
+        .add-badge-button:hover .tooltip-text,
+        .trash-bin:hover .tooltip-text,
+        .slide-panel-handle:hover .tooltip-text {
+            opacity: 1;
+            visibility: visible;
         }
 
         /* メインコンテナ */
@@ -400,6 +456,22 @@
             line-height: 1;
             padding: 0;
         }
+        
+        .add-task-button .tooltip-text {
+            left: auto;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-left: 0;
+            margin-right: 8px;
+        }
+        
+        .add-task-button .tooltip-text::before {
+            left: 100%;
+            right: auto;
+            border-left-color: rgba(0, 0, 0, 0.85);
+            border-right-color: transparent;
+        }
 
         .add-task-button:hover {
             background: var(--color-primary-hover);
@@ -433,6 +505,22 @@
             z-index: 100;
             line-height: 1;
             padding: 0;
+        }
+        
+        .add-badge-button .tooltip-text {
+            left: auto;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-left: 0;
+            margin-right: 8px;
+        }
+        
+        .add-badge-button .tooltip-text::before {
+            left: 100%;
+            right: auto;
+            border-left-color: rgba(0, 0, 0, 0.85);
+            border-right-color: transparent;
         }
 
         .add-badge-button:hover {
@@ -469,6 +557,22 @@
             box-shadow: var(--shadow-lg);
             transition: all 0.3s ease;
             opacity: 0.8;
+        }
+        
+        .trash-bin .tooltip-text {
+            left: auto;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-left: 0;
+            margin-right: 8px;
+        }
+        
+        .trash-bin .tooltip-text::before {
+            left: 100%;
+            right: auto;
+            border-left-color: rgba(0, 0, 0, 0.85);
+            border-right-color: transparent;
         }
 
         .trash-bin:hover {
@@ -1227,10 +1331,6 @@
             <div class="logo">📋 Task Market</div>
             <button class="nav-button">ホーム</button>
             <button class="nav-button">プロジェクト</button>
-            <!-- ダッシュボード表示・非表示トグルボタン（小さな△） -->
-            <button class="dashboard-toggle-btn" id="toggleDashboard" onclick="toggleDashboard()" title="ダッシュボード表示/非表示">
-                <span class="triangle-icon">◀</span>
-            </button>
         </div>
         <div class="header-right">
             <!-- Google認証ボタン/ユーザー情報表示エリア（最右） -->
@@ -1259,20 +1359,30 @@
 
         <!-- カラム2: メインボード -->
         <div class="main-board">
+            <!-- ダッシュボード表示・非表示トグルボタン（左端に小さく表示） -->
+            <button class="dashboard-toggle-btn" id="toggleDashboard" onclick="toggleDashboard()">
+                <span class="triangle-icon">◀</span>
+                <span class="tooltip-text">ダッシュボード表示/非表示</span>
+            </button>
 
             <!-- タスクグリッド -->
             <div class="task-grid" id="taskGrid">
                 <!-- 新規追加ボタン（左下に固定） -->
-                <button class="add-task-button" onclick="toggleTaskForm()" title="新規タスクを追加">+</button>
+                <button class="add-task-button" onclick="toggleTaskForm()">
+                    +
+                    <span class="tooltip-text">新規タスクを追加</span>
+                </button>
                 
                 <!-- バッジを作るボタン（右上に固定・◯デザイン） -->
-                <button class="add-badge-button" onclick="openBadgeForm()" title="バッジを作る">
+                <button class="add-badge-button" onclick="openBadgeForm()">
                     <span class="badge-icon-text">🏷️</span>
+                    <span class="tooltip-text">バッジを作る</span>
                 </button>
                 
                 <!-- ゴミ箱（右下に固定） -->
-                <div class="trash-bin" id="trashBin" title="ドラッグ&ドロップで削除">
+                <div class="trash-bin" id="trashBin">
                     <span class="trash-icon">🗑️</span>
+                    <span class="tooltip-text">ドラッグ&ドロップで削除</span>
                 </div>
                 
                 <!-- タスクカードがここに動的に生成されます -->
@@ -1303,11 +1413,21 @@
     </div>
 
     <!-- スライドインパネルのハンドル（左端に固定、5つ） -->
-    <button class="slide-panel-handle panel-1" id="slidePanelHandle1" onclick="toggleSlidePanel(1)" title="デザイナーパネルを開く"></button>
-    <button class="slide-panel-handle panel-2" id="slidePanelHandle2" onclick="toggleSlidePanel(2)" title="フロントパネルを開く"></button>
-    <button class="slide-panel-handle panel-3" id="slidePanelHandle3" onclick="toggleSlidePanel(3)" title="バックパネルを開く"></button>
-    <button class="slide-panel-handle panel-4" id="slidePanelHandle4" onclick="toggleSlidePanel(4)" title="メディアパネルを開く"></button>
-    <button class="slide-panel-handle panel-5" id="slidePanelHandle5" onclick="toggleSlidePanel(5)" title="運営パネルを開く"></button>
+    <button class="slide-panel-handle panel-1" id="slidePanelHandle1" onclick="toggleSlidePanel(1)">
+        <span class="tooltip-text">デザイナーパネルを開く</span>
+    </button>
+    <button class="slide-panel-handle panel-2" id="slidePanelHandle2" onclick="toggleSlidePanel(2)">
+        <span class="tooltip-text">フロントパネルを開く</span>
+    </button>
+    <button class="slide-panel-handle panel-3" id="slidePanelHandle3" onclick="toggleSlidePanel(3)">
+        <span class="tooltip-text">バックパネルを開く</span>
+    </button>
+    <button class="slide-panel-handle panel-4" id="slidePanelHandle4" onclick="toggleSlidePanel(4)">
+        <span class="tooltip-text">メディアパネルを開く</span>
+    </button>
+    <button class="slide-panel-handle panel-5" id="slidePanelHandle5" onclick="toggleSlidePanel(5)">
+        <span class="tooltip-text">運営パネルを開く</span>
+    </button>
 
     <!-- モーダル：タスク入力フォーム -->
     <div class="modal-overlay" id="taskFormModal" onclick="closeModalOnOverlay(event)">
@@ -1887,8 +2007,7 @@
                     const button = document.createElement('button');
                     button.className = 'add-task-button';
                     button.onclick = toggleTaskForm;
-                    button.title = '新規タスクを追加';
-                    button.textContent = '+';
+                    button.innerHTML = '+<span class="tooltip-text">新規タスクを追加</span>';
                     taskGrid.appendChild(button);
                 }
                 
@@ -1899,8 +2018,7 @@
                     const badgeButton = document.createElement('button');
                     badgeButton.className = 'add-badge-button';
                     badgeButton.onclick = openBadgeForm;
-                    badgeButton.title = 'バッジを作る';
-                    badgeButton.innerHTML = '<span class="badge-icon-text">🏷️</span>';
+                    badgeButton.innerHTML = '<span class="badge-icon-text">🏷️</span><span class="tooltip-text">バッジを作る</span>';
                     taskGrid.appendChild(badgeButton);
                 }
                 
@@ -1911,8 +2029,7 @@
                     const trash = document.createElement('div');
                     trash.className = 'trash-bin';
                     trash.id = 'trashBin';
-                    trash.title = 'ドラッグ&ドロップで削除';
-                    trash.innerHTML = '<span class="trash-icon">🗑️</span>';
+                    trash.innerHTML = '<span class="trash-icon">🗑️</span><span class="tooltip-text">ドラッグ&ドロップで削除</span>';
                     taskGrid.appendChild(trash);
                     setupTrashBinDrop(); // ドロップ処理を再設定
                 }
@@ -1946,8 +2063,7 @@
                 const button = document.createElement('button');
                 button.className = 'add-task-button';
                 button.onclick = toggleTaskForm;
-                button.title = '新規タスクを追加';
-                button.textContent = '+';
+                button.innerHTML = '+<span class="tooltip-text">新規タスクを追加</span>';
                 taskGrid.appendChild(button);
             }
             
@@ -1958,8 +2074,7 @@
                 const badgeButton = document.createElement('button');
                 badgeButton.className = 'add-badge-button';
                 badgeButton.onclick = openBadgeForm;
-                badgeButton.title = 'バッジを作る';
-                badgeButton.innerHTML = '<span class="badge-icon-text">🏷️</span>';
+                badgeButton.innerHTML = '<span class="badge-icon-text">🏷️</span><span class="tooltip-text">バッジを作る</span>';
                 taskGrid.appendChild(badgeButton);
             }
             
@@ -1970,8 +2085,7 @@
                 const trash = document.createElement('div');
                 trash.className = 'trash-bin';
                 trash.id = 'trashBin';
-                trash.title = 'ドラッグ&ドロップで削除';
-                trash.innerHTML = '<span class="trash-icon">🗑️</span>';
+                trash.innerHTML = '<span class="trash-icon">🗑️</span><span class="tooltip-text">ドラッグ&ドロップで削除</span>';
                 taskGrid.appendChild(trash);
                 setupTrashBinDrop(); // ドロップ処理を再設定
             }
