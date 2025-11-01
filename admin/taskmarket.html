@@ -1297,28 +1297,14 @@
 
         /* レスポンシブ対応 */
         @media (max-width: 430px) {
-            .main-container {
-                flex-direction: column;
-            }
-
-
-            .main-board {
-                width: 100%;
-                height: auto;
-                flex: 1;
-            }
-
-            /* 詳細ボードはスライドインパネル（モバイルでも同じ動作） */
-            .detail-board {
-                width: 100%;
-            }
-
-            .task-grid {
-                grid-template-columns: 1fr;
-            }
-
+            /* ヘッダー */
             .header {
                 padding: 0 var(--spacing-sm);
+                height: 50px;
+            }
+
+            .header-left {
+                gap: var(--spacing-xs);
             }
 
             .logo {
@@ -1328,6 +1314,217 @@
             .nav-button {
                 padding: var(--spacing-xs) var(--spacing-sm);
                 font-size: var(--font-size-xs);
+                display: none; /* ナビゲーションボタンを非表示 */
+            }
+
+            .header-right {
+                gap: var(--spacing-xs);
+            }
+
+            /* Google認証ボタンのサイズ調整 */
+            #googleSignInContainer {
+                gap: var(--spacing-xs) !important;
+            }
+
+            #userAvatar {
+                width: 24px !important;
+                height: 24px !important;
+            }
+
+            #userName {
+                font-size: var(--font-size-xs) !important;
+            }
+
+            /* メインコンテナ */
+            .main-container {
+                flex-direction: column;
+                height: calc(100vh - 50px);
+            }
+
+            .main-board {
+                width: 100%;
+                height: auto;
+                flex: 1;
+                padding: var(--spacing-sm);
+            }
+
+            /* タスクカード */
+            .task-card {
+                width: 240px;
+                min-height: 160px;
+                padding: var(--spacing-sm);
+            }
+
+            .task-card-title {
+                font-size: var(--font-size-sm);
+            }
+
+            .task-card-description {
+                font-size: 11px;
+                -webkit-line-clamp: 3;
+            }
+
+            .task-card-priority {
+                font-size: 8px;
+            }
+
+            /* タスクカードのツールチップ（モバイルでは非表示） */
+            .task-card-tooltip {
+                display: none;
+            }
+
+            /* タスクグリッド */
+            .task-grid {
+                grid-template-columns: 1fr;
+                padding: var(--spacing-sm);
+            }
+
+            /* 固定ボタンのサイズ調整 */
+            .add-task-button,
+            .add-badge-button,
+            .trash-bin {
+                width: 48px;
+                height: 48px;
+                font-size: 24px;
+            }
+
+            .add-task-button {
+                bottom: 12px;
+                left: 12px;
+            }
+
+            .add-badge-button {
+                top: 12px;
+                right: 12px;
+            }
+
+            .badge-icon-text {
+                font-size: 20px;
+            }
+
+            .trash-bin {
+                bottom: 12px;
+                right: 12px;
+            }
+
+            .trash-icon {
+                font-size: 20px;
+            }
+
+            /* 詳細ボード */
+            .detail-board {
+                width: 100%;
+            }
+
+            .detail-board-header {
+                padding: var(--spacing-sm);
+            }
+
+            .detail-title {
+                font-size: var(--font-size-lg);
+            }
+
+            .detail-edit-button {
+                width: 36px;
+                height: 36px;
+                padding: 6px;
+            }
+
+            .detail-edit-icon {
+                width: 18px;
+                height: 18px;
+            }
+
+            .detail-board-close-button {
+                width: 36px;
+                height: 36px;
+                font-size: 24px;
+            }
+
+            /* スライドインパネル */
+            .slide-panel {
+                width: 100%;
+            }
+
+            .slide-panel-handle {
+                width: 20px;
+                height: 50px;
+                z-index: 1999;
+            }
+
+            /* モーダル */
+            .task-form {
+                width: 95%;
+                max-width: 95%;
+                max-height: 90vh;
+                padding: var(--spacing-md);
+                overflow-y: auto;
+            }
+
+            .task-form-header {
+                padding: var(--spacing-sm) var(--spacing-md);
+            }
+
+            .task-form-title {
+                font-size: var(--font-size-md);
+            }
+
+            .modal-close-button {
+                width: 32px;
+                height: 32px;
+                font-size: 24px;
+            }
+
+            /* バッジ */
+            .badge {
+                width: 48px;
+                height: 48px;
+            }
+
+            .badge-icon {
+                font-size: 18px;
+            }
+
+            .badge-name {
+                font-size: 8px;
+            }
+
+            .task-card .badge {
+                width: 40px;
+                height: 40px;
+            }
+
+            /* ツールチップ（モバイルでは簡略表示または非表示） */
+            .tooltip-text {
+                font-size: 10px;
+                padding: 4px 8px;
+            }
+
+            /* フォーム */
+            .form-group {
+                margin-bottom: var(--spacing-sm);
+            }
+
+            .form-group label {
+                font-size: var(--font-size-xs);
+            }
+
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                font-size: var(--font-size-sm);
+                padding: var(--spacing-xs) var(--spacing-sm);
+            }
+
+            .btn {
+                padding: var(--spacing-xs) var(--spacing-md);
+                font-size: var(--font-size-xs);
+            }
+
+            /* スプラッシュスクリーン */
+            .splash-logo {
+                width: 80px;
+                height: 80px;
             }
         }
     </style>
