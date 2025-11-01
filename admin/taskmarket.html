@@ -1348,24 +1348,33 @@
                 padding: var(--spacing-sm);
             }
 
-            /* タスクカード */
+            /* タスクカード（80%サイズにリサイズ） */
             .task-card {
-                width: 240px;
-                min-height: 160px;
-                padding: var(--spacing-sm);
+                width: 192px; /* 240px * 0.8 = 192px */
+                min-height: 128px; /* 160px * 0.8 = 128px */
+                padding: calc(var(--spacing-sm) * 0.8);
             }
 
             .task-card-title {
-                font-size: var(--font-size-sm);
+                font-size: calc(var(--font-size-sm) * 0.8);
             }
 
             .task-card-description {
-                font-size: 11px;
+                font-size: 9px; /* 11px * 0.8 ≈ 9px */
                 -webkit-line-clamp: 3;
             }
 
             .task-card-priority {
-                font-size: 8px;
+                font-size: 6px; /* 8px * 0.8 = 6px */
+            }
+
+            .task-card-footer {
+                font-size: calc(var(--font-size-xs) * 0.8);
+            }
+
+            .task-card-category-icon {
+                width: 16px; /* 20px * 0.8 = 16px */
+                height: 16px;
             }
 
             /* タスクカードのツールチップ（モバイルでは非表示） */
@@ -1388,9 +1397,12 @@
                 font-size: 24px;
             }
 
+            /* 新規追加ボタン：画面左下に固定 */
             .add-task-button {
+                position: fixed;
                 bottom: 12px;
                 left: 12px;
+                z-index: 1000;
             }
 
             .add-badge-button {
@@ -1402,9 +1414,12 @@
                 font-size: 20px;
             }
 
+            /* ゴミ箱ボタン：画面右下に固定 */
             .trash-bin {
+                position: fixed;
                 bottom: 12px;
                 right: 12px;
+                z-index: 1000;
             }
 
             .trash-icon {
@@ -1450,6 +1465,32 @@
                 width: 20px;
                 height: 50px;
                 z-index: 1999;
+            }
+
+            /* 左パネルのハンドルを画面上にギャップ20pxで並べて表示 */
+            .slide-panel-handle.panel-1 {
+                left: 0;
+                top: 0;
+            }
+
+            .slide-panel-handle.panel-2 {
+                left: 0;
+                top: calc(50px + 20px); /* 50px (高さ) + 20px (ギャップ) */
+            }
+
+            .slide-panel-handle.panel-3 {
+                left: 0;
+                top: calc((50px + 20px) * 2);
+            }
+
+            .slide-panel-handle.panel-4 {
+                left: 0;
+                top: calc((50px + 20px) * 3);
+            }
+
+            .slide-panel-handle.panel-5 {
+                left: 0;
+                top: calc((50px + 20px) * 4);
             }
 
             /* モーダル */
