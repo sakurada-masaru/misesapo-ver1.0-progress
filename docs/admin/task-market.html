@@ -3,8 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Market - ミセサポ進捗管理</title>
+    <title>Task Market - ミセサポ</title>
     <style>
+        /*
+         ========================================
+           Task Market タスク管理ページ
+           ========================================
+           
+           📋 概要
+           WEBサイト開発における様々なタスクを管理するページ
+           
+           🎨 デザインコンセプト
+           - 基調カラー: 白とピンク
+           - フルHD画面対応
+           - スマホ版: 430px
+           
+           📐 レイアウト
+           - ヘッダー: 60px高さ
+           - ボディ: 3カラム
+             - カラム1: ダッシュボード（10%幅、100%高さ）
+             - カラム2: メインボード（60%幅）
+             - カラム3: 詳細ボード（30%幅）
+           
+           🔧 機能
+           - 新規追加ボタン
+           - タスク内容入力フォーム
+         ========================================
+        */
+        :root {
+            /* カラーパレット */
+            --color-primary: #FF679C;
+            --color-primary-hover: #FF4081;
+            --color-primary-light: rgba(255, 103, 156, 0.1);
+            --color-primary-shadow: rgba(255, 103, 156, 0.2);
+            
+            --color-background: #ffffff;
+            --color-background-secondary: #fafafa;
+            --color-text-primary: #333333;
+            --color-text-secondary: #7f8c8d;
+            --color-border: #e1e8ed;
+            
+            /* フォント設定 */
+            --font-family-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-size-xs: 12px;
+            --font-size-sm: 14px;
+            --font-size-md: 16px;
+            --font-size-lg: 18px;
+            --font-size-xl: 20px;
+            
+            --font-weight-normal: 400;
+            --font-weight-medium: 500;
+            --font-weight-semibold: 600;
+            --font-weight-bold: 700;
+            
+            /* スペーシング */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            
+            /* ボーダー半径 */
+            --border-radius-sm: 4px;
+            --border-radius-md: 8px;
+            --border-radius-lg: 12px;
+            --border-radius-xl: 16px;
+            
+            /* シャドウ */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+            
+            /* トランジション */
+            --transition-normal: 0.3s ease;
+
+            /* パネルカラー（5つのパネル用） */
+            --panel-1-color: #FF679C;
+            --panel-1-hover: #FF4081;
+            --panel-2-color: #4A90E2;
+            --panel-2-hover: #357ABD;
+            --panel-3-color: #50C878;
+            --panel-3-hover: #3FA863;
+            --panel-4-color: #FF8C42;
+            --panel-4-hover: #FF6B1F;
+            --panel-5-color: #9B59B6;
+            --panel-5-hover: #8E44AD;
+
+            /* カテゴリごとの薄い枠線色（タスクカード用） */
+            --category-design-border: rgba(255, 103, 156, 0.3);
+            --category-frontend-border: rgba(74, 144, 226, 0.3);
+            --category-backend-border: rgba(80, 200, 120, 0.3);
+            --category-media-border: rgba(255, 140, 66, 0.3);
+            --category-other-border: rgba(127, 140, 141, 0.3);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,1605 +104,2328 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: rgba(255, 103, 156, 0.05);
-            min-height: 100vh;
-            color: #333;
+            font-family: var(--font-family-primary);
+            background: var(--color-background);
+            color: var(--color-text-primary);
+            height: 100vh;
+            overflow: hidden;
         }
 
-        .container {
-            max-width: 100%;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .header-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex: 1;
-        }
-
-        .logo {
-            width: 50px;
-            height: 50px;
-            margin-right: 12px;
-            border-radius: 8px;
-        }
-
-        .header-text {
-            text-align: left;
-        }
-
-        .header h1 {
-            color: #FF679C;
-            margin-bottom: 5px;
-            font-size: 1.8rem;
-        }
-
-        .header p {
-            color: #718096;
-            font-size: 0.9rem;
-        }
-
-        .back-link {
-            display: inline-block;
-            padding: 8px 16px;
-            background: #FF679C;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            transition: background 0.3s ease;
-            font-size: 0.9rem;
-            white-space: nowrap;
-        }
-
-        .back-link:hover {
-            background: #E55A8A;
-        }
-
-        /* タスク入力フォーム */
-        .task-input-form {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-        }
-
-        .task-input-form h3 {
-            color: #2d3748;
-            margin-bottom: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .form-group label {
-            font-weight: 500;
-            color: #4a5568;
-            font-size: 0.75rem;
-        }
-
-        .form-group input,
-        .form-group select {
-            padding: 6px 8px;
-            border: 1px solid #e2e8f0;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            transition: border-color 0.2s ease;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #FF679C;
-        }
-
-        .form-actions {
-            display: flex;
-            justify-content: center;
-            margin-top: 8px;
-        }
-
-        .btn-add-task {
-            background: #FF679C;
-            color: white;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-
-        .btn-add-task:hover {
-            background: #E55A8A;
-        }
-
-        /* 新規タスク表示エリア */
-        .new-tasks-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-
-        .new-tasks-section h3 {
-            color: #2d3748;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-        }
-
-        .new-tasks-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px;
-        }
-
-        .new-task-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 16px;
-            cursor: grab;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            position: relative;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 140px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .new-task-card::before {
-            content: "";
-            position: absolute;
-            top: -4px;
-            left: 12px;
-            background: #FF679C;
-            padding: 0 8px;
-            font-size: 12px;
-            color: white;
-            border-radius: 4px;
-            font-weight: 500;
-        }
-
-        .new-task-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-        }
-
-        .new-task-card.dragging {
-            opacity: 0.7;
-            transform: rotate(2deg);
-        }
-
-        .new-task-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .new-task-card-title {
-            font-weight: 600;
-            color: #1f2937;
-            font-size: 0.9rem;
-            flex: 1;
-        }
-
-        .new-task-card-priority {
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            margin-left: 8px;
-        }
-
-        .new-task-card-priority.low {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .new-task-card-priority.medium {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .new-task-card-priority.high {
-            background: #fef2f2;
-            color: #dc2626;
-        }
-
-        .new-task-card-details {
-            margin-bottom: 8px;
-            flex: 1;
-        }
-
-        .new-task-card-category {
-            font-size: 0.75rem;
-            color: #6b7280;
-            margin-bottom: 4px;
-        }
-
-        .new-task-card-description {
-            font-size: 0.8rem;
-            color: #374151;
-            line-height: 1.3;
-        }
-
-        .new-task-card-actions {
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-            margin-top: auto;
-            padding-top: 12px;
-        }
-
-        .btn-task-action {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-edit {
-            background: #e2e8f0;
-            color: #4a5568;
-        }
-
-        .btn-edit:hover {
-            background: #cbd5e0;
-        }
-
-        .btn-delete {
-            background: #fed7d7;
-            color: #c53030;
-        }
-
-        .btn-delete:hover {
-            background: #feb2b2;
-        }
-
-        .btn-assign {
-            background: #4299e1;
-            color: white;
-        }
-
-        .btn-assign:hover {
-            background: #3182ce;
-        }
-
-        .btn-delete-task {
-            background: #e53e3e;
-            color: white;
-        }
-
-        .btn-delete-task:hover {
-            background: #c53030;
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        /* 左カラム: タイトル、フォーム、担当者カード */
-        .left-column {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        /* 右カラム: リンクとマーケットボード */
-        .right-column {
-            display: flex;
-            flex-direction: column;
-
-        }
-
-        /* タスクボードタブ */
-        .task-board-tabs {
-            display: flex;
-            margin-bottom: 0;
-            background: transparent;
-            border-radius: 0;
-            padding: 0;
-            box-shadow: none;
-            gap: 8px;
-            position: relative;
-            z-index: 10;
-        }
-
-        .tab-button {
-            flex: none;
-            padding: 6px 12px;
-            border: none;
-            background: rgba(255, 255, 255, 0.9);
-            color: #718096;
-            font-size: 0.75rem;
-            font-weight: 500;
-            cursor: pointer;
-            border-radius: 8px 8px 0 0;
-            transition: all 0.2s ease;
-            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-            position: relative;
-            min-width: 80px;
-            margin-bottom: -1px;
-        }
-
-        .tab-button.active {
-            background: #FF679C;
-            color: white;
-            box-shadow: 0 -2px 8px rgba(255, 103, 156, 0.3);
-            transform: translateY(-2px);
-            z-index: 11;
-        }
-
-        .tab-button:hover:not(.active) {
-            background: rgba(255, 103, 156, 0.1);
-            color: #FF679C;
-            transform: translateY(-1px);
-        }
-
-        .tab-button::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
+        /* スプラッシュスクリーン */
+        .splash-screen {
+            position: fixed;
+            top: 0;
             left: 0;
-            right: 0;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            width: 100%;
+            height: 100%;
+            background: var(--color-background);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 1;
+            /* 白画面を消す: ロゴが消えた後（約3秒後）に開始 */
+            animation: fadeOutScreen 0.5s ease-out 3s forwards;
         }
 
-        .tab-button.active::after {
-            background: #FF679C;
-        }
-
-        /* タスクボードセクション */
-        .task-board-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 0 15px 15px 15px;
-            padding: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            flex: 1;
-            min-height: 600px;
-        }
-
-        .task-board-section h3 {
-            color: #FF679C;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-        }
-
-        /* タブコンテンツ */
-        .tab-content {
+        .splash-screen.hidden {
             display: none;
         }
 
-        .tab-content.active {
+        .splash-logo {
+            width: 144px;
+            height: 144px;
+            opacity: 0;
+            /* 1. ロゴが出る: 0.3秒後に開始、1秒かけて表示 */
+            /* 2. ロゴが消える: 2秒後に開始、0.5秒かけて消える */
+            animation: 
+                fadeInUp 1s ease-out 0.3s forwards,
+                fadeOutLogo 0.5s ease-out 2s forwards;
+        }
+
+        /* ロゴがふわっと表示 */
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* ロゴが消える */
+        @keyframes fadeOutLogo {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.95);
+            }
+        }
+
+        /* 白画面が消える */
+        @keyframes fadeOutScreen {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        /* ヘッダー */
+        .header {
+            height: 60px;
+            background: var(--color-background);
+            border-bottom: 2px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .logo {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-primary);
+        }
+
+        .nav-button {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            background: transparent;
+            color: var(--color-text-primary);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            border-radius: var(--border-radius-md);
+            transition: var(--transition-normal);
+        }
+
+        .nav-button:hover {
+            background: var(--color-primary-light);
+            color: var(--color-primary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        /* トグルボタン */
+        .toggle-button {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 2px solid var(--color-primary);
+            background: var(--color-background);
+            color: var(--color-primary);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            cursor: pointer;
+            border-radius: var(--border-radius-md);
+            transition: var(--transition-normal);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .toggle-button:hover {
+            background: var(--color-primary-light);
+        }
+
+        .toggle-button.active {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        /* メインコンテナ */
+        .main-container {
+            display: flex;
+            height: calc(100vh - 60px);
+            width: 100%;
+        }
+
+        /* カラム1: ダッシュボード */
+        .dashboard-column {
+            width: 5%;
+            min-width: 30px;
+            max-width: 5%;
+            height: 100%;
+            background: var(--color-background-secondary);
+            border-right: 2px solid var(--color-border);
+            overflow-y: auto;
+            padding: var(--spacing-md);
+            transition: var(--transition-normal);
+        }
+
+        .dashboard-column.hidden {
+            width: 0;
+            min-width: 0;
+            padding: 0;
+            overflow: hidden;
+            border-right: none;
+        }
+
+        /* カラム2: メインボード */
+        .main-board {
+            width: 100%;
+            height: 100%;
+            background: var(--color-background);
+            overflow-y: auto;
+            padding: var(--spacing-lg);
+            transition: var(--transition-normal);
+        }
+
+        /* メインボードの幅調整はJavaScriptで制御 */
+
+        /* カラム3: 詳細ボード（右からスライドインするパネル） */
+        .detail-board-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1500;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .detail-board-overlay.active {
             display: block;
         }
 
-        .new-tasks-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
-            min-height: 300px;
+        .detail-board {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 40%;
+            height: 100%;
+            background: var(--color-background-secondary);
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+            z-index: 1501;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            border-left: 2px solid var(--color-border);
+            padding: var(--spacing-lg);
         }
 
-        /* 担当者カード */
-        .assignee-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            cursor: pointer;
+        .detail-board.active {
+            transform: translateX(0);
         }
 
-        .assignee-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .assignee-card-header {
+        .detail-board-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 2px solid var(--color-border);
+            position: sticky;
+            top: 0;
+            background: var(--color-background-secondary);
+            z-index: 10;
+            padding-top: var(--spacing-md);
         }
 
-        .assignee-card-title {
+        .detail-board-close-button {
+            background: none;
+            border: none;
+            font-size: 32px;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #FF679C;
+            justify-content: center;
+            border-radius: var(--border-radius-md);
+            transition: var(--transition-normal);
+            line-height: 1;
         }
 
-        .assignee-icon {
-            width: 24px;
-            height: 24px;
-            margin-right: 8px;
-            vertical-align: middle;
+        .detail-board-close-button:hover {
+            background: var(--color-background-secondary);
+            color: var(--color-text-primary);
         }
 
-        .assignee-task-count {
-            background: #FF679C;
+        /* 新規追加ボタン（タスクグリッド内左下に固定・円形デザイン） */
+        .add-task-button {
+            position: absolute;
+            bottom: 24px;
+            left: 24px;
+            width: 64px;
+            height: 64px;
+            background: var(--color-primary);
             color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .assignee-card-content {
-            max-height: 0;
-            overflow: hidden;
+            border: none;
+            border-radius: 50%;
+            font-size: 32px;
+            font-weight: var(--font-weight-bold);
+            cursor: pointer;
+            transition: var(--transition-normal);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            line-height: 1;
             padding: 0;
-            border: 2px dashed transparent;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            margin-top: 10px;
         }
 
-        .assignee-card.expanded {
-            background: rgba(255, 103, 156, 0.1);
+        .add-task-button:hover {
+            background: var(--color-primary-hover);
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-2px) scale(1.1);
         }
 
-        .assignee-card.expanded .assignee-card-content {
-            max-height: 500px;
-            padding: 8px;
-            border-color: #cbd5e0;
-            min-height: 60px;
+        .add-task-button:active {
+            transform: translateY(0) scale(1.05);
         }
 
-        .assignee-card.drag-over .assignee-card-content {
-            background: #ebf8ff;
-            border-color: #FF679C;
-        }
-
-        .assignee-card.drag-over .assignee-card-title {
-            color: #FF679C;
-        }
-
-        /* 展開アイコン */
-        .expand-icon {
-            font-size: 0.8rem;
-            color: #718096;
-            transition: transform 0.3s ease;
-        }
-
-        .assignee-card.expanded .expand-icon {
-            transform: rotate(180deg);
-        }
-
-        /* レスポンシブ対応 */
-        @media (max-width: 1200px) {
-            .form-row {
-                grid-template-columns: 1fr 1fr;
-            }
-            
-            .main-content {
-                grid-template-columns: 250px 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .new-tasks-container {
-                grid-template-columns: 1fr;
-            }
-
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-
-            .header {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .header-content {
-                text-align: center;
-            }
-            
-            .header h1 {
-                font-size: 1.5rem;
-            }
-
-            .container {
-                padding: 10px;
-            }
-            
-            .task-input-form {
-                padding: 10px;
-            }
-            
-            .form-group input,
-            .form-group select {
-                padding: 5px 6px;
-                font-size: 0.75rem;
-            }
-        }
-
-        /* 空の状態メッセージ */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #718096;
-        }
-
-        .empty-state-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-        }
-
-        .empty-state h4 {
-            margin-bottom: 10px;
-            color: #4a5568;
-        }
-
-        /* 担当者専用ボード */
-        .assignee-board-overlay {
+        /* モーダルオーバーレイ */
+        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
             z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
             display: flex;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
         }
 
-        .assignee-board-overlay.show {
-            opacity: 1;
-            pointer-events: auto;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
 
-        .assignee-board {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 80%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
-            transition: opacity 0.4s ease, transform 0.4s ease;
+        /* タスク入力フォーム（モーダル） */
+        .task-form {
+            background: var(--color-background);
+            border: 2px solid var(--color-border);
+            border-radius: var(--border-radius-xl);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-xl);
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .task-form-header {
             display: flex;
-            flex-direction: column;
-            opacity: 0;
-            transform: translateX(100px);
-        }
-
-        .assignee-board-overlay.show .assignee-board {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .assignee-board-header {
-            padding: 20px;
-            border-bottom: 2px solid #e2e8f0;
-            display: flex;
-            justify-content: flex-start;
+            justify-content: space-between;
             align-items: center;
-            background: rgba(255, 103, 156, 0.1);
-            gap: 20px;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 2px solid var(--color-border);
         }
 
-        .assignee-board-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .assignee-board-title h2 {
-            color: #FF679C;
-            font-size: 1.5rem;
+        .task-form-title {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text-primary);
             margin: 0;
         }
 
-        .close-board-btn {
-            background: #FF679C;
+        .modal-close-button {
+            background: none;
             border: none;
+            font-size: 32px;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            padding: 0;
             width: 40px;
             height: 40px;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            color: white;
-            cursor: pointer;
-            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            order: -1;
+            border-radius: var(--border-radius-md);
+            transition: var(--transition-normal);
+            line-height: 1;
         }
 
-        .close-board-btn:hover {
-            background: #e53e3e;
-            color: white;
-            transform: scale(1.1);
+        .modal-close-button:hover {
+            background: var(--color-background-secondary);
+            color: var(--color-text-primary);
         }
 
-        .assignee-board-content {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .assignee-board-tabs {
-            display: flex;
-            margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 8px;
-            padding: 4px;
-            gap: 4px;
-        }
-
-        .board-tab-button {
-            flex: 1;
-            padding: 8px 12px;
-            border: none;
-            background: transparent;
-            color: #718096;
-            font-size: 0.8rem;
-            font-weight: 500;
-            cursor: pointer;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-        }
-
-        .board-tab-button.active {
-            background: #FF679C;
-            color: white;
-        }
-
-        .board-tab-button:hover:not(.active) {
-            background: rgba(255, 103, 156, 0.1);
-            color: #FF679C;
-        }
-
-        .board-tab-content {
+        /* スライドインパネル（左から右にスライドイン、最前面に表示） */
+        .slide-panel-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 2000;
             display: none;
+            animation: fadeIn 0.3s ease;
         }
 
-        .board-tab-content.active {
+        .slide-panel-overlay.active {
             display: block;
         }
 
-        .assignee-tasks-list {
+        .slide-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 40%;
+            height: 100%;
+            background: var(--color-background);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+            z-index: 2001;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            border-right: 2px solid var(--color-border);
+        }
+
+        .slide-panel.active {
+            transform: translateX(0);
+        }
+
+        .slide-panel-header {
             display: flex;
-            flex-direction: column;
-            gap: 12px;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-lg);
+            border-bottom: 2px solid var(--color-border);
+            background: var(--color-background);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.8);
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #FF679C;
-            margin-bottom: 8px;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: #718096;
-            font-weight: 500;
-        }
-
-        .assignee-history {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .history-item {
-            background: rgba(255, 255, 255, 0.8);
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #FF679C;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .history-item h4 {
-            margin: 0 0 5px 0;
-            color: #2d3748;
-            font-size: 0.9rem;
-        }
-
-        .history-item p {
+        .slide-panel-title {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text-primary);
             margin: 0;
-            color: #718096;
-            font-size: 0.8rem;
+        }
+
+        .slide-panel-close-button {
+            background: none;
+            border: none;
+            font-size: 32px;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--border-radius-md);
+            transition: var(--transition-normal);
+            line-height: 1;
+        }
+
+        .slide-panel-close-button:hover {
+            background: var(--color-background-secondary);
+            color: var(--color-text-primary);
+        }
+
+        .slide-panel-content {
+            padding: var(--spacing-lg);
+        }
+
+        /* スライドインパネルのハンドル（左端に固定、5つのパネル用） */
+        .slide-panel-handle {
+            position: fixed;
+            left: 0;
+            width: 24px;
+            height: 80px;
+            border-radius: 0 12px 12px 0;
+            cursor: pointer;
+            z-index: 1999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            padding: 0;
+            border: none;
+        }
+
+        /* 各パネルのハンドルの位置と色（等間隔配置） */
+        .slide-panel-handle.panel-1 {
+            top: calc(100vh / 6);
+            transform: translateY(-50%);
+            background: var(--panel-1-color);
+        }
+
+        .slide-panel-handle.panel-2 {
+            top: calc(100vh / 3);
+            transform: translateY(-50%);
+            background: var(--panel-2-color);
+        }
+
+        .slide-panel-handle.panel-3 {
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--panel-3-color);
+        }
+
+        .slide-panel-handle.panel-4 {
+            top: calc(100vh * 2 / 3);
+            transform: translateY(-50%);
+            background: var(--panel-4-color);
+        }
+
+        .slide-panel-handle.panel-5 {
+            top: calc(100vh * 5 / 6);
+            transform: translateY(-50%);
+            background: var(--panel-5-color);
+        }
+
+        .slide-panel-handle:hover {
+            width: 32px;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .slide-panel-handle.panel-1:hover {
+            background: var(--panel-1-hover);
+        }
+
+        .slide-panel-handle.panel-2:hover {
+            background: var(--panel-2-hover);
+        }
+
+        .slide-panel-handle.panel-3:hover {
+            background: var(--panel-3-hover);
+        }
+
+        .slide-panel-handle.panel-4:hover {
+            background: var(--panel-4-hover);
+        }
+
+        .slide-panel-handle.panel-5:hover {
+            background: var(--panel-5-hover);
+        }
+
+        .slide-panel-handle::before {
+            content: '◀';
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+
+        .slide-panel-handle:hover::before {
+            transform: translateX(2px);
+        }
+
+        .slide-panel-handle.active {
+            left: 40%;
+        }
+
+        .slide-panel-handle.panel-1.active {
+            left: 40%;
+            top: calc(100vh / 6);
+            transform: translateY(-50%) translateX(-100%);
+        }
+
+        .slide-panel-handle.panel-2.active {
+            left: 40%;
+            top: calc(100vh / 3);
+            transform: translateY(-50%) translateX(-100%);
+        }
+
+        .slide-panel-handle.panel-3.active {
+            left: 40%;
+            transform: translateY(-50%) translateX(-100%);
+        }
+
+        .slide-panel-handle.panel-4.active {
+            left: 40%;
+            top: calc(100vh * 2 / 3);
+            transform: translateY(-50%) translateX(-100%);
+        }
+
+        .slide-panel-handle.panel-5.active {
+            left: 40%;
+            top: calc(100vh * 5 / 6);
+            transform: translateY(-50%) translateX(-100%);
+        }
+
+        .slide-panel-handle.active::before {
+            content: '▶';
+            transform: rotate(180deg);
+        }
+
+        .slide-panel-handle.panel-1.active::before,
+        .slide-panel-handle.panel-2.active::before,
+        .slide-panel-handle.panel-4.active::before,
+        .slide-panel-handle.panel-5.active::before {
+            content: '▶';
+            transform: rotate(180deg);
+        }
+
+        /* 各パネルのスタイル（色分け） */
+        .slide-panel.panel-1 {
+            border-right: 4px solid var(--panel-1-color);
+        }
+
+        .slide-panel.panel-2 {
+            border-right: 4px solid var(--panel-2-color);
+        }
+
+        .slide-panel.panel-3 {
+            border-right: 4px solid var(--panel-3-color);
+        }
+
+        .slide-panel.panel-4 {
+            border-right: 4px solid var(--panel-4-color);
+        }
+
+        .slide-panel.panel-5 {
+            border-right: 4px solid var(--panel-5-color);
+        }
+
+        .slide-panel-header.panel-1 {
+            border-bottom: 2px solid var(--panel-1-color);
+        }
+
+        .slide-panel-header.panel-2 {
+            border-bottom: 2px solid var(--panel-2-color);
+        }
+
+        .slide-panel-header.panel-3 {
+            border-bottom: 2px solid var(--panel-3-color);
+        }
+
+        .slide-panel-header.panel-4 {
+            border-bottom: 2px solid var(--panel-4-color);
+        }
+
+        .slide-panel-header.panel-5 {
+            border-bottom: 2px solid var(--panel-5-color);
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-sm);
+            font-size: var(--font-size-sm);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 2px solid var(--color-border);
+            border-radius: var(--border-radius-md);
+            font-size: var(--font-size-sm);
+            font-family: var(--font-family-primary);
+            transition: var(--transition-normal);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-light);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            justify-content: flex-end;
+            margin-top: var(--spacing-lg);
+        }
+
+        .btn {
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            cursor: pointer;
+            transition: var(--transition-normal);
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+        }
+
+        .btn-secondary {
+            background: var(--color-background-secondary);
+            color: var(--color-text-primary);
+            border: 2px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-border);
+        }
+
+        /* タスクカードグリッド（掲示板風のランダム配置） */
+        .task-grid {
+            position: relative;
+            min-height: 800px;
+            width: 100%;
+            background: var(--color-background-secondary);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-lg);
+        }
+
+        .task-card {
+            position: absolute;
+            background: var(--color-background);
+            border: 2px solid var(--color-border);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-md);
+            transition: var(--transition-normal);
+            cursor: grab;
+            width: 280px;
+            min-height: 180px;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .task-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px) rotate(0deg) !important;
+            z-index: 10;
+        }
+
+        /* カテゴリごとの枠線色 */
+        .task-card.category-design {
+            border-color: var(--category-design-border);
+        }
+
+        .task-card.category-frontend {
+            border-color: var(--category-frontend-border);
+        }
+
+        .task-card.category-backend {
+            border-color: var(--category-backend-border);
+        }
+
+        .task-card.category-media {
+            border-color: var(--category-media-border);
+        }
+
+        .task-card.category-database {
+            border-color: var(--category-backend-border);
+        }
+
+        .task-card.category-other {
+            border-color: var(--category-other-border);
+        }
+
+        .task-card.category-design:hover {
+            border-color: rgba(255, 103, 156, 0.5);
+        }
+
+        .task-card.category-frontend:hover {
+            border-color: rgba(74, 144, 226, 0.5);
+        }
+
+        .task-card.category-backend:hover,
+        .task-card.category-database:hover {
+            border-color: rgba(80, 200, 120, 0.5);
+        }
+
+        .task-card.category-media:hover {
+            border-color: rgba(255, 140, 66, 0.5);
+        }
+
+        .task-card.category-other:hover {
+            border-color: rgba(127, 140, 141, 0.5);
+        }
+
+        .task-card.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+            transform: rotate(0deg) !important;
+            z-index: 1000 !important;
+        }
+
+        .task-grid.drag-over {
+            background: var(--color-primary-light);
+        }
+
+        .task-card-header {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .task-card-title {
+            font-size: var(--font-size-md);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text-primary);
+            line-height: 1.3;
+            margin: 0;
+        }
+
+        .task-card-priority {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            flex-shrink: 0;
+            font-size: 14px;
+        }
+
+        .task-card-priority-star {
+            color: #fbbf24;
+            filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+        }
+
+        .task-card-description {
+            flex: 1;
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            line-height: 1.5;
+            margin: 0;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            text-overflow: ellipsis;
+        }
+
+        .task-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--spacing-md);
+            padding-top: var(--spacing-sm);
+            border-top: 1px solid var(--color-border);
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+        }
+
+        .task-card-category {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .task-card-footer-icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.7;
+        }
+
+        /* バッジスタイル */
+        .badge {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            box-shadow: var(--shadow-md);
+            z-index: 100;
+            transition: var(--transition-normal);
+            padding: var(--spacing-xs);
+            border: 3px solid var(--color-background);
+        }
+
+        .badge:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
+            z-index: 101;
+        }
+
+        .badge.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+            z-index: 1000 !important;
+        }
+
+        .badge-icon {
+            font-size: 24px;
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+
+        .badge-name {
+            font-size: 10px;
+            font-weight: var(--font-weight-semibold);
+            color: white;
+            text-align: center;
+            line-height: 1.2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 100%;
+        }
+
+        /* カードに吸着したバッジ */
+        .task-card .badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 48px;
+            height: 48px;
+            cursor: pointer;
+            z-index: 5;
+        }
+
+        .task-card .badge:hover {
+            transform: scale(1.1);
+        }
+
+        .task-card.badge-attached {
+            border: 2px dashed var(--color-primary);
+        }
+
+        .task-card.drag-over-badge {
+            border: 3px solid var(--color-primary);
+            box-shadow: 0 0 20px rgba(255, 103, 156, 0.5);
+            transform: scale(1.05);
+        }
+
+        /* 詳細ボード */
+        .detail-header {
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .detail-title {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-sm);
         }
 
         /* レスポンシブ対応 */
-        @media (max-width: 768px) {
-            .assignee-board {
-                width: 100%;
-                transform: translateX(30px);
+        @media (max-width: 430px) {
+            .main-container {
+                flex-direction: column;
             }
-            
-            .stats-grid {
+
+            .dashboard-column {
+                width: 100%;
+                height: auto;
+                max-height: 200px;
+                border-right: none;
+                border-bottom: 2px solid var(--color-border);
+            }
+
+            .main-board {
+                width: 100%;
+                height: auto;
+                flex: 1;
+            }
+
+            /* 詳細ボードはスライドインパネル（モバイルでも同じ動作） */
+            .detail-board {
+                width: 100%;
+            }
+
+            .task-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .assignee-board-header {
-                padding: 15px;
-                gap: 15px;
+
+            .header {
+                padding: 0 var(--spacing-sm);
             }
-            
-            .assignee-board-title h2 {
-                font-size: 1.2rem;
+
+            .logo {
+                font-size: var(--font-size-md);
+            }
+
+            .nav-button {
+                padding: var(--spacing-xs) var(--spacing-sm);
+                font-size: var(--font-size-xs);
             }
         }
     </style>
+    
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <a href="simple-progress.html" class="back-link">← 進捗管理</a>
-            <div class="header-content">
-                <img src="images/logo_144x144.png" alt="ミセサポ" class="logo">
-                <div class="header-text">
-                    <h1>Task Market</h1>
-                    <p>タスクボードにタスクを投稿しよう。</p>
-                </div>
-            </div>
+    <!-- スプラッシュスクリーン -->
+    <div class="splash-screen" id="splashScreen">
+        <img src="../images/logo_144x144.png" alt="ミセサポ" class="splash-logo">
+    </div>
+
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">📋 Task Market</div>
+            <button class="nav-button">ホーム</button>
+            <button class="nav-button">タスク</button>
+            <button class="nav-button">プロジェクト</button>
         </div>
-        
-        <!-- 2カラムメインコンテンツ -->
-        <div class="main-content">
-            <!-- 左カラム: 担当者カードのみ -->
-            <div class="left-column">
-                <!-- 担当者カード -->
-                <div class="assignee-card" id="designer-card" onclick="openAssigneeBoard('designer', 'デザイナー', 'images/designs.png')">
-                    <div class="assignee-card-header">
-                        <div class="assignee-card-title"><img src="images/designs.png" alt="デザイナー" class="assignee-icon"> デザイナー（D）</div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div class="assignee-task-count" id="designer-count">0</div>
-                            <span class="expand-icon">▶</span>
-                        </div>
-                    </div>
-                </div>
-
-            <div class="assignee-card" id="frontend-card" onclick="openAssigneeBoard('frontend', 'フロントエンド', 'images/front.png')">
-                <div class="assignee-card-header">
-                    <div class="assignee-card-title"><img src="images/front.png" alt="フロントエンド" class="assignee-icon"> フロントエンド（F）</div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div class="assignee-task-count" id="frontend-count">0</div>
-                            <span class="expand-icon">▶</span>
-                        </div>
-                    </div>
-                </div>
-
-            <div class="assignee-card" id="backend-card" onclick="openAssigneeBoard('backend', 'バックエンド', 'images/back.png')">
-                <div class="assignee-card-header">
-                    <div class="assignee-card-title"><img src="images/back.png" alt="バックエンド" class="assignee-icon"> バックエンド（B）</div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div class="assignee-task-count" id="backend-count">0</div>
-                            <span class="expand-icon">▶</span>
-                        </div>
-                    </div>
-                </div>
-
-            <div class="assignee-card" id="media-card" onclick="openAssigneeBoard('media', 'メディア', 'images/media.png')">
-                <div class="assignee-card-header">
-                    <div class="assignee-card-title"><img src="images/media.png" alt="メディア" class="assignee-icon"> メディア（M）</div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div class="assignee-task-count" id="media-count">0</div>
-                            <span class="expand-icon">▶</span>
-                        </div>
-                    </div>
-                </div>
-
-            <div class="assignee-card" id="production-card" onclick="openAssigneeBoard('production', 'プロダクション', 'images/direction.png')">
-                <div class="assignee-card-header">
-                    <div class="assignee-card-title"><img src="images/direction.png" alt="プロダクション" class="assignee-icon"> プロダクション（P）</div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div class="assignee-task-count" id="production-count">0</div>
-                            <span class="expand-icon">▶</span>
-                        </div>
-                    </div>
+        <div class="header-right">
+            <!-- Google認証ボタン/ユーザー情報表示エリア -->
+            <div id="googleSignInContainer" style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                <!-- ログイン前: Googleログインボタン -->
+                <div id="googleSignInButton" style="display: inline-block;"></div>
+                
+                <!-- ログイン後: ユーザー情報表示 -->
+                <div id="userInfo" style="display: none; align-items: center; gap: var(--spacing-sm);">
+                    <img id="userAvatar" src="" alt="ユーザーアバター" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--color-border);">
+                    <span id="userName" style="color: var(--color-text-primary); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold);"></span>
+                    <button class="nav-button" onclick="signOut()" style="padding: var(--spacing-xs) var(--spacing-sm);">
+                        <span>ログアウト</span>
+                    </button>
                 </div>
             </div>
             
-            <!-- 右カラム: タスク追加フォームとマーケットボード -->
-            <div class="right-column">
-                <!-- タスク入力フォーム -->
-                <div class="task-input-form">
-                    <form id="newTaskForm" class="task-form">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="taskTitle">タスク名</label>
-                                <input type="text" id="taskTitle" placeholder="追加するタスクの名称を記入" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="taskCategory">カテゴリ</label>
-                                <select id="taskCategory" required>
-                                    <option value="">選択</option>
-                                    <option value="デザイナー">デザイナー</option>
-                                    <option value="フロントエンド">フロントエンド</option>
-                                    <option value="バックエンド">バックエンド</option>
-                                    <option value="メディア">メディア</option>
-                                    <option value="プロダクション">プロダクション</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="taskPriority">優先度</label>
-                                <select id="taskPriority">
-                                    <option value="low">🟢 低</option>
-                                    <option value="medium" selected>🟡 中</option>
-                                    <option value="high">🔴 高</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="taskDescription">説明</label>
-                            <input type="text" id="taskDescription" placeholder="タスクの詳細説明を記入">
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" class="btn-add-task">追加</button>
-                        </div>
-                    </form>
-                </div>
+            <button class="toggle-button" id="toggleDashboard" onclick="toggleDashboard()">
+                <span>📊</span>
+                <span>ダッシュボード</span>
+            </button>
+            <button class="nav-button" onclick="openBadgeForm()">
+                <span>🏷️</span>
+                <span>バッジを作る</span>
+            </button>
+            <button class="nav-button">設定</button>
+        </div>
+    </header>
+
+    <!-- メインコンテナ -->
+    <div class="main-container">
+        <!-- カラム1: ダッシュボード -->
+        <div class="dashboard-column">
+            <!-- ダッシュボードコンテンツはここに追加 -->
+        </div>
+
+        <!-- カラム2: メインボード -->
+        <div class="main-board">
+
+            <!-- タスクグリッド -->
+            <div class="task-grid" id="taskGrid">
+                <!-- 新規追加ボタン（左下に固定） -->
+                <button class="add-task-button" onclick="toggleTaskForm()" title="新規タスクを追加">+</button>
                 
-                <!-- タスクボードタブ -->
-                <div class="task-board-tabs">
-                    <button class="tab-button active" onclick="switchTab('market')">🆕 新規</button>
-                    <button class="tab-button" onclick="switchTab('completed')">✅ 完了</button>
-                </div>
-                
-                <!-- タスクボードセクション -->
-                <div class="task-board-section">
-                    <!-- マーケットタブ -->
-                    <div id="market-tab" class="tab-content active">
-                        <h3>🆕 新規追加されたタスク</h3>
-                        <div class="new-tasks-container" id="newTasksContainer">
-                            <!-- 新規タスクがここに表示されます -->
-                        </div>
-                    </div>
-                    
-                    <!-- 完了タブ -->
-                    <div id="completed-tab" class="tab-content">
-                        <h3>✅ 完了済みタスク</h3>
-                        <div class="completed-tasks-container" id="completedTasksContainer">
-                            <!-- 完了済みタスクがここに表示されます -->
-                        </div>
-                    </div>
+                <!-- タスクカードがここに動的に生成されます -->
+                <div style="text-align: center; padding: var(--spacing-xl); color: var(--color-text-secondary);">
+                    <p>タスクがありません</p>
+                    <p style="font-size: var(--font-size-sm); margin-top: var(--spacing-sm);">左下の「+」ボタンからタスクを作成してください</p>
                 </div>
             </div>
         </div>
-        
-        <!-- 担当者専用ボード（スライド表示） -->
-        <div id="assignee-board-overlay" class="assignee-board-overlay">
-            <div id="assignee-board" class="assignee-board">
-                <div class="assignee-board-header">
-                    <div class="assignee-board-title">
-                        <img id="assignee-board-icon" src="" alt="" class="assignee-icon">
-                        <h2 id="assignee-board-name">担当者名</h2>
-                    </div>
-                    <button class="close-board-btn" onclick="closeAssigneeBoard()">×</button>
+    </div>
+
+    <!-- タスク詳細パネル（右からスライドイン） -->
+    <div class="detail-board-overlay" id="detailBoardOverlay" onclick="closeDetailBoardOnOverlay(event)">
+        <div class="detail-board" id="detailBoard" onclick="event.stopPropagation()">
+            <div class="detail-board-header">
+                <div>
+                    <h2 class="detail-title">タスク詳細</h2>
+                    <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm); margin: 0;">タスクを選択して詳細を表示</p>
                 </div>
-                <div class="assignee-board-content">
-                    <div class="assignee-board-tabs">
-                        <button class="board-tab-button active" onclick="switchBoardTab('tasks')">📋 タスク</button>
-                        <button class="board-tab-button" onclick="switchBoardTab('stats')">📊 統計</button>
-                        <button class="board-tab-button" onclick="switchBoardTab('history')">📈 履歴</button>
-                    </div>
-                    
-                    <div class="board-tab-content active" id="tasks-board-tab">
-                        <h3>担当タスク</h3>
-                        <div id="assignee-tasks-list" class="assignee-tasks-list">
-                            <!-- 担当者のタスクがここに表示されます -->
-                        </div>
-                    </div>
-                    
-                    <div class="board-tab-content" id="stats-board-tab">
-                        <h3>作業統計</h3>
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-number" id="total-tasks">0</div>
-                                <div class="stat-label">総タスク数</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-number" id="completed-tasks">0</div>
-                                <div class="stat-label">完了数</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-number" id="in-progress-tasks">0</div>
-                                <div class="stat-label">進行中</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-number" id="completion-rate">0%</div>
-                                <div class="stat-label">完了率</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="board-tab-content" id="history-board-tab">
-                        <h3>作業履歴</h3>
-                        <div id="assignee-history" class="assignee-history">
-                            <!-- 作業履歴がここに表示されます -->
-                        </div>
-                    </div>
+                <button class="detail-board-close-button" onclick="closeDetailBoard()" title="閉じる">×</button>
+            </div>
+            <div id="detailContent">
+                <div style="text-align: center; padding: var(--spacing-xl); color: var(--color-text-secondary);">
+                    <p>タスクが選択されていません</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- スライドインパネルのハンドル（左端に固定、5つ） -->
+    <button class="slide-panel-handle panel-1" id="slidePanelHandle1" onclick="toggleSlidePanel(1)" title="デザイナーパネルを開く"></button>
+    <button class="slide-panel-handle panel-2" id="slidePanelHandle2" onclick="toggleSlidePanel(2)" title="フロントパネルを開く"></button>
+    <button class="slide-panel-handle panel-3" id="slidePanelHandle3" onclick="toggleSlidePanel(3)" title="バックパネルを開く"></button>
+    <button class="slide-panel-handle panel-4" id="slidePanelHandle4" onclick="toggleSlidePanel(4)" title="メディアパネルを開く"></button>
+    <button class="slide-panel-handle panel-5" id="slidePanelHandle5" onclick="toggleSlidePanel(5)" title="運営パネルを開く"></button>
+
+    <!-- モーダル：タスク入力フォーム -->
+    <div class="modal-overlay" id="taskFormModal" onclick="closeModalOnOverlay(event)">
+        <div class="task-form" onclick="event.stopPropagation()">
+            <div class="task-form-header">
+                <h3 class="task-form-title">新しいタスクを作成</h3>
+                <button class="modal-close-button" onclick="cancelTaskForm()" title="閉じる">×</button>
+            </div>
+            <form id="taskInputForm">
+                <div class="form-group">
+                    <label for="taskTitle">タスクタイトル *</label>
+                    <input type="text" id="taskTitle" name="title" required placeholder="タスクのタイトルを入力">
+                </div>
+                <div class="form-group">
+                    <label for="taskDescription">説明</label>
+                    <textarea id="taskDescription" name="description" placeholder="タスクの詳細を入力"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="taskCategory">カテゴリー</label>
+                    <select id="taskCategory" name="category">
+                        <option value="design">デザイン</option>
+                        <option value="frontend">フロントエンド</option>
+                        <option value="backend">バックエンド</option>
+                        <option value="database">データベース</option>
+                        <option value="media">メディア</option>
+                        <option value="other">その他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="taskPriority">優先度</label>
+                    <select id="taskPriority" name="priority">
+                        <option value="low">低</option>
+                        <option value="medium" selected>中</option>
+                        <option value="high">高</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="cancelTaskForm()">キャンセル</button>
+                    <button type="submit" class="btn btn-primary">作成</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- モーダル：バッジ作成フォーム -->
+    <div class="modal-overlay" id="badgeFormModal" onclick="closeBadgeFormOnOverlay(event)">
+        <div class="task-form" onclick="event.stopPropagation()">
+            <div class="task-form-header">
+                <h3 class="task-form-title">新しいバッジを作成</h3>
+                <button class="modal-close-button" onclick="cancelBadgeForm()" title="閉じる">×</button>
+            </div>
+            <form id="badgeInputForm">
+                <div class="form-group">
+                    <label for="badgeName">バッジ名（担当者名）*</label>
+                    <input type="text" id="badgeName" name="name" required placeholder="例: 田中太郎">
+                </div>
+                <div class="form-group">
+                    <label for="badgeIcon">アイコン（絵文字）</label>
+                    <input type="text" id="badgeIcon" name="icon" placeholder="例: 👤 🧑‍💻 👨‍💼">
+                </div>
+                <div class="form-group">
+                    <label for="badgeColor">カラー</label>
+                    <input type="color" id="badgeColor" name="color" value="#FF679C">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="cancelBadgeForm()">キャンセル</button>
+                    <button type="submit" class="btn btn-primary">作成</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- スライドインパネル（左から右にスライドイン、5つ） -->
+    <!-- パネル1（ピンク：デザイナー） -->
+    <div class="slide-panel-overlay" id="slidePanelOverlay1" onclick="closeSlidePanelOnOverlay(event, 1)">
+        <div class="slide-panel panel-1" id="slidePanel1" onclick="event.stopPropagation()">
+            <div class="slide-panel-header panel-1">
+                <h2 class="slide-panel-title">デザイナー</h2>
+                <button class="slide-panel-close-button" onclick="closeSlidePanel(1)" title="閉じる">×</button>
+            </div>
+            <div class="slide-panel-content">
+                <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-md);">
+                    デザイナーのタスク管理パネルです。
+                </p>
+                <div style="padding: var(--spacing-lg); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
+                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">デザイナーのコンテンツ</h3>
+                    <p style="color: var(--color-text-secondary);">ここにデザイナー関連のコンテンツを配置できます。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- パネル2（ブルー：フロント） -->
+    <div class="slide-panel-overlay" id="slidePanelOverlay2" onclick="closeSlidePanelOnOverlay(event, 2)">
+        <div class="slide-panel panel-2" id="slidePanel2" onclick="event.stopPropagation()">
+            <div class="slide-panel-header panel-2">
+                <h2 class="slide-panel-title">フロント</h2>
+                <button class="slide-panel-close-button" onclick="closeSlidePanel(2)" title="閉じる">×</button>
+            </div>
+            <div class="slide-panel-content">
+                <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-md);">
+                    フロントエンド開発のタスク管理パネルです。
+                </p>
+                <div style="padding: var(--spacing-lg); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
+                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">フロントのコンテンツ</h3>
+                    <p style="color: var(--color-text-secondary);">ここにフロントエンド関連のコンテンツを配置できます。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- パネル3（グリーン：バック） -->
+    <div class="slide-panel-overlay" id="slidePanelOverlay3" onclick="closeSlidePanelOnOverlay(event, 3)">
+        <div class="slide-panel panel-3" id="slidePanel3" onclick="event.stopPropagation()">
+            <div class="slide-panel-header panel-3">
+                <h2 class="slide-panel-title">バック</h2>
+                <button class="slide-panel-close-button" onclick="closeSlidePanel(3)" title="閉じる">×</button>
+            </div>
+            <div class="slide-panel-content">
+                <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-md);">
+                    バックエンド開発のタスク管理パネルです。
+                </p>
+                <div style="padding: var(--spacing-lg); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
+                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">バックのコンテンツ</h3>
+                    <p style="color: var(--color-text-secondary);">ここにバックエンド関連のコンテンツを配置できます。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- パネル4（オレンジ：メディア） -->
+    <div class="slide-panel-overlay" id="slidePanelOverlay4" onclick="closeSlidePanelOnOverlay(event, 4)">
+        <div class="slide-panel panel-4" id="slidePanel4" onclick="event.stopPropagation()">
+            <div class="slide-panel-header panel-4">
+                <h2 class="slide-panel-title">メディア</h2>
+                <button class="slide-panel-close-button" onclick="closeSlidePanel(4)" title="閉じる">×</button>
+            </div>
+            <div class="slide-panel-content">
+                <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-md);">
+                    メディア関連のタスク管理パネルです。
+                </p>
+                <div style="padding: var(--spacing-lg); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
+                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">メディアのコンテンツ</h3>
+                    <p style="color: var(--color-text-secondary);">ここにメディア関連のコンテンツを配置できます。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- パネル5（パープル：運営） -->
+    <div class="slide-panel-overlay" id="slidePanelOverlay5" onclick="closeSlidePanelOnOverlay(event, 5)">
+        <div class="slide-panel panel-5" id="slidePanel5" onclick="event.stopPropagation()">
+            <div class="slide-panel-header panel-5">
+                <h2 class="slide-panel-title">運営</h2>
+                <button class="slide-panel-close-button" onclick="closeSlidePanel(5)" title="閉じる">×</button>
+            </div>
+            <div class="slide-panel-content">
+                <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-md);">
+                    運営関連のタスク管理パネルです。
+                </p>
+                <div style="padding: var(--spacing-lg); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
+                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">運営のコンテンツ</h3>
+                    <p style="color: var(--color-text-secondary);">ここに運営関連のコンテンツを配置できます。</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // タスクマーケット専用のデータ管理
-        let taskMarketData = {
-            availableTasks: [], // 受注可能なタスク
-            assignedTasks: {    // 担当者別の受注済みタスク
-                designer: [],
-                frontend: [],
-                backend: [],
-                media: [],
-                production: []
-            },
-            completedTasks: []  // 完了済みタスク
-        };
-
-        // 新規タスクの管理
-        let newTasks = [];
+        // Google認証関連
+        let currentUser = null;
         
-        // ページ読み込み時の初期化
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('タスクマーケットページ読み込み完了');
-            setupEventListeners();
-            updateDisplay();
+        // Google認証の初期化
+        function initializeGoogleSignIn() {
+            // ========================================
+            // Google OAuth 2.0 Client ID の設定方法
+            // ========================================
+            // 1. Google Cloud Console (https://console.cloud.google.com/) にアクセス
+            // 2. プロジェクトを作成または選択
+            // 3. 「APIとサービス」→「認証情報」に移動
+            // 4. 「認証情報を作成」→「OAuth 2.0 クライアント ID」を選択
+            // 5. アプリケーションの種類: 「ウェブアプリケーション」
+            // 6. 承認済みの JavaScript 生成元:
+            //    - 開発環境: http://localhost:8000 (ポート番号は環境に応じて変更)
+            //    - 本番環境: https://yourdomain.com
+            // 7. 承認済みのリダイレクト URI:
+            //    - http://localhost:8000 (開発環境の場合)
+            //    - https://yourdomain.com (本番環境の場合)
+            // 8. 作成されたClient IDを以下の定数に設定してください
+            // ========================================
+            
+            // Google Cloud Consoleで取得したClient IDを設定
+            // 注意: 実際の実装では、Client IDを環境変数や設定ファイルから読み込む
+            // Client IDが設定されていない場合は処理をスキップ
+            const CLIENT_ID = '926808186549-b0nhr610mnojulc9f8e679nh19ag58f1.apps.googleusercontent.com';
+            
+            // Client IDが設定されていない場合は処理をスキップ
+            if (!CLIENT_ID || CLIENT_ID.trim() === '') {
+                console.warn('⚠️ Google Client IDが設定されていません。Google Cloud ConsoleでClient IDを取得して設定してください。');
+                // プレースホルダーを表示
+                document.getElementById('googleSignInButton').innerHTML = 
+                    '<button style="padding: 8px 16px; border: 1px solid #dadce0; border-radius: 4px; background: white; cursor: pointer; color: #3c4043; font-size: 14px;">Client IDを設定してください</button>';
+                return;
+            }
+            
+            // Google Identity Services が読み込まれているか確認
+            if (!window.google || !window.google.accounts || !window.google.accounts.id) {
+                console.error('❌ Google Identity Services が読み込まれていません');
+                return;
+            }
+            
+            // 認証済みユーザー情報をチェック
+            const savedUser = localStorage.getItem('googleUser');
+            if (savedUser) {
+                try {
+                    currentUser = JSON.parse(savedUser);
+                    displayUserInfo(currentUser);
+                } catch (e) {
+                    console.error('ユーザー情報の読み込みエラー:', e);
+                    localStorage.removeItem('googleUser');
+                }
+            }
+            
+            try {
+                // Google Sign-In ボタンを初期化（FedCM対応）
+                window.google.accounts.id.initialize({
+                    client_id: CLIENT_ID,
+                    callback: handleCredentialResponse,
+                    auto_select: false,
+                    cancel_on_tap_outside: true,
+                    // FedCM移行対応: use_fedcm_for_prompt を true に設定（オプション）
+                    // use_fedcm_for_prompt: true
+                });
+                
+                // Google Sign-In ボタンをレンダリング
+                if (!currentUser) {
+                    window.google.accounts.id.renderButton(
+                        document.getElementById('googleSignInButton'),
+                        {
+                            type: 'standard',
+                            theme: 'outline',
+                            size: 'medium',
+                            text: 'signin_with',
+                            shape: 'rectangular',
+                            logo_alignment: 'left'
+                        }
+                    );
+                    
+                    // One Tap サインイン（オプション）- FedCM移行警告を回避するため、デフォルトでは無効化
+                    // 必要に応じて以下のコメントを外して有効化してください
+                    /*
+                    try {
+                        window.google.accounts.id.prompt((notification) => {
+                            // FedCM移行対応: isDismissedMoment() と getNotDisplayedReason() を使用
+                            if (notification.isDismissedMoment && notification.isDismissedMoment()) {
+                                console.log('One Tap サインインがユーザーによって閉じられました');
+                            } else if (notification.getNotDisplayedReason) {
+                                const reason = notification.getNotDisplayedReason();
+                                if (reason !== 'browser_not_supported' && reason !== 'invalid_client') {
+                                    // デバッグ情報のみ表示（警告は出さない）
+                                    console.log('One Tap サインインが表示されませんでした。理由:', reason);
+                                }
+                            } else {
+                                // 旧APIとの互換性
+                                if (notification.isNotDisplayed || notification.isSkippedMoment) {
+                                    console.log('One Tap サインインが表示されませんでした');
+                                }
+                            }
+                        });
+                    } catch (e) {
+                        console.warn('One Tap サインインの初期化エラー（無視可能）:', e);
+                        // One Tap UIのエラーは無視して続行
+                    }
+                    */
+                }
+            } catch (e) {
+                console.error('Google認証の初期化エラー:', e);
+                document.getElementById('googleSignInButton').innerHTML = 
+                    '<button style="padding: 8px 16px; border: 1px solid #dadce0; border-radius: 4px; background: white; cursor: pointer; color: #3c4043; font-size: 14px;" disabled>認証エラー</button>';
+            }
+        }
+        
+        // Google認証成功時のコールバック
+        function handleCredentialResponse(response) {
+            // JWT トークンをデコード
+            const payload = parseJwt(response.credential);
+            
+            // ユーザー情報を保存
+            currentUser = {
+                id: payload.sub,
+                name: payload.name,
+                email: payload.email,
+                picture: payload.picture
+            };
+            
+            // ローカルストレージに保存
+            localStorage.setItem('googleUser', JSON.stringify(currentUser));
+            
+            // ユーザー情報を表示
+            displayUserInfo(currentUser);
+            
+            console.log('ログイン成功:', currentUser.name, currentUser.email);
+        }
+        
+        // JWTトークンをパース（簡易版）
+        function parseJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                console.error('JWT解析エラー:', e);
+                return null;
+            }
+        }
+        
+        // ユーザー情報を表示
+        function displayUserInfo(user) {
+            const signInButton = document.getElementById('googleSignInButton');
+            const userInfo = document.getElementById('userInfo');
+            const userAvatar = document.getElementById('userAvatar');
+            const userName = document.getElementById('userName');
+            
+            if (user) {
+                // ログインボタンを非表示
+                signInButton.style.display = 'none';
+                
+                // ユーザー情報を表示
+                userAvatar.src = user.picture || '';
+                userName.textContent = user.name || user.email || 'ユーザー';
+                userInfo.style.display = 'flex';
+            } else {
+                // ユーザー情報を非表示
+                userInfo.style.display = 'none';
+                signInButton.style.display = 'inline-block';
+            }
+        }
+        
+        // ログアウト
+        function signOut() {
+            // ローカルストレージからユーザー情報を削除
+            localStorage.removeItem('googleUser');
+            currentUser = null;
+            
+            // Google認証をリセット
+            window.google.accounts.id.disableAutoSelect();
+            
+            // UIを更新
+            displayUserInfo(null);
+            
+            // Google Sign-In ボタンを再表示
+            initializeGoogleSignIn();
+            
+            console.log('ログアウトしました');
+        }
+        
+        // Google Identity Services が読み込まれた後に初期化
+        window.addEventListener('load', function() {
+            // Google Identity Services が読み込まれるまで待つ
+            if (window.google && window.google.accounts && window.google.accounts.id) {
+                initializeGoogleSignIn();
+            } else {
+                // 少し待ってから再試行
+                setTimeout(function() {
+                    if (window.google && window.google.accounts && window.google.accounts.id) {
+                        initializeGoogleSignIn();
+                    } else {
+                        console.error('Google Identity Services が読み込まれませんでした');
+                    }
+                }, 1000);
+            }
+        });
+        
+        // タスクデータ
+        // タスクデータ（サンプルタスク1つを含む）
+        let tasks = [
+            {
+                id: Date.now(),
+                title: "レスポンシブデザイン実装",
+                description: "モバイル・タブレット・デスクトップ対応のレスポンシブデザインを実装する。ブレークポイントの設定とメディアクエリの最適化が必要。",
+                category: "frontend",
+                priority: "high",
+                status: "pending",
+                createdAt: new Date().toISOString()
+            }
+        ];
+
+        // バッジデータ
+        let badges = [];
+
+        // タスクに紐づくバッジ（タスクIDをキーに、バッジIDの配列を値に）
+        let taskBadges = {};
+
+        // バッジのドラッグ状態管理
+        let draggedBadgeGlobal = null;
+        let draggedBadgeOffset = { x: 0, y: 0 };
+
+        // フォーム表示切り替え（モーダル表示）
+        function toggleTaskForm() {
+            const modal = document.getElementById('taskFormModal');
+            modal.classList.toggle('active');
+            
+            // モーダルを開く時にフォームをリセット
+            if (modal.classList.contains('active')) {
+                document.getElementById('taskInputForm').reset();
+                // フォーカスを最初の入力欄に
+                setTimeout(() => {
+                    document.getElementById('taskTitle').focus();
+                }, 100);
+            }
+        }
+
+        // フォームキャンセル（モーダルを閉じる）
+        function cancelTaskForm() {
+            const modal = document.getElementById('taskFormModal');
+            modal.classList.remove('active');
+            document.getElementById('taskInputForm').reset();
+        }
+
+        // オーバーレイクリックでモーダルを閉じる
+        function closeModalOnOverlay(event) {
+            if (event.target.id === 'taskFormModal') {
+                cancelTaskForm();
+            }
+        }
+
+        // ESCキーでモーダルを閉じる
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const taskModal = document.getElementById('taskFormModal');
+                const badgeModal = document.getElementById('badgeFormModal');
+                if (taskModal && taskModal.classList.contains('active')) {
+                    cancelTaskForm();
+                } else if (badgeModal && badgeModal.classList.contains('active')) {
+                    cancelBadgeForm();
+                }
+            }
         });
 
-        // イベントリスナーの設定
-        function setupEventListeners() {
-            // フォーム送信
-            document.getElementById('newTaskForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                addNewTask();
-            });
-
-            // ドラッグ&ドロップの設定
-            setupDragAndDrop();
-        }
-
-        // 担当者ボードを開く
-        function openAssigneeBoard(assigneeId, assigneeName, iconSrc) {
-            const overlay = document.getElementById('assignee-board-overlay');
-            const board = document.getElementById('assignee-board');
-            const boardIcon = document.getElementById('assignee-board-icon');
-            const boardName = document.getElementById('assignee-board-name');
+        // タスク作成
+        document.getElementById('taskInputForm').addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            // ボードの情報を設定
-            boardIcon.src = iconSrc;
-            boardIcon.alt = assigneeName;
-            boardName.textContent = assigneeName;
-            
-            // 現在の担当者IDを保存
-            board.dataset.assigneeId = assigneeId;
-            
-            // ボードを表示
-            overlay.classList.add('show');
-            
-            // 担当者データを更新
-            updateAssigneeBoardData(assigneeId);
-            
-            console.log('担当者ボードを開く:', assigneeName);
-        }
-
-        // 担当者ボードを閉じる
-        function closeAssigneeBoard() {
-            const overlay = document.getElementById('assignee-board-overlay');
-            overlay.classList.remove('show');
-        }
-
-        // 担当者ボードのデータを更新
-        function updateAssigneeBoardData(assigneeId) {
-            const tasks = taskMarketData.assignedTasks[assigneeId] || [];
-            const completedTasks = taskMarketData.completedTasks.filter(task => 
-                task.assignedTo === assigneeId || task.category === getAssigneeCategory(assigneeId)
-            );
-            
-            // タスクリストを更新
-            updateAssigneeTasksList(tasks);
-            
-            // 統計を更新
-            updateAssigneeStats(tasks, completedTasks);
-            
-            // 履歴を更新
-            updateAssigneeHistory(assigneeId);
-        }
-
-        // 担当者カテゴリを取得
-        function getAssigneeCategory(assigneeId) {
-            const categoryMap = {
-                'designer': 'デザイナー',
-                'frontend': 'フロントエンド',
-                'backend': 'バックエンド',
-                'media': 'メディア',
-                'production': 'プロダクション'
+            const formData = new FormData(this);
+            const task = {
+                id: Date.now(),
+                title: formData.get('title'),
+                description: formData.get('description'),
+                category: formData.get('category'),
+                priority: formData.get('priority'),
+                status: 'pending',
+                createdAt: new Date().toISOString()
             };
-            return categoryMap[assigneeId] || '';
+
+            tasks.push(task);
+            updateTaskGrid();
+            // モーダルを閉じる
+            cancelTaskForm();
+        });
+
+        // バッジ作成フォーム表示
+        function openBadgeForm() {
+            const modal = document.getElementById('badgeFormModal');
+            modal.classList.add('active');
+            document.getElementById('badgeInputForm').reset();
+            setTimeout(() => {
+                document.getElementById('badgeName').focus();
+            }, 100);
         }
 
-        // 担当者タスクリストを更新
-        function updateAssigneeTasksList(tasks) {
-            const container = document.getElementById('assignee-tasks-list');
-            container.innerHTML = '';
+        // バッジ作成フォームキャンセル
+        function cancelBadgeForm() {
+            const modal = document.getElementById('badgeFormModal');
+            modal.classList.remove('active');
+            document.getElementById('badgeInputForm').reset();
+        }
+
+        // バッジ作成フォームオーバーレイクリック
+        function closeBadgeFormOnOverlay(event) {
+            if (event.target.id === 'badgeFormModal') {
+                cancelBadgeForm();
+            }
+        }
+
+        // バッジ作成
+        document.getElementById('badgeInputForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const badge = {
+                id: Date.now(),
+                name: formData.get('name'),
+                icon: formData.get('icon') || '👤',
+                color: formData.get('color') || '#FF679C',
+                position: {
+                    top: Math.random() * 300 + 100,
+                    left: Math.random() * 300 + 100
+                },
+                attachedToTaskId: null // カードに吸着していない場合はnull
+            };
+
+            badges.push(badge);
+            updateBadges();
+            cancelBadgeForm();
+        });
+
+        // タスクグリッド更新（掲示板風のランダム配置）
+        function updateTaskGrid() {
+            const taskGrid = document.getElementById('taskGrid');
             
             if (tasks.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📋</div>
-                        <h4>タスクがありません</h4>
-                        <p>マーケットからタスクを割り当ててください</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            tasks.forEach(task => {
-                const taskCard = createAssigneeTaskCard(task);
-                container.appendChild(taskCard);
-            });
-        }
-
-        // 担当者タスクカードを作成
-        function createAssigneeTaskCard(task) {
-            const card = document.createElement('div');
-            card.className = 'new-task-card';
-            card.dataset.taskId = task.id;
-            
-            const priorityText = {
-                'low': '🟢 低',
-                'medium': '🟡 中',
-                'high': '🔴 高'
-            };
-            
-            card.innerHTML = `
-                <div class="new-task-card-header">
-                    <div class="new-task-card-title">${task.title}</div>
-                    <div class="new-task-card-priority ${task.priority}">${priorityText[task.priority]}</div>
-                </div>
-                <div class="new-task-card-details">
-                    <div class="new-task-card-category">${task.category}</div>
-                    <div class="new-task-card-description">${task.description}</div>
-                </div>
-                <div class="new-task-card-actions">
-                    <button class="btn-task-action btn-assign" onclick="completeTask('${task.id}')">完了</button>
-                    <button class="btn-task-action btn-delete-task" onclick="removeAssignedTask('${task.id}')">削除</button>
-                </div>
-            `;
-            
-            return card;
-        }
-
-        // 担当者統計を更新
-        function updateAssigneeStats(tasks, completedTasks) {
-            const totalTasks = tasks.length + completedTasks.length;
-            const completedCount = completedTasks.length;
-            const inProgressCount = tasks.length;
-            const completionRate = totalTasks > 0 ? Math.round((completedCount / totalTasks) * 100) : 0;
-            
-            document.getElementById('total-tasks').textContent = totalTasks;
-            document.getElementById('completed-tasks').textContent = completedCount;
-            document.getElementById('in-progress-tasks').textContent = inProgressCount;
-            document.getElementById('completion-rate').textContent = completionRate + '%';
-        }
-
-        // 担当者履歴を更新
-        function updateAssigneeHistory(assigneeId) {
-            const container = document.getElementById('assignee-history');
-            container.innerHTML = '';
-            
-            // サンプル履歴データ（実際の実装では、データベースから取得）
-            const historyData = [
-                { title: 'タスク完了', description: 'ログインページのデザイン完了', time: '2時間前' },
-                { title: 'タスク受領', description: 'ダッシュボードのUI設計', time: '1日前' },
-                { title: 'タスク完了', description: 'ヘッダーコンポーネント作成', time: '3日前' }
-            ];
-            
-            historyData.forEach(item => {
-                const historyItem = document.createElement('div');
-                historyItem.className = 'history-item';
-                historyItem.innerHTML = `
-                    <h4>${item.title}</h4>
-                    <p>${item.description} - ${item.time}</p>
-                `;
-                container.appendChild(historyItem);
-            });
-        }
-
-        // ボードタブ切り替え
-        function switchBoardTab(tabName) {
-            // 全てのボードタブボタンからactiveクラスを削除
-            document.querySelectorAll('.board-tab-button').forEach(button => {
-                button.classList.remove('active');
-            });
-            
-            // 全てのボードタブコンテンツからactiveクラスを削除
-            document.querySelectorAll('.board-tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            // 選択されたタブボタンにactiveクラスを追加
-            event.target.classList.add('active');
-            
-            // 選択されたタブコンテンツにactiveクラスを追加
-            document.getElementById(tabName + '-board-tab').classList.add('active');
-        }
-
-        // タブ切り替え機能
-        function switchTab(tabName) {
-            // 全てのタブボタンからactiveクラスを削除
-            document.querySelectorAll('.tab-button').forEach(button => {
-                button.classList.remove('active');
-            });
-            
-            // 全てのタブコンテンツからactiveクラスを削除
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            // 選択されたタブボタンにactiveクラスを追加
-            event.target.classList.add('active');
-            
-            // 選択されたタブコンテンツにactiveクラスを追加
-            document.getElementById(tabName + '-tab').classList.add('active');
-            
-            // 完了タブが選択された場合は完了タスクを更新
-            if (tabName === 'completed') {
-                updateCompletedTasksDisplay();
-            }
-        }
-
-        // カテゴリから担当者IDを取得
-        function getAssigneeIdFromCategory(category) {
-            const categoryMap = {
-                'デザイナー': 'designer',
-                'フロントエンド': 'frontend',
-                'バックエンド': 'backend',
-                'メディア': 'media',
-                'プロダクション': 'production'
-            };
-            return categoryMap[category] || null;
-        }
-
-        // 新規タスクを追加
-        function addNewTask() {
-            const title = document.getElementById('taskTitle').value;
-            const category = document.getElementById('taskCategory').value;
-            const description = document.getElementById('taskDescription').value;
-            const priority = document.getElementById('taskPriority').value;
-            
-            if (!title || !category) {
-                alert('タスク名とカテゴリは必須です');
-                return;
-            }
-            
-            const newTask = {
-                id: 'task_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-                title: title,
-                category: category,
-                description: description,
-                priority: priority,
-                status: 'available',
-                createdAt: new Date().toISOString().split('T')[0]
-            };
-            
-            // カテゴリに基づいて自動で担当者に割り当て
-            const assigneeId = getAssigneeIdFromCategory(category);
-            if (assigneeId) {
-                // 担当者に直接割り当て
-                if (!taskMarketData.assignedTasks[assigneeId]) {
-                    taskMarketData.assignedTasks[assigneeId] = [];
-                }
-                newTask.assignedTo = assigneeId;
-                newTask.status = 'assigned';
-                newTask.assignedAt = new Date().toISOString();
-                taskMarketData.assignedTasks[assigneeId].push(newTask);
+                // カードをクリア（ボタンは残す）
+                const addButton = taskGrid.querySelector('.add-task-button');
+                taskGrid.innerHTML = '';
                 
-                console.log(`タスク「${title}」を${category}担当者に自動割り当てしました`);
-            } else {
-                // 利用可能タスクとして追加
-                newTasks.push(newTask);
-                taskMarketData.availableTasks.push(newTask);
-            }
-            
-            updateDisplay();
-            
-            // フォームをリセット
-            document.getElementById('newTaskForm').reset();
-            
-            console.log('新しいタスクを追加:', newTask);
-        }
-
-        // 表示を更新
-        function updateDisplay() {
-            updateNewTasksDisplay();
-            updateAssignedTasksDisplay();
-            updateCompletedTasksDisplay();
-        }
-
-        // 新規タスクの表示を更新
-        function updateNewTasksDisplay() {
-            const container = document.getElementById('newTasksContainer');
-            container.innerHTML = '';
-            
-            if (newTasks.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📝</div>
-                        <h4>まだタスクがありません</h4>
-                        <p>上のフォームから新しいタスクを追加してください</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            newTasks.forEach(task => {
-                const taskCard = createNewTaskCard(task);
-                container.appendChild(taskCard);
-            });
-        }
-
-        // 新規タスクカードを作成
-        function createNewTaskCard(task) {
-            const card = document.createElement('div');
-            card.className = 'new-task-card';
-            card.draggable = true;
-            card.dataset.taskId = task.id;
-            
-            const priorityText = {
-                'low': '🟢 低',
-                'medium': '🟡 中',
-                'high': '🔴 高'
-            };
-            
-            card.innerHTML = `
-                <div class="new-task-card-header">
-                    <div class="new-task-card-title">${task.title}</div>
-                    <div class="new-task-card-priority ${task.priority}">${priorityText[task.priority]}</div>
-                </div>
-                <div class="new-task-card-details">
-                    <div class="new-task-card-category">${task.category}</div>
-                    <div class="new-task-card-description">${task.description}</div>
-                </div>
-                <div class="new-task-card-actions">
-                    <button class="btn-task-action btn-edit" onclick="editNewTask('${task.id}')">修正</button>
-                    <button class="btn-task-action btn-delete" onclick="deleteNewTask('${task.id}')">削除</button>
-                </div>
-            `;
-            
-            // ドラッグイベントを設定
-            card.addEventListener('dragstart', handleDragStart);
-            card.addEventListener('dragend', handleDragEnd);
-            
-            return card;
-        }
-
-        // 新規タスクを削除
-        function deleteNewTask(taskId) {
-            if (confirm('このタスクを削除しますか？')) {
-                newTasks = newTasks.filter(t => t.id !== taskId);
-                taskMarketData.availableTasks = taskMarketData.availableTasks.filter(t => t.id !== taskId);
-                updateDisplay();
-            }
-        }
-
-        // 新規タスクを修正
-        function editNewTask(taskId) {
-            const task = newTasks.find(t => t.id === taskId);
-            if (!task) return;
-
-            // フォームに値を設定
-            document.getElementById('taskTitle').value = task.title;
-            document.getElementById('taskCategory').value = task.category;
-            document.getElementById('taskPriority').value = task.priority;
-            document.getElementById('taskDescription').value = task.description;
-
-            // 削除してから再追加
-            deleteNewTask(taskId);
-        }
-
-        // 割り当て済みタスクの表示を更新
-        function updateAssignedTasksDisplay() {
-            const assignees = ['designer', 'frontend', 'backend', 'media', 'production'];
-            
-            assignees.forEach(assignee => {
-                const countElement = document.getElementById(assignee + '-count');
-                const tasksContainer = document.getElementById(assignee + '-tasks');
-                
-                const tasks = taskMarketData.assignedTasks[assignee];
-                countElement.textContent = tasks.length;
-                
-                tasksContainer.innerHTML = '';
-                
-                if (tasks.length === 0) {
-                    tasksContainer.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-state-icon">📋</div>
-                            <h4>タスクがありません</h4>
-                            <p>ドラッグ&ドロップでタスクを割り当ててください</p>
-                        </div>
-                    `;
+                // ボタンを再追加
+                if (addButton) {
+                    taskGrid.appendChild(addButton);
                 } else {
-                    tasks.forEach(task => {
-                        const taskCard = createAssignedTaskCard(task);
-                        tasksContainer.appendChild(taskCard);
+                    const button = document.createElement('button');
+                    button.className = 'add-task-button';
+                    button.onclick = toggleTaskForm;
+                    button.title = '新規タスクを追加';
+                    button.textContent = '+';
+                    taskGrid.appendChild(button);
+                }
+                
+                const emptyMessage = document.createElement('div');
+                emptyMessage.style.cssText = 'text-align: center; padding: var(--spacing-xl); color: var(--color-text-secondary); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);';
+                emptyMessage.innerHTML = `
+                    <p>タスクがありません</p>
+                    <p style="font-size: var(--font-size-sm); margin-top: var(--spacing-sm);">左下の「+」ボタンからタスクを作成してください</p>
+                `;
+                taskGrid.appendChild(emptyMessage);
+                return;
+            }
+
+            // グリッドのサイズを取得
+            const gridWidth = taskGrid.offsetWidth - 48; // padding分を引く
+            const gridHeight = Math.max(800, taskGrid.offsetHeight - 48);
+            const cardWidth = 280;
+            const cardHeight = 180;
+
+            // カードをクリア（ボタンは残す）
+            const addButton = taskGrid.querySelector('.add-task-button');
+            taskGrid.innerHTML = '';
+            
+            // ボタンを再追加
+            if (addButton) {
+                taskGrid.appendChild(addButton);
+            } else {
+                const button = document.createElement('button');
+                button.className = 'add-task-button';
+                button.onclick = toggleTaskForm;
+                button.title = '新規タスクを追加';
+                button.textContent = '+';
+                taskGrid.appendChild(button);
+            }
+            
+            // 配置済みカードの位置を記録
+            const placedCards = [];
+
+            // 各タスクカードをランダムな位置に配置（または保存された位置を使用）
+            tasks.forEach((task, index) => {
+                const card = document.createElement('div');
+                card.className = `task-card category-${task.category}`;
+                card.draggable = true;
+                card.dataset.taskId = task.id;
+                card.dataset.isDragging = 'false';
+                card.dataset.hasDragged = 'false';
+                
+                // ダブルクリックイベント（右パネルを展開）
+                card.addEventListener('dblclick', function(e) {
+                    // ドラッグでない場合のみダブルクリックイベントを実行
+                    if (this.dataset.hasDragged === 'false' && this.dataset.isDragging === 'false') {
+                        e.stopPropagation();
+                        showTaskDetail(task.id);
+                    }
+                });
+                
+                let top, left, rotation, zIndex;
+                
+                // 保存された位置があれば使用、なければランダム配置
+                if (task.position && task.position.top !== undefined && task.position.left !== undefined) {
+                    top = task.position.top;
+                    left = task.position.left;
+                    rotation = task.position.rotation || (Math.random() - 0.5) * 8;
+                    zIndex = task.position.zIndex || Math.floor(Math.random() * 11);
+                } else {
+                    // ランダムな位置を計算（重なりを避ける）
+                    let attempts = 0;
+                    const maxAttempts = 50;
+                    
+                    do {
+                        top = Math.random() * Math.max(0, gridHeight - cardHeight);
+                        left = Math.random() * Math.max(0, gridWidth - cardWidth);
+                        rotation = (Math.random() - 0.5) * 8; // -4度から+4度の範囲
+                        attempts++;
+                        
+                        // 既存のカードとの重なりをチェック
+                        let overlaps = false;
+                        for (let i = 0; i < placedCards.length; i++) {
+                            const placed = placedCards[i];
+                            // 簡易的な重なりチェック（余白20pxを考慮）
+                            const margin = 20;
+                            if (!(left + cardWidth + margin < placed.left ||
+                                  left > placed.left + placed.width + margin ||
+                                  top + cardHeight + margin < placed.top ||
+                                  top > placed.top + placed.height + margin)) {
+                                overlaps = true;
+                                break;
+                            }
+                        }
+                        
+                        if (!overlaps || attempts >= maxAttempts) break;
+                    } while (attempts < maxAttempts);
+                    
+                    // ランダムなz-indexを設定（0〜10の範囲）
+                    zIndex = Math.floor(Math.random() * 11);
+                    
+                    // タスクデータに位置情報を保存
+                    if (!task.position) {
+                        task.position = {};
+                    }
+                    task.position.top = top;
+                    task.position.left = left;
+                    task.position.rotation = rotation;
+                    task.position.zIndex = zIndex;
+                }
+                
+                // 配置済みカードの位置を記録
+                placedCards.push({
+                    left: left,
+                    top: top,
+                    width: cardWidth,
+                    height: cardHeight
+                });
+                
+                card.style.top = top + 'px';
+                card.style.left = left + 'px';
+                card.style.transform = `rotate(${rotation}deg)`;
+                card.style.zIndex = zIndex;
+                
+                // カテゴリアイコンのパスを取得
+                const categoryIconPath = getCategoryIconPath(task.category);
+                const categoryIconHtml = categoryIconPath ? 
+                    `<img src="${categoryIconPath}" alt="${getCategoryName(task.category)}" class="task-card-footer-icon">` : 
+                    '';
+                
+                card.innerHTML = `
+                    <div class="task-card-header">
+                        <div class="task-card-title">${task.title}</div>
+                    </div>
+                    <div class="task-card-description">${task.description || '説明なし'}</div>
+                    <div class="task-card-footer">
+                        <div class="task-card-category">
+                            ${categoryIconHtml}
+                            <span>${getCategoryName(task.category)}</span>
+                        </div>
+                        <div class="task-card-priority">${getPriorityStars(task.priority)}</div>
+                    </div>
+                `;
+                
+                // カードに吸着したバッジを表示
+                if (taskBadges[task.id] && taskBadges[task.id].length > 0) {
+                    taskBadges[task.id].forEach(badgeId => {
+                        const badge = badges.find(b => b.id === badgeId);
+                        if (badge && badge.attachedToTaskId === task.id) {
+                            const badgeElement = createAttachedBadgeElement(badge);
+                            card.appendChild(badgeElement);
+                            card.classList.add('badge-attached');
+                        }
                     });
                 }
+                
+                taskGrid.appendChild(card);
+                
+                // カードへのバッジ吸着機能を設定
+                setupTaskCardBadgeDrop(card, task);
+            });
+            
+            // ドラッグ&ドロップイベントを設定
+            setupDragAndDrop();
+            
+            // バッジを更新（カードに吸着していないものを表示）
+            updateBadges();
+        }
+
+        // ドラッグ&ドロップ機能の設定
+        function setupDragAndDrop() {
+            const taskGrid = document.getElementById('taskGrid');
+            const taskCards = taskGrid.querySelectorAll('.task-card');
+            
+            let draggedCard = null;
+            let draggedOffset = { x: 0, y: 0 };
+            
+            taskCards.forEach(card => {
+                // ドラッグ開始
+                card.addEventListener('dragstart', function(e) {
+                    draggedCard = this;
+                    this.classList.add('dragging');
+                    this.dataset.isDragging = 'true';
+                    this.dataset.hasDragged = 'true'; // ドラッグ開始をマーク
+                    
+                    // カードの位置とマウス位置のオフセットを計算
+                    const rect = this.getBoundingClientRect();
+                    draggedOffset.x = e.clientX - rect.left;
+                    draggedOffset.y = e.clientY - rect.top;
+                    
+                    // データ転送設定（必須）
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/html', this.outerHTML);
+                });
+                
+                // ドラッグ終了
+                card.addEventListener('dragend', function(e) {
+                    this.classList.remove('dragging');
+                    this.dataset.isDragging = 'false';
+                    taskGrid.classList.remove('drag-over');
+                    
+                    // ドラッグ終了後、少し遅延させてリセット（クリックイベントが発火しないように）
+                    setTimeout(() => {
+                        this.dataset.hasDragged = 'false';
+                    }, 100);
+                });
+            });
+            
+            // グリッド上のドラッグオーバー
+            taskGrid.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                this.classList.add('drag-over');
+                
+                if (draggedCard) {
+                    // カードの位置をマウス位置に更新
+                    const gridRect = this.getBoundingClientRect();
+                    const gridWidth = this.offsetWidth - 48;
+                    const gridHeight = Math.max(800, this.offsetHeight - 48);
+                    const cardWidth = 280;
+                    const cardHeight = 180;
+                    
+                    // グリッド内の相対位置を計算（マウス位置からオフセットを引く）
+                    let left = e.clientX - gridRect.left - draggedOffset.x - 24; // padding分を考慮
+                    let top = e.clientY - gridRect.top - draggedOffset.y - 24;
+                    
+                    // グリッド内に制限
+                    left = Math.max(0, Math.min(left, gridWidth - cardWidth));
+                    top = Math.max(0, Math.min(top, gridHeight - cardHeight));
+                    
+                    draggedCard.style.left = left + 'px';
+                    draggedCard.style.top = top + 'px';
+                    draggedCard.style.transform = 'rotate(0deg)'; // ドラッグ中は回転なし
+                }
+            });
+            
+            // グリッドからのドラッグ離脱
+            taskGrid.addEventListener('dragleave', function(e) {
+                // グリッド外に出た場合のみ
+                if (!this.contains(e.relatedTarget)) {
+                    this.classList.remove('drag-over');
+                }
+            });
+            
+            // ドロップ
+            taskGrid.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('drag-over');
+                
+                if (draggedCard) {
+                    const taskId = parseInt(draggedCard.dataset.taskId);
+                    const task = tasks.find(t => t.id === taskId);
+                    
+                    if (task) {
+                        // タスクデータに新しい位置を保存
+                        if (!task.position) {
+                            task.position = {};
+                        }
+                        task.position.left = parseInt(draggedCard.style.left);
+                        task.position.top = parseInt(draggedCard.style.top);
+                        // ドロップ後は回転を保持（元の回転があれば使用、なければランダム）
+                        if (!task.position.rotation) {
+                            task.position.rotation = (Math.random() - 0.5) * 8;
+                        }
+                        draggedCard.style.transform = `rotate(${task.position.rotation}deg)`;
+                    }
+                    
+                    draggedCard = null;
+                }
             });
         }
 
-        // 割り当て済みタスクカードを作成
-        function createAssignedTaskCard(task) {
-            const card = document.createElement('div');
-            card.className = 'new-task-card';
-            card.dataset.taskId = task.id;
+        // バッジ表示と更新
+        function updateBadges() {
+            const taskGrid = document.getElementById('taskGrid');
             
-            const priorityText = {
-                'low': '🟢 低',
-                'medium': '🟡 中',
-                'high': '🔴 高'
-            };
+            // 既存のバッジを削除（カードに吸着しているものを除く）
+            const existingBadges = taskGrid.querySelectorAll('.badge:not(.attached)');
+            existingBadges.forEach(badge => badge.remove());
             
-            card.innerHTML = `
-                <div class="new-task-card-header">
-                    <div class="new-task-card-title">${task.title}</div>
-                    <div class="new-task-card-priority ${task.priority}">${priorityText[task.priority]}</div>
-                </div>
-                <div class="new-task-card-details">
-                    <div class="new-task-card-category">${task.category}</div>
-                    <div class="new-task-card-description">${task.description}</div>
-                </div>
-                <div class="new-task-card-actions">
-                    <button class="btn-task-action btn-assign" onclick="completeTask('${task.id}')">完了</button>
-                    <button class="btn-task-action btn-delete-task" onclick="removeAssignedTask('${task.id}')">削除</button>
-                </div>
-            `;
+            // バッジを表示（カードに吸着していないもの）
+            badges.forEach(badge => {
+                if (!badge.attachedToTaskId) {
+                    const badgeElement = createBadgeElement(badge);
+                    taskGrid.appendChild(badgeElement);
+                    setupBadgeDragAndDrop(badgeElement, badge);
+                }
+            });
             
-            return card;
+            // カードに吸着したバッジは、updateTaskGrid()で個別に更新されるため、ここでは呼び出さない
+            // updateTaskGrid()を呼び出すとカードが再生成されてしまうため、バッジドロップ時のみ手動で呼び出す
         }
 
-        // タスクを完了
-        function completeTask(taskId) {
-            if (confirm('このタスクを完了としてマークしますか？')) {
-                // 全担当者から該当タスクを検索
-                let completedTask = null;
-                Object.keys(taskMarketData.assignedTasks).forEach(assigneeKey => {
-                    const taskIndex = taskMarketData.assignedTasks[assigneeKey].findIndex(task => task.id === taskId);
-                    if (taskIndex !== -1) {
-                        completedTask = taskMarketData.assignedTasks[assigneeKey][taskIndex];
-                        taskMarketData.assignedTasks[assigneeKey].splice(taskIndex, 1);
+        // バッジ要素を作成（カードに吸着していないもの）
+        function createBadgeElement(badge) {
+            const badgeDiv = document.createElement('div');
+            badgeDiv.className = 'badge';
+            badgeDiv.dataset.badgeId = badge.id;
+            badgeDiv.style.background = badge.color;
+            badgeDiv.style.top = badge.position.top + 'px';
+            badgeDiv.style.left = badge.position.left + 'px';
+            
+            badgeDiv.innerHTML = `
+                <div class="badge-icon">${badge.icon}</div>
+                <div class="badge-name">${badge.name}</div>
+            `;
+            
+            return badgeDiv;
+        }
+
+        // カードに吸着したバッジ要素を作成
+        function createAttachedBadgeElement(badge) {
+            const badgeDiv = document.createElement('div');
+            badgeDiv.className = 'badge attached';
+            badgeDiv.dataset.badgeId = badge.id;
+            badgeDiv.style.background = badge.color;
+            badgeDiv.title = badge.name + 'が着手中（クリックで外す）';
+            
+            badgeDiv.innerHTML = `
+                <div class="badge-icon">${badge.icon}</div>
+                <div class="badge-name">${badge.name}</div>
+            `;
+            
+            // クリックでカードからバッジを外す
+            badgeDiv.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (badge.attachedToTaskId) {
+                    const taskId = badge.attachedToTaskId;
+                    // タスクからバッジを外す
+                    if (taskBadges[taskId]) {
+                        taskBadges[taskId] = taskBadges[taskId].filter(id => id !== badge.id);
+                        if (taskBadges[taskId].length === 0) {
+                            delete taskBadges[taskId];
+                            // カードからbadge-attachedクラスを削除
+                            const card = this.closest('.task-card');
+                            if (card) {
+                                card.classList.remove('badge-attached');
+                            }
+                        }
                     }
-                });
+                    // バッジの吸着状態を解除
+                    badge.attachedToTaskId = null;
+                    // バッジ要素を削除
+                    this.remove();
+                    // グリッド上にバッジを再表示
+                    updateBadges();
+                }
+            });
+            
+            return badgeDiv;
+        }
+
+        // バッジのドラッグ&ドロップ機能を設定
+        function setupBadgeDragAndDrop(badgeElement, badge) {
+            const taskGrid = document.getElementById('taskGrid');
+            
+            badgeElement.addEventListener('dragstart', function(e) {
+                draggedBadgeGlobal = badge;
+                this.classList.add('dragging');
                 
-                // 完了タスクに追加
-                if (completedTask) {
-                    completedTask.completedAt = new Date().toISOString().split('T')[0];
-                    completedTask.status = 'completed';
-                    taskMarketData.completedTasks.push(completedTask);
+                const rect = this.getBoundingClientRect();
+                const gridRect = taskGrid.getBoundingClientRect();
+                draggedBadgeOffset.x = e.clientX - rect.left;
+                draggedBadgeOffset.y = e.clientY - rect.top;
+                
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('badgeId', badge.id.toString());
+            });
+            
+            badgeElement.addEventListener('dragend', function(e) {
+                this.classList.remove('dragging');
+                
+                // ドロップ先がカードでない場合、位置を更新
+                if (draggedBadgeGlobal && !draggedBadgeGlobal.attachedToTaskId) {
+                    const rect = this.getBoundingClientRect();
+                    const gridRect = taskGrid.getBoundingClientRect();
+                    draggedBadgeGlobal.position.left = parseInt(this.style.left);
+                    draggedBadgeGlobal.position.top = parseInt(this.style.top);
                 }
                 
-                updateDisplay();
-                console.log('タスクを完了:', taskId);
-            }
+                draggedBadgeGlobal = null;
+            });
+            
+            badgeElement.setAttribute('draggable', 'true');
         }
 
-        // 割り当て済みタスクを削除
-        function removeAssignedTask(taskId) {
-            if (confirm('このタスクを削除しますか？')) {
-                // 全担当者から該当タスクを検索して削除
-                Object.keys(taskMarketData.assignedTasks).forEach(assigneeKey => {
-                    const taskIndex = taskMarketData.assignedTasks[assigneeKey].findIndex(task => task.id === taskId);
-                    if (taskIndex !== -1) {
-                        taskMarketData.assignedTasks[assigneeKey].splice(taskIndex, 1);
+        // グリッド上でのバッジドラッグ中に位置を更新（一度だけ設定）
+        let badgeDragHandlerSet = false;
+        function setupBadgeDragHandler() {
+            if (badgeDragHandlerSet) return;
+            badgeDragHandlerSet = true;
+            
+            const taskGrid = document.getElementById('taskGrid');
+            if (taskGrid) {
+                taskGrid.addEventListener('dragover', function(e) {
+                    if (draggedBadgeGlobal && !draggedBadgeGlobal.attachedToTaskId) {
+                        const draggingElement = taskGrid.querySelector(`.badge[data-badge-id="${draggedBadgeGlobal.id}"].dragging`);
+                        if (draggingElement) {
+                            const gridRect = taskGrid.getBoundingClientRect();
+                            let newLeft = e.clientX - gridRect.left - draggedBadgeOffset.x;
+                            let newTop = e.clientY - gridRect.top - draggedBadgeOffset.y;
+                            
+                            // グリッド内に制限
+                            newLeft = Math.max(0, Math.min(newLeft, gridRect.width - draggingElement.offsetWidth));
+                            newTop = Math.max(0, Math.min(newTop, gridRect.height - draggingElement.offsetHeight));
+                            
+                            draggingElement.style.left = newLeft + 'px';
+                            draggingElement.style.top = newTop + 'px';
+                        }
                     }
                 });
+            }
+        }
+
+        // カードへのバッジ吸着機能を設定
+        function setupTaskCardBadgeDrop(cardElement, task) {
+            cardElement.addEventListener('dragover', function(e) {
+                const badgeId = e.dataTransfer.getData('badgeId');
+                if (badgeId) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    this.classList.add('drag-over-badge');
+                }
+            });
+            
+            cardElement.addEventListener('dragleave', function(e) {
+                this.classList.remove('drag-over-badge');
+            });
+            
+            cardElement.addEventListener('drop', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.classList.remove('drag-over-badge');
                 
-                updateDisplay();
-                console.log('割り当て済みタスクを削除:', taskId);
-            }
-        }
-
-        // ドラッグ&ドロップの設定
-        function setupDragAndDrop() {
-            const assigneeCards = document.querySelectorAll('.assignee-card');
-            
-            assigneeCards.forEach(card => {
-                card.addEventListener('dragover', handleDragOver);
-                card.addEventListener('dragenter', handleDragEnter);
-                card.addEventListener('dragleave', handleDragLeave);
-                card.addEventListener('drop', handleDrop);
+                const badgeId = parseInt(e.dataTransfer.getData('badgeId'));
+                if (badgeId) {
+                    const badge = badges.find(b => b.id === badgeId);
+                    if (badge && badge.attachedToTaskId !== task.id) {
+                        // 以前のカードからバッジを外す
+                        if (badge.attachedToTaskId) {
+                            const prevTaskId = badge.attachedToTaskId;
+                            if (taskBadges[prevTaskId]) {
+                                taskBadges[prevTaskId] = taskBadges[prevTaskId].filter(id => id !== badge.id);
+                            }
+                        }
+                        
+                        // 新しいカードにバッジを吸着
+                        badge.attachedToTaskId = task.id;
+                        if (!taskBadges[task.id]) {
+                            taskBadges[task.id] = [];
+                        }
+                        if (!taskBadges[task.id].includes(badge.id)) {
+                            taskBadges[task.id].push(badge.id);
+                        }
+                        
+                        // カードに直接バッジを追加（updateTaskGrid()を呼ばない）
+                        const badgeElement = createAttachedBadgeElement(badge);
+                        this.appendChild(badgeElement);
+                        this.classList.add('badge-attached');
+                        
+                        // バッジを更新（グリッド上のバッジを更新）
+                        updateBadges();
+                    }
+                }
             });
         }
 
-        // ドラッグ開始
-        function handleDragStart(e) {
-            e.dataTransfer.setData('text/plain', e.target.dataset.taskId);
-            e.target.classList.add('dragging');
-        }
-
-        // ドラッグ終了
-        function handleDragEnd(e) {
-            e.target.classList.remove('dragging');
-        }
-
-        // ドラッグオーバー
-        function handleDragOver(e) {
-            e.preventDefault();
-        }
-
-        // ドラッグエンター
-        function handleDragEnter(e) {
-            e.preventDefault();
-            e.currentTarget.classList.add('drag-over');
-        }
-
-        // ドラッグリーブ
-        function handleDragLeave(e) {
-            e.currentTarget.classList.remove('drag-over');
-        }
-
-        // ドロップ
-        function handleDrop(e) {
-            e.preventDefault();
-            e.currentTarget.classList.remove('drag-over');
-            
-            const taskId = e.dataTransfer.getData('text/plain');
-            const assignee = e.currentTarget.id.replace('-card', '');
-            
-            assignTaskToAssignee(taskId, assignee);
-        }
-
-        // タスクを担当者に割り当て
-        function assignTaskToAssignee(taskId, assignee) {
-            const task = newTasks.find(t => t.id === taskId);
-            if (!task) return;
-            
-            // 担当者に追加
-            taskMarketData.assignedTasks[assignee].push(task);
-            
-            // 新規タスクから削除
-            newTasks = newTasks.filter(t => t.id !== taskId);
-            taskMarketData.availableTasks = taskMarketData.availableTasks.filter(t => t.id !== taskId);
-            
-            updateDisplay();
-            
-            console.log('タスクを割り当て:', task.title, '→', assignee);
-        }
-
-        // 完了タスクの表示を更新
-        function updateCompletedTasksDisplay() {
-            const container = document.getElementById('completedTasksContainer');
-            container.innerHTML = '';
-            
-            if (taskMarketData.completedTasks.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">✅</div>
-                        <h4>完了したタスクがありません</h4>
-                        <p>タスクを完了するとここに表示されます</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            // 完了日でソート（新しい順）
-            const sortedTasks = taskMarketData.completedTasks.sort((a, b) => 
-                new Date(b.completedAt) - new Date(a.completedAt)
-            );
-            
-            sortedTasks.forEach(task => {
-                const taskCard = createCompletedTaskCard(task);
-                container.appendChild(taskCard);
-            });
-        }
-
-        // 完了タスクカードを作成
-        function createCompletedTaskCard(task) {
-            const card = document.createElement('div');
-            card.className = 'new-task-card';
-            card.dataset.taskId = task.id;
-            card.style.opacity = '0.8';
-            card.style.border = '2px solid #48bb78';
-            
-            const priorityText = {
-                'low': '🟢 低',
-                'medium': '🟡 中',
-                'high': '🔴 高'
+        // カテゴリー名取得
+        function getCategoryName(category) {
+            const names = {
+                'design': 'デザイン',
+                'frontend': 'フロントエンド',
+                'backend': 'バックエンド',
+                'database': 'データベース',
+                'media': 'メディア',
+                'other': 'その他'
             };
+            return names[category] || category;
+        }
+
+        // カテゴリアイコンパス取得
+        function getCategoryIconPath(category) {
+            const iconPaths = {
+                'design': 'images/デザイン.svg',
+                'frontend': 'images/フロント.svg',
+                'backend': 'images/バック.svg',
+                'media': 'images/メディア ・SNS.svg',
+                'database': 'images/バック.svg',
+                'other': null
+            };
+            return iconPaths[category] || null;
+        }
+
+        // 優先度名取得
+        function getPriorityName(priority) {
+            const names = {
+                'low': '低',
+                'medium': '中',
+                'high': '高'
+            };
+            return names[priority] || priority;
+        }
+
+        // 優先度カラー取得
+        function getPriorityColor(priority) {
+            const colors = {
+                'low': '#10b981',
+                'medium': '#f59e0b',
+                'high': '#ef4444'
+            };
+            return colors[priority] || '#7f8c8d';
+        }
+
+        // 優先度を⭐️で表示
+        function getPriorityStars(priority) {
+            const starCount = {
+                'low': 1,
+                'medium': 2,
+                'high': 3
+            };
+            const count = starCount[priority] || 1;
+            return '⭐️'.repeat(count);
+        }
+
+        // タスク詳細表示（右からスライドイン）
+        function showTaskDetail(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+
+            const overlay = document.getElementById('detailBoardOverlay');
+            const detailBoard = document.getElementById('detailBoard');
+            const detailContent = document.getElementById('detailContent');
             
-            card.innerHTML = `
-                <div class="new-task-card-header">
-                    <div class="new-task-card-title">${task.title}</div>
-                    <div class="new-task-card-priority ${task.priority}">${priorityText[task.priority]}</div>
-                </div>
-                <div class="new-task-card-details">
-                    <div class="new-task-card-category">${task.category}</div>
-                    <div class="new-task-card-description">${task.description}</div>
-                    <div style="font-size: 0.7rem; color: #48bb78; margin-top: 4px;">
-                        ✅ 完了日: ${task.completedAt}
+            // 詳細コンテンツを設定
+            detailContent.innerHTML = `
+                <div style="background: var(--color-background); border-radius: var(--border-radius-lg); padding: var(--spacing-md);">
+                    <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">${task.title}</h3>
+                    <div style="margin-bottom: var(--spacing-sm);">
+                        <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">カテゴリー: </span>
+                        <span>${getCategoryName(task.category)}</span>
                     </div>
-                </div>
-                <div class="new-task-card-actions">
-                    <button class="btn-task-action btn-delete" onclick="deleteCompletedTask('${task.id}')">削除</button>
+                    <div style="margin-bottom: var(--spacing-sm);">
+                        <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">優先度: </span>
+                        <span style="color: ${getPriorityColor(task.priority)};">${getPriorityStars(task.priority)}</span>
+                    </div>
+                    <div style="margin-bottom: var(--spacing-md);">
+                        <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">ステータス: </span>
+                        <span>未着手</span>
+                    </div>
+                    <div style="margin-top: var(--spacing-md); padding-top: var(--spacing-md); border-top: 1px solid var(--color-border);">
+                        <p style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary); margin-bottom: var(--spacing-sm);">説明:</p>
+                        <p style="color: var(--color-text-primary); line-height: 1.6;">${task.description || '説明なし'}</p>
+                    </div>
                 </div>
             `;
             
-            return card;
+            // パネルを開く
+            overlay.classList.add('active');
+            setTimeout(function() {
+                detailBoard.classList.add('active');
+            }, 10);
         }
 
-        // 完了タスクを削除
-        function deleteCompletedTask(taskId) {
-            if (confirm('この完了タスクを削除しますか？')) {
-                taskMarketData.completedTasks = taskMarketData.completedTasks.filter(t => t.id !== taskId);
-                updateCompletedTasksDisplay();
-                console.log('完了タスクを削除:', taskId);
+        // 詳細パネルを閉じる
+        function closeDetailBoard() {
+            const overlay = document.getElementById('detailBoardOverlay');
+            const detailBoard = document.getElementById('detailBoard');
+            detailBoard.classList.remove('active');
+            setTimeout(function() {
+                overlay.classList.remove('active');
+            }, 300);
+        }
+
+        // オーバーレイクリックで詳細パネルを閉じる
+        function closeDetailBoardOnOverlay(event) {
+            if (event.target.id === 'detailBoardOverlay') {
+                closeDetailBoard();
             }
         }
+
+        // ダッシュボードの表示/非表示を切り替え
+        function toggleDashboard() {
+            const dashboard = document.querySelector('.dashboard-column');
+            const mainBoard = document.querySelector('.main-board');
+            const toggleBtn = document.getElementById('toggleDashboard');
+            
+            dashboard.classList.toggle('hidden');
+            toggleBtn.classList.toggle('active');
+            updateMainBoardWidth();
+        }
+
+        // 詳細ボードの表示/非表示を切り替え（削除：詳細ボードはカラムではなくスライドインパネルに変更）
+        // function toggleDetail() {
+        //     const detailBoard = document.querySelector('.detail-board');
+        //     const mainBoard = document.querySelector('.main-board');
+        //     const toggleBtn = document.getElementById('toggleDetail');
+        //     
+        //     detailBoard.classList.toggle('hidden');
+        //     toggleBtn.classList.toggle('active');
+        //     updateMainBoardWidth();
+        // }
+
+        // メインボードの幅を動的に調整（詳細ボードはカラムではなくなったため削除）
+        function updateMainBoardWidth() {
+            const dashboard = document.querySelector('.dashboard-column');
+            const mainBoard = document.querySelector('.main-board');
+            
+            const dashboardHidden = dashboard.classList.contains('hidden');
+            
+            if (dashboardHidden) {
+                // ダッシュボード非表示 → メインボード100%
+                mainBoard.style.width = '100%';
+            } else {
+                // ダッシュボード表示 → メインボード95%（65% + 30%）
+                mainBoard.style.width = '95%';
+            }
+        }
+
+        // スプラッシュスクリーンの非表示処理
+        window.addEventListener('load', function() {
+            const splashScreen = document.getElementById('splashScreen');
+            // アニメーション完了後（3.5秒）にスプラッシュスクリーンを削除
+            // 順番: 1. 白画面が出る（0秒）→ 2. ロゴが出る（0.3秒〜1.3秒）→ 3. ロゴが消える（2秒〜2.5秒）→ 4. 白画面を消す（3秒〜3.5秒）
+            setTimeout(function() {
+                splashScreen.classList.add('hidden');
+                // アニメーション完了後に完全に削除
+                setTimeout(function() {
+                    splashScreen.remove();
+                    // スプラッシュ後にタスクグリッドを更新（確実にサイズを取得するため）
+                    setTimeout(function() {
+                        updateTaskGrid();
+                    }, 100);
+                }, 500);
+            }, 3500);
+        });
+
+        // 初期化（ページロード時にも実行、スプラッシュ後に再実行される）
+        setTimeout(function() {
+            setupBadgeDragHandler(); // バッジドラッグハンドラーを設定
+            updateTaskGrid();
+            updateBadges(); // バッジを表示
+            updateMainBoardWidth(); // メインボードの幅を調整
+        }, 100);
+
+        // スライドインパネルの開閉機能（5つのパネル対応）
+        function openSlidePanel(panelNumber) {
+            const overlay = document.getElementById('slidePanelOverlay' + panelNumber);
+            const panel = document.getElementById('slidePanel' + panelNumber);
+            const handle = document.getElementById('slidePanelHandle' + panelNumber);
+            overlay.classList.add('active');
+            handle.classList.add('active');
+            // 少し遅延させてパネルを表示（オーバーレイの表示後に）
+            setTimeout(function() {
+                panel.classList.add('active');
+            }, 10);
+        }
+
+        function closeSlidePanel(panelNumber) {
+            const overlay = document.getElementById('slidePanelOverlay' + panelNumber);
+            const panel = document.getElementById('slidePanel' + panelNumber);
+            const handle = document.getElementById('slidePanelHandle' + panelNumber);
+            panel.classList.remove('active');
+            handle.classList.remove('active');
+            // アニメーション完了後にオーバーレイを非表示
+            setTimeout(function() {
+                overlay.classList.remove('active');
+            }, 300);
+        }
+
+        // パネルの開閉を切り替える
+        function toggleSlidePanel(panelNumber) {
+            const overlay = document.getElementById('slidePanelOverlay' + panelNumber);
+            if (overlay.classList.contains('active')) {
+                closeSlidePanel(panelNumber);
+            } else {
+                // 他のパネルを閉じる
+                for (let i = 1; i <= 5; i++) {
+                    if (i !== panelNumber) {
+                        closeSlidePanel(i);
+                    }
+                }
+                openSlidePanel(panelNumber);
+            }
+        }
+
+        // オーバーレイクリックでパネルを閉じる
+        function closeSlidePanelOnOverlay(event, panelNumber) {
+            if (event.target.id === 'slidePanelOverlay' + panelNumber) {
+                closeSlidePanel(panelNumber);
+            }
+        }
+
+        // ESCキーで開いているパネルを閉じる
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                // 詳細パネルを閉じる
+                const detailOverlay = document.getElementById('detailBoardOverlay');
+                if (detailOverlay && detailOverlay.classList.contains('active')) {
+                    closeDetailBoard();
+                    return;
+                }
+                
+                // 開いているスライドインパネルをすべて閉じる
+                for (let i = 1; i <= 5; i++) {
+                    const overlay = document.getElementById('slidePanelOverlay' + i);
+                    if (overlay && overlay.classList.contains('active')) {
+                        closeSlidePanel(i);
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html>
+
