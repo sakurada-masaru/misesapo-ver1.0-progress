@@ -1191,6 +1191,40 @@
             transform: scale(1.05);
         }
 
+        /* タスクカードのツールチップ */
+        .task-card-tooltip {
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 6px 10px;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            font-size: 11px;
+            white-space: nowrap;
+            border-radius: var(--border-radius-sm);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .task-card-tooltip::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-bottom-color: rgba(0, 0, 0, 0.85);
+        }
+
+        .task-card:hover .task-card-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
         /* 詳細ボード */
         .detail-header {
             margin-bottom: var(--spacing-lg);
