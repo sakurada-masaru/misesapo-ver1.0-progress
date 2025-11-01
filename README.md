@@ -13,7 +13,7 @@
 
 ### GitHub Pages
 - **メインページ**: [進捗管理](https://sakurada-masaru.github.io/misesapo-ver1.0-progress/admin/simple-progress-organized.html)
-- **タスクマーケット**: [タスク管理](https://sakurada-masaru.github.io/misesapo-ver1.0-progress/admin/task-market.html)
+- **タスクマーケット**: [タスク管理](https://sakurada-masaru.github.io/misesapo-ver1.0-progress/admin/taskmarket.html)
 - **スケジュール**: [スケジュール可視化](https://sakurada-masaru.github.io/misesapo-ver1.0-progress/admin/schedule-visualization.html)
 
 ### 外部リンク
@@ -33,7 +33,7 @@ github-pages/
 ├── admin/                    # 管理画面
 │   ├── images/              # アイコン画像
 │   ├── simple-progress-organized.html # 進捗管理ページ
-│   ├── task-market.html     # タスクマーケット
+│   ├── taskmarket.html       # タスクマーケット
 │   └── schedule-visualization.html # スケジュール可視化
 ├── images/                  # 共通画像
 └── index.html              # トップページ

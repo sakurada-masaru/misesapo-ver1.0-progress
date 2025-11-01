@@ -12,9 +12,9 @@
 ## アクセス方法
 
 ### GitHub Pages
-- **メインページ**: [進捗管理](https://your-username.github.io/MisesapoRenewal/admin/simple-progress.html)
-- **タスクマーケット**: [タスク管理](https://your-username.github.io/MisesapoRenewal/admin/task-market.html)
-- **スケジュール**: [スケジュール可視化](https://your-username.github.io/MisesapoRenewal/admin/schedule-visualization.html)
+- **メインページ**: [進捗管理](https://sakurada-masaru.github.io/misesapo-ver1.0-progress/admin/simple-progress-organized.html)
+- **タスクマーケット**: [タスク管理](https://sakurada-masaru.github.io/misesapo-ver1.0-progress/admin/taskmarket.html)
+- **スケジュール**: [スケジュール可視化](https://sakurada-masaru.github.io/misesapo-ver1.0-progress/admin/schedule-visualization.html)
 
 ### 外部リンク
 - **Figmaデザイン**: [ミセサポ2025デザインファイル](https://www.figma.com/design/GWPufW1ofPkygNZN3r6vdr/%E3%83%9F%E3%82%BB%E3%82%B5%E3%83%9D2025?node-id=8133-18454&p=f&t=ai2JLv0Fye2amTFC-0)
@@ -23,7 +23,7 @@
 ## 技術仕様
 - **フロントエンド**: HTML5, CSS3, JavaScript (ES6+)
 - **データベース**: Firebase Firestore
-- **認証**: Firebase Authentication
+- **認証**: Google OAuth 2.0 (Google Identity Services)
 - **ホスティング**: GitHub Pages
 - **レスポンシブデザイン**: モバイルファースト
 
@@ -32,8 +32,8 @@
 github-pages/
 ├── admin/                    # 管理画面
 │   ├── images/              # アイコン画像
-│   ├── simple-progress.html # 進捗管理ページ
-│   ├── task-market.html     # タスクマーケット
+│   ├── simple-progress-organized.html # 進捗管理ページ
+│   ├── taskmarket.html       # タスクマーケット
 │   └── schedule-visualization.html # スケジュール可視化
 ├── images/                  # 共通画像
 └── index.html              # トップページ
