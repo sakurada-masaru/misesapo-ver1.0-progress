@@ -1999,10 +1999,10 @@
                 
                 // カードに吸着したバッジを表示
                 if (taskBadges[task.id] && taskBadges[task.id].length > 0) {
-                    taskBadges[task.id].forEach(badgeId => {
+                    taskBadges[task.id].forEach((badgeId, index) => {
                         const badge = badges.find(b => b.id === badgeId);
                         if (badge && badge.attachedToTaskId === task.id) {
-                            const badgeElement = createAttachedBadgeElement(badge);
+                            const badgeElement = createAttachedBadgeElement(badge, index);
                             card.appendChild(badgeElement);
                             card.classList.add('badge-attached');
                         }
@@ -2182,12 +2182,33 @@
         }
 
         // カードに吸着したバッジ要素を作成
-        function createAttachedBadgeElement(badge) {
+        function createAttachedBadgeElement(badge, index = 0) {
             const badgeDiv = document.createElement('div');
             badgeDiv.className = 'badge attached';
             badgeDiv.dataset.badgeId = badge.id;
             badgeDiv.style.background = badge.color;
             badgeDiv.title = badge.name + 'が着手中（クリックで外す）';
+            
+            // 複数のバッジがある場合、位置をずらす
+            // バッジのサイズ: 48px (width/height)
+            // オフセット: インデックスに応じて右から左に、または上から下に配置
+            const badgeSize = 48;
+            const badgeSpacing = 12; // バッジ間のスペース
+            const baseRight = 8;
+            const baseTop = 8;
+            
+            // 右側から左側へ、少し下にずらす配置
+            // 最大3つまで横に並べ、それ以上は下に配置
+            if (index < 3) {
+                // 最初の3つは横に並べる
+                badgeDiv.style.right = (baseRight + (index * (badgeSize + badgeSpacing))) + 'px';
+                badgeDiv.style.top = baseTop + 'px';
+            } else {
+                // 4つ目以降は下に配置（2列目）
+                const colIndex = index - 3;
+                badgeDiv.style.right = (baseRight + (colIndex * (badgeSize + badgeSpacing))) + 'px';
+                badgeDiv.style.top = (baseTop + badgeSize + badgeSpacing) + 'px';
+            }
             
             // Googleアカウントの画像を使用する場合
             let iconHtml = badge.icon;
@@ -2468,7 +2489,10 @@
                         }
                         
                         // カードに直接バッジを追加（updateTaskGrid()を呼ばない）
-                        const badgeElement = createAttachedBadgeElement(badge);
+                        // 既存のバッジの数を取得してインデックスを設定
+                        const existingBadges = this.querySelectorAll('.badge.attached');
+                        const badgeIndex = existingBadges.length;
+                        const badgeElement = createAttachedBadgeElement(badge, badgeIndex);
                         this.appendChild(badgeElement);
                         this.classList.add('badge-attached');
                         
