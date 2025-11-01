@@ -1002,6 +1002,16 @@
             font-size: 24px;
             line-height: 1;
             margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .badge-icon img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
         .badge-name {
@@ -1258,6 +1268,7 @@
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" onclick="cancelBadgeForm()">キャンセル</button>
+                    <button type="button" class="btn btn-google" id="createFromGoogleBtn" onclick="createBadgeFromGoogle()" style="display: none; background: #4285F4; color: white; margin-right: 8px;">🔵 Googleアカウントから作成</button>
                     <button type="submit" class="btn btn-primary">作成</button>
                 </div>
             </form>
@@ -1660,6 +1671,15 @@
             const modal = document.getElementById('badgeFormModal');
             modal.classList.add('active');
             document.getElementById('badgeInputForm').reset();
+            
+            // Googleアカウントでログインしている場合はボタンを表示
+            const googleBtn = document.getElementById('createFromGoogleBtn');
+            if (currentUser) {
+                googleBtn.style.display = 'inline-block';
+            } else {
+                googleBtn.style.display = 'none';
+            }
+            
             setTimeout(() => {
                 document.getElementById('badgeName').focus();
             }, 100);
@@ -1679,6 +1699,48 @@
             }
         }
 
+        // Googleアカウントからバッジを作成
+        function createBadgeFromGoogle() {
+            if (!currentUser) {
+                alert('Googleアカウントでログインしてください。');
+                return;
+            }
+            
+            // 既に同じユーザーのバッジが存在するか確認
+            const existingBadge = badges.find(b => b.userId === currentUser.id);
+            if (existingBadge) {
+                if (confirm(`既に「${existingBadge.name}」のバッジが存在します。新しく作成しますか？`)) {
+                    // 既存のバッジを削除
+                    badges = badges.filter(b => b.id !== existingBadge.id);
+                } else {
+                    return;
+                }
+            }
+            
+            // Googleアカウント情報からバッジを作成
+            const badge = {
+                id: Date.now(),
+                userId: currentUser.id,
+                name: currentUser.name || currentUser.email || 'ユーザー',
+                icon: currentUser.picture ? `img:${currentUser.picture}` : '👤',
+                color: '#FF679C',
+                email: currentUser.email,
+                picture: currentUser.picture,
+                position: {
+                    top: Math.random() * 300 + 100,
+                    left: Math.random() * 300 + 100
+                },
+                attachedToTaskId: null,
+                createdAt: new Date().toISOString()
+            };
+            
+            badges.push(badge);
+            updateBadges();
+            cancelBadgeForm();
+            
+            console.log('Googleアカウントからバッジを作成しました:', badge);
+        }
+        
         // バッジ作成
         document.getElementById('badgeInputForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -2016,8 +2078,18 @@
             badgeDiv.style.top = badge.position.top + 'px';
             badgeDiv.style.left = badge.position.left + 'px';
             
+            // Googleアカウントの画像を使用する場合
+            let iconHtml = badge.icon;
+            if (badge.icon && badge.icon.startsWith('img:')) {
+                const imageUrl = badge.icon.substring(4); // "img:"を削除
+                iconHtml = `<img src="${imageUrl}" alt="${badge.name}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+            } else if (badge.picture) {
+                // pictureプロパティが直接ある場合
+                iconHtml = `<img src="${badge.picture}" alt="${badge.name}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+            }
+            
             badgeDiv.innerHTML = `
-                <div class="badge-icon">${badge.icon}</div>
+                <div class="badge-icon">${iconHtml}</div>
                 <div class="badge-name">${badge.name}</div>
             `;
             
@@ -2032,8 +2104,18 @@
             badgeDiv.style.background = badge.color;
             badgeDiv.title = badge.name + 'が着手中（クリックで外す）';
             
+            // Googleアカウントの画像を使用する場合
+            let iconHtml = badge.icon;
+            if (badge.icon && badge.icon.startsWith('img:')) {
+                const imageUrl = badge.icon.substring(4); // "img:"を削除
+                iconHtml = `<img src="${imageUrl}" alt="${badge.name}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+            } else if (badge.picture) {
+                // pictureプロパティが直接ある場合
+                iconHtml = `<img src="${badge.picture}" alt="${badge.name}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+            }
+            
             badgeDiv.innerHTML = `
-                <div class="badge-icon">${badge.icon}</div>
+                <div class="badge-icon">${iconHtml}</div>
                 <div class="badge-name">${badge.name}</div>
             `;
             
