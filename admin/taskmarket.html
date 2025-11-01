@@ -809,30 +809,30 @@
             background: var(--panel-5-color);
         }
 
-        /* スマホ版での左パネルハンドルの配置 */
+        /* スマホ版での左パネルハンドルの配置（100px下に移動） */
         @media (max-width: 430px) {
             .slide-panel-handle.panel-1 {
-                top: 0;
+                top: 100px;
                 transform: none;
             }
 
             .slide-panel-handle.panel-2 {
-                top: calc(50px + 20px); /* 50px (高さ) + 20px (ギャップ) */
+                top: calc(100px + 50px + 20px); /* 100px + 50px (高さ) + 20px (ギャップ) */
                 transform: none;
             }
 
             .slide-panel-handle.panel-3 {
-                top: calc((50px + 20px) * 2);
+                top: calc(100px + (50px + 20px) * 2);
                 transform: none;
             }
 
             .slide-panel-handle.panel-4 {
-                top: calc((50px + 20px) * 3);
+                top: calc(100px + (50px + 20px) * 3);
                 transform: none;
             }
 
             .slide-panel-handle.panel-5 {
-                top: calc((50px + 20px) * 4);
+                top: calc(100px + (50px + 20px) * 4);
                 transform: none;
             }
         }
@@ -1236,6 +1236,10 @@
             height: 100%;
             border-radius: 50%;
             object-fit: cover;
+            -webkit-touch-callout: none; /* iOSのロングタッチメニューを無効化 */
+            -webkit-user-select: none; /* 画像の選択を無効化 */
+            user-select: none;
+            pointer-events: none; /* 画像へのイベントを無効化 */
         }
 
         .badge-name {
@@ -2863,6 +2867,17 @@
             let badgeTouchTimeout = null;
             let currentTouchedBadge = null;
             
+            // コンテキストメニューを無効化（画像保存メニューなどを防ぐ）
+            badgeElement.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+            
+            // 画像の選択を無効化
+            badgeElement.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+            });
+            
             // タッチ開始（スマホ対応）
             badgeElement.addEventListener('touchstart', function(e) {
                 if (e.touches.length === 1) {
@@ -2941,17 +2956,44 @@
                 badgeTouchTimeout = null;
                 
                 if (isBadgeDragging && currentTouchedBadge === this) {
-                    // バッジの位置情報を更新
-                    const gridRect = taskGrid.getBoundingClientRect();
+                    // ゴミ箱の上にドロップされたかチェック
+                    const trashBin = document.getElementById('trashBin');
                     const badgeRect = this.getBoundingClientRect();
+                    let droppedOnTrash = false;
                     
-                    const newLeft = badgeRect.left - gridRect.left;
-                    const newTop = badgeRect.top - gridRect.top;
+                    if (trashBin) {
+                        const trashRect = trashBin.getBoundingClientRect();
+                        // バッジの中心点がゴミ箱の範囲内にあるかチェック
+                        const badgeCenterX = badgeRect.left + badgeRect.width / 2;
+                        const badgeCenterY = badgeRect.top + badgeRect.height / 2;
+                        
+                        if (badgeCenterX >= trashRect.left && badgeCenterX <= trashRect.right &&
+                            badgeCenterY >= trashRect.top && badgeCenterY <= trashRect.bottom) {
+                            droppedOnTrash = true;
+                        }
+                    }
                     
-                    // バッジデータの位置を更新（カードに吸着していない場合のみ）
-                    if (!badge.attachedToTaskId) {
-                        badge.position.left = newLeft;
-                        badge.position.top = newTop;
+                    if (droppedOnTrash) {
+                        // 削除確認ダイアログを表示
+                        const badgeName = badge.name || 'バッジ';
+                        if (confirm(`「${badgeName}」を削除してもよろしいですか？\nこの操作は取り消せません。`)) {
+                            deleteBadge(badge.id);
+                        } else {
+                            // キャンセル時は元の位置に戻す
+                            this.style.left = badge.position.left + 'px';
+                            this.style.top = badge.position.top + 'px';
+                        }
+                    } else {
+                        // バッジの位置情報を更新
+                        const gridRect = taskGrid.getBoundingClientRect();
+                        const newLeft = badgeRect.left - gridRect.left;
+                        const newTop = badgeRect.top - gridRect.top;
+                        
+                        // バッジデータの位置を更新（カードに吸着していない場合のみ）
+                        if (!badge.attachedToTaskId) {
+                            badge.position.left = newLeft;
+                            badge.position.top = newTop;
+                        }
                     }
                     
                     this.style.transition = '';
@@ -2963,7 +3005,9 @@
                     isBadgeDragging = false;
                     currentTouchedBadge = null;
                     
-                    console.log('バッジの位置を更新しました:', badge.id, badge.position);
+                    if (!droppedOnTrash) {
+                        console.log('バッジの位置を更新しました:', badge.id, badge.position);
+                    }
                 } else if (currentTouchedBadge === this) {
                     // タップ判定（移動量が少ない場合）
                     currentTouchedBadge = null;
@@ -3069,7 +3113,29 @@
                 // バッジがドロップされた場合
                 const badgeId = e.dataTransfer.getData('badgeId');
                 if (badgeId) {
-                    deleteBadge(parseInt(badgeId));
+                    // 削除確認ダイアログを表示
+                    const badge = badges.find(b => b.id === parseInt(badgeId));
+                    if (badge) {
+                        const badgeName = badge.name || 'バッジ';
+                        if (confirm(`「${badgeName}」を削除してもよろしいですか？\nこの操作は取り消せません。`)) {
+                            deleteBadge(parseInt(badgeId));
+                        }
+                    }
+                }
+                
+                // タッチドラッグでドロップされた場合（タッチイベントから直接）
+                const touchedBadge = taskGrid.querySelector('.badge.dragging');
+                if (touchedBadge && !e.dataTransfer.getData('badgeId')) {
+                    const badgeIdNum = parseInt(touchedBadge.dataset.badgeId);
+                    if (badgeIdNum) {
+                        const badge = badges.find(b => b.id === badgeIdNum);
+                        if (badge) {
+                            const badgeName = badge.name || 'バッジ';
+                            if (confirm(`「${badgeName}」を削除してもよろしいですか？\nこの操作は取り消せません。`)) {
+                                deleteBadge(badgeIdNum);
+                            }
+                        }
+                    }
                 }
                 
                 // 処理完了後にフラグをリセット
