@@ -1,0 +1,10 @@
+.DS_Store
+client_secret*.json
+*.db
+venv/
+__pycache__/
+*.pyc
+.env
+node_modules/
+*.zip
+project-data-*.csv
