@@ -1351,7 +1351,10 @@
                     <h2 class="detail-title">タスク詳細</h2>
                     <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm); margin: 0;">タスクを選択して詳細を表示</p>
                 </div>
-                <button class="detail-board-close-button" onclick="closeDetailBoard()" title="閉じる">×</button>
+                <div style="display: flex; gap: var(--spacing-sm); align-items: center;">
+                    <button class="detail-edit-button" id="detailEditButton" onclick="toggleTaskEditMode()" style="display: none;" title="修正">✏️</button>
+                    <button class="detail-board-close-button" onclick="closeDetailBoard()" title="閉じる">×</button>
+                </div>
             </div>
             <div id="detailContent">
                 <div style="text-align: center; padding: var(--spacing-xl); color: var(--color-text-secondary);">
@@ -2707,16 +2710,38 @@
             return '⭐️'.repeat(count);
         }
 
+        // 現在表示中のタスクIDを保持
+        let currentDetailTaskId = null;
+
         // タスク詳細表示（右からスライドイン）
         function showTaskDetail(taskId) {
             const task = tasks.find(t => t.id === taskId);
             if (!task) return;
 
+            currentDetailTaskId = taskId;
+
             const overlay = document.getElementById('detailBoardOverlay');
             const detailBoard = document.getElementById('detailBoard');
             const detailContent = document.getElementById('detailContent');
+            const editButton = document.getElementById('detailEditButton');
             
-            // 詳細コンテンツを設定
+            // 修正ボタンを表示
+            editButton.style.display = 'flex';
+            
+            // 表示モードで詳細を表示
+            renderTaskDetailView(task);
+            
+            // パネルを開く
+            overlay.classList.add('active');
+            setTimeout(function() {
+                detailBoard.classList.add('active');
+            }, 10);
+        }
+
+        // タスク詳細の表示モード（読み取り専用）
+        function renderTaskDetailView(task) {
+            const detailContent = document.getElementById('detailContent');
+            
             detailContent.innerHTML = `
                 <div style="background: var(--color-background); border-radius: var(--border-radius-lg); padding: var(--spacing-md);">
                     <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">${task.title}</h3>
@@ -2738,18 +2763,144 @@
                     </div>
                 </div>
             `;
+        }
+
+        // タスク詳細の編集モード
+        function renderTaskDetailEdit(task) {
+            const detailContent = document.getElementById('detailContent');
             
-            // パネルを開く
-            overlay.classList.add('active');
-            setTimeout(function() {
-                detailBoard.classList.add('active');
-            }, 10);
+            detailContent.innerHTML = `
+                <div style="background: var(--color-background); border-radius: var(--border-radius-lg); padding: var(--spacing-md);">
+                    <form id="taskEditForm">
+                        <div class="form-group">
+                            <label for="editTaskTitle">タイトル *</label>
+                            <input type="text" id="editTaskTitle" name="title" value="${task.title || ''}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="editTaskCategory">カテゴリー *</label>
+                            <select id="editTaskCategory" name="category" required>
+                                <option value="design" ${task.category === 'design' ? 'selected' : ''}>デザイン</option>
+                                <option value="frontend" ${task.category === 'frontend' ? 'selected' : ''}>フロントエンド</option>
+                                <option value="backend" ${task.category === 'backend' ? 'selected' : ''}>バックエンド</option>
+                                <option value="database" ${task.category === 'database' ? 'selected' : ''}>データベース</option>
+                                <option value="media" ${task.category === 'media' ? 'selected' : ''}>メディア</option>
+                                <option value="other" ${task.category === 'other' ? 'selected' : ''}>その他</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="editTaskPriority">優先度 *</label>
+                            <select id="editTaskPriority" name="priority" required>
+                                <option value="low" ${task.priority === 'low' ? 'selected' : ''}>低 (⭐️)</option>
+                                <option value="medium" ${task.priority === 'medium' ? 'selected' : ''}>中 (⭐️⭐️)</option>
+                                <option value="high" ${task.priority === 'high' ? 'selected' : ''}>高 (⭐️⭐️⭐️)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="editTaskDescription">説明</label>
+                            <textarea id="editTaskDescription" name="description" rows="5">${task.description || ''}</textarea>
+                        </div>
+                        
+                        <div class="form-actions" style="margin-top: var(--spacing-md);">
+                            <button type="button" class="btn btn-secondary" onclick="cancelTaskEdit()">キャンセル</button>
+                            <button type="submit" class="btn btn-primary">保存</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            // フォームの送信イベントを設定
+            document.getElementById('taskEditForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveTaskEdit();
+            });
+        }
+
+        // 編集モードの切り替え
+        function toggleTaskEditMode() {
+            if (!currentDetailTaskId) return;
+            
+            const task = tasks.find(t => t.id === currentDetailTaskId);
+            if (!task) return;
+            
+            const editButton = document.getElementById('detailEditButton');
+            const detailContent = document.getElementById('detailContent');
+            
+            // 編集モードかどうかを判定（フォームが存在するか）
+            const isEditMode = detailContent.querySelector('#taskEditForm');
+            
+            if (isEditMode) {
+                // 編集モードから表示モードに戻す
+                renderTaskDetailView(task);
+                editButton.textContent = '✏️';
+            } else {
+                // 表示モードから編集モードに切り替え
+                renderTaskDetailEdit(task);
+                editButton.textContent = '👁️';
+            }
+        }
+
+        // タスク編集をキャンセル
+        function cancelTaskEdit() {
+            if (!currentDetailTaskId) return;
+            
+            const task = tasks.find(t => t.id === currentDetailTaskId);
+            if (!task) return;
+            
+            renderTaskDetailView(task);
+            const editButton = document.getElementById('detailEditButton');
+            editButton.textContent = '✏️';
+        }
+
+        // タスク編集を保存
+        function saveTaskEdit() {
+            if (!currentDetailTaskId) return;
+            
+            const task = tasks.find(t => t.id === currentDetailTaskId);
+            if (!task) return;
+            
+            const form = document.getElementById('taskEditForm');
+            const formData = new FormData(form);
+            
+            // タスクデータを更新
+            task.title = formData.get('title');
+            task.category = formData.get('category');
+            task.priority = formData.get('priority');
+            task.description = formData.get('description') || '';
+            task.updatedAt = new Date().toISOString();
+            
+            // カードの内容を更新（タスクグリッドを再描画）
+            updateTaskGrid();
+            
+            // 詳細パネルの表示を更新
+            renderTaskDetailView(task);
+            
+            // 編集ボタンを元に戻す
+            const editButton = document.getElementById('detailEditButton');
+            editButton.textContent = '✏️';
+            
+            console.log('タスクを更新しました:', task);
         }
 
         // 詳細パネルを閉じる
         function closeDetailBoard() {
             const overlay = document.getElementById('detailBoardOverlay');
             const detailBoard = document.getElementById('detailBoard');
+            const editButton = document.getElementById('detailEditButton');
+            
+            // 編集モードの場合は表示モードに戻す
+            if (editButton && editButton.textContent === '👁️') {
+                cancelTaskEdit();
+            }
+            
+            // 現在表示中のタスクIDをリセット
+            currentDetailTaskId = null;
+            
+            // 修正ボタンを非表示
+            editButton.style.display = 'none';
+            
             detailBoard.classList.remove('active');
             setTimeout(function() {
                 overlay.classList.remove('active');
