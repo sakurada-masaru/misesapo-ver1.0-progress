@@ -2049,16 +2049,6 @@
                     this.dataset.isDragging = 'true';
                     this.dataset.hasDragged = 'true'; // ドラッグ開始をマーク
                     
-                    // ドラッグ中の視覚効果を最小化（ブラウザのデフォルト画像を使用）
-                    const dragImage = this.cloneNode(true);
-                    dragImage.style.position = 'absolute';
-                    dragImage.style.top = '-1000px';
-                    dragImage.style.opacity = '1';
-                    dragImage.style.transform = 'rotate(0deg)';
-                    document.body.appendChild(dragImage);
-                    e.dataTransfer.setDragImage(dragImage, draggedOffset.x || 140, draggedOffset.y || 90);
-                    setTimeout(() => document.body.removeChild(dragImage), 0);
-                    
                     // カードの位置とマウス位置のオフセットを計算
                     const rect = this.getBoundingClientRect();
                     draggedOffset.x = e.clientX - rect.left;
