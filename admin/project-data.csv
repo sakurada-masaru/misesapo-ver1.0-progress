@@ -1,0 +1,45 @@
+カテゴリ,ページ名,URL,ステータス,担当者,機能,最終更新日
+メイン,トップページ,https://misesapo-renewal-558861392326.asia-northeast1.run.app/index.html,complete,frontend,サービス一覧・カテゴリフィルタ・カート連携,2025-01-27
+マイページ：レポート関連,PC/レポート一覧画面,report.html,complete,frontend,動的レポート一覧・ページネーション機能,2025-01-27
+マイページ,PC/マイページTOP画面,mypage.html,complete,frontend,ユーザー情報管理TOP画面,2025-01-27
+マイページ：レポート関連,PC/レポート内容詳細画面,reports/[id].html,complete,frontend,動的レポート詳細表示,2025-01-27
+認証,PC/サインインTOP画面,signin.html,complete,frontend,ユーザーサインイン（ログイン）画面,2025-01-27
+認証,PC/サインアップ（新規登録）画面１,signup.html,complete,frontend,ユーザー登録,2025-01-27
+認証,PC/サインアップ（新規登録）画面２,signup2.html,complete,frontend,追加情報入力,2025-01-27
+認証,PC/サインアップ（新規登録）画面３,signup3.html,complete,frontend,最終確認,2025-01-27
+認証,パスワードリセット,reset-password.html,complete,frontend,パスワード再設定,2025-01-27
+登録,個人登録,registration/personal.html,complete,frontend,個人情報登録,2025-01-27
+登録,個人登録2,registration/personal2.html,complete,frontend,追加情報入力,2025-01-27
+登録,法人登録,registration/corporation.html,complete,frontend,法人情報登録,2025-01-27
+登録,法人登録2,registration/corporation2.html,complete,frontend,追加情報入力,2025-01-27
+登録,法人登録3,registration/corporation3.html,complete,frontend,最終確認,2025-01-27
+登録,登録完了,registration/complete.html,complete,frontend,完了通知・カート連携,2025-01-27
+サポート,お問い合わせ完了,inquiry/complete.html,complete,frontend,完了通知,2025-01-27
+マイページ,PC/マイページ/個人情報編集画面,mypage/info.html,complete,frontend,情報編集・更新,2025-01-27
+サポート,お問い合わせ,mypage/inquiry.html,complete,frontend,サポート問い合わせ,2025-01-27
+Eコマース,カート,cart.html,complete,frontend,ショッピングカート機能,2025-01-27
+Eコマース,チェックアウト,checkout.html,complete,frontend,決済・注文処理,2025-01-27
+Eコマース,注文確認,order-confirm.html,complete,frontend,注文内容確認,2025-01-27
+Eコマース,注文完了,order-complete.html,complete,frontend,注文完了通知,2025-01-27
+SPバージョン,カート画面,cart.html,pending,frontend,SP版のレスポンシブ対応カート画面,2025-10-28
+Eコマース,発注履歴確認機能,？？？,unknown,backend,過去の注文から、日毎の清掃詳細・再発注・請求書のダウンロード・レポートの確認ができる,2025-10-28
+SPバージョン,発注履歴確認画面,？？？,unknown,backend,SP 過去の注文から、日毎の清掃詳細・再発注・請求書のダウンロード・レポートの確認ができる,2025-10-28
+登録,PC/クレジットカード情報確認画面,？？？,unknown,frontend,マイページ上の「登録クレジット情報を確認する画面」,2025-10-28
+Eコマース,クレジットカード決済機能,？？？,unknown,backend,クリジットカード情報の登録、決済ができる機能。,2025-10-28
+登録,PC/クレジットカード情報入力・編集画面,？？？,unknown,frontend,クレジットカード情報入力・編集画面の実装,2025-10-28
+登録,SP/クレジットカード情報確認画面,？？？,unknown,backend,クレジットカード登録・編集機能の実装,2025-10-28
+SPバージョン,店舗情報編集画面,？？？,pending,frontend,SP 店舗（個人）情報の編集画面,2025-10-28
+SPバージョン,新規店舗情報登録画面,？？？,unknown,frontend,SP 新規店舗情報を登録する画面,2025-10-28
+SPバージョン,お客様情報（基本情報）編集画面,？？？,unknown,backend,お客様情報（基本情報）編集する画面,2025-10-28
+SPバージョン,マイページTOP画面,？？？,complete,frontend,2-0　マイページのSP画面,2025-10-28
+SPバージョン,マイページ：レポート一覧画面,？？？,complete,frontend,２−１清掃員から、送られてきた「清掃レポート」の一覧が表示される画面,2025-10-28
+マイページ：レポート関連,SP/レポート一覧画面,report.html,complete,frontend,２−１清掃員から、送られてきた「清掃レポート」の一覧が表示される画面,2025-10-28
+メイン,SP/トップページ,index.html,complete,frontend,サービス一覧・カテゴリフィルタ・カート連携,2025-10-28
+マイページ,SP/マイページTOP画面,mypage.html,complete,frontend,2-0　SPマイページTOP画面,2025-10-28
+マイページ,SP/マイページ/個人情報編集画面,,complete,frontend,SP/マイページ/個人情報編集画面,2025-10-28
+登録,SP/クレジットカード情報入力・編集画面,,unknown,backend,,2025-10-28
+マイページ：レポート関連,SP/レポート内容詳細画面,reports/[id].html,complete,frontend,動的レポート詳細表示,2025-10-28
+認証,SP/サインインTOP画面,signin.html,unknown,frontend,ユーザーサインイン（ログイン）画面,2025-10-27
+認証,SP/サインアップ（新規登録）画面1,signup.html,unknown,frontend,,2025-10-28
+認証,SP/サインアップ（新規登録）画面２,signup2.html,unknown,frontend,,2025-10-28
+認証,SP/サインアップ（新規登録）画面3,signup3.html,unknown,frontend,,2025-10-28
