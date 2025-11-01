@@ -398,6 +398,50 @@
             transform: translateY(0) scale(1.05);
         }
 
+        /* ゴミ箱 */
+        .trash-bin {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            width: 64px;
+            height: 64px;
+            background: var(--color-danger, #ff4757);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+            opacity: 0.8;
+        }
+
+        .trash-bin:hover {
+            background: var(--color-danger-hover, #ff3838);
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-2px) scale(1.1);
+            opacity: 1;
+        }
+
+        .trash-bin.drag-over {
+            background: var(--color-danger-hover, #ff3838);
+            transform: scale(1.2);
+            opacity: 1;
+            box-shadow: 0 0 20px rgba(255, 71, 87, 0.6);
+        }
+
+        .trash-bin:active {
+            transform: translateY(0) scale(1.05);
+        }
+
+        .trash-icon {
+            font-size: 28px;
+            user-select: none;
+        }
+
         /* モーダルオーバーレイ */
         .modal-overlay {
             position: fixed;
@@ -1169,6 +1213,11 @@
                 <!-- 新規追加ボタン（左下に固定） -->
                 <button class="add-task-button" onclick="toggleTaskForm()" title="新規タスクを追加">+</button>
                 
+                <!-- ゴミ箱（右下に固定） -->
+                <div class="trash-bin" id="trashBin" title="ドラッグ&ドロップで削除">
+                    <span class="trash-icon">🗑️</span>
+                </div>
+                
                 <!-- タスクカードがここに動的に生成されます -->
                 <div style="text-align: center; padding: var(--spacing-xl); color: var(--color-text-secondary);">
                     <p>タスクがありません</p>
@@ -1768,8 +1817,9 @@
             const taskGrid = document.getElementById('taskGrid');
             
             if (tasks.length === 0) {
-                // カードをクリア（ボタンは残す）
+                // カードをクリア（ボタンとゴミ箱は残す）
                 const addButton = taskGrid.querySelector('.add-task-button');
+                const trashBin = taskGrid.querySelector('.trash-bin');
                 taskGrid.innerHTML = '';
                 
                 // ボタンを再追加
@@ -1782,6 +1832,19 @@
                     button.title = '新規タスクを追加';
                     button.textContent = '+';
                     taskGrid.appendChild(button);
+                }
+                
+                // ゴミ箱を再追加
+                if (trashBin) {
+                    taskGrid.appendChild(trashBin);
+                } else {
+                    const trash = document.createElement('div');
+                    trash.className = 'trash-bin';
+                    trash.id = 'trashBin';
+                    trash.title = 'ドラッグ&ドロップで削除';
+                    trash.innerHTML = '<span class="trash-icon">🗑️</span>';
+                    taskGrid.appendChild(trash);
+                    setupTrashBinDrop(); // ドロップ処理を再設定
                 }
                 
                 const emptyMessage = document.createElement('div');
@@ -1802,6 +1865,7 @@
 
             // カードをクリア（ボタンは残す）
             const addButton = taskGrid.querySelector('.add-task-button');
+            const trashBin = taskGrid.querySelector('.trash-bin');
             taskGrid.innerHTML = '';
             
             // ボタンを再追加
@@ -1814,6 +1878,19 @@
                 button.title = '新規タスクを追加';
                 button.textContent = '+';
                 taskGrid.appendChild(button);
+            }
+            
+            // ゴミ箱を再追加
+            if (trashBin) {
+                taskGrid.appendChild(trashBin);
+            } else {
+                const trash = document.createElement('div');
+                trash.className = 'trash-bin';
+                trash.id = 'trashBin';
+                trash.title = 'ドラッグ&ドロップで削除';
+                trash.innerHTML = '<span class="trash-icon">🗑️</span>';
+                taskGrid.appendChild(trash);
+                setupTrashBinDrop(); // ドロップ処理を再設定
             }
             
             // 配置済みカードの位置を記録
@@ -2046,6 +2123,9 @@
                     draggedCard = null;
                 }
             });
+            
+            // ゴミ箱のドロップ処理を設定
+            setupTrashBinDrop();
         }
 
         // バッジ表示と更新
@@ -2180,6 +2260,105 @@
             });
             
             badgeElement.setAttribute('draggable', 'true');
+        }
+        
+        // ゴミ箱のドロップ処理を設定
+        function setupTrashBinDrop() {
+            const trashBin = document.getElementById('trashBin');
+            if (!trashBin) return;
+            
+            // ゴミ箱の上でのドラッグオーバー
+            trashBin.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.dataTransfer.dropEffect = 'move';
+                this.classList.add('drag-over');
+            });
+            
+            // ゴミ箱から離れた時
+            trashBin.addEventListener('dragleave', function(e) {
+                this.classList.remove('drag-over');
+            });
+            
+            // ゴミ箱にドロップ
+            trashBin.addEventListener('drop', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.classList.remove('drag-over');
+                
+                // タスクカードがドロップされた場合
+                const taskGrid = document.getElementById('taskGrid');
+                const draggedCard = taskGrid.querySelector('.task-card.dragging');
+                if (draggedCard) {
+                    const taskIdNum = parseInt(draggedCard.dataset.taskId);
+                    if (taskIdNum && !isNaN(taskIdNum)) {
+                        deleteTask(taskIdNum);
+                        return;
+                    }
+                }
+                
+                // バッジがドロップされた場合
+                const badgeId = e.dataTransfer.getData('badgeId');
+                if (badgeId) {
+                    deleteBadge(parseInt(badgeId));
+                }
+            });
+        }
+        
+        // タスクを削除
+        function deleteTask(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+            
+            // 削除確認ダイアログ
+            const taskTitle = task.title || '無題のタスク';
+            if (!confirm(`「${taskTitle}」を削除してもよろしいですか？\nこの操作は取り消せません。`)) {
+                return;
+            }
+            
+            // タスクを削除
+            tasks = tasks.filter(t => t.id !== taskId);
+            
+            // タスクに紐づくバッジも削除
+            if (taskBadges[taskId]) {
+                taskBadges[taskId].forEach(badgeId => {
+                    const badge = badges.find(b => b.id === badgeId);
+                    if (badge) {
+                        badge.attachedToTaskId = null;
+                    }
+                });
+                delete taskBadges[taskId];
+            }
+            
+            // グリッドを更新
+            updateTaskGrid();
+            
+            console.log('タスクを削除しました:', taskId);
+        }
+        
+        // バッジを削除
+        function deleteBadge(badgeId) {
+            const badge = badges.find(b => b.id === badgeId);
+            if (!badge) return;
+            
+            // バッジを削除（確認なし）
+            badges = badges.filter(b => b.id !== badgeId);
+            
+            // タスクからバッジの紐付けを削除
+            if (badge.attachedToTaskId) {
+                const taskId = badge.attachedToTaskId;
+                if (taskBadges[taskId]) {
+                    taskBadges[taskId] = taskBadges[taskId].filter(id => id !== badgeId);
+                    if (taskBadges[taskId].length === 0) {
+                        delete taskBadges[taskId];
+                    }
+                }
+            }
+            
+            // バッジ表示を更新
+            updateBadges();
+            
+            console.log('バッジを削除しました:', badgeId);
         }
 
         // グリッド上でのバッジドラッグ中に位置を更新（一度だけ設定）
@@ -2435,6 +2614,7 @@
         // 初期化（ページロード時にも実行、スプラッシュ後に再実行される）
         setTimeout(function() {
             setupBadgeDragHandler(); // バッジドラッグハンドラーを設定
+            setupTrashBinDrop(); // ゴミ箱のドロップ処理を初期化
             updateTaskGrid();
             updateBadges(); // バッジを表示
             updateMainBoardWidth(); // メインボードの幅を調整
