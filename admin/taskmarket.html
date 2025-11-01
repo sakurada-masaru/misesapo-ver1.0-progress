@@ -1376,11 +1376,13 @@
                 padding: var(--spacing-sm);
             }
 
-            /* タスクカード（80%サイズにリサイズ） */
+            /* タスクカード（水平方向に3つ並ぶサイズ） */
             .task-card {
-                width: 192px; /* 240px * 0.8 = 192px */
-                min-height: 128px; /* 160px * 0.8 = 128px */
-                padding: calc(var(--spacing-sm) * 0.8);
+                width: calc((100vw - 24px - 40px) / 3 - 12px); /* 画面幅からパディングとギャップを引いて3等分 */
+                max-width: 120px;
+                min-height: 100px;
+                padding: calc(var(--spacing-xs) * 0.8);
+                font-size: 0.75rem;
             }
 
             .task-card-title {
@@ -1410,9 +1412,10 @@
                 display: none;
             }
 
-            /* タスクグリッド */
+            /* タスクグリッド（水平方向に3つ並ぶ） */
             .task-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 6px;
                 padding: var(--spacing-sm);
             }
 
@@ -1425,10 +1428,10 @@
                 font-size: 24px;
             }
 
-            /* 新規追加ボタン：画面左下に固定 */
+            /* 新規追加ボタン：画面左下に固定（20px上に移動） */
             .add-task-button {
                 position: fixed;
-                bottom: 12px;
+                bottom: 32px;
                 left: 12px;
                 z-index: 1000;
             }
@@ -1442,10 +1445,10 @@
                 font-size: 20px;
             }
 
-            /* ゴミ箱ボタン：画面右下に固定 */
+            /* ゴミ箱ボタン：画面右下に固定（20px上に移動） */
             .trash-bin {
                 position: fixed;
-                bottom: 12px;
+                bottom: 32px;
                 right: 12px;
                 z-index: 1000;
             }
@@ -2851,6 +2854,135 @@
         function setupBadgeDragAndDrop(badgeElement, badge) {
             const taskGrid = document.getElementById('taskGrid');
             
+            // タッチイベント用の変数（スマホ対応）
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let badgeStartX = 0;
+            let badgeStartY = 0;
+            let isBadgeDragging = false;
+            let badgeTouchTimeout = null;
+            let currentTouchedBadge = null;
+            
+            // タッチ開始（スマホ対応）
+            badgeElement.addEventListener('touchstart', function(e) {
+                if (e.touches.length === 1) {
+                    const touch = e.touches[0];
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
+                    currentTouchedBadge = this;
+                    
+                    // バッジの現在位置を取得
+                    const rect = this.getBoundingClientRect();
+                    const gridRect = taskGrid.getBoundingClientRect();
+                    badgeStartX = rect.left - gridRect.left;
+                    badgeStartY = rect.top - gridRect.top;
+                    
+                    // 長押し判定（300ms後にドラッグ開始）
+                    badgeTouchTimeout = setTimeout(() => {
+                        isBadgeDragging = true;
+                        this.classList.add('dragging');
+                        this.style.transition = 'none';
+                        this.style.zIndex = '1000';
+                        
+                        // 視覚的フィードバック
+                        this.style.opacity = '0.8';
+                        this.style.transform += ' scale(1.1)';
+                    }, 300);
+                }
+            }, { passive: false });
+            
+            // タッチ移動（スマホ対応）
+            badgeElement.addEventListener('touchmove', function(e) {
+                if (isBadgeDragging && e.touches.length === 1 && currentTouchedBadge === this) {
+                    const touch = e.touches[0];
+                    const deltaX = touch.clientX - touchStartX;
+                    const deltaY = touch.clientY - touchStartY;
+                    
+                    // バッジの位置を更新
+                    const gridRect = taskGrid.getBoundingClientRect();
+                    const newX = badgeStartX + deltaX;
+                    const newY = badgeStartY + deltaY;
+                    
+                    // タスクグリッドの境界内に制限
+                    const badgeRect = this.getBoundingClientRect();
+                    const badgeWidth = badgeRect.width;
+                    const badgeHeight = badgeRect.height;
+                    
+                    const maxX = taskGrid.offsetWidth - badgeWidth;
+                    const maxY = Math.max(800, taskGrid.offsetHeight) - badgeHeight;
+                    
+                    const clampedX = Math.max(0, Math.min(newX, maxX));
+                    const clampedY = Math.max(0, Math.min(newY, maxY));
+                    
+                    this.style.left = clampedX + 'px';
+                    this.style.top = clampedY + 'px';
+                    
+                    e.preventDefault();
+                } else if (badgeTouchTimeout && currentTouchedBadge === this) {
+                    // 移動が小さい場合はドラッグをキャンセル
+                    const touch = e.touches[0];
+                    const deltaX = Math.abs(touch.clientX - touchStartX);
+                    const deltaY = Math.abs(touch.clientY - touchStartY);
+                    
+                    if (deltaX < 5 && deltaY < 5) {
+                        // まだドラッグ開始していない
+                        return;
+                    } else {
+                        // 移動量が大きい場合はタイマーをクリア
+                        clearTimeout(badgeTouchTimeout);
+                        badgeTouchTimeout = null;
+                    }
+                }
+            }, { passive: false });
+            
+            // タッチ終了（スマホ対応）
+            badgeElement.addEventListener('touchend', function(e) {
+                clearTimeout(badgeTouchTimeout);
+                badgeTouchTimeout = null;
+                
+                if (isBadgeDragging && currentTouchedBadge === this) {
+                    // バッジの位置情報を更新
+                    const gridRect = taskGrid.getBoundingClientRect();
+                    const badgeRect = this.getBoundingClientRect();
+                    
+                    const newLeft = badgeRect.left - gridRect.left;
+                    const newTop = badgeRect.top - gridRect.top;
+                    
+                    // バッジデータの位置を更新（カードに吸着していない場合のみ）
+                    if (!badge.attachedToTaskId) {
+                        badge.position.left = newLeft;
+                        badge.position.top = newTop;
+                    }
+                    
+                    this.style.transition = '';
+                    this.style.zIndex = '10';
+                    this.style.opacity = '1';
+                    this.style.transform = this.style.transform.replace(' scale(1.1)', '');
+                    this.classList.remove('dragging');
+                    
+                    isBadgeDragging = false;
+                    currentTouchedBadge = null;
+                    
+                    console.log('バッジの位置を更新しました:', badge.id, badge.position);
+                } else if (currentTouchedBadge === this) {
+                    // タップ判定（移動量が少ない場合）
+                    currentTouchedBadge = null;
+                }
+            });
+            
+            // タッチキャンセル（スマホ対応）
+            badgeElement.addEventListener('touchcancel', function(e) {
+                clearTimeout(badgeTouchTimeout);
+                badgeTouchTimeout = null;
+                isBadgeDragging = false;
+                this.classList.remove('dragging');
+                this.style.transition = '';
+                this.style.opacity = '1';
+                this.style.transform = this.style.transform.replace(' scale(1.1)', '');
+                currentTouchedBadge = null;
+            });
+            
+            // ドラッグ開始（PC対応）
             badgeElement.addEventListener('dragstart', function(e) {
                 draggedBadgeGlobal = badge;
                 this.classList.add('dragging');
@@ -2867,6 +2999,7 @@
                 e.dataTransfer.setData('badgeId', badge.id.toString());
             });
             
+            // ドラッグ終了（PC対応）
             badgeElement.addEventListener('dragend', function(e) {
                 // 元のバッジを再度表示
                 this.style.visibility = 'visible';
