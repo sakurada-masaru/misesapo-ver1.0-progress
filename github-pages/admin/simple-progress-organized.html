@@ -278,6 +278,8 @@
             display: flex;
             align-items: center;
             gap: var(--spacing-md);
+            justify-content: center;
+            flex: 1;
         }
 
         .header-actions {
@@ -439,6 +441,56 @@
             gap: var(--spacing-xl);
             flex-wrap: wrap;
         }
+        
+        /* フィルター行のスタイル */
+        .filters-row {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .filter-group label {
+            font-weight: var(--font-weight-medium);
+            color: var(--color-text-primary);
+            white-space: nowrap;
+        }
+        
+        .filter-group select {
+            padding: var(--padding-sm) var(--padding-md);
+            border: var(--form-input-border);
+            border-radius: var(--form-input-border-radius);
+            font-size: var(--font-size-sm);
+            background: var(--color-background);
+            color: var(--color-text-primary);
+            min-width: 120px;
+        }
+        
+        .filter-group select:focus {
+            outline: none;
+            border: var(--form-input-focus-border);
+            box-shadow: var(--form-input-focus-shadow);
+        }
+        
+        /* アクションボタン群のスタイル */
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .action-buttons-row {
+            display: flex;
+            gap: var(--spacing-md);
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
 
         .add-button {
             background: var(--color-primary);
@@ -483,6 +535,11 @@
             border: var(--card-border);
             overflow: hidden;
         }
+        
+        /* テーブル同士のギャップを追加 */
+        .category-section + .category-section {
+            margin-top: var(--spacing-2xl);
+        }
 
         .category-header {
             background: var(--color-primary);
@@ -520,6 +577,11 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
+        /* ========================================
+           📱 レスポンシブデザイン (Responsive Design)
+           ======================================== */
+        
+        /* モバイル用ヘッダー調整 */
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -537,6 +599,20 @@
 
             .header-menu, .header-actions {
                 justify-content: center;
+            }
+            
+            /* SP版でヘッダーアクションボタンとタブメニューを非表示 */
+            .header-actions {
+                display: none;
+            }
+            
+            .header-menu {
+                display: none;
+            }
+            
+            /* SP版でミニメニューを表示 */
+            .mobile-mini-menu {
+                display: block;
             }
 
             .logo {
@@ -751,16 +827,14 @@
             border-top: var(--border-width-thin) solid var(--color-border);
         }
 
-        /* ========================================
-           📱 レスポンシブ (Responsive)
-           ======================================== */
+        /* モバイル用メインコンテンツ調整 */
         @media (max-width: 768px) {
             .container {
                 padding: var(--spacing-md);
                 padding-bottom: 80px;
             }
             
-            
+            /* 統計カードのレイアウト調整 */
             .stats {
                 grid-template-columns: repeat(2, 1fr);
                 gap: var(--spacing-md);
@@ -774,34 +848,298 @@
                 font-size: var(--font-size-2xl);
             }
             
+            /* テーブルのモバイル最適化 - simple-progress.htmlを参考にした実装 */
             .table {
                 font-size: var(--font-size-sm);
+                display: block;
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
             }
             
-            .table th, .table td {
-                padding: var(--spacing-sm) var(--spacing-xs);
-                vertical-align: middle;
+            .table thead {
+                display: none;
+            }
+            
+            .table tbody {
+                display: block;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            
+            .table tr {
+                display: block;
+                border: 1px solid var(--color-border);
+                border-radius: var(--border-radius-md);
+                margin-bottom: var(--spacing-sm);
+                padding: var(--spacing-sm);
+                background: var(--color-background-secondary);
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+                margin-left: 0;
+                margin-right: 0;
+                position: relative;
+            }
+            
+            /* テーブル行間にピンクの区切り線を追加 */
+            .table tr:not(:last-child)::after {
+                content: '';
+                position: absolute;
+                bottom: -4px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 60%;
+                height: 2px;
+                background: var(--color-primary);
+                border-radius: 1px;
+            }
+            
+            .table td {
+                display: block;
+                padding: var(--spacing-xs) 0;
+                border: none;
+                text-align: left;
+                width: 100%;
+                box-sizing: border-box;
+                white-space: nowrap;
+                min-width: 0;
+            }
+            
+            .table td:before {
+                content: attr(data-label) ": ";
+                font-weight: var(--font-weight-semibold);
+                color: var(--color-text-primary);
+                display: inline;
+                font-size: var(--font-size-xs);
+                margin-right: var(--spacing-xs);
+            }
+            
+            .table td > *:not(:before) {
+                display: inline;
+                white-space: nowrap;
+            }
+            
+            /* リンクの調整 */
+            .table td a {
+                color: var(--color-primary);
+                text-decoration: none;
+                display: inline;
+                white-space: nowrap;
+            }
+            
+            .table td a:hover {
+                text-decoration: underline;
+            }
+            
+            /* ステータス表示の調整 */
+            .table td span {
+                display: inline;
             }
             
             /* モバイルでの操作ボタン最適化 */
             .table .btn {
-                padding: var(--spacing-xs);
+                padding: var(--spacing-xs) var(--spacing-sm);
                 font-size: var(--font-size-xs);
-                min-width: 40px;
-                margin: 0 var(--spacing-xs);
+                min-width: 50px;
+                margin: var(--spacing-xs) var(--spacing-xs) 0 0;
+                display: inline-block;
             }
             
-            /* モバイルでの操作列最適化 */
-            .table td:last-child {
-                text-align: center;
+            /* 不要な列を非表示（必要に応じて調整） */
+            .table td:nth-child(7) {
+                display: none; /* 最終更新日を非表示 */
+            }
+            
+            /* カテゴリヘッダーのモバイル調整 */
+            .category-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-sm);
+            }
+            
+            .category-stats {
+                flex-wrap: wrap;
+                gap: var(--spacing-xs);
+            }
+            
+            .stat-item {
+                font-size: var(--font-size-xs);
                 padding: var(--spacing-xs);
             }
             
+            /* カテゴリセクション間にピンクの区切り線を追加 */
+            .category-section:not(:last-child) {
+                margin-bottom: var(--spacing-xl);
+                position: relative;
+            }
+            
+            /* モバイル版でのテーブル間ギャップ調整 */
+            .category-section + .category-section {
+                margin-top: var(--spacing-xl);
+            }
+            
+            .category-section:not(:last-child)::after {
+                content: '';
+                position: absolute;
+                bottom: -var(--spacing-lg);
+                left: 50%;
+                transform: translateX(-50%);
+                width: 80%;
+                height: 3px;
+                background: var(--color-primary);
+                border-radius: 2px;
+                box-shadow: 0 2px 4px var(--color-primary-shadow);
+            }
+            
+            /* モーダルのモバイル調整 */
             .modal-content {
                 margin: 10% auto;
                 width: 95%;
                 padding: var(--spacing-lg);
             }
+        }
+
+        /* ========================================
+           📱 SP版ミニメニュー (Mobile Mini Menu)
+           ======================================== */
+        .mobile-mini-menu {
+            display: none;
+            position: relative;
+            margin-bottom: var(--margin-lg);
+        }
+        
+        .mini-menu-toggle {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--padding-sm) var(--padding-md);
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-sm);
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .mini-menu-toggle:hover {
+            background: var(--color-primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .mini-menu-toggle.active {
+            background: var(--color-primary-hover);
+            border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+        }
+        
+        .mini-menu-content {
+            display: none;
+            position: fixed;
+            bottom: 80px;
+            left: 10px;
+            right: 10px;
+            background: var(--color-background-card);
+            border: var(--card-border);
+            border-radius: var(--card-border-radius);
+            box-shadow: var(--card-shadow);
+            z-index: var(--z-modal);
+            overflow: hidden;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
+        .mini-menu-content.show {
+            display: block;
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .mini-menu-section {
+            padding: var(--padding-md);
+            border-bottom: 1px solid var(--color-border-light);
+        }
+        
+        .mini-menu-section:last-child {
+            border-bottom: none;
+        }
+        
+        .mini-menu-section h4 {
+            color: var(--color-text-primary);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-semibold);
+            margin: 0 0 var(--spacing-sm) 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .mini-menu-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-xs);
+        }
+        
+        .mini-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: var(--spacing-sm);
+            background: var(--color-background-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-size: 10px;
+            color: var(--color-text-secondary);
+            min-height: 50px;
+            justify-content: center;
+        }
+        
+        .mini-btn:hover {
+            background: var(--color-primary-light);
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+            transform: translateY(-1px);
+        }
+        
+        .mini-btn.active {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            color: white;
+        }
+        
+        .mini-btn img {
+            opacity: 0.8;
+            width: 14px;
+            height: 14px;
+        }
+        
+        .mini-btn.active img {
+            opacity: 1;
+        }
+        
+        .mini-btn span {
+            font-weight: var(--font-weight-medium);
+            text-align: center;
+            line-height: 1.1;
         }
 
         /* ========================================
@@ -843,10 +1181,391 @@
             height: var(--spacing-2xl);
             margin-bottom: var(--spacing-xs);
         }
+        
+        /* 下部固定メニューのミニメニュートリガー */
+        .mini-menu-trigger {
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+        
+        .mini-menu-trigger:hover {
+            color: var(--color-primary);
+            transform: translateY(-2px);
+        }
+        
+        .mini-menu-trigger.active {
+            color: var(--color-primary);
+            background: var(--color-primary-light);
+            border-radius: var(--border-radius-sm);
+        }
 
+        /* モバイルナビゲーションの表示制御 */
         @media (max-width: 768px) {
             .mobile-nav {
                 display: block;
+            }
+        }
+
+        /* ========================================
+           📱 スマートフォン専用調整 (Smartphone Specific)
+           ======================================== */
+        
+        /* より小さなスマートフォン画面用 */
+        @media (max-width: 480px) {
+            .container {
+                padding: var(--spacing-sm);
+                padding-bottom: 80px;
+            }
+            
+            .header {
+                padding: var(--spacing-sm) 0;
+            }
+            
+            .header-text h1 {
+                font-size: var(--font-size-xl);
+            }
+            
+            .header-text p {
+                font-size: var(--font-size-sm);
+            }
+            
+            .logo {
+                width: 40px;
+                height: 40px;
+            }
+            
+            /* 統計カードを1列に */
+            .stats {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-sm);
+            }
+            
+            .stat-card {
+                padding: var(--spacing-md);
+            }
+            
+            .stat-card h3 {
+                font-size: var(--font-size-xl);
+            }
+            
+            /* コントロールボタンの調整 */
+            .controls-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: var(--spacing-md);
+            }
+            
+            .filters-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: var(--spacing-sm);
+            }
+            
+            .filter-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-xs);
+            }
+            
+            .filter-group select {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .action-buttons {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            /* SP版でコントロールのアクションボタンを非表示 */
+            .action-buttons {
+                display: none;
+            }
+            
+            /* テーブルの超小型画面調整 - simple-progress.htmlスタイル */
+            .table tr {
+                padding: var(--spacing-xs);
+                margin-bottom: var(--spacing-xs);
+            }
+            
+            .table td {
+                padding: 2px 0;
+                font-size: var(--font-size-xs);
+            }
+            
+            .table td:before {
+                font-size: 10px;
+                margin-right: 4px;
+            }
+            
+            .table .btn {
+                padding: 2px 6px;
+                font-size: 10px;
+                min-width: 40px;
+                margin: 2px 4px 0 0;
+            }
+            
+            /* 超小型画面での区切り線調整 */
+            .table tr:not(:last-child)::after {
+                width: 50%;
+                height: 1px;
+                bottom: -2px;
+            }
+            
+            .category-section:not(:last-child)::after {
+                width: 70%;
+                height: 2px;
+                bottom: -var(--spacing-md);
+            }
+            
+            /* 超小型画面でのテーブル間ギャップ調整 */
+            .category-section + .category-section {
+                margin-top: var(--spacing-lg);
+            }
+            
+            /* 超小型画面でのフィルター調整 */
+            .filters-row {
+                gap: var(--spacing-xs);
+            }
+            
+            .filter-group {
+                gap: 2px;
+            }
+            
+            .filter-group label {
+                font-size: var(--font-size-xs);
+            }
+            
+            .filter-group select {
+                font-size: var(--font-size-xs);
+                padding: var(--spacing-xs);
+            }
+            
+            /* 超小型画面でのサブメニュー調整 */
+            .submenu-content {
+                padding: var(--spacing-md);
+            }
+            
+            .submenu-buttons {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--spacing-xs);
+            }
+            
+            .submenu-btn {
+                min-height: 50px;
+                padding: var(--spacing-xs);
+                font-size: 10px;
+            }
+            
+            .submenu-btn img {
+                width: 14px;
+                height: 14px;
+            }
+            
+            /* 超小型画面でのミニメニュー調整 */
+            .mini-menu-buttons {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 4px;
+            }
+            
+            .mini-btn {
+                min-height: 45px;
+                padding: 6px;
+                font-size: 9px;
+            }
+            
+            .mini-btn img {
+                width: 12px;
+                height: 12px;
+            }
+            
+            /* モーダルの調整 */
+            .modal-content {
+                margin: 5% auto;
+                width: 98%;
+                padding: var(--spacing-md);
+                max-height: 90vh;
+            }
+            
+            /* モバイルナビゲーションの調整 */
+            .mobile-nav-content {
+                padding: var(--spacing-sm) 0;
+            }
+            
+            .mobile-nav-item {
+                font-size: 10px;
+            }
+            
+            .mobile-nav-item img {
+                width: var(--spacing-xl);
+                height: var(--spacing-xl);
+            }
+        }
+
+        /* ========================================
+           📱 モバイル用ボトムパネル (Mobile Bottom Panel)
+           ======================================== */
+        .mobile-bottom-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: var(--z-modal);
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+        }
+
+        .mobile-bottom-panel.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .bottom-panel-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--color-background-card);
+            border-radius: var(--card-border-radius) var(--card-border-radius) 0 0;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .mobile-bottom-panel.show .bottom-panel-content {
+            transform: translateY(0);
+        }
+
+        .bottom-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--color-border-light);
+            background: var(--color-background);
+        }
+
+        .bottom-panel-header h3 {
+            margin: 0;
+            color: var(--color-text-primary);
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+        }
+
+        .close-panel-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            padding: var(--spacing-xs);
+            border-radius: var(--border-radius-sm);
+            transition: all var(--transition-normal);
+        }
+
+        .close-panel-btn:hover {
+            background: var(--color-background-hover);
+            color: var(--color-text-primary);
+        }
+
+        .bottom-panel-body {
+            padding: var(--spacing-lg);
+        }
+
+        .bottom-panel-body .mini-menu-section {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .bottom-panel-body .mini-menu-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .bottom-panel-body .mini-menu-section h4 {
+            margin: 0 0 var(--spacing-md) 0;
+            color: var(--color-text-primary);
+            font-size: var(--font-size-md);
+            font-weight: var(--font-weight-semibold);
+        }
+
+        .bottom-panel-body .mini-menu-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-md);
+        }
+
+        .bottom-panel-body .mini-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-md);
+            background: var(--color-background);
+            border: 1px solid var(--color-border-light);
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            min-height: 80px;
+        }
+
+        .bottom-panel-body .mini-btn:hover {
+            background: var(--color-background-hover);
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .bottom-panel-body .mini-btn.active {
+            background: var(--color-primary-light);
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .bottom-panel-body .mini-btn img {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .bottom-panel-body .mini-btn span {
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            text-align: center;
+        }
+
+        /* スマートフォン用の調整 */
+        @media (max-width: 480px) {
+            .bottom-panel-content {
+                max-height: 60vh;
+            }
+
+            .bottom-panel-header {
+                padding: var(--spacing-md);
+            }
+
+            .bottom-panel-header h3 {
+                font-size: var(--font-size-md);
+            }
+
+            .bottom-panel-body {
+                padding: var(--spacing-md);
+            }
+
+            .bottom-panel-body .mini-menu-buttons {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--spacing-sm);
+            }
+
+            .bottom-panel-body .mini-btn {
+                min-height: 70px;
+                padding: var(--spacing-sm);
+            }
+
+            .bottom-panel-body .mini-btn span {
+                font-size: var(--font-size-xs);
             }
         }
 
@@ -883,7 +1602,7 @@
         <!-- ヘッダー -->
         <div class="header">
             <div class="header-left">
-                <img src="../images/logo_144x144.png" alt="ミセサポロゴ" class="logo">
+                <img src="images/logo_144x144.png" alt="ミセサポロゴ" class="logo">
                 <div class="header-text">
                     <h1>ミセサポポータル</h1>
                     <p>プロジェクト進捗管理システム</p>
@@ -896,13 +1615,102 @@
 
             <div class="header-actions">
                 <button class="btn active" id="statsToggle" onclick="toggleStats()" title="統計カードの表示・非表示">
-                    <img src="../images/統計.svg" alt="統計" style="width: 16px; height: 16px;">
+                    <img src="images/統計.svg" alt="統計" style="width: 16px; height: 16px;">
                     <span class="btn-label">統計カード</span>
                 </button>
                 <button class="btn active" id="progressToggle" onclick="toggleProgress()" title="完成率の表示・非表示">
-                    <img src="../images/完成率.svg" alt="完成率" style="width: 16px; height: 16px;">
+                    <img src="images/完成率.svg" alt="完成率" style="width: 16px; height: 16px;">
                     <span class="btn-label">完成率</span>
                 </button>
+            </div>
+        </div>
+
+        <!-- SP版ミニメニュー -->
+        <div class="mobile-mini-menu" id="mobileMiniMenu">
+            <!-- ミニメニュートグルボタン -->
+            <button class="mini-menu-toggle" id="miniMenuToggle" onclick="toggleMiniMenu()">
+                <img src="images/ギアアイコン.svg" alt="メニュー" style="width: 20px; height: 20px;">
+                <span>メニュー</span>
+            </button>
+            
+            <!-- ミニメニューコンテンツ -->
+            <div class="mini-menu-content" id="miniMenuContent">
+                <div class="mini-menu-section">
+                    <h4>表示設定</h4>
+                    <div class="mini-menu-buttons">
+                        <button class="mini-btn active" id="miniStatsToggle" onclick="toggleStats()">
+                            <img src="images/統計.svg" alt="統計" style="width: 16px; height: 16px;">
+                            <span>統計</span>
+                        </button>
+                        <button class="mini-btn active" id="miniProgressToggle" onclick="toggleProgress()">
+                            <img src="images/完成率.svg" alt="完成率" style="width: 16px; height: 16px;">
+                            <span>完成率</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mini-menu-section">
+                    <h4>データ管理</h4>
+                    <div class="mini-menu-buttons">
+                        <button class="mini-btn" onclick="downloadCSV()">
+                            <img src="images/ダウンロード.svg" alt="ダウンロード" style="width: 16px; height: 16px;">
+                            <span>ダウンロード</span>
+                        </button>
+                        <button class="mini-btn" onclick="openUploadModal()">
+                            <img src="images/アップロード.svg" alt="アップロード" style="width: 16px; height: 16px;">
+                            <span>アップロード</span>
+                        </button>
+                        <button class="mini-btn" onclick="openCategoryModal()">
+                            <img src="images/ギアアイコン.svg" alt="カテゴリ管理" style="width: 16px; height: 16px;">
+                            <span>カテゴリ</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- モバイル用ボトムパネル -->
+        <div class="mobile-bottom-panel" id="mobileBottomPanel">
+            <div class="bottom-panel-content" id="bottomPanelContent">
+                <div class="bottom-panel-header">
+                    <h3>メニュー</h3>
+                    <button class="close-panel-btn" onclick="closeBottomPanel()">
+                        <span>×</span>
+                    </button>
+                </div>
+                <div class="bottom-panel-body">
+                    <div class="mini-menu-section">
+                        <h4>表示設定</h4>
+                        <div class="mini-menu-buttons">
+                            <button class="mini-btn active" id="bottomStatsToggle" onclick="toggleStats()">
+                                <img src="images/統計.svg" alt="統計" style="width: 16px; height: 16px;">
+                                <span>統計</span>
+                            </button>
+                            <button class="mini-btn active" id="bottomProgressToggle" onclick="toggleProgress()">
+                                <img src="images/完成率.svg" alt="完成率" style="width: 16px; height: 16px;">
+                                <span>完成率</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mini-menu-section">
+                        <h4>データ管理</h4>
+                        <div class="mini-menu-buttons">
+                            <button class="mini-btn" onclick="downloadCSV(); closeBottomPanel();">
+                                <img src="images/ダウンロード.svg" alt="ダウンロード" style="width: 16px; height: 16px;">
+                                <span>ダウンロード</span>
+                            </button>
+                            <button class="mini-btn" onclick="openUploadModal(); closeBottomPanel();">
+                                <img src="images/アップロード.svg" alt="アップロード" style="width: 16px; height: 16px;">
+                                <span>アップロード</span>
+                            </button>
+                            <button class="mini-btn" onclick="openCategoryModal(); closeBottomPanel();">
+                                <img src="images/ギアアイコン.svg" alt="カテゴリ管理" style="width: 16px; height: 16px;">
+                                <span>カテゴリ</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -949,35 +1757,49 @@
 
             <!-- 新規追加ボタンとフィルター -->
             <div class="controls-container">
-                <button class="add-button" onclick="openAddModal()">新規項目を追加</button>
+                <div class="action-buttons-row">
+                    <button class="add-button" onclick="openAddModal()">新規項目を追加</button>
+                    <button class="btn btn-save" onclick="forceSaveData()" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500;">
+                        更新
+                    </button>
+                    <button class="btn btn-info" onclick="openCSVView()" style="background: #17a2b8; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500;">
+                        CSV表示
+                    </button>
+                </div>
                 
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <label for="categoryFilter">カテゴリ:</label>
-                    <select id="categoryFilter" onchange="filterByCategory()">
-                        <option value="">すべて</option>
-                    </select>
+                <div class="filters-row">
+                    <div class="filter-group">
+                        <label for="categoryFilter">カテゴリ:</label>
+                        <select id="categoryFilter" onchange="filterByCategory()">
+                            <option value="">すべて</option>
+                        </select>
+                    </div>
                     
-                    <label for="statusFilter">ステータス:</label>
-                    <select id="statusFilter" onchange="filterByStatus()">
-                        <option value="">すべて</option>
-                        <option value="completed">完了</option>
-                        <option value="in-progress">進行中</option>
-                        <option value="pending">未着手</option>
-                        <option value="waiting">待機中</option>
-                    </select>
+                    <div class="filter-group">
+                        <label for="statusFilter">ステータス:</label>
+                        <select id="statusFilter" onchange="filterByStatus()">
+                            <option value="">すべて</option>
+                            <option value="completed">完了</option>
+                            <option value="in-progress">進行中</option>
+                            <option value="pending">未着手</option>
+                            <option value="waiting">待機中</option>
+                        </select>
+                    </div>
                 </div>
 
-                <button class="download-button" onclick="downloadCSV()" title="リストダウンロード">
-                    <img src="../images/ダウンロード.svg" alt="ダウンロード" style="width: 20px; height: 20px;">
-                </button>
-                
-                <button class="upload-button" onclick="openUploadModal()" title="リストアップロード">
-                    <img src="../images/アップロード.svg" alt="アップロード" style="width: 20px; height: 20px;">
-                </button>
-                
-                <button class="category-button" onclick="openCategoryModal()" title="カテゴリ管理">
-                    <img src="../images/ギアアイコン.svg" alt="カテゴリ管理" style="width: 20px; height: 20px;">
-                </button>
+                <div class="action-buttons">
+                    <button class="download-button" onclick="downloadCSV()" title="リストダウンロード">
+                        <img src="images/ダウンロード.svg" alt="ダウンロード" style="width: 20px; height: 20px;">
+                    </button>
+                    
+                    <button class="upload-button" onclick="openUploadModal()" title="リストアップロード">
+                        <img src="images/アップロード.svg" alt="アップロード" style="width: 20px; height: 20px;">
+                    </button>
+                    
+                    <button class="category-button" onclick="openCategoryModal()" title="カテゴリ管理">
+                        <img src="images/ギアアイコン.svg" alt="カテゴリ管理" style="width: 20px; height: 20px;">
+                    </button>
+                </div>
             </div>
 
             <!-- カテゴリごとのテーブル -->
@@ -1218,21 +2040,21 @@
     <div class="mobile-nav">
         <div class="mobile-nav-content">
             <a href="#" class="mobile-nav-item active" onclick="showTab('progress')">
-                <img src="../images/graph.png" alt="進捗管理">
+                <img src="images/graph.png" alt="進捗管理">
                 <span>進捗</span>
             </a>
             <a href="task-market.html" class="mobile-nav-item">
-                <img src="../images/TASK.png" alt="タスクマーケット">
+                <img src="images/TASK.png" alt="タスクマーケット">
                 <span>タスク</span>
             </a>
             <a href="#" class="mobile-nav-item" onclick="window.open('https://www.figma.com/design/example', '_blank')">
-                <img src="../images/figma.png" alt="Figma">
+                <img src="images/figma.png" alt="Figma">
                 <span>Figma</span>
             </a>
-            <a href="#" class="mobile-nav-item" onclick="window.open('https://www.mindmeister.com/example', '_blank')">
-                <img src="../images/Mind.webp" alt="MindMeister">
-                <span>Mind</span>
-            </a>
+            <button class="mobile-nav-item mini-menu-trigger" id="bottomMiniMenuToggle" onclick="openBottomPanel()">
+                <img src="images/ギアアイコン.svg" alt="メニュー">
+                <span>メニュー</span>
+            </button>
         </div>
     </div>
 
@@ -1354,7 +2176,7 @@
         document.addEventListener('DOMContentLoaded', async function() {
             console.log('ページ読み込み完了');
             await loadData();
-            subscribeRealtime();
+            // subscribeRealtime(); // リアルタイム購読を完全に無効化
             setupEventListeners();
             
             // エラー監視
@@ -1393,8 +2215,14 @@
                 try {
                     const doc = await db.collection('projectData').doc('main').get();
                     if (doc.exists) {
-                        projectData = doc.data();
-                        console.log('Firebaseからデータを読み込みました:', projectData);
+                        const data = doc.data();
+                        console.log('🔥 Firebaseから読み込んだデータ:', data);
+                        console.log('📈 Firebaseデータの項目数:', Object.keys(data).length);
+                        console.log('🔍 FirebaseデータにID 36が存在するか:', data.hasOwnProperty('36'));
+                        
+                        projectData = data;
+                        localStorage.setItem('projectData', JSON.stringify(projectData));
+                        console.log('✅ Firebaseからデータを読み込みました:', projectData);
                         updateDisplay();
                         return;
                     }
@@ -1442,8 +2270,12 @@
             updateDisplay();
         }
 
-        // Firestoreリアルタイム購読
+        // Firestoreリアルタイム購読（完全に無効化）
         function subscribeRealtime() {
+            console.log('⚠️ リアルタイム購読を完全に無効化しています（データ上書き問題のため）');
+            // リアルタイム購読を完全に無効化（データ上書き問題のため）
+            return;
+            
             if (!firebaseInitialized || !db) return;
             try {
                 window._unsubscribeProject = db.collection('projectData').doc('main').onSnapshot((doc) => {
@@ -1574,10 +2406,117 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
             await saveData();
         }
 
+        // GitHub APIを使用してCSVファイルを更新
+        async function updateCSVOnGitHub() {
+            console.log('🔄 GitHub上のCSVファイルを更新開始');
+            
+            try {
+                const csvData = convertProjectDataToCSV(projectData);
+                const fileName = 'project-data-updated.csv';
+                
+                // GitHub APIを使用してファイルを更新
+                const response = await fetch(`https://api.github.com/repos/sakurada-masaru/misesapo-ver1.0-progress/contents/${fileName}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': 'token YOUR_GITHUB_TOKEN', // 実際のトークンが必要
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: `Update ${fileName} - ${new Date().toISOString()}`,
+                        content: btoa(unescape(encodeURIComponent(csvData))), // Base64エンコード
+                        sha: 'current_file_sha' // 現在のファイルのSHAが必要
+                    })
+                });
+                
+                if (response.ok) {
+                    console.log('✅ GitHub上のCSVファイルを更新しました');
+                    return true;
+                } else {
+                    console.error('❌ GitHub API更新失敗:', response.status);
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ GitHub API更新エラー:', error);
+                return false;
+            }
+        }
+
+        // CSV表示ページを開く
+        function openCSVView() {
+            const csvData = convertProjectDataToCSV(projectData);
+            const newWindow = window.open('', '_blank');
+            newWindow.document.write(`
+                <html>
+                <head>
+                    <title>プロジェクトデータ - CSV表示</title>
+                    <style>
+                        body { font-family: monospace; padding: 20px; }
+                        pre { background: #f5f5f5; padding: 15px; border-radius: 5px; }
+                        .header { background: #FF679C; color: white; padding: 10px; margin-bottom: 20px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>📊 プロジェクトデータ（最新）</h1>
+                        <p>更新日時: ${new Date().toLocaleString('ja-JP')}</p>
+                    </div>
+                    <pre>${csvData}</pre>
+                    <p><a href="data:text/csv;charset=utf-8,${encodeURIComponent(csvData)}" download="project-data-latest.csv">📥 CSVファイルをダウンロード</a></p>
+                </body>
+                </html>
+            `);
+        }
+
+        // プロジェクトデータをCSV形式に変換
+        function convertProjectDataToCSV(data) {
+            const headers = ['ID', 'カテゴリ', 'ページ名', 'URL', 'PC版開発状況', 'SP版開発状況', '業務担当', '機能', '最終更新日'];
+            const rows = [headers.join(',')];
+            
+            Object.values(data).forEach(item => {
+                if (item.id && item.pageName) {
+                    const row = [
+                        item.id,
+                        item.category || '',
+                        item.pageName || '',
+                        item.url || '',
+                        item.pcStatus || '',
+                        item.spStatus || '',
+                        item.assignee || '',
+                        item.function || '',
+                        item.lastUpdated || ''
+                    ];
+                    rows.push(row.join(','));
+                }
+            });
+            
+            return rows.join('\n');
+        }
+
+        // 強制保存関数（更新ボタン用）
+        async function forceSaveData() {
+            console.log('💾 強制保存開始');
+            try {
+                await saveData();
+                alert('✅ データを保存しました！');
+                console.log('✅ 強制保存完了');
+            } catch (error) {
+                console.error('❌ 強制保存失敗:', error);
+                alert('❌ 保存に失敗しました。コンソールを確認してください。');
+            }
+        }
+
         // データ保存
         async function saveData() {
+            console.log('💾 saveData() 開始');
+            console.log('Firebase初期化状態:', firebaseInitialized);
+            console.log('DB接続状態:', !!db);
+            console.log('保存するデータ:', projectData);
+            console.log('📈 保存するデータの項目数:', Object.keys(projectData).length);
+            console.log('🔍 保存するデータにID 36が存在するか:', projectData.hasOwnProperty('36'));
+            
             try {
                 if (firebaseInitialized && db) {
+                    console.log('🔥 Firebaseに保存を試行中...');
                     // Firebase書き込み（リトライ機能付き）
                     let retryCount = 0;
                     const maxRetries = 3;
@@ -1585,12 +2524,64 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
                     while (retryCount < maxRetries) {
                         try {
                             const payload = Object.assign({}, projectData, { _updatedAt: Date.now() });
+                            console.log('Firebase送信データ:', payload);
+                            console.log('📈 Firebase送信データの項目数:', Object.keys(payload).length);
+                            console.log('🔍 Firebase送信データにID 36が存在するか:', payload.hasOwnProperty('36'));
+                            
+                            // 削除されたIDを動的に削除
+                            const FieldValue = firebase.firestore.FieldValue;
+                            
+                            // 現在のFirebaseデータを取得
+                            const currentDoc = await db.collection('projectData').doc('main').get();
+                            if (currentDoc.exists) {
+                                const currentData = currentDoc.data();
+                                
+                                // 削除されたIDを特定
+                                const deletedIds = [];
+                                Object.keys(currentData).forEach(key => {
+                                    if (key !== '_updatedAt' && !payload.hasOwnProperty(key)) {
+                                        deletedIds.push(key);
+                                    }
+                                });
+                                
+                                console.log('🗑️ 削除対象のID:', deletedIds);
+                                
+                                // 削除されたIDをFirebaseから削除
+                                if (deletedIds.length > 0) {
+                                    const deleteUpdate = {};
+                                    deletedIds.forEach(id => {
+                                        deleteUpdate[id] = FieldValue.delete();
+                                    });
+                                    await db.collection('projectData').doc('main').update(deleteUpdate);
+                                    console.log('✅ Firebaseから削除されたID:', deletedIds);
+                                }
+                            }
+                            
+                            // その後、新しいデータで更新
                             await db.collection('projectData').doc('main').set(payload, { merge: true });
-                            console.log('データをFirebaseに保存しました');
+                            console.log('✅ データをFirebaseに保存しました');
+                            
+                            // 保存直後にFirebaseから読み込んで確認
+                            try {
+                                const doc = await db.collection('projectData').doc('main').get();
+                                if (doc.exists) {
+                                    const savedData = doc.data();
+                                    console.log('🔄 保存直後のFirebase確認:', savedData);
+                                    console.log('📈 保存直後のFirebaseデータ数:', Object.keys(savedData).length);
+                                    console.log('🔍 保存直後のFirebaseにID 36が存在するか:', savedData.hasOwnProperty('36'));
+                                }
+                            } catch (e) {
+                                console.warn('保存直後のFirebase確認失敗:', e);
+                            }
                             return; // 成功したら終了
                         } catch (firebaseError) {
                             retryCount++;
-                            console.warn(`Firebase保存失敗 (試行 ${retryCount}/${maxRetries}):`, firebaseError);
+                            console.error(`❌ Firebase保存失敗 (試行 ${retryCount}/${maxRetries}):`, firebaseError);
+                            console.error('エラー詳細:', {
+                                code: firebaseError.code,
+                                message: firebaseError.message,
+                                stack: firebaseError.stack
+                            });
                             
                             if (retryCount >= maxRetries) {
                                 throw firebaseError; // 最大リトライ回数に達したらエラーを投げる
@@ -1601,8 +2592,9 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
                         }
                     }
                 } else {
-                    console.warn('Firebase not initialized, saving to localStorage only');
+                    console.warn('⚠️ Firebase not initialized, saving to localStorage only');
                     localStorage.setItem('projectData', JSON.stringify(projectData));
+                    console.log('✅ localStorageに保存しました');
                 }
             } catch (error) {
                 console.error('データ保存エラー:', error);
@@ -1753,16 +2745,16 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
                         <tbody>
                             ${categoryItems.map(item => `
                                 <tr>
-                                    <td>${item.pageName}</td>
-                                    <td><a href="${item.url}" target="_blank" style="color: #FF679C; text-decoration: none;">${item.url}</a></td>
-                                    <td>${getStatusDisplay(item.pcStatus)}</td>
-                                    <td>${getStatusDisplay(item.spStatus)}</td>
-                                    <td>${getAssigneeIcon(item.assignee)}</td>
-                                    <td>${item.function || ''}</td>
-                                    <td>${item.lastUpdated || ''}</td>
-                                    <td>
+                                    <td data-label="ページ名">${item.pageName}</td>
+                                    <td data-label="URL"><a href="${item.url}" target="_blank" style="color: #FF679C; text-decoration: none;">${item.url}</a></td>
+                                    <td data-label="PC">${getStatusDisplay(item.pcStatus)}</td>
+                                    <td data-label="SP">${getStatusDisplay(item.spStatus)}</td>
+                                    <td data-label="業務担当">${getAssigneeIcon(item.assignee)}</td>
+                                    <td data-label="機能">${item.function || ''}</td>
+                                    <td data-label="最終更新日">${item.lastUpdated || ''}</td>
+                                    <td data-label="操作">
                                         <button class="btn btn-edit" data-id="${item.id}" onclick="editItem('${item.id}')">編集</button>
-                                        <button class="btn btn-delete" data-id="${item.id}" onclick="deleteItem('${item.id}')">削除</button>
+                                        <button class="btn btn-delete" data-id="${item.id}" onclick="console.log('削除ボタンクリック:', '${item.id}'); deleteItem('${item.id}')">削除</button>
                                     </td>
                                 </tr>
                             `).join('')}
@@ -1776,11 +2768,11 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
         // 業務担当アイコン表示関数
         function getAssigneeIcon(assignee) {
             const iconMap = {
-                'デザイナー': '<img src="../images/デザイナー.svg" alt="デザイナー" style="width: 20px; height: 20px;">',
-                'フロントエンド': '<img src="../images/フロントエンジニア.svg" alt="フロントエンド" style="width: 20px; height: 20px;">',
-                'バックエンド': '<img src="../images/バックエンジニア.svg" alt="バックエンド" style="width: 20px; height: 20px;">',
-                'メディア': '<img src="../images/メディア.svg" alt="メディア" style="width: 20px; height: 20px;">',
-                'プロダクション': '<img src="../images/direction.png" alt="プロダクション" style="width: 20px; height: 20px;">'
+                'デザイナー': '<img src="images/デザイナー.svg" alt="デザイナー" style="width: 20px; height: 20px;">',
+                'フロントエンド': '<img src="images/フロントエンジニア.svg" alt="フロントエンド" style="width: 20px; height: 20px;">',
+                'バックエンド': '<img src="images/バックエンジニア.svg" alt="バックエンド" style="width: 20px; height: 20px;">',
+                'メディア': '<img src="images/メディア.svg" alt="メディア" style="width: 20px; height: 20px;">',
+                'プロダクション': '<img src="images/direction.png" alt="プロダクション" style="width: 20px; height: 20px;">'
             };
             return iconMap[assignee] || '';
         }
@@ -1803,20 +2795,115 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
         function toggleStats() {
             const statsElement = document.querySelector('.stats');
             const toggleButton = document.getElementById('statsToggle');
+            const mobileToggleButton = document.getElementById('mobileStatsToggle');
+            const miniToggleButton = document.getElementById('miniStatsToggle');
+            const bottomToggleButton = document.getElementById('bottomStatsToggle');
             if (!statsElement || !toggleButton) return;
             const hidden = statsElement.classList.toggle('hidden');
             toggleButton.classList.toggle('active', !hidden);
+            if (mobileToggleButton) {
+                mobileToggleButton.classList.toggle('active', !hidden);
+            }
+            if (miniToggleButton) {
+                miniToggleButton.classList.toggle('active', !hidden);
+            }
+            if (bottomToggleButton) {
+                bottomToggleButton.classList.toggle('active', !hidden);
+            }
             toggleButton.title = hidden ? '統計カード (非表示) - クリックで表示' : '統計カード (表示中) - クリックで非表示';
         }
 
         function toggleProgress() {
             const progressElement = document.querySelector('.progress-container');
             const toggleButton = document.getElementById('progressToggle');
+            const mobileToggleButton = document.getElementById('mobileProgressToggle');
+            const miniToggleButton = document.getElementById('miniProgressToggle');
+            const bottomToggleButton = document.getElementById('bottomProgressToggle');
             if (!progressElement || !toggleButton) return;
             const hidden = progressElement.classList.toggle('hidden');
             toggleButton.classList.toggle('active', !hidden);
+            if (mobileToggleButton) {
+                mobileToggleButton.classList.toggle('active', !hidden);
+            }
+            if (miniToggleButton) {
+                miniToggleButton.classList.toggle('active', !hidden);
+            }
+            if (bottomToggleButton) {
+                bottomToggleButton.classList.toggle('active', !hidden);
+            }
             toggleButton.title = hidden ? '完成率 (非表示) - クリックで表示' : '完成率 (表示中) - クリックで非表示';
         }
+
+        // ミニメニューの開閉機能
+        function toggleMiniMenu() {
+            const miniMenuContent = document.getElementById('miniMenuContent');
+            const miniMenuToggle = document.getElementById('miniMenuToggle');
+            
+            if (miniMenuContent) {
+                const isOpen = miniMenuContent.classList.contains('show');
+                
+                if (isOpen) {
+                    miniMenuContent.classList.remove('show');
+                    if (miniMenuToggle) miniMenuToggle.classList.remove('active');
+                } else {
+                    miniMenuContent.classList.add('show');
+                    if (miniMenuToggle) miniMenuToggle.classList.add('active');
+                }
+            }
+        }
+
+        // ボトムパネルを開く
+        function openBottomPanel() {
+            const bottomPanel = document.getElementById('mobileBottomPanel');
+            const bottomMiniMenuToggle = document.getElementById('bottomMiniMenuToggle');
+            
+            if (bottomPanel) {
+                bottomPanel.classList.add('show');
+                if (bottomMiniMenuToggle) bottomMiniMenuToggle.classList.add('active');
+            }
+        }
+
+        // ボトムパネルを閉じる
+        function closeBottomPanel() {
+            const bottomPanel = document.getElementById('mobileBottomPanel');
+            const bottomMiniMenuToggle = document.getElementById('bottomMiniMenuToggle');
+            
+            if (bottomPanel) {
+                bottomPanel.classList.remove('show');
+                if (bottomMiniMenuToggle) bottomMiniMenuToggle.classList.remove('active');
+            }
+        }
+
+        // ミニメニュー外クリックで閉じる
+        document.addEventListener('click', function(event) {
+            const miniMenu = document.getElementById('mobileMiniMenu');
+            const miniMenuContent = document.getElementById('miniMenuContent');
+            const miniMenuToggle = document.getElementById('miniMenuToggle');
+            const bottomPanel = document.getElementById('mobileBottomPanel');
+            const bottomPanelContent = document.getElementById('bottomPanelContent');
+            const bottomMiniMenuToggle = document.getElementById('bottomMiniMenuToggle');
+            
+            // ミニメニューの外クリック処理
+            if (miniMenuContent && miniMenuContent.classList.contains('show')) {
+                const isMiniMenuClick = miniMenu && miniMenu.contains(event.target);
+                
+                if (!isMiniMenuClick) {
+                    miniMenuContent.classList.remove('show');
+                    if (miniMenuToggle) miniMenuToggle.classList.remove('active');
+                }
+            }
+            
+            // ボトムパネルの外クリック処理
+            if (bottomPanel && bottomPanel.classList.contains('show')) {
+                const isBottomPanelClick = bottomPanelContent && bottomPanelContent.contains(event.target);
+                const isBottomMenuClick = bottomMiniMenuToggle && bottomMiniMenuToggle.contains(event.target);
+                
+                if (!isBottomPanelClick && !isBottomMenuClick) {
+                    bottomPanel.classList.remove('show');
+                    if (bottomMiniMenuToggle) bottomMiniMenuToggle.classList.remove('active');
+                }
+            }
+        });
 
         /* ========================================
            🪟 モーダル操作 (Modal Operations)
@@ -1914,7 +3001,7 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
 
         // 新規項目追加
         async function addNewItem() {
-            console.log('addNewItem called');
+            console.log('➕ addNewItem() 開始');
             const id = Date.now().toString();
             const newItem = {
                 id: id,
@@ -1928,14 +3015,20 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
                 lastUpdated: document.getElementById('addLastUpdated').value || new Date().toISOString().split('T')[0]
             };
 
-            console.log('New item:', newItem);
+            console.log('📝 新しいアイテム:', newItem);
             projectData[id] = newItem;
-            console.log('Project data updated:', projectData);
+            console.log('📊 プロジェクトデータ更新後:', projectData);
             
-            await saveData();
-            updateDisplay();
-            closeAddModal();
-            console.log('Item added successfully');
+            try {
+                await saveData();
+                console.log('✅ データ保存完了');
+                updateDisplay();
+                closeAddModal();
+                console.log('✅ アイテム追加成功');
+            } catch (error) {
+                console.error('❌ アイテム追加失敗:', error);
+                alert('データの保存に失敗しました。コンソールを確認してください。');
+            }
         }
 
         // 項目更新
@@ -1966,10 +3059,48 @@ SPバージョン,マイページ：レポート一覧画面,？？？,complete,
 
         // 項目削除
         async function deleteItem(id) {
-            if (confirm('この項目を削除しますか？')) {
+            console.log('🗑️ deleteItem() 開始, ID:', id);
+            console.log('削除対象のID:', id);
+            console.log('削除前のプロジェクトデータ:', projectData);
+            
+            if (confirm(`⚠️ 警告: この項目を完全に削除しますか？\n\n項目ID: ${id}\n\n削除後は復元できません。\n\n「OK」を押すと削除されます。`)) {
+                console.log('✅ 削除確認済み');
                 delete projectData[id];
-                await saveData();
-                updateDisplay();
+                console.log('📊 プロジェクトデータから削除後:', projectData);
+                console.log('🔍 削除されたIDが存在するか:', projectData.hasOwnProperty(id));
+                console.log('📈 現在のデータ数:', Object.keys(projectData).length);
+                
+                // 削除後は即座に保存
+                try {
+                    await saveData();
+                    console.log('✅ 削除データを保存しました');
+                    
+                    // Firebaseから再読み込みして確認
+                    try {
+                        const doc = await db.collection('projectData').doc('main').get();
+                        if (doc.exists) {
+                            const savedData = doc.data();
+                            console.log('🔄 Firebase再読み込み確認:', savedData);
+                            console.log('📈 保存後のFirebaseデータ数:', Object.keys(savedData).length);
+                            console.log('🔍 保存後のFirebaseにID 36が存在するか:', savedData.hasOwnProperty(id));
+                        }
+                    } catch (e) {
+                        console.warn('Firebase再読み込み確認失敗:', e);
+                    }
+                    
+                    updateDisplay();
+                    console.log('✅ 表示更新完了');
+                    
+                    // 保存後の確認
+                    console.log('🔍 保存後のデータ数:', Object.keys(projectData).length);
+                    console.log('🔍 削除されたIDがまだ存在するか:', projectData.hasOwnProperty(id));
+                } catch (error) {
+                    console.error('❌ 削除データ保存失敗:', error);
+                    updateDisplay();
+                    console.log('⚠️ 表示更新完了（更新ボタンで保存してください）');
+                }
+            } else {
+                console.log('❌ 削除キャンセル');
             }
         }
 
