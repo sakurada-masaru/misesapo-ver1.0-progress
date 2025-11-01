@@ -227,28 +227,41 @@
         }
 
         /* トグルボタン */
-        .toggle-button {
-            padding: var(--spacing-sm) var(--spacing-md);
-            border: 2px solid var(--color-primary);
-            background: var(--color-background);
-            color: var(--color-primary);
-            font-size: var(--font-size-sm);
-            font-weight: var(--font-weight-semibold);
-            cursor: pointer;
-            border-radius: var(--border-radius-md);
-            transition: var(--transition-normal);
+        .dashboard-toggle-btn {
             display: flex;
             align-items: center;
-            gap: var(--spacing-xs);
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            background: var(--color-background);
+            border: 2px solid var(--color-border);
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            transition: var(--transition-normal);
+            font-size: 12px;
+            color: var(--color-text-primary);
         }
 
-        .toggle-button:hover {
+        .dashboard-toggle-btn:hover {
             background: var(--color-primary-light);
+            border-color: var(--color-primary);
         }
 
-        .toggle-button.active {
+        .dashboard-toggle-btn.active {
             background: var(--color-primary);
             color: white;
+            border-color: var(--color-primary);
+        }
+        
+        .dashboard-toggle-btn.active .triangle-icon {
+            transform: rotate(180deg);
+        }
+        
+        .triangle-icon {
+            display: inline-block;
+            transition: transform 0.3s ease;
+            font-size: 10px;
         }
 
         /* メインコンテナ */
@@ -396,6 +409,45 @@
 
         .add-task-button:active {
             transform: translateY(0) scale(1.05);
+        }
+
+        /* バッジを作るボタン（右上に固定・◯デザイン） */
+        .add-badge-button {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            width: 64px;
+            height: 64px;
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 28px;
+            font-weight: var(--font-weight-bold);
+            cursor: pointer;
+            transition: var(--transition-normal);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .add-badge-button:hover {
+            background: var(--color-primary-hover);
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-2px) scale(1.1);
+        }
+
+        .add-badge-button:active {
+            transform: translateY(0) scale(1.05);
+        }
+
+        .badge-icon-text {
+            font-size: 28px;
+            line-height: 1;
         }
 
         /* ゴミ箱 */
@@ -1174,11 +1226,14 @@
         <div class="header-left">
             <div class="logo">📋 Task Market</div>
             <button class="nav-button">ホーム</button>
-            <button class="nav-button">タスク</button>
             <button class="nav-button">プロジェクト</button>
+            <!-- ダッシュボード表示・非表示トグルボタン（小さな△） -->
+            <button class="dashboard-toggle-btn" id="toggleDashboard" onclick="toggleDashboard()" title="ダッシュボード表示/非表示">
+                <span class="triangle-icon">◀</span>
+            </button>
         </div>
         <div class="header-right">
-            <!-- Google認証ボタン/ユーザー情報表示エリア -->
+            <!-- Google認証ボタン/ユーザー情報表示エリア（最右） -->
             <div id="googleSignInContainer" style="display: flex; align-items: center; gap: var(--spacing-sm);">
                 <!-- ログイン前: Googleログインボタン -->
                 <div id="googleSignInButton" style="display: inline-block;"></div>
@@ -1192,16 +1247,6 @@
                     </button>
                 </div>
             </div>
-            
-            <button class="toggle-button" id="toggleDashboard" onclick="toggleDashboard()">
-                <span>📊</span>
-                <span>ダッシュボード</span>
-            </button>
-            <button class="nav-button" onclick="openBadgeForm()">
-                <span>🏷️</span>
-                <span>バッジを作る</span>
-            </button>
-            <button class="nav-button">設定</button>
         </div>
     </header>
 
@@ -1219,6 +1264,11 @@
             <div class="task-grid" id="taskGrid">
                 <!-- 新規追加ボタン（左下に固定） -->
                 <button class="add-task-button" onclick="toggleTaskForm()" title="新規タスクを追加">+</button>
+                
+                <!-- バッジを作るボタン（右上に固定・◯デザイン） -->
+                <button class="add-badge-button" onclick="openBadgeForm()" title="バッジを作る">
+                    <span class="badge-icon-text">🏷️</span>
+                </button>
                 
                 <!-- ゴミ箱（右下に固定） -->
                 <div class="trash-bin" id="trashBin" title="ドラッグ&ドロップで削除">
@@ -1826,6 +1876,7 @@
             if (tasks.length === 0) {
                 // カードをクリア（ボタンとゴミ箱は残す）
                 const addButton = taskGrid.querySelector('.add-task-button');
+                const addBadgeButton = taskGrid.querySelector('.add-badge-button');
                 const trashBin = taskGrid.querySelector('.trash-bin');
                 taskGrid.innerHTML = '';
                 
@@ -1839,6 +1890,18 @@
                     button.title = '新規タスクを追加';
                     button.textContent = '+';
                     taskGrid.appendChild(button);
+                }
+                
+                // バッジボタンを再追加
+                if (addBadgeButton) {
+                    taskGrid.appendChild(addBadgeButton);
+                } else {
+                    const badgeButton = document.createElement('button');
+                    badgeButton.className = 'add-badge-button';
+                    badgeButton.onclick = openBadgeForm;
+                    badgeButton.title = 'バッジを作る';
+                    badgeButton.innerHTML = '<span class="badge-icon-text">🏷️</span>';
+                    taskGrid.appendChild(badgeButton);
                 }
                 
                 // ゴミ箱を再追加
@@ -1872,6 +1935,7 @@
 
             // カードをクリア（ボタンは残す）
             const addButton = taskGrid.querySelector('.add-task-button');
+            const addBadgeButton = taskGrid.querySelector('.add-badge-button');
             const trashBin = taskGrid.querySelector('.trash-bin');
             taskGrid.innerHTML = '';
             
@@ -1885,6 +1949,18 @@
                 button.title = '新規タスクを追加';
                 button.textContent = '+';
                 taskGrid.appendChild(button);
+            }
+            
+            // バッジボタンを再追加
+            if (addBadgeButton) {
+                taskGrid.appendChild(addBadgeButton);
+            } else {
+                const badgeButton = document.createElement('button');
+                badgeButton.className = 'add-badge-button';
+                badgeButton.onclick = openBadgeForm;
+                badgeButton.title = 'バッジを作る';
+                badgeButton.innerHTML = '<span class="badge-icon-text">🏷️</span>';
+                taskGrid.appendChild(badgeButton);
             }
             
             // ゴミ箱を再追加
