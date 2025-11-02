@@ -4475,6 +4475,8 @@
                     const gridRect = taskGrid.getBoundingClientRect();
                     draggedBadgeGlobal.position.left = parseInt(this.style.left);
                     draggedBadgeGlobal.position.top = parseInt(this.style.top);
+                    // Firebaseに保存
+                    saveTaskMarketData();
                 }
                 
                 draggedBadgeGlobal = null;
@@ -5557,8 +5559,8 @@
             }, 800); // 0.8秒後に完了（実際のデータ取得をシミュレート）
         }
 
-        // リンクパネル関連の変数
-        let externalLinks = JSON.parse(localStorage.getItem('externalLinks') || '[]');
+        // リンクパネル関連の変数（初期化時は空、loadTaskMarketData()で読み込む）
+        let externalLinks = [];
         let selectedLinkIds = new Set();
         let linkDragStartPosition = { x: 0, y: 0 };
         
@@ -5849,6 +5851,8 @@
         // 外部リンクを保存
         function saveExternalLinks() {
             localStorage.setItem('externalLinks', JSON.stringify(externalLinks));
+            // Firebaseにも保存
+            saveTaskMarketData();
         }
         
         // 外部リンクを削除
