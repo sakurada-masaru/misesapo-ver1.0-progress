@@ -732,6 +732,11 @@
             transform: translateY(-2px) scale(1.1);
             opacity: 1;
         }
+        
+        .trash-bin:focus {
+            outline: none;
+            box-shadow: var(--shadow-xl), 0 0 0 3px rgba(255, 71, 87, 0.3);
+        }
 
         .trash-bin.drag-over {
             background: var(--color-danger-hover, #ff3838);
