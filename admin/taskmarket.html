@@ -1989,14 +1989,14 @@
                 <div id="linkIconGrid" class="link-icon-grid">
                     <!-- リンクアイコンがここに動的に生成されます -->
                 </div>
-                
-                <!-- パネル内ゴミ箱 -->
-                <div class="panel-trash-bin" id="panelTrashBin1">
-                    <span class="trash-icon">🗑️</span>
-                    <span class="tooltip-text">ドラッグ&ドロップで削除</span>
-                </div>
             </div>
         </div>
+    </div>
+    
+    <!-- パネル内ゴミ箱（パネル1用、パネルが開いている時のみ表示） -->
+    <div class="panel-trash-bin" id="panelTrashBin1">
+        <span class="trash-icon">🗑️</span>
+        <span class="tooltip-text">ドラッグ&ドロップで削除</span>
     </div>
 
     <!-- パネル2（ブルー：フロント） -->
@@ -4395,7 +4395,11 @@
                 linkIcon.className = 'link-icon';
                 linkIcon.dataset.linkId = link.id;
                 linkIcon.draggable = true;
-                linkIcon.style.position = 'relative';
+                
+                // グループ化されている場合は選択状態にする
+                if (link.groupId && selectedLinkIds.has(link.id)) {
+                    linkIcon.classList.add('selected');
+                }
                 
                 // ファビコン画像
                 const img = document.createElement('img');
@@ -4414,14 +4418,17 @@
                 linkIcon.appendChild(img);
                 linkIcon.appendChild(titleSpan);
                 
-                // クリックイベント（選択/グループ解除）
-                linkIcon.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    toggleLinkSelection(link.id);
-                });
-                
                 // ドラッグ&ドロップイベント
                 setupLinkDragAndDrop(linkIcon, link);
+                
+                // 選択用のクリックイベント（Ctrlキーまたは長押しで選択）
+                linkIcon.addEventListener('click', function(e) {
+                    // Ctrlキー（MacではCmdキー）が押されている場合は選択モード
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        toggleLinkSelection(link.id);
+                    }
+                });
                 
                 linkIconGrid.appendChild(linkIcon);
             });
@@ -4616,7 +4623,7 @@
         }, 100);
 
         // スライドインパネルの開閉機能（5つのパネル対応）
-        function openSlidePanel(panelNumber) {
+        function openSlidePanelOriginal(panelNumber) {
             const overlay = document.getElementById('slidePanelOverlay' + panelNumber);
             const panel = document.getElementById('slidePanel' + panelNumber);
             const handle = document.getElementById('slidePanelHandle' + panelNumber);
