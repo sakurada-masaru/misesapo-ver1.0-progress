@@ -1389,19 +1389,25 @@
             }
         }
 
-        .task-card-tooltip::before {
-            content: '';
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 6px solid transparent;
-            border-bottom-color: rgba(0, 0, 0, 0.85);
+        /* PC版：ツールチップの矢印（下から上） */
+        @media (min-width: 431px) {
+            .task-card-tooltip::before {
+                content: '';
+                position: absolute;
+                bottom: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                border: 6px solid transparent;
+                border-bottom-color: rgba(0, 0, 0, 0.85);
+            }
         }
 
-        .task-card:hover .task-card-tooltip {
-            opacity: 1;
-            visibility: visible;
+        /* PC版：ホバー時にツールチップを表示 */
+        @media (min-width: 431px) {
+            .task-card:hover .task-card-tooltip {
+                opacity: 1;
+                visibility: visible;
+            }
         }
 
         /* 詳細ボード */
@@ -1504,7 +1510,15 @@
 
             /* タスクカードのツールチップ（スマホ版（SP）では表示） */
             .task-card-tooltip {
-                display: block;
+                display: block !important;
+                opacity: 0;
+                visibility: hidden;
+            }
+            
+            /* スマホ版（SP）：選択時にツールチップを表示 */
+            .task-card.selected .task-card-tooltip {
+                opacity: 1 !important;
+                visibility: visible !important;
             }
 
             /* タスクグリッド（水平方向に3つ並ぶ） */
@@ -2596,6 +2610,12 @@
                 const allCards = taskGrid.querySelectorAll('.task-card');
                 allCards.forEach(c => {
                     c.classList.remove('selected');
+                    // ツールチップを非表示（スマホ版）
+                    const tooltip = c.querySelector('.task-card-tooltip');
+                    if (tooltip && window.innerWidth <= 430) {
+                        tooltip.style.opacity = '0';
+                        tooltip.style.visibility = 'hidden';
+                    }
                 });
                 selectedCard = null;
             }
