@@ -2133,20 +2133,57 @@
         </div>
     </div>
 
-    <!-- パネル5（パープル：運営） -->
+    <!-- パネル5（パープル：アーカイブ） -->
     <div class="slide-panel-overlay" id="slidePanelOverlay5" onclick="closeSlidePanelOnOverlay(event, 5)">
         <div class="slide-panel panel-5" id="slidePanel5" onclick="event.stopPropagation()">
             <div class="slide-panel-header panel-5">
-                <h2 class="slide-panel-title">運営</h2>
+                <h2 class="slide-panel-title">アーカイブ</h2>
                 <button class="slide-panel-close-button" onclick="closeSlidePanel(5)" title="閉じる">×</button>
             </div>
             <div class="slide-panel-content">
-                <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-md);">
-                    運営関連のタスク管理パネルです。
-                </p>
-                <div style="padding: var(--spacing-lg); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
-                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">運営のコンテンツ</h3>
-                    <p style="color: var(--color-text-secondary);">ここに運営関連のコンテンツを配置できます。</p>
+                <!-- フィルター機能 -->
+                <div class="archive-filter" style="padding: var(--spacing-md); margin-bottom: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
+                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">フィルター</h3>
+                    <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 120px;">
+                            <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">日付</label>
+                            <select id="archiveFilterDate" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
+                                <option value="all">すべて</option>
+                                <option value="today">今日</option>
+                                <option value="week">今週</option>
+                                <option value="month">今月</option>
+                                <option value="year">今年</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1; min-width: 120px;">
+                            <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">担当者</label>
+                            <select id="archiveFilterAssignee" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
+                                <option value="all">すべて</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1; min-width: 120px;">
+                            <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">カテゴリ</label>
+                            <select id="archiveFilterCategory" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
+                                <option value="all">すべて</option>
+                                <option value="design">デザイン</option>
+                                <option value="frontend">フロントエンド</option>
+                                <option value="backend">バックエンド</option>
+                                <option value="database">データベース</option>
+                                <option value="media">メディア</option>
+                                <option value="other">その他</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1; min-width: 120px;">
+                            <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">検索</label>
+                            <input type="text" id="archiveFilterSearch" placeholder="タイトルで検索" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 完了済タスクアーカイブ -->
+                <div id="archiveTaskList" class="archive-task-list">
+                    <!-- 完了済タスクがここに動的に生成されます -->
+                    <p class="archive-empty">完了済タスクがありません</p>
                 </div>
             </div>
         </div>
@@ -4584,6 +4621,238 @@
             search: ''
         };
         
+        // アーカイブパネル：完了済タスクを表示
+        function updateArchivePanel() {
+            const archiveTaskList = document.getElementById('archiveTaskList');
+            if (!archiveTaskList) return;
+            
+            // 完了済タスクを取得
+            let completedTasks = tasks.filter(task => task.status === 'completed');
+            
+            // フィルター適用
+            completedTasks = applyArchiveFilters(completedTasks);
+            
+            archiveTaskList.innerHTML = '';
+            
+            if (completedTasks.length === 0) {
+                archiveTaskList.innerHTML = '<p class="archive-empty">完了済タスクがありません</p>';
+                return;
+            }
+            
+            // 日付でソート（新しい順）
+            completedTasks.sort((a, b) => {
+                const dateA = new Date(a.completedAt || a.updatedAt || a.createdAt || 0);
+                const dateB = new Date(b.completedAt || b.updatedAt || b.createdAt || 0);
+                return dateB - dateA;
+            });
+            
+            completedTasks.forEach(task => {
+                const archiveItem = createArchiveTaskItem(task);
+                archiveTaskList.appendChild(archiveItem);
+            });
+        }
+        
+        // アーカイブタスクアイテムを作成（アコーディオン）
+        function createArchiveTaskItem(task) {
+            const item = document.createElement('div');
+            item.className = 'archive-task-item';
+            item.dataset.taskId = task.id;
+            
+            // 完了日時
+            const completedDate = task.completedAt ? new Date(task.completedAt) : (task.updatedAt ? new Date(task.updatedAt) : new Date(task.createdAt));
+            const dateStr = completedDate.toLocaleDateString('ja-JP', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            // 担当バッジ
+            const assignedBadges = getAssignedBadgesForTask(task.id);
+            
+            // カテゴリ名
+            const categoryNames = {
+                'design': 'デザイン',
+                'frontend': 'フロントエンド',
+                'backend': 'バックエンド',
+                'database': 'データベース',
+                'media': 'メディア',
+                'other': 'その他'
+            };
+            
+            item.innerHTML = `
+                <div class="archive-task-header" onclick="toggleArchiveTask(this)">
+                    <div style="flex: 1;">
+                        <div class="archive-task-title">${escapeHtml(task.title || '無題のタスク')}</div>
+                        <div class="archive-task-meta">
+                            <span>📅 ${dateStr}</span>
+                            <span>|</span>
+                            <span>${categoryNames[task.category] || '未分類'}</span>
+                            ${assignedBadges.length > 0 ? `<span>|</span><span>担当: ${assignedBadges.length}人</span>` : ''}
+                        </div>
+                    </div>
+                    <span class="archive-task-arrow">▼</span>
+                </div>
+                <div class="archive-task-content">
+                    <div class="archive-task-body">
+                        ${task.description ? `<div class="archive-task-description">${escapeHtml(task.description)}</div>` : ''}
+                        ${assignedBadges.length > 0 ? `
+                            <div class="archive-task-badges">
+                                <span style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-right: var(--spacing-xs);">担当者:</span>
+                                ${assignedBadges.map(badge => `
+                                    <div class="archive-task-badge">
+                                        ${badge.picture ? `<img src="${badge.picture}" alt="${escapeHtml(badge.name)}" class="archive-task-badge-icon">` : 
+                                          badge.icon && badge.icon.startsWith('img:') ? `<img src="${badge.icon.substring(4)}" alt="${escapeHtml(badge.name)}" class="archive-task-badge-icon">` :
+                                          `<span>${badge.icon || '👤'}</span>`}
+                                        <span>${escapeHtml(badge.name)}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            return item;
+        }
+        
+        // タスクに割り当てられたバッジを取得
+        function getAssignedBadgesForTask(taskId) {
+            if (!taskBadges[taskId] || taskBadges[taskId].length === 0) {
+                return [];
+            }
+            
+            return badges.filter(badge => taskBadges[taskId].includes(badge.id));
+        }
+        
+        // HTMLエスケープ
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // アーカイブアコーディオンの開閉
+        function toggleArchiveTask(header) {
+            const item = header.closest('.archive-task-item');
+            item.classList.toggle('active');
+        }
+        
+        // アーカイブフィルターを適用
+        function applyArchiveFilters(tasks) {
+            let filtered = [...tasks];
+            
+            // 日付フィルター
+            if (archiveFilters.date !== 'all') {
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                
+                filtered = filtered.filter(task => {
+                    const taskDate = task.completedAt ? new Date(task.completedAt) : (task.updatedAt ? new Date(task.updatedAt) : new Date(task.createdAt));
+                    
+                    switch (archiveFilters.date) {
+                        case 'today':
+                            return taskDate >= today;
+                        case 'week':
+                            const weekAgo = new Date(today);
+                            weekAgo.setDate(weekAgo.getDate() - 7);
+                            return taskDate >= weekAgo;
+                        case 'month':
+                            const monthAgo = new Date(today);
+                            monthAgo.setMonth(monthAgo.getMonth() - 1);
+                            return taskDate >= monthAgo;
+                        case 'year':
+                            const yearAgo = new Date(today);
+                            yearAgo.setFullYear(yearAgo.getFullYear() - 1);
+                            return taskDate >= yearAgo;
+                        default:
+                            return true;
+                    }
+                });
+            }
+            
+            // 担当者フィルター
+            if (archiveFilters.assignee !== 'all') {
+                filtered = filtered.filter(task => {
+                    const assignedBadges = getAssignedBadgesForTask(task.id);
+                    return assignedBadges.some(badge => badge.id.toString() === archiveFilters.assignee);
+                });
+            }
+            
+            // カテゴリフィルター
+            if (archiveFilters.category !== 'all') {
+                filtered = filtered.filter(task => task.category === archiveFilters.category);
+            }
+            
+            // 検索フィルター
+            if (archiveFilters.search.trim() !== '') {
+                const searchTerm = archiveFilters.search.toLowerCase();
+                filtered = filtered.filter(task => 
+                    (task.title && task.title.toLowerCase().includes(searchTerm)) ||
+                    (task.description && task.description.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            return filtered;
+        }
+        
+        // アーカイブフィルターイベント
+        function setupArchiveFilters() {
+            const filterDate = document.getElementById('archiveFilterDate');
+            const filterAssignee = document.getElementById('archiveFilterAssignee');
+            const filterCategory = document.getElementById('archiveFilterCategory');
+            const filterSearch = document.getElementById('archiveFilterSearch');
+            
+            if (filterDate) {
+                filterDate.addEventListener('change', function() {
+                    archiveFilters.date = this.value;
+                    updateArchivePanel();
+                });
+            }
+            
+            if (filterAssignee) {
+                filterAssignee.addEventListener('change', function() {
+                    archiveFilters.assignee = this.value;
+                    updateArchivePanel();
+                });
+            }
+            
+            if (filterCategory) {
+                filterCategory.addEventListener('change', function() {
+                    archiveFilters.category = this.value;
+                    updateArchivePanel();
+                });
+            }
+            
+            if (filterSearch) {
+                filterSearch.addEventListener('input', function() {
+                    archiveFilters.search = this.value;
+                    updateArchivePanel();
+                });
+            }
+            
+            // 担当者フィルターのオプションを更新
+            updateAssigneeFilterOptions();
+        }
+        
+        // 担当者フィルターのオプションを更新
+        function updateAssigneeFilterOptions() {
+            const filterAssignee = document.getElementById('archiveFilterAssignee');
+            if (!filterAssignee) return;
+            
+            // 現在のオプションを保持（「すべて」のみ）
+            filterAssignee.innerHTML = '<option value="all">すべて</option>';
+            
+            // すべてのバッジを取得
+            badges.forEach(badge => {
+                const option = document.createElement('option');
+                option.value = badge.id.toString();
+                option.textContent = badge.name;
+                filterAssignee.appendChild(option);
+            });
+        }
+        
         // 外部リンクを追加
         function addExternalLink(url, title = '') {
             try {
@@ -4996,6 +5265,9 @@
             updateBadges(); // バッジを表示
             // リンクパネルの初期化
             updateLinkIconGrid();
+            // アーカイブパネルの初期化
+            setupArchiveFilters();
+            updateArchivePanel();
             // プルリフレッシュ機能を初期化（スマホ版のみ）
             if (window.innerWidth <= 430) {
                 setupPullRefresh();
