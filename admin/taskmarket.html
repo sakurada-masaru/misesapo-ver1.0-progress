@@ -2609,12 +2609,14 @@
             e.preventDefault();
             
             const formData = new FormData(this);
+            const estimatedTime = formData.get('estimatedTime');
             const task = {
                 id: Date.now(),
                 title: formData.get('title'),
                 description: formData.get('description'),
                 category: formData.get('category'),
                 priority: formData.get('priority'),
+                estimatedTime: estimatedTime ? parseInt(estimatedTime) : null, // 分単位
                 status: 'pending',
                 createdAt: new Date().toISOString()
             };
@@ -4597,6 +4599,12 @@
                         <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">ステータス: </span>
                         <span>${task.status === 'completed' ? '完了' : '未着手'}</span>
                     </div>
+                    ${task.estimatedTime ? `
+                    <div style="margin-bottom: var(--spacing-md);">
+                        <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">予想作業時間: </span>
+                        <span>${formatEstimatedTime(task.estimatedTime)}</span>
+                    </div>
+                    ` : ''}
                     <div style="margin-top: var(--spacing-md); padding-top: var(--spacing-md); border-top: 1px solid var(--color-border);">
                         <p style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary); margin-bottom: var(--spacing-sm);">説明:</p>
                         <p style="color: var(--color-text-primary); line-height: 1.6;">${task.description || '説明なし'}</p>
