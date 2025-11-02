@@ -4491,47 +4491,175 @@
         // リンクのドラッグ&ドロップ機能を設定
         function setupLinkDragAndDrop(linkIcon, link) {
             // PC版：ドラッグ&ドロップ
+            let dragStartPosition = { x: 0, y: 0 };
+            
             linkIcon.addEventListener('dragstart', function(e) {
                 this.classList.add('dragging');
                 e.dataTransfer.effectAllowed = 'move';
                 e.dataTransfer.setData('linkId', link.id.toString());
+                
+                // グループ化されたアイコンも一緒にドラッグする場合の処理
+                if (link.groupId) {
+                    e.dataTransfer.setData('groupId', link.groupId.toString());
+                }
+                
+                // ドラッグ開始位置を記録
+                dragStartPosition.x = link.position.x;
+                dragStartPosition.y = link.position.y;
+            });
+            
+            linkIcon.addEventListener('drag', function(e) {
+                // ドラッグ中の位置更新（グループ化されたアイコンも一緒に移動）
+                if (link.groupId && e.clientX !== 0 && e.clientY !== 0) {
+                    const gridRect = document.getElementById('linkIconGrid').getBoundingClientRect();
+                    const newX = e.clientX - gridRect.left - 25; // アイコンの中心を考慮
+                    const newY = e.clientY - gridRect.top - 25;
+                    
+                    const deltaX = newX - dragStartPosition.x;
+                    const deltaY = newY - dragStartPosition.y;
+                    
+                    moveGroupedLinks(link.id, deltaX, deltaY);
+                    dragStartPosition.x = newX;
+                    dragStartPosition.y = newY;
+                }
             });
             
             linkIcon.addEventListener('dragend', function(e) {
                 this.classList.remove('dragging');
+                
+                // 最終位置を保存
+                const rect = this.getBoundingClientRect();
+                const gridRect = document.getElementById('linkIconGrid').getBoundingClientRect();
+                link.position.x = rect.left - gridRect.left;
+                link.position.y = rect.top - gridRect.top;
+                saveExternalLinks();
             });
             
             // スマホ版：タッチドラッグ
             let touchStartX = 0;
             let touchStartY = 0;
             let isDragging = false;
+            let linkStartX = 0;
+            let linkStartY = 0;
+            let touchTimeout = null;
             
             linkIcon.addEventListener('touchstart', function(e) {
                 if (e.touches.length === 1) {
-                    touchStartX = e.touches[0].clientX;
-                    touchStartY = e.touches[0].clientY;
+                    const touch = e.touches[0];
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
                     isDragging = false;
+                    
+                    // リンクアイコンの現在位置を取得
+                    const rect = this.getBoundingClientRect();
+                    const gridRect = document.getElementById('linkIconGrid').getBoundingClientRect();
+                    linkStartX = rect.left - gridRect.left;
+                    linkStartY = rect.top - gridRect.top;
+                    
+                    // 長押しでドラッグ開始（300ms）
+                    touchTimeout = setTimeout(() => {
+                        isDragging = true;
+                        this.classList.add('dragging');
+                        this.style.transition = 'none';
+                        this.style.zIndex = '100';
+                    }, 300);
                 }
             }, { passive: true });
             
             linkIcon.addEventListener('touchmove', function(e) {
                 if (e.touches.length === 1) {
-                    const deltaX = Math.abs(e.touches[0].clientX - touchStartX);
-                    const deltaY = Math.abs(e.touches[0].clientY - touchStartY);
+                    const touch = e.touches[0];
+                    const deltaX = Math.abs(touch.clientX - touchStartX);
+                    const deltaY = Math.abs(touch.clientY - touchStartY);
                     
                     if ((deltaX > 5 || deltaY > 5) && !isDragging) {
+                        clearTimeout(touchTimeout);
                         isDragging = true;
                         this.classList.add('dragging');
+                        this.style.transition = 'none';
+                        this.style.zIndex = '100';
+                    }
+                    
+                    // ドラッグ中の位置更新
+                    if (isDragging) {
+                        e.preventDefault();
+                        const gridRect = document.getElementById('linkIconGrid').getBoundingClientRect();
+                        const newX = linkStartX + (touch.clientX - touchStartX);
+                        const newY = linkStartY + (touch.clientY - touchStartY);
+                        
+                        // グリッド内に制限
+                        const maxX = gridRect.width - 50;
+                        const maxY = gridRect.height - 50;
+                        const clampedX = Math.max(0, Math.min(newX, maxX));
+                        const clampedY = Math.max(0, Math.min(newY, maxY));
+                        
+                        this.style.position = 'absolute';
+                        this.style.left = clampedX + 'px';
+                        this.style.top = clampedY + 'px';
+                        
+                        // ゴミ箱との重なりチェック
+                        const panelTrashBin = document.getElementById('panelTrashBin1');
+                        if (panelTrashBin && panelTrashBin.style.opacity === '1') {
+                            const trashRect = panelTrashBin.getBoundingClientRect();
+                            const linkRect = this.getBoundingClientRect();
+                            
+                            if (linkRect.left < trashRect.right && linkRect.right > trashRect.left &&
+                                linkRect.top < trashRect.bottom && linkRect.bottom > trashRect.top) {
+                                panelTrashBin.classList.add('drag-over');
+                            } else {
+                                panelTrashBin.classList.remove('drag-over');
+                            }
+                        }
                     }
                 }
-            }, { passive: true });
+            }, { passive: false });
             
             linkIcon.addEventListener('touchend', function(e) {
+                clearTimeout(touchTimeout);
+                
                 if (isDragging) {
                     isDragging = false;
                     this.classList.remove('dragging');
+                    this.style.transition = '';
+                    this.style.zIndex = '';
+                    
+                    // ゴミ箱との重なりチェック
+                    const panelTrashBin = document.getElementById('panelTrashBin1');
+                    if (panelTrashBin && panelTrashBin.classList.contains('drag-over')) {
+                        if (confirm('このリンクを削除しますか？')) {
+                            deleteExternalLink(link.id);
+                        } else {
+                            // 位置をリセット
+                            this.style.position = '';
+                            this.style.left = '';
+                            this.style.top = '';
+                        }
+                        panelTrashBin.classList.remove('drag-over');
+                    } else {
+                        // 位置を更新（グリッドから独立した位置に移動）
+                        const rect = this.getBoundingClientRect();
+                        const gridRect = document.getElementById('linkIconGrid').getBoundingClientRect();
+                        link.position.x = rect.left - gridRect.left;
+                        link.position.y = rect.top - gridRect.top;
+                        saveExternalLinks();
+                        
+                        // 絶対位置で保持
+                        this.style.position = 'absolute';
+                        this.style.left = link.position.x + 'px';
+                        this.style.top = link.position.y + 'px';
+                    }
+                } else {
+                    // タップ：リンクを開く（Ctrl/Cmdキーで選択）
+                    // 選択処理は別のイベントハンドラーで処理
                 }
             }, { passive: true });
+            
+            // リンクアイコンをクリックして開く（選択モードでない場合のみ）
+            linkIcon.addEventListener('click', function(e) {
+                if (!isDragging && !e.ctrlKey && !e.metaKey) {
+                    window.open(link.url, '_blank');
+                }
+            });
         }
         
         // パネル内ゴミ箱のドロップ処理を設定
