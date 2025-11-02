@@ -2806,6 +2806,7 @@
 
             // カードをクリア（ボタンは残す）
             const addButton = taskGrid.querySelector('.add-task-button');
+            const completeButton = taskGrid.querySelector('.complete-button');
             const addBadgeButton = taskGrid.querySelector('.add-badge-button');
             const trashBin = taskGrid.querySelector('.trash-bin');
             taskGrid.innerHTML = '';
@@ -2819,6 +2820,20 @@
                 button.onclick = toggleTaskForm;
                 button.innerHTML = '+<span class="tooltip-text">新規タスクを追加</span>';
                 taskGrid.appendChild(button);
+            }
+            
+            // 完了ボタンを再追加
+            if (completeButton) {
+                taskGrid.appendChild(completeButton);
+            } else {
+                const complete = document.createElement('div');
+                complete.className = 'complete-button';
+                complete.id = 'completeButton';
+                complete.innerHTML = '<span class="complete-icon">✓</span><span class="tooltip-text">ドラッグ&ドロップで完了</span>';
+                taskGrid.appendChild(complete);
+                // 完了ボタンのハンドラーをリセットして再設定
+                completeButtonHandlerSet = false;
+                setupCompleteButtonDrop(); // ドロップ処理を再設定
             }
             
             // バッジボタンを再追加
