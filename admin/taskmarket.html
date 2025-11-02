@@ -3119,6 +3119,38 @@
                     this.style.left = clampedX + 'px';
                     this.style.top = clampedY + 'px';
                     
+                    // カードとの重なりをチェック（スマホ版：バッジ吸着機能）
+                    const taskCards = taskGrid.querySelectorAll('.task-card');
+                    taskCards.forEach(card => {
+                        const cardRect = card.getBoundingClientRect();
+                        const badgeCenterX = clampedX + badgeWidth / 2 + gridRect.left;
+                        const badgeCenterY = clampedY + badgeHeight / 2 + gridRect.top;
+                        
+                        // バッジの中心点がカードの範囲内にあるかチェック
+                        if (badgeCenterX >= cardRect.left && badgeCenterX <= cardRect.right &&
+                            badgeCenterY >= cardRect.top && badgeCenterY <= cardRect.bottom) {
+                            card.classList.add('drag-over-badge');
+                        } else {
+                            card.classList.remove('drag-over-badge');
+                        }
+                    });
+                    
+                    // ゴミ箱との重なりをチェック
+                    const trashBin = document.getElementById('trashBin');
+                    if (trashBin) {
+                        const trashRect = trashBin.getBoundingClientRect();
+                        const badgeCenterX = clampedX + badgeWidth / 2 + gridRect.left;
+                        const badgeCenterY = clampedY + badgeHeight / 2 + gridRect.top;
+                        
+                        // バッジの中心点がゴミ箱の範囲内にあるかチェック
+                        if (badgeCenterX >= trashRect.left && badgeCenterX <= trashRect.right &&
+                            badgeCenterY >= trashRect.top && badgeCenterY <= trashRect.bottom) {
+                            trashBin.classList.add('touch-drag-over');
+                        } else {
+                            trashBin.classList.remove('touch-drag-over');
+                        }
+                    }
+                    
                     e.preventDefault();
                 } else if (badgeTouchTimeout && currentTouchedBadge === this) {
                     // 移動が小さい場合はドラッグをキャンセル
