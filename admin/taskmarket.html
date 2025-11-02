@@ -5908,6 +5908,19 @@
                                 this.style.top = '';
                             }
                         } else {
+                            // 位置を更新（グリッドから独立した位置に移動）
+                            const rect = this.getBoundingClientRect();
+                            const gridRect = document.getElementById('linkIconGrid').getBoundingClientRect();
+                            link.position.x = rect.left - gridRect.left;
+                            link.position.y = rect.top - gridRect.top;
+                            saveExternalLinks();
+                            
+                            // 絶対位置で保持
+                            this.style.position = 'absolute';
+                            this.style.left = link.position.x + 'px';
+                            this.style.top = link.position.y + 'px';
+                        }
+                    } else {
                         // 位置を更新（グリッドから独立した位置に移動）
                         const rect = this.getBoundingClientRect();
                         const gridRect = document.getElementById('linkIconGrid').getBoundingClientRect();
