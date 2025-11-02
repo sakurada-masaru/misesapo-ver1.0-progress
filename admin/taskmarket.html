@@ -2125,6 +2125,11 @@
     <div class="main-container">
         <!-- メインボード -->
         <div class="main-board">
+            <!-- SP版：ブラインドパネルトグルボタン（左上） -->
+            <button class="blind-panel-toggle" id="blindPanelToggle" onclick="toggleBlindPanel()">
+                ☰
+            </button>
+            
             <!-- タスクグリッド -->
             <div class="task-grid" id="taskGrid">
                 <!-- プルリフレッシュインジケーター -->
@@ -5988,6 +5993,46 @@
             }
         }, 100);
 
+        // ブラインドパネルの開閉
+        function toggleBlindPanel() {
+            const overlay = document.getElementById('blindPanelOverlay');
+            const panel = document.getElementById('blindPanel');
+            const toggle = document.getElementById('blindPanelToggle');
+            
+            if (panel.classList.contains('active')) {
+                // 閉じる
+                panel.classList.remove('active');
+                setTimeout(function() {
+                    overlay.classList.remove('active');
+                    toggle.classList.remove('active');
+                }, 300);
+            } else {
+                // 開く
+                overlay.classList.add('active');
+                toggle.classList.add('active');
+                setTimeout(function() {
+                    panel.classList.add('active');
+                }, 10);
+            }
+        }
+        
+        // オーバーレイクリックでブラインドパネルを閉じる
+        function closeBlindPanelOnOverlay(event) {
+            if (event.target.id === 'blindPanelOverlay') {
+                toggleBlindPanel();
+            }
+        }
+        
+        // ブラインドパネルからスライドパネルを開く
+        function toggleSlidePanelFromBlind(panelNumber) {
+            // ブラインドパネルを閉じる
+            toggleBlindPanel();
+            // スライドパネルを開く
+            setTimeout(function() {
+                openSlidePanelOriginal(panelNumber);
+            }, 300);
+        }
+        
         // スライドインパネルの開閉機能（5つのパネル対応）
         function openSlidePanelOriginal(panelNumber) {
             const overlay = document.getElementById('slidePanelOverlay' + panelNumber);
