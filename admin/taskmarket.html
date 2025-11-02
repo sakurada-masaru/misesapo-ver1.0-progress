@@ -268,6 +268,7 @@
         .add-task-button:hover .tooltip-text,
         .add-badge-button:hover .tooltip-text,
         .trash-bin:hover .tooltip-text,
+        .complete-button:hover .tooltip-text,
         .slide-panel-handle:hover .tooltip-text {
             opacity: 1;
             visibility: visible;
@@ -557,6 +558,7 @@
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
+            position: relative; /* ツールチップの基準点 */
         }
         
         .complete-button:hover {
