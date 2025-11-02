@@ -4551,6 +4551,22 @@
             const count = starCount[priority] || 1;
             return '⭐️'.repeat(count);
         }
+        
+        // 予想作業時間をフォーマット（分単位を日本語表記に変換）
+        function formatEstimatedTime(minutes) {
+            if (!minutes && minutes !== 0) return '-';
+            
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            
+            if (hours > 0 && mins > 0) {
+                return `${hours}時間${mins}分`;
+            } else if (hours > 0) {
+                return `${hours}時間`;
+            } else {
+                return `${mins}分`;
+            }
+        }
 
         // 現在表示中のタスクIDを保持
         let currentDetailTaskId = null;
