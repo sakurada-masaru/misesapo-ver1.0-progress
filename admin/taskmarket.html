@@ -202,15 +202,6 @@
             font-size: var(--font-size-xl);
             font-weight: var(--font-weight-bold);
             color: var(--color-primary);
-                cursor: pointer; /* SP版でタッチ可能であることを示す */
-                user-select: none; /* テキスト選択を防ぐ */
-            }
-            
-            /* SP版：ロゴをタッチ可能にする */
-            @media (max-width: 430px) {
-                .logo {
-                    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
-                }
         }
 
         .nav-button {
@@ -1790,8 +1781,6 @@
 
             .logo {
                 font-size: var(--font-size-md);
-                cursor: pointer;
-                -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
             }
 
             .nav-button {
@@ -2014,180 +2003,9 @@
             }
 
             .slide-panel-handle {
-                display: none !important;
-            }
-            
-            /* ブラインドパネルオーバーレイ（タスクボード内のみ） */
-            .blind-panel-overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.1);
-                z-index: 1997;
-                display: none;
-                animation: fadeIn 0.3s ease;
-                pointer-events: auto; /* クリック可能にする */
-            }
-            
-            .blind-panel-overlay.active {
-                display: block;
-            }
-            
-            /* ブラインドパネル */
-            .blind-panel {
-                position: absolute; /* fixedからabsoluteに変更（タスクボード内に配置） */
-                top: 0; /* タスクボードの上端から */
-                left: 0;
-                width: 200px;
-                background: var(--color-background);
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                width: 20px;
+                height: 50px;
                 z-index: 1999;
-                transform: translateY(-100%);
-                transition: transform 0.3s ease;
-                overflow-y: auto;
-                border-bottom: 2px solid var(--color-border);
-                padding: var(--spacing-md);
-                padding-top: 10px;
-                max-height: 600px;
-            }
-            
-            .blind-panel.active {
-                transform: translateY(0);
-            }
-            
-            /* ブラインドパネル内のパネル呼び出しボタン */
-            .blind-panel-button {
-                width: 100%;
-                padding: var(--spacing-md);
-                margin-bottom: var(--spacing-sm);
-                border: none;
-                border-radius: var(--border-radius-md);
-                cursor: pointer;
-                font-size: var(--font-size-sm);
-                font-weight: var(--font-weight-semibold);
-                color: white;
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
-            
-            .blind-panel-button.panel-1 {
-                background: var(--panel-1-color);
-            }
-            
-            .blind-panel-button.panel-2 {
-                background: var(--panel-2-color);
-            }
-            
-            .blind-panel-button.panel-3 {
-                background: var(--panel-3-color);
-            }
-            
-            .blind-panel-button.panel-4 {
-                background: var(--panel-4-color);
-            }
-            
-            .blind-panel-button.panel-5 {
-                background: var(--panel-5-color);
-            }
-            
-            .blind-panel-button:hover,
-            .blind-panel-button:active {
-                transform: translateX(4px);
-                box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
-            }
-            
-            .blind-panel-button.panel-1:hover,
-            .blind-panel-button.panel-1:active {
-                background: var(--panel-1-hover);
-            }
-            
-            .blind-panel-button.panel-2:hover,
-            .blind-panel-button.panel-2:active {
-                background: var(--panel-2-hover);
-            }
-            
-            .blind-panel-button.panel-3:hover,
-            .blind-panel-button.panel-3:active {
-                background: var(--panel-3-hover);
-            }
-            
-            .blind-panel-button.panel-4:hover,
-            .blind-panel-button.panel-4:active {
-                background: var(--panel-4-hover);
-            }
-            
-            .blind-panel-button.panel-5:hover,
-            .blind-panel-button.panel-5:active {
-                background: var(--panel-5-hover);
-            }
-            
-            /* ブラインドパネル閉じるボタン */
-            .blind-panel-close-button {
-                width: 100%;
-                padding: var(--spacing-md);
-                margin-top: var(--spacing-md);
-                border: 2px solid var(--color-border);
-                border-radius: var(--border-radius-md);
-                background: var(--color-background);
-                color: var(--color-text-primary);
-                cursor: pointer;
-                font-size: var(--font-size-sm);
-                font-weight: var(--font-weight-semibold);
-                transition: all 0.3s ease;
-                text-align: center;
-            }
-            
-            .blind-panel-close-button:hover,
-            .blind-panel-close-button:active {
-                background: var(--color-border);
-                transform: translateY(1px);
-            }
-            
-            /* タスクボード左上のスワイプヒント（SP版のみ） */
-            .swipe-hint {
-                position: absolute;
-                top: 10px;
-                left: 10px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: var(--spacing-xs);
-                padding: var(--spacing-sm);
-                background: rgba(255, 192, 203, 0.3); /* 薄いピンク */
-                border-radius: 8px;
-                font-size: var(--font-size-xs);
-                color: var(--color-text-secondary);
-                z-index: 100;
-                pointer-events: none;
-            }
-            
-            .swipe-hint-arrow {
-                font-size: 24px;
-                animation: floatUpDown 2s ease-in-out infinite;
-            }
-            
-            @keyframes floatUpDown {
-                0%, 100% {
-                    transform: translateY(0);
-                }
-                50% {
-                    transform: translateY(-8px);
-                }
-            }
-            
-            /* パネルが開いている時はヒントを非表示 */
-            .blind-panel.active ~ .swipe-hint,
-            .main-board:has(.blind-panel.active) .swipe-hint {
-                display: none !important;
-            }
-            
-            /* 左パネルハンドルのツールチップを非表示 */
-            .slide-panel-handle .tooltip-text {
-                display: none !important;
             }
 
 
@@ -2306,45 +2124,7 @@
     <!-- メインコンテナ -->
     <div class="main-container">
         <!-- メインボード -->
-        <div class="main-board" id="mainBoard">
-            <!-- SP版：スワイプヒント（左上） -->
-            <div class="swipe-hint" id="swipeHint">
-                <div class="swipe-hint-arrow">↓</div>
-                <div>タイトルをタッチ</div>
-            </div>
-            
-            <!-- SP版：ブラインドパネルオーバーレイ（タスクボード内） -->
-            <div class="blind-panel-overlay" id="blindPanelOverlay" onclick="closeBlindPanelOnOverlay(event)"></div>
-            
-            <!-- SP版：ブラインドパネル（タスクボード内に配置） -->
-            <div class="blind-panel" id="blindPanel" onclick="event.stopPropagation()">
-                <div class="blind-panel-content">
-                    <button class="blind-panel-button panel-1" onclick="toggleSlidePanelFromBlind(1)">
-                        <span>リンクパネル</span>
-                        <span>◀</span>
-                    </button>
-                    <button class="blind-panel-button panel-2" onclick="toggleSlidePanelFromBlind(2)">
-                        <span>フロントパネル</span>
-                        <span>◀</span>
-                    </button>
-                    <button class="blind-panel-button panel-3" onclick="toggleSlidePanelFromBlind(3)">
-                        <span>バックパネル</span>
-                        <span>◀</span>
-                    </button>
-                    <button class="blind-panel-button panel-4" onclick="toggleSlidePanelFromBlind(4)">
-                        <span>メディアパネル</span>
-                        <span>◀</span>
-                    </button>
-                    <button class="blind-panel-button panel-5" onclick="toggleSlidePanelFromBlind(5)">
-                        <span>アーカイブパネル</span>
-                        <span>◀</span>
-                    </button>
-                    <button class="blind-panel-close-button" onclick="toggleBlindPanel()">
-                        閉じる
-                    </button>
-                </div>
-            </div>
-
+        <div class="main-board">
             <!-- タスクグリッド -->
             <div class="task-grid" id="taskGrid">
                 <!-- プルリフレッシュインジケーター -->
@@ -2433,7 +2213,6 @@
             </div>
         </div>
     </div>
-    
 
     <!-- スライドインパネルのハンドル（左端に固定、5つ） -->
     <button class="slide-panel-handle panel-1" id="slidePanelHandle1" onclick="toggleSlidePanel(1)">
@@ -6206,183 +5985,8 @@
                     taskGrid.classList.add('scroll-top');
                     updatePullRefreshHint();
                 }
-                // ヘッダーのロゴタッチでブラインドパネルを開閉
-                setupBlindPanelHeaderTouch();
-                // ブラインドパネルの下方向ドラッグで閉じる機能
-                setupBlindPanelDragToClose();
             }
         }, 100);
-
-        // ブラインドパネルの開閉
-        function toggleBlindPanel() {
-            const overlay = document.getElementById('blindPanelOverlay');
-            const panel = document.getElementById('blindPanel');
-            const hint = document.getElementById('swipeHint');
-            
-            if (!panel || !overlay) return;
-            
-            if (panel.classList.contains('active')) {
-                // 閉じる
-                panel.classList.remove('active');
-                setTimeout(function() {
-                    overlay.classList.remove('active');
-                    if (hint && window.innerWidth <= 430) {
-                        hint.style.display = 'flex'; // ヒントを表示
-                    }
-                }, 300);
-            } else {
-                // 開く
-                overlay.classList.add('active');
-                if (hint && window.innerWidth <= 430) {
-                    hint.style.display = 'none'; // ヒントを非表示
-                }
-                setTimeout(function() {
-                    panel.classList.add('active');
-                }, 10);
-            }
-        }
-        
-        // ヘッダーのロゴにタッチイベントを追加（SP版のみ）
-        function setupBlindPanelHeaderTouch() {
-            if (window.innerWidth > 430) return; // SP版のみ
-            
-            const logo = document.querySelector('.logo');
-            if (!logo) return;
-            
-            // タッチイベントを追加
-            logo.addEventListener('touchstart', function(e) {
-                e.stopPropagation(); // イベントの伝播を止める
-                toggleBlindPanel();
-            }, { passive: true });
-            
-            // クリックイベントも追加（SP版でもクリック可能な場合に対応）
-            logo.addEventListener('click', function(e) {
-                if (window.innerWidth <= 430) {
-                    e.stopPropagation();
-                    toggleBlindPanel();
-                }
-            });
-        }
-        
-        // ブラインドパネルの下方向ドラッグで閉じる機能（SP版のみ）
-        function setupBlindPanelDragToClose() {
-            if (window.innerWidth > 430) return; // SP版のみ
-            
-            const panel = document.getElementById('blindPanel');
-            if (!panel) return;
-            
-            let touchStartY = 0;
-            let touchCurrentY = 0;
-            let isDragging = false;
-            let panelStartY = 0;
-            
-            panel.addEventListener('touchstart', function(e) {
-                // パネルが開いている時のみ有効
-                if (!panel.classList.contains('active')) return;
-                
-                const touch = e.touches[0];
-                touchStartY = touch.clientY;
-                touchCurrentY = touch.clientY;
-                isDragging = false;
-                
-                // パネルの現在の位置を取得（translateY値）
-                const transform = window.getComputedStyle(panel).transform;
-                if (transform !== 'none') {
-                    const matrix = new DOMMatrix(transform);
-                    panelStartY = matrix.m42; // translateY値
-                } else {
-                    panelStartY = 0;
-                }
-            }, { passive: true });
-            
-            panel.addEventListener('touchmove', function(e) {
-                if (touchStartY === 0 || !panel.classList.contains('active')) return;
-                
-                const touch = e.touches[0];
-                touchCurrentY = touch.clientY;
-                const deltaY = touchCurrentY - touchStartY;
-                
-                // 下方向へのドラッグを検出（10px以上）
-                if (deltaY > 10) {
-                    if (!isDragging) {
-                        isDragging = true;
-                        panel.style.transition = 'none';
-                    }
-                    
-                    e.preventDefault(); // デフォルトのスクロールを防止
-                    
-                    // パネルを下に引っ張る（translateYを更新）
-                    // パネルの最大高さ（600px）を考慮して、引っ張りに応じて上に移動させる
-                    const pullDistance = Math.min(deltaY, 600); // 最大600pxまで引っ張れる
-                    const newTranslateY = panelStartY - pullDistance;
-                    
-                    // translateYが-600以下にならないように制限
-                    const maxHeight = 600;
-                    const clampedY = Math.max(newTranslateY, -maxHeight);
-                    
-                    panel.style.transform = `translateY(${clampedY}px)`;
-                }
-            }, { passive: false });
-            
-            panel.addEventListener('touchend', function(e) {
-                if (touchStartY === 0) return;
-                
-                const deltaY = touchCurrentY - touchStartY;
-                const CLOSE_THRESHOLD = 80; // 80px以上引っ張ったら閉じる
-                
-                if (isDragging && deltaY > CLOSE_THRESHOLD) {
-                    // パネルを閉じる
-                    panel.style.transition = 'transform 0.3s ease';
-                    panel.style.transform = 'translateY(-100%)';
-                    panel.classList.remove('active');
-                    
-                    const overlay = document.getElementById('blindPanelOverlay');
-                    if (overlay) overlay.classList.remove('active');
-                    
-                    const hint = document.getElementById('swipeHint');
-                    if (hint) hint.style.display = 'flex'; // ヒントを表示
-                } else if (isDragging) {
-                    // 途中で離した場合は元の位置に戻す
-                    panel.style.transition = 'transform 0.3s ease';
-                    panel.style.transform = 'translateY(0)';
-                }
-                
-                // リセット
-                touchStartY = 0;
-                touchCurrentY = 0;
-                isDragging = false;
-                panelStartY = 0;
-            }, { passive: true });
-            
-            panel.addEventListener('touchcancel', function(e) {
-                // タッチがキャンセルされた場合もリセット
-                if (isDragging) {
-                    panel.style.transition = 'transform 0.3s ease';
-                    panel.style.transform = 'translateY(0)';
-                }
-                touchStartY = 0;
-                touchCurrentY = 0;
-                isDragging = false;
-                panelStartY = 0;
-            }, { passive: true });
-        }
-        
-        // オーバーレイクリックでブラインドパネルを閉じる
-        function closeBlindPanelOnOverlay(event) {
-            if (event.target.id === 'blindPanelOverlay') {
-                toggleBlindPanel();
-            }
-        }
-        
-        // ブラインドパネルからスライドパネルを開く
-        function toggleSlidePanelFromBlind(panelNumber) {
-            // ブラインドパネルを閉じる
-            toggleBlindPanel();
-            // スライドパネルを開く
-            setTimeout(function() {
-                openSlidePanelOriginal(panelNumber);
-            }, 300);
-        }
 
         // スライドインパネルの開閉機能（5つのパネル対応）
         function openSlidePanelOriginal(panelNumber) {
@@ -6409,28 +6013,8 @@
             }, 300);
         }
 
-        // パネルの開閉を切り替える（PC版とSP版で動作が異なる）
+        // パネルの開閉を切り替える
         function toggleSlidePanel(panelNumber) {
-            // SP版の場合はブラインドパネル経由で開く
-            if (window.innerWidth <= 430) {
-                const blindPanel = document.getElementById('blindPanel');
-                if (!blindPanel || !blindPanel.classList.contains('active')) {
-                    // ブラインドパネルが開いていない場合は開いてからパネルを開く
-                    toggleBlindPanel();
-                    setTimeout(function() {
-                        openSlidePanelOriginal(panelNumber);
-                        // パネルを開いた後にブラインドパネルを閉じる
-                        setTimeout(function() {
-                            toggleBlindPanel();
-                        }, 100);
-                    }, 300);
-                } else {
-                    // ブラインドパネルが開いている場合は直接パネルを開く
-                    openSlidePanelOriginal(panelNumber);
-                    toggleBlindPanel();
-                }
-            } else {
-                // PC版の場合は通常通り
             const overlay = document.getElementById('slidePanelOverlay' + panelNumber);
             if (overlay.classList.contains('active')) {
                 closeSlidePanel(panelNumber);
@@ -6441,8 +6025,7 @@
                         closeSlidePanel(i);
                     }
                 }
-                    openSlidePanelOriginal(panelNumber);
-                }
+                openSlidePanel(panelNumber);
             }
         }
 
