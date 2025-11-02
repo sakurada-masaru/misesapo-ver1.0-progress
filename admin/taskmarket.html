@@ -2150,6 +2150,9 @@
     </style>
     
     <!-- Google Identity Services -->
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
@@ -2537,6 +2540,48 @@
     </div>
 
     <script>
+        /* ========================================
+           🔧 Firebase初期化 (Firebase Initialization)
+           ======================================== */
+        
+        // Firebase設定
+        const firebaseConfig = {
+            apiKey: "AIzaSyDi2_U6INLm7sb-02GsdWzDl2qaFBe8US4",
+            authDomain: "misesapo-progress.firebaseapp.com",
+            databaseURL: "https://misesapo-progress-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "misesapo-progress",
+            storageBucket: "misesapo-progress.firebasestorage.app",
+            messagingSenderId: "926808186549",
+            appId: "1:926808186549:web:91ce8534877c4ecf2e28fc",
+            measurementId: "G-5JS29JLL13"
+        };
+
+        // Firebase初期化（エラーハンドリング付き）
+        console.log('Firebase初期化開始');
+        let firebaseInitialized = false;
+        let db;
+        
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                firebaseInitialized = true;
+                console.log('Firebase初期化成功');
+            } else {
+                db = firebase.firestore();
+                firebaseInitialized = true;
+                console.log('Firebase既に初期化済み');
+            }
+        } catch (error) {
+            console.error('Firebase初期化エラー:', error);
+            firebaseInitialized = false;
+        }
+
+        // Firestore設定
+        if (firebaseInitialized && db) {
+            console.log('Firestore接続準備完了');
+        }
+
         // Google認証関連
         let currentUser = null;
         
@@ -2745,28 +2790,7 @@
         });
         
         // タスクデータ
-        // タスクデータ（サンプルタスク1つを含む）
-        let tasks = [
-            {
-                id: Date.now(),
-                title: "レスポンシブデザイン実装",
-                description: "モバイル・タブレット・デスクトップ対応のレスポンシブデザインを実装する。ブレークポイントの設定とメディアクエリの最適化が必要。",
-                category: "frontend",
-                priority: "high",
-                status: "pending",
-                createdAt: new Date().toISOString()
-            },
-            {
-                id: Date.now() + 1,
-                title: "テスト完了タスク",
-                description: "これはアーカイブパネルに表示されるテスト用の完了タスクです。",
-                category: "frontend",
-                priority: "medium",
-                status: "completed",
-                createdAt: new Date(Date.now() - 86400000).toISOString(), // 1日前
-                completedAt: new Date(Date.now() - 3600000).toISOString() // 1時間前
-            }
-        ];
+        let tasks = [];
 
         // バッジデータ
         let badges = [];
@@ -2775,8 +2799,143 @@
         let taskBadges = {};
         
         // タイムレコード（バッジがタスクに付けられた時間から完了までの時間を記録）
-        let timeRecords = JSON.parse(localStorage.getItem('timeRecords') || '[]');
+        let timeRecords = [];
         // timeRecords構造: [{ id, taskId, badgeId, startTime, endTime, duration, status }]
+
+        /* ========================================
+           💾 Firebaseデータ保存・読み込み (Firebase Data Save & Load)
+           ======================================== */
+
+        // データをFirebaseに保存
+        async function saveTaskMarketData() {
+            if (!firebaseInitialized || !db) {
+                console.warn('Firebaseが初期化されていません。localStorageに保存します。');
+                // Firebaseが初期化されていない場合はlocalStorageに保存
+                localStorage.setItem('taskMarketTasks', JSON.stringify(tasks));
+                localStorage.setItem('taskMarketBadges', JSON.stringify(badges));
+                localStorage.setItem('taskMarketTaskBadges', JSON.stringify(taskBadges));
+                localStorage.setItem('timeRecords', JSON.stringify(timeRecords));
+                localStorage.setItem('externalLinks', JSON.stringify(externalLinks));
+                return;
+            }
+
+            try {
+                const payload = {
+                    tasks: tasks,
+                    badges: badges,
+                    taskBadges: taskBadges,
+                    timeRecords: timeRecords,
+                    externalLinks: externalLinks,
+                    _updatedAt: Date.now()
+                };
+
+                await db.collection('taskMarket').doc('main').set(payload, { merge: true });
+                console.log('✅ タスクマーケットデータをFirebaseに保存しました');
+            } catch (error) {
+                console.error('❌ Firebase保存エラー:', error);
+                // エラー時はlocalStorageにフォールバック
+                localStorage.setItem('taskMarketTasks', JSON.stringify(tasks));
+                localStorage.setItem('taskMarketBadges', JSON.stringify(badges));
+                localStorage.setItem('taskMarketTaskBadges', JSON.stringify(taskBadges));
+                localStorage.setItem('timeRecords', JSON.stringify(timeRecords));
+                localStorage.setItem('externalLinks', JSON.stringify(externalLinks));
+            }
+        }
+
+        // データをFirebaseから読み込み
+        async function loadTaskMarketData() {
+            // 1) Firebaseから読み込み（最優先）
+            if (firebaseInitialized && db) {
+                try {
+                    const doc = await db.collection('taskMarket').doc('main').get();
+                    if (doc.exists) {
+                        const data = doc.data();
+                        console.log('🔥 Firebaseからタスクマーケットデータを読み込みました:', data);
+                        
+                        if (data.tasks) tasks = data.tasks;
+                        if (data.badges) badges = data.badges;
+                        if (data.taskBadges) taskBadges = data.taskBadges;
+                        if (data.timeRecords) timeRecords = data.timeRecords;
+                        if (data.externalLinks) externalLinks = data.externalLinks;
+                        
+                        // リアルタイム更新を設定
+                        setupRealtimeListener();
+                        
+                        // UIを更新
+                        updateTaskGrid();
+                        updateBadges();
+                        updateLinkIconGrid();
+                        updateArchivePanel();
+                        
+                        return;
+                    }
+                } catch (error) {
+                    console.warn('Firebase読み込みエラー:', error);
+                }
+            }
+
+            // 2) localStorageから読み込み（フォールバック）
+            try {
+                const savedTasks = localStorage.getItem('taskMarketTasks');
+                const savedBadges = localStorage.getItem('taskMarketBadges');
+                const savedTaskBadges = localStorage.getItem('taskMarketTaskBadges');
+                const savedTimeRecords = localStorage.getItem('timeRecords');
+                const savedExternalLinks = localStorage.getItem('externalLinks');
+
+                if (savedTasks) tasks = JSON.parse(savedTasks);
+                if (savedBadges) badges = JSON.parse(savedBadges);
+                if (savedTaskBadges) taskBadges = JSON.parse(savedTaskBadges);
+                if (savedTimeRecords) timeRecords = JSON.parse(savedTimeRecords);
+                if (savedExternalLinks) externalLinks = JSON.parse(savedExternalLinks);
+
+                console.log('localStorageからタスクマーケットデータを読み込みました');
+
+                // UIを更新
+                updateTaskGrid();
+                updateBadges();
+                updateLinkIconGrid();
+                updateArchivePanel();
+            } catch (error) {
+                console.warn('localStorage読み込みエラー:', error);
+                // デフォルトデータ（初回起動時）
+                tasks = [];
+                badges = [];
+                taskBadges = {};
+                timeRecords = [];
+                externalLinks = [];
+            }
+        }
+
+        // リアルタイム更新リスナーを設定
+        function setupRealtimeListener() {
+            if (!firebaseInitialized || !db) return;
+
+            try {
+                db.collection('taskMarket').doc('main').onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        console.log('🔄 リアルタイム更新を受信しました:', data);
+                        
+                        // データが更新された場合のみ反映（自分自身の更新は除外）
+                        if (data.tasks) tasks = data.tasks;
+                        if (data.badges) badges = data.badges;
+                        if (data.taskBadges) taskBadges = data.taskBadges;
+                        if (data.timeRecords) timeRecords = data.timeRecords;
+                        if (data.externalLinks) externalLinks = data.externalLinks;
+                        
+                        // UIを更新
+                        updateTaskGrid();
+                        updateBadges();
+                        updateLinkIconGrid();
+                        updateArchivePanel();
+                    }
+                }, (error) => {
+                    console.error('リアルタイム更新エラー:', error);
+                });
+            } catch (error) {
+                console.error('リアルタイムリスナー設定エラー:', error);
+            }
+        }
 
         // バッジのドラッグ状態管理
         let draggedBadgeGlobal = null;
@@ -2860,6 +3019,7 @@
 
             tasks.push(task);
             updateTaskGrid();
+            saveTaskMarketData(); // Firebaseに保存
             // モーダルを閉じる
             cancelTaskForm();
         });
@@ -2935,6 +3095,7 @@
             
             badges.push(badge);
             updateBadges();
+            saveTaskMarketData(); // Firebaseに保存
             cancelBadgeForm();
             
             console.log('Googleアカウントからバッジを作成しました:', badge);
@@ -2961,6 +3122,7 @@
 
             badges.push(badge);
             updateBadges();
+            saveTaskMarketData(); // Firebaseに保存
             cancelBadgeForm();
         });
         }
@@ -3596,6 +3758,8 @@
                             this.classList.remove('dragging');
                             
                             console.log('タスクの位置を更新しました:', task.id, task.position);
+                            // Firebaseに保存
+                            saveTaskMarketData();
                         }
                         
                         isDragging = false;
@@ -3773,6 +3937,8 @@
                             task.position.rotation = (Math.random() - 0.5) * 8;
                         }
                         draggedCard.style.transform = `rotate(${task.position.rotation}deg)`;
+                        // Firebaseに保存
+                        saveTaskMarketData();
                     }
                     
                     draggedCard = null;
@@ -3911,6 +4077,8 @@
                     badge.attachedToTaskId = null;
                     // バッジ要素を削除
                     this.remove();
+                    // Firebaseに保存
+                    saveTaskMarketData();
                     // グリッド上にバッジを再表示
                     updateBadges();
                     }
@@ -4162,6 +4330,8 @@
                                             delete taskBadges[prevTaskId];
                                         }
                                     }
+                                    // Firebaseに保存
+                                    saveTaskMarketData();
                                 } else {
                                     // キャンセルした場合は、新しいカードへの吸着を中止
                                     e.preventDefault();
@@ -4185,6 +4355,8 @@
                                     // タイムレコードを作成（バッジがタスクに付けられた時）
                                     createTimeRecord(taskId, badge.id);
                                 }
+                                // Firebaseに保存
+                                saveTaskMarketData();
                             }
                             
                             // カードに直接バッジを追加
@@ -4219,6 +4391,8 @@
                             this.classList.remove('dragging');
                             
                             console.log('バッジの位置を更新しました:', badge.id, badge.position);
+                            // Firebaseに保存
+                            saveTaskMarketData();
                         }
                         
                         isBadgeDragging = false;
@@ -4385,6 +4559,9 @@
                 updateArchivePanel();
             }
             
+            // Firebaseに保存
+            saveTaskMarketData();
+            
             console.log('タスクを完了にしました:', task.title);
         }
         
@@ -4450,6 +4627,8 @@
         // タイムレコードを保存
         function saveTimeRecords() {
             localStorage.setItem('timeRecords', JSON.stringify(timeRecords));
+            // Firebaseにも保存
+            saveTaskMarketData();
         }
         
         // タスクのタイムレコードを取得
@@ -4719,6 +4898,9 @@
             // グリッドを更新
             updateTaskGrid();
             
+            // Firebaseに保存
+            saveTaskMarketData();
+            
             console.log('タスクを削除しました:', taskId);
             
             // 削除処理完了後にフラグをリセット
@@ -4762,6 +4944,9 @@
             
             // バッジ表示を更新
             updateBadges();
+            
+            // Firebaseに保存
+            saveTaskMarketData();
             
             console.log('バッジを削除しました:', badgeId);
         }
@@ -4849,6 +5034,8 @@
                         }
                         if (!taskBadges[task.id].includes(badge.id)) {
                             taskBadges[task.id].push(badge.id);
+                            // Firebaseに保存
+                            saveTaskMarketData();
                             // タイムレコード起動の確認ダイアログ
                             const taskObj = tasks.find(t => t.id === task.id);
                             const taskTitle = taskObj ? taskObj.title : 'タスク';
@@ -5153,6 +5340,9 @@
             
             // 詳細パネルの表示を更新
             renderTaskDetailView(task);
+            
+            // Firebaseに保存
+            saveTaskMarketData();
             
             console.log('タスクを更新しました:', task);
         }
@@ -6005,7 +6195,10 @@
         }
 
         // 初期化（ページロード時にも実行、スプラッシュ後に再実行される）
-        setTimeout(function() {
+        setTimeout(async function() {
+            // Firebaseからデータを読み込み（最優先）
+            await loadTaskMarketData();
+            
             // ゴミ箱を全て削除してから再作成（重複を完全に防ぐ）
             const allTrashBins = document.querySelectorAll('.trash-bin[id="trashBin"]');
             allTrashBins.forEach(function(trashBin) {
@@ -6025,8 +6218,14 @@
             setupBadgeDragHandler(); // バッジドラッグハンドラーを設定
             setupTrashBinDrop(); // ゴミ箱のドロップ処理を初期化
             setupCompleteButtonDrop(); // 完了ボタンのドロップ処理を初期化
-            updateTaskGrid();
-            updateBadges(); // バッジを表示
+            // データ読み込み時に既にupdateTaskGrid()が呼ばれているため、重複を避ける
+            // ただし、ゴミ箱作成後にUIを更新
+            if (!document.getElementById('taskGrid').hasChildNodes() || document.getElementById('taskGrid').childElementCount === 0) {
+                updateTaskGrid();
+            }
+            if (badges.length > 0) {
+                updateBadges(); // バッジを表示
+            }
             // リンクパネルの初期化
             updateLinkIconGrid();
             // アーカイブパネルの初期化
