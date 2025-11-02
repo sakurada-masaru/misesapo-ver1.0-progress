@@ -2127,6 +2127,30 @@
                         <option value="high">高</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label for="taskEstimatedTime">予想作業時間</label>
+                    <select id="taskEstimatedTime" name="estimatedTime">
+                        <option value="">未設定</option>
+                        <option value="10">10分</option>
+                        <option value="20">20分</option>
+                        <option value="30">30分</option>
+                        <option value="40">40分</option>
+                        <option value="50">50分</option>
+                        <option value="60">1時間</option>
+                        <option value="70">1時間10分</option>
+                        <option value="80">1時間20分</option>
+                        <option value="90">1時間30分</option>
+                        <option value="100">1時間40分</option>
+                        <option value="110">1時間50分</option>
+                        <option value="120">2時間</option>
+                        <option value="150">2時間30分</option>
+                        <option value="180">3時間</option>
+                        <option value="240">4時間</option>
+                        <option value="300">5時間</option>
+                        <option value="360">6時間</option>
+                        <option value="480">8時間</option>
+                    </select>
+                </div>
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" onclick="cancelTaskForm()">キャンセル</button>
                     <button type="submit" class="btn btn-primary">作成</button>
@@ -4663,6 +4687,31 @@
                         </div>
                         
                         <div class="form-group">
+                            <label for="editTaskEstimatedTime">予想作業時間</label>
+                            <select id="editTaskEstimatedTime" name="estimatedTime">
+                                <option value="">未設定</option>
+                                <option value="10" ${task.estimatedTime === 10 ? 'selected' : ''}>10分</option>
+                                <option value="20" ${task.estimatedTime === 20 ? 'selected' : ''}>20分</option>
+                                <option value="30" ${task.estimatedTime === 30 ? 'selected' : ''}>30分</option>
+                                <option value="40" ${task.estimatedTime === 40 ? 'selected' : ''}>40分</option>
+                                <option value="50" ${task.estimatedTime === 50 ? 'selected' : ''}>50分</option>
+                                <option value="60" ${task.estimatedTime === 60 ? 'selected' : ''}>1時間</option>
+                                <option value="70" ${task.estimatedTime === 70 ? 'selected' : ''}>1時間10分</option>
+                                <option value="80" ${task.estimatedTime === 80 ? 'selected' : ''}>1時間20分</option>
+                                <option value="90" ${task.estimatedTime === 90 ? 'selected' : ''}>1時間30分</option>
+                                <option value="100" ${task.estimatedTime === 100 ? 'selected' : ''}>1時間40分</option>
+                                <option value="110" ${task.estimatedTime === 110 ? 'selected' : ''}>1時間50分</option>
+                                <option value="120" ${task.estimatedTime === 120 ? 'selected' : ''}>2時間</option>
+                                <option value="150" ${task.estimatedTime === 150 ? 'selected' : ''}>2時間30分</option>
+                                <option value="180" ${task.estimatedTime === 180 ? 'selected' : ''}>3時間</option>
+                                <option value="240" ${task.estimatedTime === 240 ? 'selected' : ''}>4時間</option>
+                                <option value="300" ${task.estimatedTime === 300 ? 'selected' : ''}>5時間</option>
+                                <option value="360" ${task.estimatedTime === 360 ? 'selected' : ''}>6時間</option>
+                                <option value="480" ${task.estimatedTime === 480 ? 'selected' : ''}>8時間</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
                             <label for="editTaskDescription">説明</label>
                             <textarea id="editTaskDescription" name="description" rows="5">${task.description || ''}</textarea>
                         </div>
@@ -4725,10 +4774,12 @@
             const formData = new FormData(form);
             
             // タスクデータを更新
+            const estimatedTime = formData.get('estimatedTime');
             task.title = formData.get('title');
             task.category = formData.get('category');
             task.priority = formData.get('priority');
             task.description = formData.get('description') || '';
+            task.estimatedTime = estimatedTime ? parseInt(estimatedTime) : null; // 分単位
             task.updatedAt = new Date().toISOString();
             
             // カードの内容を更新（タスクグリッドを再描画）
