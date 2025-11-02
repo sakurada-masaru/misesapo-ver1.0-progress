@@ -1297,6 +1297,28 @@
             z-index: 5;
         }
 
+        /* スマホ版：カードの直下（カード外）に密着して吸着 */
+        @media (max-width: 430px) {
+            .task-card .badge.attached {
+                position: absolute;
+                bottom: -56px; /* カードの下に密着（-48px(バッジの高さ) - 8px(余白)） */
+                left: 50%;
+                transform: translateX(-50%);
+                margin: 0;
+            }
+
+            /* 複数のバッジがある場合、横方向に並べる */
+            .task-card .badge.attached:nth-child(2) {
+                left: calc(50% - 28px); /* 中央から左に28px（48px/2 + 8px/2） */
+                transform: translateX(0);
+            }
+
+            .task-card .badge.attached:nth-child(3) {
+                left: calc(50% + 28px); /* 中央から右に28px */
+                transform: translateX(0);
+            }
+        }
+
         .task-card .badge:hover {
             transform: scale(1.1);
         }
@@ -1328,6 +1350,14 @@
             transition: opacity 0.2s ease, visibility 0.2s ease;
             pointer-events: none;
             z-index: 1000;
+        }
+
+        /* スマホ版：選択時のツールチップ */
+        @media (max-width: 430px) {
+            .task-card.selected .task-card-tooltip {
+                opacity: 1;
+                visibility: visible;
+            }
         }
 
         .task-card-tooltip::before {
@@ -1464,18 +1494,18 @@
                 font-size: 24px;
             }
 
-            /* 新規追加ボタン：画面左下に固定（内側に50px移動） */
+            /* 新規追加ボタン：画面左下に固定（外側に50px移動） */
             .add-task-button {
                 position: fixed;
                 bottom: 32px;
-                left: 62px; /* 12px + 50px = 62px */
+                left: -38px; /* 12px - 50px = -38px */
                 z-index: 1000;
             }
 
-            /* バッジボタン：画面右上に固定 */
+            /* バッジボタン：画面右上に固定（下方向に80px移動） */
             .add-badge-button {
                 position: fixed;
-                top: 12px;
+                top: 92px; /* 12px + 80px = 92px */
                 right: 12px;
                 z-index: 1000;
             }
@@ -1484,11 +1514,11 @@
                 font-size: 20px;
             }
 
-            /* ゴミ箱ボタン：画面右下に固定（内側に50px移動） */
+            /* ゴミ箱ボタン：画面右下に固定（外側に50px移動） */
             .trash-bin {
                 position: fixed;
                 bottom: 32px;
-                right: 62px; /* 12px + 50px = 62px */
+                right: -38px; /* 12px - 50px = -38px */
                 z-index: 1001; /* カードのz-indexより上にして、常に上に表示 */
             }
 
@@ -2785,11 +2815,32 @@
                                 // 既に選択されている場合は選択解除
                                 this.classList.remove('selected');
                                 selectedCard = null;
+                                // ツールチップを非表示
+                                const tooltip = this.querySelector('.task-card-tooltip');
+                                if (tooltip) {
+                                    tooltip.style.opacity = '0';
+                                    tooltip.style.visibility = 'hidden';
+                                }
                             } else {
                                 // 新規選択
                                 deselectAllCards();
                                 this.classList.add('selected');
                                 selectedCard = this;
+                                
+                                // ツールチップを表示（スマホ版）
+                                const tooltip = this.querySelector('.task-card-tooltip');
+                                if (tooltip && window.innerWidth <= 430) {
+                                    tooltip.textContent = 'ダブルタップで詳細表示';
+                                    tooltip.style.opacity = '1';
+                                    tooltip.style.visibility = 'visible';
+                                    // 3秒後に非表示
+                                    setTimeout(() => {
+                                        if (tooltip) {
+                                            tooltip.style.opacity = '0';
+                                            tooltip.style.visibility = 'hidden';
+                                        }
+                                    }, 3000);
+                                }
                             }
                         }
                         
@@ -2976,25 +3027,30 @@
             badgeDiv.style.background = badge.color;
             badgeDiv.title = badge.name + 'が着手中（クリックで外す）';
             
-            // 複数のバッジがある場合、位置をずらす
-            // バッジのサイズ: 48px (width/height)
-            // オフセット: インデックスに応じて右から左に、または上から下に配置
+            // PC版：カード内に配置（右下）
+            // スマホ版：カードの直下（カード外）に密着して配置（CSSで制御）
             const badgeSize = 48;
             const badgeSpacing = 12; // バッジ間のスペース
             const baseRight = 8;
             const baseBottom = 8; // フッター右に配置
             
-            // 右側から左側へ、少し上にずらす配置
-            // 最大3つまで横に並べ、それ以上は上に配置（2列目）
-            if (index < 3) {
-                // 最初の3つは横に並べる
-                badgeDiv.style.right = (baseRight + (index * (badgeSize + badgeSpacing))) + 'px';
-                badgeDiv.style.bottom = baseBottom + 'px';
+            // PC版用の配置（デフォルト）
+            if (window.innerWidth > 430) {
+                // 右側から左側へ、少し上にずらす配置
+                // 最大3つまで横に並べ、それ以上は上に配置（2列目）
+                if (index < 3) {
+                    // 最初の3つは横に並べる
+                    badgeDiv.style.right = (baseRight + (index * (badgeSize + badgeSpacing))) + 'px';
+                    badgeDiv.style.bottom = baseBottom + 'px';
+                } else {
+                    // 4つ目以降は上に配置（2列目）
+                    const colIndex = index - 3;
+                    badgeDiv.style.right = (baseRight + (colIndex * (badgeSize + badgeSpacing))) + 'px';
+                    badgeDiv.style.bottom = (baseBottom + badgeSize + badgeSpacing) + 'px';
+                }
             } else {
-                // 4つ目以降は上に配置（2列目）
-                const colIndex = index - 3;
-                badgeDiv.style.right = (baseRight + (colIndex * (badgeSize + badgeSpacing))) + 'px';
-                badgeDiv.style.bottom = (baseBottom + badgeSize + badgeSpacing) + 'px';
+                // スマホ版：カードの直下に配置（CSSクラスで制御されるため、スタイルは最小限）
+                // CSSの.attachedクラスで位置が制御される
             }
             
             // Googleアカウントの画像を使用する場合
