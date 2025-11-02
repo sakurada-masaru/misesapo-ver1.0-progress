@@ -2009,7 +2009,7 @@
             /* ブラインドパネルトグルボタン */
             .blind-panel-toggle {
                 position: fixed;
-                top: 0;
+                top: 60px; /* ヘッダーの直下（ヘッダー高さ60px） */
                 left: 0;
                 width: 50px;
                 height: 50px;
@@ -2018,7 +2018,7 @@
                 border: none;
                 border-radius: 0 0 12px 0;
                 cursor: pointer;
-                z-index: 9998;
+                z-index: 1998;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -2042,7 +2042,7 @@
                 width: 100%;
                 height: 100%;
                 background: rgba(0, 0, 0, 0.3);
-                z-index: 9999;
+                z-index: 1997;
                 display: none;
                 animation: fadeIn 0.3s ease;
             }
@@ -2059,7 +2059,7 @@
                 width: 200px;
                 background: var(--color-background);
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-                z-index: 10000;
+                z-index: 1999;
                 transform: translateY(-100%);
                 transition: transform 0.3s ease;
                 overflow-y: auto;
@@ -2277,7 +2277,7 @@
             <button class="blind-panel-toggle" id="blindPanelToggle" onclick="toggleBlindPanel()">
                 ☰
             </button>
-            
+
             <!-- タスクグリッド -->
             <div class="task-grid" id="taskGrid">
                 <!-- プルリフレッシュインジケーター -->
@@ -2397,7 +2397,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- スライドインパネルのハンドル（左端に固定、5つ） -->
     <button class="slide-panel-handle panel-1" id="slidePanelHandle1" onclick="toggleSlidePanel(1)">
         <span class="tooltip-text">リンクパネルを開く</span>
@@ -2955,26 +2955,26 @@
         const taskInputForm = document.getElementById('taskInputForm');
         if (taskInputForm) {
             taskInputForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(this);
+            e.preventDefault();
+            
+            const formData = new FormData(this);
                 const estimatedTime = formData.get('estimatedTime');
-                const task = {
-                    id: Date.now(),
-                    title: formData.get('title'),
-                    description: formData.get('description'),
-                    category: formData.get('category'),
-                    priority: formData.get('priority'),
+            const task = {
+                id: Date.now(),
+                title: formData.get('title'),
+                description: formData.get('description'),
+                category: formData.get('category'),
+                priority: formData.get('priority'),
                     estimatedTime: estimatedTime ? parseInt(estimatedTime) : null, // 分単位
-                    status: 'pending',
-                    createdAt: new Date().toISOString()
-                };
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            };
 
-                tasks.push(task);
-                updateTaskGrid();
-                // モーダルを閉じる
-                cancelTaskForm();
-            });
+            tasks.push(task);
+            updateTaskGrid();
+            // モーダルを閉じる
+            cancelTaskForm();
+        });
         }
 
         // バッジ作成フォーム表示
@@ -3056,25 +3056,25 @@
         const badgeInputForm = document.getElementById('badgeInputForm');
         if (badgeInputForm) {
             badgeInputForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(this);
-                const badge = {
-                    id: Date.now(),
-                    name: formData.get('name'),
-                    icon: formData.get('icon') || '👤',
-                    color: formData.get('color') || '#FF679C',
-                    position: {
-                        top: Math.random() * 300 + 100,
-                        left: Math.random() * 300 + 100
-                    },
-                    attachedToTaskId: null // カードに吸着していない場合はnull
-                };
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const badge = {
+                id: Date.now(),
+                name: formData.get('name'),
+                icon: formData.get('icon') || '👤',
+                color: formData.get('color') || '#FF679C',
+                position: {
+                    top: Math.random() * 300 + 100,
+                    left: Math.random() * 300 + 100
+                },
+                attachedToTaskId: null // カードに吸着していない場合はnull
+            };
 
-                badges.push(badge);
-                updateBadges();
-                cancelBadgeForm();
-            });
+            badges.push(badge);
+            updateBadges();
+            cancelBadgeForm();
+        });
         }
 
         // タスクグリッド更新（掲示板風のランダム配置）
@@ -4020,24 +4020,24 @@
                         // このバッジに関連するアクティブなタイムレコードを停止
                         endTimeRecordsForBadge(taskId, badge.id);
                         
-                        // タスクからバッジを外す
-                        if (taskBadges[taskId]) {
-                            taskBadges[taskId] = taskBadges[taskId].filter(id => id !== badge.id);
-                            if (taskBadges[taskId].length === 0) {
-                                delete taskBadges[taskId];
-                                // カードからbadge-attachedクラスを削除
-                                const card = this.closest('.task-card');
-                                if (card) {
-                                    card.classList.remove('badge-attached');
-                                }
+                    // タスクからバッジを外す
+                    if (taskBadges[taskId]) {
+                        taskBadges[taskId] = taskBadges[taskId].filter(id => id !== badge.id);
+                        if (taskBadges[taskId].length === 0) {
+                            delete taskBadges[taskId];
+                            // カードからbadge-attachedクラスを削除
+                            const card = this.closest('.task-card');
+                            if (card) {
+                                card.classList.remove('badge-attached');
                             }
                         }
-                        // バッジの吸着状態を解除
-                        badge.attachedToTaskId = null;
-                        // バッジ要素を削除
-                        this.remove();
-                        // グリッド上にバッジを再表示
-                        updateBadges();
+                    }
+                    // バッジの吸着状態を解除
+                    badge.attachedToTaskId = null;
+                    // バッジ要素を削除
+                    this.remove();
+                    // グリッド上にバッジを再表示
+                    updateBadges();
                     }
                 }
             });
@@ -4956,8 +4956,8 @@
                                 // 以前のタスクからこのバッジに関連するアクティブなタイムレコードを停止
                                 endTimeRecordsForBadge(prevTaskId, badge.id);
                                 
-                                if (taskBadges[prevTaskId]) {
-                                    taskBadges[prevTaskId] = taskBadges[prevTaskId].filter(id => id !== badge.id);
+                            if (taskBadges[prevTaskId]) {
+                                taskBadges[prevTaskId] = taskBadges[prevTaskId].filter(id => id !== badge.id);
                                 }
                             } else {
                                 // キャンセルした場合は、新しいカードへの吸着を中止
@@ -6211,7 +6211,7 @@
                 openSlidePanelOriginal(panelNumber);
             }, 300);
         }
-        
+
         // スライドインパネルの開閉機能（5つのパネル対応）
         function openSlidePanelOriginal(panelNumber) {
             const overlay = document.getElementById('slidePanelOverlay' + panelNumber);
@@ -6259,16 +6259,16 @@
                 }
             } else {
                 // PC版の場合は通常通り
-                const overlay = document.getElementById('slidePanelOverlay' + panelNumber);
-                if (overlay.classList.contains('active')) {
-                    closeSlidePanel(panelNumber);
-                } else {
-                    // 他のパネルを閉じる
-                    for (let i = 1; i <= 5; i++) {
-                        if (i !== panelNumber) {
-                            closeSlidePanel(i);
-                        }
+            const overlay = document.getElementById('slidePanelOverlay' + panelNumber);
+            if (overlay.classList.contains('active')) {
+                closeSlidePanel(panelNumber);
+            } else {
+                // 他のパネルを閉じる
+                for (let i = 1; i <= 5; i++) {
+                    if (i !== panelNumber) {
+                        closeSlidePanel(i);
                     }
+                }
                     openSlidePanelOriginal(panelNumber);
                 }
             }
