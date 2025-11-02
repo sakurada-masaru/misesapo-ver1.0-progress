@@ -2603,6 +2603,8 @@
                     complete.id = 'completeButton';
                     complete.innerHTML = '<span class="complete-icon">✓</span><span class="tooltip-text">ドラッグ&ドロップで完了</span>';
                     taskGrid.appendChild(complete);
+                    // 完了ボタンのハンドラーをリセットして再設定
+                    completeButtonHandlerSet = false;
                     setupCompleteButtonDrop(); // ドロップ処理を再設定
                 }
                 
