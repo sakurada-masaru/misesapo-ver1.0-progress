@@ -833,6 +833,126 @@
         .slide-panel-content {
             padding: var(--spacing-lg);
         }
+        
+        /* アーカイブタスクリスト */
+        .archive-task-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        /* アーカイブタスクアイテム（アコーディオン） */
+        .archive-task-item {
+            background: var(--color-background);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-md);
+            overflow: hidden;
+            transition: var(--transition-normal);
+        }
+        
+        .archive-task-item:hover {
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .archive-task-header {
+            padding: var(--spacing-md);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--color-background-secondary);
+            transition: var(--transition-normal);
+        }
+        
+        .archive-task-header:hover {
+            background: var(--color-border);
+        }
+        
+        .archive-task-item.active .archive-task-header {
+            background: var(--color-primary-light);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .archive-task-title {
+            font-size: var(--font-size-md);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text-primary);
+            flex: 1;
+            margin-right: var(--spacing-sm);
+        }
+        
+        .archive-task-meta {
+            display: flex;
+            gap: var(--spacing-sm);
+            align-items: center;
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+            margin-top: 4px;
+        }
+        
+        .archive-task-arrow {
+            font-size: var(--font-size-lg);
+            transition: transform 0.3s ease;
+        }
+        
+        .archive-task-item.active .archive-task-arrow {
+            transform: rotate(180deg);
+        }
+        
+        .archive-task-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 var(--spacing-md);
+        }
+        
+        .archive-task-item.active .archive-task-content {
+            max-height: 500px;
+            padding: var(--spacing-md);
+        }
+        
+        .archive-task-body {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .archive-task-description {
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm);
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        
+        .archive-task-badges {
+            display: flex;
+            gap: var(--spacing-xs);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .archive-task-badge {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: var(--color-background-secondary);
+            border-radius: var(--border-radius-sm);
+            font-size: var(--font-size-xs);
+        }
+        
+        .archive-task-badge-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .archive-empty {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: var(--color-text-secondary);
+        }
 
         /* スライドインパネルのハンドル（左端に固定、5つのパネル用） */
         .slide-panel-handle {
