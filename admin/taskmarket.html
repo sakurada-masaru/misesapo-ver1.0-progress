@@ -2219,6 +2219,37 @@
         </div>
     </div>
     
+    <!-- SP版：ブラインドパネル（上から下にスライド） -->
+    <div class="blind-panel-overlay" id="blindPanelOverlay" onclick="closeBlindPanelOnOverlay(event)">
+        <div class="blind-panel" id="blindPanel" onclick="event.stopPropagation()">
+            <div class="blind-panel-content">
+                <button class="blind-panel-button panel-1" onclick="toggleSlidePanelFromBlind(1)">
+                    <span>リンクパネル</span>
+                    <span>◀</span>
+                </button>
+                <button class="blind-panel-button panel-2" onclick="toggleSlidePanelFromBlind(2)">
+                    <span>フロントパネル</span>
+                    <span>◀</span>
+                </button>
+                <button class="blind-panel-button panel-3" onclick="toggleSlidePanelFromBlind(3)">
+                    <span>バックパネル</span>
+                    <span>◀</span>
+                </button>
+                <button class="blind-panel-button panel-4" onclick="toggleSlidePanelFromBlind(4)">
+                    <span>メディアパネル</span>
+                    <span>◀</span>
+                </button>
+                <button class="blind-panel-button panel-5" onclick="toggleSlidePanelFromBlind(5)">
+                    <span>アーカイブパネル</span>
+                    <span>◀</span>
+                </button>
+                <div class="blind-panel-hint">
+                    ← 左にスワイプでパネルを開く
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- スライドインパネルのハンドル（左端に固定、5つ） -->
     <button class="slide-panel-handle panel-1" id="slidePanelHandle1" onclick="toggleSlidePanel(1)">
         <span class="tooltip-text">リンクパネルを開く</span>
