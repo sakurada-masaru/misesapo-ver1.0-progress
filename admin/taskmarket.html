@@ -1148,7 +1148,7 @@
             opacity: 1;
             cursor: grabbing;
             transform: rotate(0deg) !important;
-            z-index: 1000 !important;
+            z-index: 999 !important; /* ゴミ箱のz-index: 1000より下にする */
         }
 
         .task-grid.drag-over {
@@ -1486,7 +1486,7 @@
                 position: fixed;
                 bottom: 32px;
                 right: 12px;
-                z-index: 1000;
+                z-index: 1001; /* カードのz-indexより上にして、常に上に表示 */
             }
 
             .trash-icon {
@@ -2571,7 +2571,7 @@
                             this.dataset.hasDragged = 'true';
                             this.classList.add('dragging');
                             this.style.transition = 'none';
-                            this.style.zIndex = '1000';
+                            this.style.zIndex = '999'; /* ゴミ箱より下にする */
                             this.style.opacity = '0.8';
                             this.style.transform += ' scale(1.05)';
                         } else {
@@ -2622,16 +2622,23 @@
                         this.style.left = clampedX + 'px';
                         this.style.top = clampedY + 'px';
                         
-                        // ゴミ箱との重なりをチェック
+                        // ゴミ箱との重なりをチェック（カードの領域全体で判定）
                         const trashBin = document.getElementById('trashBin');
                         if (trashBin) {
                             const trashRect = trashBin.getBoundingClientRect();
-                            const cardCenterX = clampedX + cardWidth / 2 + gridRect.left;
-                            const cardCenterY = clampedY + cardHeight / 2 + gridRect.top;
+                            // カードの領域全体を計算（グリッド座標系）
+                            const cardLeft = clampedX + gridRect.left;
+                            const cardRight = cardLeft + cardWidth;
+                            const cardTop = clampedY + gridRect.top;
+                            const cardBottom = cardTop + cardHeight;
                             
-                            // カードの中心点がゴミ箱の範囲内にあるかチェック
-                            if (cardCenterX >= trashRect.left && cardCenterX <= trashRect.right &&
-                                cardCenterY >= trashRect.top && cardCenterY <= trashRect.bottom) {
+                            // カードの領域がゴミ箱の領域と重なっているかチェック
+                            const isOverlapping = !(cardRight < trashRect.left || 
+                                                   cardLeft > trashRect.right || 
+                                                   cardBottom < trashRect.top || 
+                                                   cardTop > trashRect.bottom);
+                            
+                            if (isOverlapping) {
                                 trashBin.classList.add('touch-drag-over');
                             } else {
                                 trashBin.classList.remove('touch-drag-over');
@@ -2654,7 +2661,7 @@
                                 this.dataset.hasDragged = 'true';
                                 this.classList.add('dragging');
                                 this.style.transition = 'none';
-                                this.style.zIndex = '1000';
+                                this.style.zIndex = '999'; /* ゴミ箱より下にする */
                                 this.style.opacity = '0.8';
                                 this.style.transform += ' scale(1.05)';
                                 e.preventDefault();
@@ -2677,7 +2684,7 @@
                                 this.dataset.hasDragged = 'true';
                                 this.classList.add('dragging');
                                 this.style.transition = 'none';
-                                this.style.zIndex = '1000';
+                                this.style.zIndex = '999'; /* ゴミ箱より下にする */
                                 this.style.opacity = '0.8';
                                 this.style.transform += ' scale(1.05)';
                                 e.preventDefault();
@@ -2698,19 +2705,20 @@
                     }
                     
                     if (isDragging && currentTouchedCard === this) {
-                        // ゴミ箱の上にドロップされたかチェック
+                        // ゴミ箱の上にドロップされたかチェック（カードの領域全体で判定）
                         const gridRect = taskGrid.getBoundingClientRect();
                         const cardRect = this.getBoundingClientRect();
                         let droppedOnTrash = false;
                         
                         if (trashBin) {
                             const trashRect = trashBin.getBoundingClientRect();
-                            // カードの中心点がゴミ箱の範囲内にあるかチェック
-                            const cardCenterX = cardRect.left + cardRect.width / 2;
-                            const cardCenterY = cardRect.top + cardRect.height / 2;
+                            // カードの領域全体がゴミ箱の領域と重なっているかチェック
+                            const isOverlapping = !(cardRect.right < trashRect.left || 
+                                                   cardRect.left > trashRect.right || 
+                                                   cardRect.bottom < trashRect.top || 
+                                                   cardRect.top > trashRect.bottom);
                             
-                            if (cardCenterX >= trashRect.left && cardCenterX <= trashRect.right &&
-                                cardCenterY >= trashRect.top && cardCenterY <= trashRect.bottom) {
+                            if (isOverlapping) {
                                 droppedOnTrash = true;
                             }
                         }
