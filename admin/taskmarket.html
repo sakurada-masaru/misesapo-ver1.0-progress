@@ -422,11 +422,12 @@
             visibility: visible;
         }
 
-        /* 新規追加ボタン（タスクグリッド内左下に固定・円形デザイン） */
+        /* 新規追加ボタン（タスクグリッド内下部中央に固定・円形デザイン） */
         .add-task-button {
             position: absolute;
             bottom: 24px;
-            left: 24px;
+            left: 50%;
+            transform: translateX(-50%);
             width: 64px;
             height: 64px;
             background: var(--color-primary);
@@ -444,6 +445,63 @@
             z-index: 100;
             line-height: 1;
             padding: 0;
+        }
+        
+        /* 完了ボタン（タスクグリッド内左下に固定・円形デザイン） */
+        .complete-button {
+            position: absolute;
+            bottom: 24px;
+            left: 24px;
+            width: 64px;
+            height: 64px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+            opacity: 0.8;
+        }
+        
+        .complete-button:hover {
+            background: #45a049;
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-2px) scale(1.1);
+            opacity: 1;
+        }
+        
+        .complete-button.drag-over {
+            background: #45a049;
+            transform: scale(1.2);
+            opacity: 1;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+        }
+        
+        .complete-icon {
+            font-size: 32px;
+            font-weight: var(--font-weight-bold);
+            user-select: none;
+        }
+        
+        .complete-button .tooltip-text {
+            left: 100%;
+            right: auto;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-left: 8px;
+            margin-right: 0;
+        }
+        
+        .complete-button .tooltip-text::before {
+            left: -6px;
+            right: auto;
+            border-right-color: rgba(0, 0, 0, 0.85);
+            border-left-color: transparent;
         }
         
         .add-task-button .tooltip-text {
@@ -1820,11 +1878,17 @@
                     「更新」は画面を下にひいてください
                 </div>
                 
-                <!-- 新規追加ボタン（左下に固定） -->
+                <!-- 新規追加ボタン（下部中央に固定） -->
                 <button class="add-task-button" onclick="toggleTaskForm()">
                     +
                     <span class="tooltip-text">新規タスクを追加</span>
                 </button>
+                
+                <!-- 完了ボタン（左下に固定） -->
+                <div class="complete-button" id="completeButton">
+                    <span class="complete-icon">✓</span>
+                    <span class="tooltip-text">ドラッグ&ドロップで完了</span>
+                </div>
                 
                 <!-- バッジを作るボタン（右上に固定・◯デザイン） -->
                 <button class="add-badge-button" onclick="openBadgeForm()">
@@ -2294,6 +2358,16 @@
                 priority: "high",
                 status: "pending",
                 createdAt: new Date().toISOString()
+            },
+            {
+                id: Date.now() + 1,
+                title: "テスト完了タスク",
+                description: "これはアーカイブパネルに表示されるテスト用の完了タスクです。",
+                category: "frontend",
+                priority: "medium",
+                status: "completed",
+                createdAt: new Date(Date.now() - 86400000).toISOString(), // 1日前
+                completedAt: new Date(Date.now() - 3600000).toISOString() // 1時間前
             }
         ];
 
@@ -2585,8 +2659,11 @@
             // 配置済みカードの位置を記録
             const placedCards = [];
 
+            // 完了していないタスクのみ表示（pendingタスクのみ）
+            const pendingTasks = tasks.filter(task => task.status !== 'completed');
+            
             // 各タスクカードをランダムな位置に配置（または保存された位置を使用）
-            tasks.forEach((task, index) => {
+            pendingTasks.forEach((task, index) => {
                 const card = document.createElement('div');
                 card.className = `task-card category-${task.category}`;
                 card.draggable = true;
