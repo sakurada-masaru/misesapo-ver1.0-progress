@@ -1970,11 +1970,23 @@
                 height: 48px !important;
                 z-index: 1001 !important; /* カードのz-indexより上にして、常に上に表示 */
                 /* 完了ボタンと同じ位置（左下）に表示されないようにする */
-                display: block !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                border-radius: 50% !important;
+                /* 背景とアイコンの中心点を合わせる */
+                padding: 0 !important;
+                margin: 0 !important;
             }
 
-            .trash-icon {
-                font-size: 20px;
+            .trash-bin .trash-icon {
+                font-size: 20px !important;
+                line-height: 1 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
 
             /* 詳細ボード */
