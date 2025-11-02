@@ -2214,12 +2214,12 @@
                 </div>
             </div>
         </div>
-        
-        <!-- ゴミ箱（右下に固定、taskGrid外に配置） -->
-        <div class="trash-bin" id="trashBin">
-            <span class="trash-icon">🗑️</span>
-            <span class="tooltip-text">ドラッグ&ドロップで削除</span>
-        </div>
+    </div>
+    
+    <!-- ゴミ箱（右下に固定、body直下に配置） -->
+    <div class="trash-bin" id="trashBin">
+        <span class="trash-icon">🗑️</span>
+        <span class="tooltip-text">ドラッグ&ドロップで削除</span>
     </div>
 
     <!-- タスク詳細パネル（右からスライドイン） -->
@@ -6018,6 +6018,17 @@
 
         // 初期化（ページロード時にも実行、スプラッシュ後に再実行される）
         setTimeout(function() {
+            // ゴミ箱を確実に1つだけ作成（重複を防ぐ）
+            const existingTrashBin = document.getElementById('trashBin');
+            if (!existingTrashBin) {
+                // ゴミ箱が存在しない場合のみ作成
+                const trashBin = document.createElement('div');
+                trashBin.className = 'trash-bin';
+                trashBin.id = 'trashBin';
+                trashBin.innerHTML = '<span class="trash-icon">🗑️</span><span class="tooltip-text">ドラッグ&ドロップで削除</span>';
+                document.body.appendChild(trashBin);
+            }
+            
             setupBadgeDragHandler(); // バッジドラッグハンドラーを設定
             setupTrashBinDrop(); // ゴミ箱のドロップ処理を初期化
             setupCompleteButtonDrop(); // 完了ボタンのドロップ処理を初期化
