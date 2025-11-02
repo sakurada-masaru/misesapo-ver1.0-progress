@@ -1110,6 +1110,7 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
+            white-space: nowrap;
         }
         
         /* スマホ版（SP）：プルリフレッシュ対応とヒント表示 */
@@ -1118,22 +1119,23 @@
                 -webkit-overflow-scrolling: touch;
             }
             
-            /* ヒントを表示（タスクがない場合、またはスクロール位置が最上部の時のみ） */
+            /* ヒントを表示（スマホ版ではデフォルトで表示） */
             .pull-refresh-hint {
-                opacity: 1;
-                visibility: visible;
+                opacity: 1 !important;
+                visibility: visible !important;
             }
             
             /* タスクがある場合は、スクロール位置に応じて表示/非表示を切り替え */
-            .task-grid.has-tasks .pull-refresh-hint {
+            .task-grid.has-tasks:not(.scroll-top) .pull-refresh-hint {
                 opacity: 0;
                 visibility: hidden;
             }
             
             /* スクロール位置が最上部（5px以下）の時のみヒントを表示 */
-            .task-grid.scroll-top .pull-refresh-hint {
-                opacity: 1;
-                visibility: visible;
+            .task-grid.scroll-top .pull-refresh-hint,
+            .task-grid:not(.has-tasks) .pull-refresh-hint {
+                opacity: 1 !important;
+                visibility: visible !important;
             }
         }
 
@@ -2457,8 +2459,10 @@
                     taskGrid.classList.add('scroll-top');
                 } else {
                     taskGrid.classList.add('has-tasks');
-                    // スクロール位置に応じてクラスを更新
-                    updatePullRefreshHint();
+                    // スクロール位置に応じてクラスを更新（初期化時は最上部とみなす）
+                    setTimeout(() => {
+                        updatePullRefreshHint();
+                    }, 100);
                 }
             }
             
@@ -4315,6 +4319,13 @@
             // プルリフレッシュ機能を初期化（スマホ版のみ）
             if (window.innerWidth <= 430) {
                 setupPullRefresh();
+                // ヒントの初期表示を設定
+                const taskGrid = document.getElementById('taskGrid');
+                if (taskGrid) {
+                    // 初期化時は最上部とみなす
+                    taskGrid.classList.add('scroll-top');
+                    updatePullRefreshHint();
+                }
             }
         }, 100);
 
