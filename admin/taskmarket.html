@@ -3267,6 +3267,23 @@
             
             // タッチ移動（スマホ対応）
             badgeElement.addEventListener('touchmove', function(e) {
+                // 選択済みバッジが移動した場合は即座にドラッグ開始
+                if (this.classList.contains('selected') && selectedBadge === this && !isBadgeDragging) {
+                    const touch = e.touches[0];
+                    const deltaX = Math.abs(touch.clientX - touchStartX);
+                    const deltaY = Math.abs(touch.clientY - touchStartY);
+                    if (deltaX > 5 || deltaY > 5) {
+                        // 移動が検出された場合は即座にドラッグ開始
+                        clearTimeout(badgeTouchTimeout);
+                        isBadgeDragging = true;
+                        this.classList.add('dragging');
+                        this.style.transition = 'none';
+                        this.style.zIndex = '1000';
+                        this.style.opacity = '0.8';
+                        this.style.transform += ' scale(1.1)';
+                    }
+                }
+                
                 if (isBadgeDragging && e.touches.length === 1 && currentTouchedBadge === this) {
                     const touch = e.touches[0];
                     const deltaX = touch.clientX - touchStartX;
