@@ -86,8 +86,8 @@
             --panel-3-hover: #3FA863;
             --panel-4-color: #FF8C42;
             --panel-4-hover: #FF6B1F;
-            --panel-5-color: #9B59B6;
-            --panel-5-hover: #8E44AD;
+            --panel-5-color: #4CAF50;
+            --panel-5-hover: #45a049;
 
             /* カテゴリごとの薄い枠線色（タスクカード用） */
             --category-design-border: rgba(255, 103, 156, 0.3);
@@ -538,9 +538,11 @@
         
         /* 完了ボタン（画面左下に固定・円形デザイン） */
         .complete-button {
-            position: fixed;
-            bottom: 24px;
-            left: 24px;
+            position: fixed !important;
+            bottom: 24px !important;
+            left: 24px !important;
+            top: auto !important;
+            right: auto !important;
             width: 64px;
             height: 64px;
             background: #4CAF50;
