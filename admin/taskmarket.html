@@ -1301,7 +1301,7 @@
         @media (max-width: 430px) {
             .task-card .badge.attached {
                 position: absolute;
-                bottom: -50px !important; /* カードの下に密着（-48px(バッジの高さ) - 2px(余白)） */
+                bottom: -48px !important; /* カード下部とバッジ上部が密着（-48px = バッジの高さ） */
                 left: 50% !important;
                 right: auto !important;
                 transform: translateX(-50%) !important;
@@ -1363,23 +1363,24 @@
             z-index: 1000;
         }
 
-        /* スマホ版（SP）：選択時のツールチップ（カード右に表示） */
+        /* スマホ版（SP）：選択時のツールチップ（カード上に表示） */
         @media (max-width: 430px) {
             .task-card-tooltip {
-                bottom: auto;
-                top: 50%;
-                left: 100%;
-                transform: translateY(-50%);
-                margin-left: 12px;
+                bottom: 100%;
+                top: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                margin-bottom: 12px;
             }
 
             .task-card-tooltip::before {
-                bottom: auto;
-                top: 50%;
-                left: -6px;
-                transform: translateY(-50%);
+                bottom: -6px;
+                top: auto;
+                left: 50%;
+                transform: translateX(-50%);
                 border: 6px solid transparent;
-                border-right-color: rgba(0, 0, 0, 0.85);
+                border-top-color: rgba(0, 0, 0, 0.85);
+                border-right-color: transparent;
                 border-bottom-color: transparent;
             }
 
@@ -2620,10 +2621,36 @@
                 selectedCard = null;
             }
             
-            // グリッド外をタップしたら選択解除
+            // バッジ選択を解除する関数
+            function deselectAllBadges() {
+                const allBadges = taskGrid.querySelectorAll('.badge');
+                allBadges.forEach(b => {
+                    b.classList.remove('selected');
+                });
+                selectedBadge = null;
+            }
+            
+            // グリッド外をタップしたら選択解除とツールチップ非表示
             taskGrid.addEventListener('touchstart', function(e) {
                 if (!e.target.closest('.task-card') && !e.target.closest('.badge')) {
                     deselectAllCards();
+                    // バッジの選択も解除
+                    deselectAllBadges();
+                }
+            }, { passive: true });
+            
+            // ページ全体で何もない場所をタッチした場合も選択解除
+            document.addEventListener('touchstart', function(e) {
+                if (window.innerWidth <= 430) {
+                    // カード、バッジ、ボタン以外をタッチした場合
+                    if (!e.target.closest('.task-card') && 
+                        !e.target.closest('.badge') && 
+                        !e.target.closest('button') &&
+                        !e.target.closest('.modal') &&
+                        !e.target.closest('.slide-panel')) {
+                        deselectAllCards();
+                        deselectAllBadges();
+                    }
                 }
             }, { passive: true });
             
