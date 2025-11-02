@@ -2197,12 +2197,6 @@
                     <span class="tooltip-text">バッジを作る</span>
                 </button>
                 
-                <!-- ゴミ箱（右下に固定） -->
-                <div class="trash-bin" id="trashBin">
-                    <span class="trash-icon">🗑️</span>
-                    <span class="tooltip-text">ドラッグ&ドロップで削除</span>
-                </div>
-                
                 <!-- タスクカードがここに動的に生成されます -->
                 <div style="text-align: center; padding: var(--spacing-xl); color: var(--color-text-secondary);">
                     <p>タスクがありません</p>
@@ -2971,11 +2965,11 @@
             const pendingTasksCount = tasks.filter(task => task.status !== 'completed').length;
             
             if (pendingTasksCount === 0) {
-                // カードをクリア（ボタンとゴミ箱は残す）
+                // カードをクリア（ボタンは残す、ゴミ箱はtaskGrid外に固定されているので除外）
                 const addButton = taskGrid.querySelector('.add-task-button');
                 const completeButton = taskGrid.querySelector('.complete-button');
                 const addBadgeButton = taskGrid.querySelector('.add-badge-button');
-                const trashBin = taskGrid.querySelector('.trash-bin');
+                // ゴミ箱はtaskGrid外に配置されているため、querySelectorしない
                 taskGrid.innerHTML = '';
                 
                 // ボタンを再追加
@@ -3019,17 +3013,8 @@
                     taskGrid.appendChild(badgeButton);
                 }
                 
-                // ゴミ箱を再追加
-                if (trashBin) {
-                    taskGrid.appendChild(trashBin);
-                } else {
-                    const trash = document.createElement('div');
-                    trash.className = 'trash-bin';
-                    trash.id = 'trashBin';
-                    trash.innerHTML = '<span class="trash-icon">🗑️</span><span class="tooltip-text">ドラッグ&ドロップで削除</span>';
-                    taskGrid.appendChild(trash);
-                    setupTrashBinDrop(); // ドロップ処理を再設定
-                }
+                // ゴミ箱はtaskGrid外に配置（position: fixedで画面右下に固定）
+                // taskGrid内には追加しない
                 
                 const emptyMessage = document.createElement('div');
                 emptyMessage.style.cssText = 'text-align: center; padding: var(--spacing-xl); color: var(--color-text-secondary); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);';
@@ -3051,11 +3036,11 @@
             const cardWidth = 280;
             const cardHeight = 180;
 
-            // カードをクリア（ボタンは残す）
+            // カードをクリア（ボタンは残す、ゴミ箱はtaskGrid外に固定されているので除外）
             const addButton = taskGrid.querySelector('.add-task-button');
             const completeButton = taskGrid.querySelector('.complete-button');
             const addBadgeButton = taskGrid.querySelector('.add-badge-button');
-            const trashBin = taskGrid.querySelector('.trash-bin');
+            // ゴミ箱はtaskGrid外に配置されているため、querySelectorしない
             taskGrid.innerHTML = '';
             
             // ボタンを再追加
@@ -3094,17 +3079,8 @@
                 taskGrid.appendChild(badgeButton);
             }
             
-            // ゴミ箱を再追加
-            if (trashBin) {
-                taskGrid.appendChild(trashBin);
-            } else {
-                const trash = document.createElement('div');
-                trash.className = 'trash-bin';
-                trash.id = 'trashBin';
-                trash.innerHTML = '<span class="trash-icon">🗑️</span><span class="tooltip-text">ドラッグ&ドロップで削除</span>';
-                taskGrid.appendChild(trash);
-                setupTrashBinDrop(); // ドロップ処理を再設定
-            }
+            // ゴミ箱はtaskGrid外に配置（position: fixedで画面右下に固定）
+            // taskGrid内には追加しない
             
             // 配置済みカードの位置を記録
             const placedCards = [];
