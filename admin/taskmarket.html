@@ -2154,7 +2154,22 @@
             </div>
         </div>
     </div>
-
+    
+    <!-- タイムレコードパネル（右からスライドイン） -->
+    <div class="time-record-panel-overlay" id="timeRecordPanelOverlay" onclick="closeTimeRecordPanelOnOverlay(event)">
+        <div class="time-record-panel" id="timeRecordPanel" onclick="event.stopPropagation()">
+            <div class="time-record-panel-header">
+                <h2 class="time-record-panel-title">タイムレコード</h2>
+                <button class="time-record-panel-close-button" onclick="closeTimeRecordPanel()" title="閉じる">×</button>
+            </div>
+            <div id="timeRecordContent">
+                <div style="text-align: center; padding: var(--spacing-xl); color: var(--color-text-secondary);">
+                    <p>読み込み中...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- スライドインパネルのハンドル（左端に固定、5つ） -->
     <button class="slide-panel-handle panel-1" id="slidePanelHandle1" onclick="toggleSlidePanel(1)">
         <span class="tooltip-text">リンクパネルを開く</span>
