@@ -2791,9 +2791,13 @@
                 
                 const emptyMessage = document.createElement('div');
                 emptyMessage.style.cssText = 'text-align: center; padding: var(--spacing-xl); color: var(--color-text-secondary); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);';
+                
+                // PC版とSP版でメッセージを分ける
+                const isMobile = window.innerWidth <= 430;
+                const createMessage = isMobile ? '「+」ボタンをタッチ' : '「+」ボタンをクリック';
+                
                 emptyMessage.innerHTML = `
-                    <p>タスクがありません</p>
-                    <p style="font-size: var(--font-size-sm); margin-top: var(--spacing-sm);">左下の「+」ボタンからタスクを作成してください</p>
+                    <p>タスクがありません。新規タスク作成は${createMessage}</p>
                 `;
                 taskGrid.appendChild(emptyMessage);
                 return;
