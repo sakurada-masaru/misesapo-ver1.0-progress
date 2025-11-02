@@ -5330,6 +5330,12 @@
             // 担当バッジ
             const assignedBadges = getAssignedBadgesForTask(task.id);
             
+            // タイムレコードの合計作業時間を計算
+            const taskRecords = getTimeRecordsForTask(task.id);
+            const completedRecords = taskRecords.filter(r => r.status === 'completed' && r.duration !== null);
+            const totalDuration = completedRecords.reduce((sum, r) => sum + r.duration, 0);
+            const totalDurationFormatted = totalDuration > 0 ? formatDuration(totalDuration) : '-';
+            
             // カテゴリ名
             const categoryNames = {
                 'design': 'デザイン',
@@ -5349,6 +5355,7 @@
                             <span>|</span>
                             <span>${categoryNames[task.category] || '未分類'}</span>
                             ${assignedBadges.length > 0 ? `<span>|</span><span>担当: ${assignedBadges.length}人</span>` : ''}
+                            ${totalDuration > 0 ? `<span>|</span><span>⏱️ ${totalDurationFormatted}</span>` : ''}
                         </div>
                     </div>
                     <span class="archive-task-arrow">▼</span>
