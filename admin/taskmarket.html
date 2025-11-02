@@ -4327,6 +4327,26 @@
             console.log('タイムレコードを終了しました:', taskId);
         }
         
+        // 特定のバッジに紐づくアクティブなタイムレコードを終了（バッジを外した時）
+        function endTimeRecordsForBadge(taskId, badgeId) {
+            const endTime = new Date();
+            const endTimeISO = endTime.toISOString();
+            
+            timeRecords.forEach(record => {
+                if (record.taskId === taskId && record.badgeId === badgeId && record.status === 'active') {
+                    const startTime = new Date(record.startTime);
+                    const duration = Math.floor((endTime - startTime) / 1000); // 秒単位
+                    
+                    record.endTime = endTimeISO;
+                    record.duration = duration;
+                    record.status = 'completed';
+                }
+            });
+            
+            saveTimeRecords();
+            console.log('タイムレコードを停止しました（バッジを外した）:', taskId, badgeId);
+        }
+        
         // タイムレコードを保存
         function saveTimeRecords() {
             localStorage.setItem('timeRecords', JSON.stringify(timeRecords));
@@ -4610,7 +4630,23 @@
             const badge = badges.find(b => b.id === badgeId);
             if (!badge) return;
             
-            // バッジを削除（確認なし）
+            // バッジがタスクに吸着している場合は、タイムレコードを停止
+            if (badge.attachedToTaskId) {
+                const taskId = badge.attachedToTaskId;
+                const task = tasks.find(t => t.id === taskId);
+                const taskTitle = task ? task.title : 'タスク';
+                const badgeName = badge.name || 'バッジ';
+                
+                if (confirm(`作業を停止しますか？\nバッジを削除するとタイムレコードが停止します。\n\nバッジ: ${badgeName}\nタスク: ${taskTitle}`)) {
+                    // このバッジに関連するアクティブなタイムレコードを停止
+                    endTimeRecordsForBadge(taskId, badgeId);
+                } else {
+                    // キャンセルした場合は削除を中止
+                    return;
+                }
+            }
+            
+            // バッジを削除
             badges = badges.filter(b => b.id !== badgeId);
             
             // タスクからバッジの紐付けを削除
@@ -4682,11 +4718,27 @@
                 if (badgeId) {
                     const badge = badges.find(b => b.id === badgeId);
                     if (badge && badge.attachedToTaskId !== task.id) {
-                        // 以前のカードからバッジを外す
+                        // 以前のカードからバッジを外す（別のカードに移動する時）
                         if (badge.attachedToTaskId) {
                             const prevTaskId = badge.attachedToTaskId;
-                            if (taskBadges[prevTaskId]) {
-                                taskBadges[prevTaskId] = taskBadges[prevTaskId].filter(id => id !== badge.id);
+                            
+                            // 確認ダイアログを表示（バッジを外す時のみ）
+                            const prevTask = tasks.find(t => t.id === prevTaskId);
+                            const prevTaskTitle = prevTask ? prevTask.title : 'タスク';
+                            const badgeName = badge.name || 'バッジ';
+                            
+                            if (confirm(`作業を停止しますか？\nバッジを外すとタイムレコードが停止します。\n\nバッジ: ${badgeName}\nタスク: ${prevTaskTitle}`)) {
+                                // 以前のタスクからこのバッジに関連するアクティブなタイムレコードを停止
+                                endTimeRecordsForBadge(prevTaskId, badge.id);
+                                
+                                if (taskBadges[prevTaskId]) {
+                                    taskBadges[prevTaskId] = taskBadges[prevTaskId].filter(id => id !== badge.id);
+                                }
+                            } else {
+                                // キャンセルした場合は、新しいカードへの吸着を中止
+                                e.preventDefault();
+                                e.stopPropagation();
+                                return;
                             }
                         }
                         
