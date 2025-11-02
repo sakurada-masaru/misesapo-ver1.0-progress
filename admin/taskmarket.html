@@ -1885,7 +1885,7 @@
         <span class="tooltip-text">メディアパネルを開く</span>
     </button>
     <button class="slide-panel-handle panel-5" id="slidePanelHandle5" onclick="toggleSlidePanel(5)">
-        <span class="tooltip-text">運営パネルを開く</span>
+        <span class="tooltip-text">アーカイブパネルを開く</span>
     </button>
 
     <!-- モーダル：タスク入力フォーム -->
@@ -4334,6 +4334,14 @@
         let selectedLinkIds = new Set();
         let linkDragStartPosition = { x: 0, y: 0 };
         
+        // アーカイブパネル関連の変数
+        let archiveFilters = {
+            date: 'all',
+            assignee: 'all',
+            category: 'all',
+            search: ''
+        };
+        
         // 外部リンクを追加
         function addExternalLink(url, title = '') {
             try {
@@ -4727,6 +4735,12 @@
             if (panelNumber === 1) {
                 setTimeout(() => {
                     updateLinkIconGrid();
+                }, 100);
+            } else if (panelNumber === 5) {
+                // アーカイブパネルを開いた時に更新
+                setTimeout(() => {
+                    updateArchivePanel();
+                    updateAssigneeFilterOptions();
                 }, 100);
             }
         }
