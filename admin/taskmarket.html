@@ -1135,11 +1135,11 @@
             z-index: 500;
         }
 
-        /* スマホ版：選択状態のスタイル */
+        /* スマホ版（SP）：選択状態のスタイル */
         @media (max-width: 430px) {
             .task-card.selected {
                 border: 2px solid var(--color-primary);
-                box-shadow: 0 0 10px rgba(255, 103, 156, 0.5);
+                box-shadow: 0 0 20px rgba(255, 103, 156, 0.8); /* ドロップシャドウを濃く */
                 transform: scale(1.05);
             }
         }
@@ -1297,11 +1297,11 @@
             z-index: 5;
         }
 
-        /* スマホ版：カードの直下（カード外）に密着して吸着 */
+        /* スマホ版（SP）：カードの直下（カード外）に密着して吸着 */
         @media (max-width: 430px) {
             .task-card .badge.attached {
                 position: absolute;
-                bottom: -56px !important; /* カードの下に密着（-48px(バッジの高さ) - 8px(余白)） */
+                bottom: -50px !important; /* カードの下に密着（-48px(バッジの高さ) - 2px(余白)） */
                 left: 50% !important;
                 right: auto !important;
                 transform: translateX(-50%) !important;
@@ -1363,11 +1363,29 @@
             z-index: 1000;
         }
 
-        /* スマホ版：選択時のツールチップ */
+        /* スマホ版（SP）：選択時のツールチップ（カード右に表示） */
         @media (max-width: 430px) {
+            .task-card-tooltip {
+                bottom: auto;
+                top: 50%;
+                left: 100%;
+                transform: translateY(-50%);
+                margin-left: 12px;
+            }
+
+            .task-card-tooltip::before {
+                bottom: auto;
+                top: 50%;
+                left: -6px;
+                transform: translateY(-50%);
+                border: 6px solid transparent;
+                border-right-color: rgba(0, 0, 0, 0.85);
+                border-bottom-color: transparent;
+            }
+
             .task-card.selected .task-card-tooltip {
-                opacity: 1;
-                visibility: visible;
+                opacity: 1 !important;
+                visibility: visible !important;
             }
         }
 
@@ -1505,11 +1523,11 @@
                 font-size: 24px;
             }
 
-            /* 新規追加ボタン：画面左下に固定（外側に50px移動） */
+            /* 新規追加ボタン：画面左下に固定（430px画面幅内に収める） */
             .add-task-button {
                 position: fixed;
-                bottom: 32px;
-                left: -38px; /* 12px - 50px = -38px */
+                bottom: 16px;
+                left: 16px;
                 z-index: 1000;
             }
 
@@ -1525,11 +1543,11 @@
                 font-size: 20px;
             }
 
-            /* ゴミ箱ボタン：画面右下に固定（外側に50px移動） */
+            /* ゴミ箱ボタン：画面右下に固定（430px画面幅内に収める） */
             .trash-bin {
                 position: fixed;
-                bottom: 32px;
-                right: -38px; /* 12px - 50px = -38px */
+                bottom: 16px;
+                right: 16px;
                 z-index: 1001; /* カードのz-indexより上にして、常に上に表示 */
             }
 
