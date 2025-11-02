@@ -4107,12 +4107,137 @@
             }, 3500);
         });
 
+        // プルリフレッシュ機能（スマホ版）
+        function setupPullRefresh() {
+            const taskGrid = document.getElementById('taskGrid');
+            const pullRefreshIndicator = document.getElementById('pullRefreshIndicator');
+            
+            if (!taskGrid || !pullRefreshIndicator || window.innerWidth > 430) {
+                return; // スマホ版のみ
+            }
+            
+            let touchStartY = 0;
+            let touchCurrentY = 0;
+            let isPulling = false;
+            let pullDistance = 0;
+            const PULL_THRESHOLD = 80; // 80px引っ張ったらリフレッシュ開始
+            const PULL_MAX = 120; // 最大120pxまで引っ張れる
+            
+            // タッチ開始
+            taskGrid.addEventListener('touchstart', function(e) {
+                // スクロール位置が最上部（0または0に近い）の時のみ有効
+                if (taskGrid.scrollTop <= 5) {
+                    touchStartY = e.touches[0].clientY;
+                    isPulling = false;
+                    pullDistance = 0;
+                }
+            }, { passive: true });
+            
+            // タッチ移動
+            taskGrid.addEventListener('touchmove', function(e) {
+                if (touchStartY === 0) return;
+                
+                touchCurrentY = e.touches[0].clientY;
+                const deltaY = touchCurrentY - touchStartY;
+                
+                // 下方向への引っ張りを検出（スクロール位置が最上部の時）
+                if (deltaY > 0 && taskGrid.scrollTop <= 5) {
+                    e.preventDefault(); // デフォルトのスクロールを防止
+                    
+                    pullDistance = Math.min(deltaY, PULL_MAX);
+                    isPulling = pullDistance > 10; // 10px以上引っ張ったら開始
+                    
+                    // 視覚的フィードバック
+                    if (pullDistance >= PULL_THRESHOLD) {
+                        pullRefreshIndicator.classList.add('active');
+                        pullRefreshIndicator.querySelector('span').textContent = '離して更新';
+                    } else {
+                        pullRefreshIndicator.classList.remove('active');
+                        pullRefreshIndicator.querySelector('span').textContent = '更新中...';
+                    }
+                    
+                    // グリッドを下に引っ張る
+                    taskGrid.style.transform = `translateY(${Math.min(pullDistance * 0.5, PULL_MAX * 0.5)}px)`;
+                }
+            }, { passive: false });
+            
+            // タッチ終了
+            taskGrid.addEventListener('touchend', function(e) {
+                if (!isPulling) {
+                    touchStartY = 0;
+                    touchCurrentY = 0;
+                    pullDistance = 0;
+                    taskGrid.style.transform = '';
+                    pullRefreshIndicator.classList.remove('active');
+                    return;
+                }
+                
+                if (pullDistance >= PULL_THRESHOLD) {
+                    // リフレッシュ実行
+                    pullRefreshIndicator.classList.add('active');
+                    pullRefreshIndicator.querySelector('span').textContent = '更新中...';
+                    
+                    // リフレッシュ処理
+                    refreshTaskData();
+                } else {
+                    // 閾値に達していない場合は元に戻す
+                    taskGrid.style.transform = '';
+                    pullRefreshIndicator.classList.remove('active');
+                }
+                
+                // リセット
+                touchStartY = 0;
+                touchCurrentY = 0;
+                pullDistance = 0;
+                isPulling = false;
+            }, { passive: true });
+            
+            // タッチキャンセル
+            taskGrid.addEventListener('touchcancel', function(e) {
+                touchStartY = 0;
+                touchCurrentY = 0;
+                pullDistance = 0;
+                isPulling = false;
+                taskGrid.style.transform = '';
+                pullRefreshIndicator.classList.remove('active');
+            }, { passive: true });
+        }
+        
+        // タスクデータをリフレッシュ（再読み込み）
+        function refreshTaskData() {
+            console.log('タスクデータをリフレッシュします...');
+            
+            // 実際のリフレッシュ処理（Firebaseなどから再読み込み）
+            // 今回は簡単にupdateTaskGridとupdateBadgesを呼び出す
+            setTimeout(() => {
+                updateTaskGrid();
+                updateBadges();
+                
+                // リフレッシュ完了
+                const pullRefreshIndicator = document.getElementById('pullRefreshIndicator');
+                if (pullRefreshIndicator) {
+                    pullRefreshIndicator.querySelector('span').textContent = '更新完了';
+                    setTimeout(() => {
+                        pullRefreshIndicator.classList.remove('active');
+                        const taskGrid = document.getElementById('taskGrid');
+                        if (taskGrid) {
+                            taskGrid.style.transform = '';
+                        }
+                    }, 500);
+                }
+            }, 800); // 0.8秒後に完了（実際のデータ取得をシミュレート）
+        }
+
         // 初期化（ページロード時にも実行、スプラッシュ後に再実行される）
         setTimeout(function() {
             setupBadgeDragHandler(); // バッジドラッグハンドラーを設定
             setupTrashBinDrop(); // ゴミ箱のドロップ処理を初期化
             updateTaskGrid();
             updateBadges(); // バッジを表示
+            // プルリフレッシュ機能を初期化（スマホ版のみ）
+            if (window.innerWidth <= 430) {
+                setupPullRefresh();
+            }
         }, 100);
 
         // スライドインパネルの開閉機能（5つのパネル対応）
