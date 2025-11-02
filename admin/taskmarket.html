@@ -3785,24 +3785,35 @@
                 e.stopPropagation();
                 if (badge.attachedToTaskId) {
                     const taskId = badge.attachedToTaskId;
-                    // タスクからバッジを外す
-                    if (taskBadges[taskId]) {
-                        taskBadges[taskId] = taskBadges[taskId].filter(id => id !== badge.id);
-                        if (taskBadges[taskId].length === 0) {
-                            delete taskBadges[taskId];
-                            // カードからbadge-attachedクラスを削除
-                            const card = this.closest('.task-card');
-                            if (card) {
-                                card.classList.remove('badge-attached');
+                    
+                    // 確認ダイアログを表示
+                    const task = tasks.find(t => t.id === taskId);
+                    const taskTitle = task ? task.title : 'タスク';
+                    const badgeName = badge.name || 'バッジ';
+                    
+                    if (confirm(`作業を停止しますか？\nバッジを外すとタイムレコードが停止します。\n\nバッジ: ${badgeName}\nタスク: ${taskTitle}`)) {
+                        // このバッジに関連するアクティブなタイムレコードを停止
+                        endTimeRecordsForBadge(taskId, badge.id);
+                        
+                        // タスクからバッジを外す
+                        if (taskBadges[taskId]) {
+                            taskBadges[taskId] = taskBadges[taskId].filter(id => id !== badge.id);
+                            if (taskBadges[taskId].length === 0) {
+                                delete taskBadges[taskId];
+                                // カードからbadge-attachedクラスを削除
+                                const card = this.closest('.task-card');
+                                if (card) {
+                                    card.classList.remove('badge-attached');
+                                }
                             }
                         }
+                        // バッジの吸着状態を解除
+                        badge.attachedToTaskId = null;
+                        // バッジ要素を削除
+                        this.remove();
+                        // グリッド上にバッジを再表示
+                        updateBadges();
                     }
-                    // バッジの吸着状態を解除
-                    badge.attachedToTaskId = null;
-                    // バッジ要素を削除
-                    this.remove();
-                    // グリッド上にバッジを再表示
-                    updateBadges();
                 }
             });
             
@@ -4032,14 +4043,29 @@
                             const taskId = droppedOnCard.taskId;
                             const card = droppedOnCard.card;
                             
-                            // 以前のカードからバッジを外す
-                            if (badge.attachedToTaskId) {
+                            // 以前のカードからバッジを外す（別のカードに移動する時）
+                            if (badge.attachedToTaskId && badge.attachedToTaskId !== taskId) {
                                 const prevTaskId = badge.attachedToTaskId;
-                                if (taskBadges[prevTaskId]) {
-                                    taskBadges[prevTaskId] = taskBadges[prevTaskId].filter(id => id !== badge.id);
-                                    if (taskBadges[prevTaskId].length === 0) {
-                                        delete taskBadges[prevTaskId];
+                                
+                                // 確認ダイアログを表示（バッジを外す時のみ）
+                                const prevTask = tasks.find(t => t.id === prevTaskId);
+                                const prevTaskTitle = prevTask ? prevTask.title : 'タスク';
+                                const badgeName = badge.name || 'バッジ';
+                                
+                                if (confirm(`作業を停止しますか？\nバッジを外すとタイムレコードが停止します。\n\nバッジ: ${badgeName}\nタスク: ${prevTaskTitle}`)) {
+                                    // 以前のタスクからこのバッジに関連するアクティブなタイムレコードを停止
+                                    endTimeRecordsForBadge(prevTaskId, badge.id);
+                                    
+                                    if (taskBadges[prevTaskId]) {
+                                        taskBadges[prevTaskId] = taskBadges[prevTaskId].filter(id => id !== badge.id);
+                                        if (taskBadges[prevTaskId].length === 0) {
+                                            delete taskBadges[prevTaskId];
+                                        }
                                     }
+                                } else {
+                                    // キャンセルした場合は、新しいカードへの吸着を中止
+                                    e.preventDefault();
+                                    return;
                                 }
                             }
                             
