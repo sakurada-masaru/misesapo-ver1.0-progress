@@ -3855,6 +3855,82 @@
             badgeElement.setAttribute('draggable', 'true');
         }
         
+        // 完了ボタンのドロップ処理を設定（重複登録を防ぐ）
+        let completeButtonHandlerSet = false;
+        function setupCompleteButtonDrop() {
+            const completeButton = document.getElementById('completeButton');
+            if (!completeButton) return;
+            
+            // 既に設定済みの場合は何もしない
+            if (completeButtonHandlerSet) return;
+            completeButtonHandlerSet = true;
+            
+            // 完了ボタンの上でのドラッグオーバー
+            completeButton.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.dataTransfer.dropEffect = 'move';
+                this.classList.add('drag-over');
+            });
+            
+            // 完了ボタンから離れた時
+            completeButton.addEventListener('dragleave', function(e) {
+                this.classList.remove('drag-over');
+            });
+            
+            // 完了ボタンにドロップ（一度だけ処理されるようにフラグを使用）
+            let isProcessing = false;
+            completeButton.addEventListener('drop', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.classList.remove('drag-over');
+                
+                // 既に処理中の場合は何もしない
+                if (isProcessing) return;
+                isProcessing = true;
+                
+                // タスクカードがドロップされた場合
+                const taskGrid = document.getElementById('taskGrid');
+                const draggedCard = taskGrid.querySelector('.task-card.dragging');
+                if (draggedCard) {
+                    const taskIdNum = parseInt(draggedCard.dataset.taskId);
+                    if (taskIdNum && !isNaN(taskIdNum)) {
+                        completeTask(taskIdNum);
+                        // 処理完了後にフラグをリセット
+                        setTimeout(() => { isProcessing = false; }, 100);
+                        return;
+                    }
+                }
+                
+                // 処理完了後にフラグをリセット
+                setTimeout(() => { isProcessing = false; }, 100);
+            });
+        }
+        
+        // タスクを完了にする
+        function completeTask(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+            
+            // 既に完了済みの場合は何もしない
+            if (task.status === 'completed') return;
+            
+            // タスクを完了状態に変更
+            task.status = 'completed';
+            task.completedAt = new Date().toISOString();
+            task.updatedAt = new Date().toISOString();
+            
+            // グリッドを更新（完了タスクは表示から除外）
+            updateTaskGrid();
+            
+            // アーカイブパネルを更新（パネルが開いている場合）
+            if (document.getElementById('slidePanelOverlay5') && document.getElementById('slidePanelOverlay5').classList.contains('active')) {
+                updateArchivePanel();
+            }
+            
+            console.log('タスクを完了にしました:', task.title);
+        }
+        
         // ゴミ箱のドロップ処理を設定（重複登録を防ぐ）
         let trashBinHandlerSet = false;
         function setupTrashBinDrop() {
@@ -4913,6 +4989,7 @@
         setTimeout(function() {
             setupBadgeDragHandler(); // バッジドラッグハンドラーを設定
             setupTrashBinDrop(); // ゴミ箱のドロップ処理を初期化
+            setupCompleteButtonDrop(); // 完了ボタンのドロップ処理を初期化
             updateTaskGrid();
             updateBadges(); // バッジを表示
             // リンクパネルの初期化
