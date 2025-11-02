@@ -482,8 +482,9 @@
             transform: rotate(180deg); /* ホバー時に回転 */
         }
 
-        /* 詳細パネルの修正ボタンのツールチップ */
-        .detail-edit-button .tooltip-text {
+        /* 詳細パネルの修正ボタンとタイムレコードボタンのツールチップ */
+        .detail-edit-button .tooltip-text,
+        .detail-time-record-button .tooltip-text {
             left: auto;
             right: 100%;
             top: 50%;
@@ -492,14 +493,16 @@
             margin-right: 8px;
         }
         
-        .detail-edit-button .tooltip-text::before {
+        .detail-edit-button .tooltip-text::before,
+        .detail-time-record-button .tooltip-text::before {
             left: 100%;
             right: auto;
             border-left-color: rgba(0, 0, 0, 0.85);
             border-right-color: transparent;
         }
 
-        .detail-edit-button:hover .tooltip-text {
+        .detail-edit-button:hover .tooltip-text,
+        .detail-time-record-button:hover .tooltip-text {
             opacity: 1;
             visibility: visible;
         }
@@ -2137,7 +2140,7 @@
                 </div>
                 <div style="display: flex; gap: var(--spacing-sm); align-items: center;">
                     <button class="detail-time-record-button" id="detailTimeRecordButton" onclick="showTimeRecords()" style="display: none;">
-                        <span style="font-size: 18px;">⏱️</span>
+                        <span style="font-size: 20px;">🕐</span>
                         <span class="tooltip-text">タイムレコード</span>
                     </button>
                     <button class="detail-edit-button" id="detailEditButton" onclick="toggleTaskEditMode()" style="display: none;">
@@ -4781,9 +4784,12 @@
             const detailBoard = document.getElementById('detailBoard');
             const detailContent = document.getElementById('detailContent');
             const editButton = document.getElementById('detailEditButton');
+            const timeRecordButton = document.getElementById('detailTimeRecordButton');
             
             // 修正ボタンを表示
             editButton.style.display = 'flex';
+            // タイムレコードボタンを表示
+            timeRecordButton.style.display = 'flex';
             
             // 表示モードで詳細を表示
             renderTaskDetailView(task);
@@ -4991,6 +4997,11 @@
             
             // 修正ボタンを非表示
             editButton.style.display = 'none';
+            // タイムレコードボタンを非表示
+            const timeRecordButton = document.getElementById('detailTimeRecordButton');
+            if (timeRecordButton) {
+                timeRecordButton.style.display = 'none';
+            }
             
             detailBoard.classList.remove('active');
             setTimeout(function() {
