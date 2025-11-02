@@ -1096,10 +1096,44 @@
             to { transform: rotate(360deg); }
         }
         
-        /* スマホ版（SP）：プルリフレッシュ対応 */
+        /* プルリフレッシュヒント（スマホ版のみ） */
+        .pull-refresh-hint {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(0, 0, 0, 0.5); /* 黒文字で半透明 */
+            font-size: var(--font-size-sm);
+            pointer-events: none;
+            user-select: none;
+            z-index: 1;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        /* スマホ版（SP）：プルリフレッシュ対応とヒント表示 */
         @media (max-width: 430px) {
             .task-grid {
                 -webkit-overflow-scrolling: touch;
+            }
+            
+            /* ヒントを表示（タスクがない場合、またはスクロール位置が最上部の時のみ） */
+            .pull-refresh-hint {
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            /* タスクがある場合は、スクロール位置に応じて表示/非表示を切り替え */
+            .task-grid.has-tasks .pull-refresh-hint {
+                opacity: 0;
+                visibility: hidden;
+            }
+            
+            /* スクロール位置が最上部（5px以下）の時のみヒントを表示 */
+            .task-grid.scroll-top .pull-refresh-hint {
+                opacity: 1;
+                visibility: visible;
             }
         }
 
@@ -2403,6 +2437,18 @@
         // タスクグリッド更新（掲示板風のランダム配置）
         function updateTaskGrid() {
             const taskGrid = document.getElementById('taskGrid');
+            
+            // ヒントの表示/非表示を更新（スマホ版のみ）
+            if (window.innerWidth <= 430) {
+                if (tasks.length === 0) {
+                    taskGrid.classList.remove('has-tasks');
+                    taskGrid.classList.add('scroll-top');
+                } else {
+                    taskGrid.classList.add('has-tasks');
+                    // スクロール位置に応じてクラスを更新
+                    updatePullRefreshHint();
+                }
+            }
             
             if (tasks.length === 0) {
                 // カードをクリア（ボタンとゴミ箱は残す）
@@ -4107,10 +4153,30 @@
             }, 3500);
         });
 
+        // プルリフレッシュヒントの表示/非表示を更新
+        function updatePullRefreshHint() {
+            if (window.innerWidth > 430) return;
+            
+            const taskGrid = document.getElementById('taskGrid');
+            if (!taskGrid) return;
+            
+            // スクロール位置が最上部（5px以下）の時のみヒントを表示
+            if (taskGrid.scrollTop <= 5) {
+                taskGrid.classList.add('scroll-top');
+            } else {
+                taskGrid.classList.remove('scroll-top');
+            }
+        }
+        
         // プルリフレッシュ機能（スマホ版）
         function setupPullRefresh() {
             const taskGrid = document.getElementById('taskGrid');
             const pullRefreshIndicator = document.getElementById('pullRefreshIndicator');
+            
+            // スクロールイベントでヒントの表示/非表示を更新
+            taskGrid.addEventListener('scroll', function() {
+                updatePullRefreshHint();
+            }, { passive: true });
             
             if (!taskGrid || !pullRefreshIndicator || window.innerWidth > 430) {
                 return; // スマホ版のみ
