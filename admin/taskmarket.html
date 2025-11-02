@@ -2045,7 +2045,7 @@
                 z-index: 1997;
                 display: none;
                 animation: fadeIn 0.3s ease;
-                pointer-events: none;
+                pointer-events: auto; /* クリック可能にする */
             }
             
             .blind-panel-overlay.active {
@@ -2067,7 +2067,7 @@
                 border-bottom: 2px solid var(--color-border);
                 padding: var(--spacing-md);
                 padding-top: 10px;
-                max-height: 400px;
+                max-height: 300px;
             }
             
             .blind-panel.active {
@@ -2279,6 +2279,9 @@
                 ☰
             </button>
             
+            <!-- SP版：ブラインドパネルオーバーレイ（タスクボード内） -->
+            <div class="blind-panel-overlay" id="blindPanelOverlay" onclick="closeBlindPanelOnOverlay(event)"></div>
+            
             <!-- SP版：ブラインドパネル（タスクボード内に配置） -->
             <div class="blind-panel" id="blindPanel" onclick="event.stopPropagation()">
                 <div class="blind-panel-content">
@@ -2397,8 +2400,6 @@
         </div>
     </div>
     
-    <!-- SP版：ブラインドパネルオーバーレイ -->
-    <div class="blind-panel-overlay" id="blindPanelOverlay" onclick="closeBlindPanelOnOverlay(event)"></div>
 
     <!-- スライドインパネルのハンドル（左端に固定、5つ） -->
     <button class="slide-panel-handle panel-1" id="slidePanelHandle1" onclick="toggleSlidePanel(1)">
@@ -6218,12 +6219,17 @@
             mainBoard.addEventListener('touchstart', function(e) {
                 if (window.innerWidth > 430) return;
                 
+                // ブラインドパネルやボタン内をタッチした場合は無視
+                if (e.target.closest('.blind-panel') || e.target.closest('.blind-panel-toggle')) {
+                    return;
+                }
+                
                 const touch = e.touches[0];
                 const touchY = touch.clientY;
                 const mainBoardRect = mainBoard.getBoundingClientRect();
                 
-                // タスクボードの上端付近（60px以内）をタッチした場合
-                if (touchY - mainBoardRect.top <= 60) {
+                // タスクボードの上端付近（80px以内）をタッチした場合
+                if (touchY - mainBoardRect.top <= 80) {
                     swipeStartY = touch.clientY;
                     swipeStartTime = Date.now();
                     isSwiping = false;
@@ -6245,8 +6251,9 @@
                 
                 // 下方向にスワイプ中はブラインドパネルを開く
                 if (isSwiping && deltaY > 0 && !blindPanelOpen) {
-                    const panelHeight = Math.min(deltaY, 400); // 最大400px
-                    blindPanel.style.transform = `translateY(${-400 + panelHeight}px)`;
+                    const panelHeight = Math.min(deltaY, 300); // 最大300pxまで表示
+                    const maxHeight = 300; // パネルの最大高さ
+                    blindPanel.style.transform = `translateY(${-maxHeight + panelHeight}px)`;
                     blindPanel.style.transition = 'none';
                 }
             }, { passive: false });
@@ -6264,7 +6271,7 @@
                 // スライドジェスチャー判定
                 if (isSwiping && deltaY > 50) {
                     // 下方向に50px以上スワイプ、または速度が速い場合
-                    if (swipeDistance > 100 || (swipeDistance > 50 && swipeSpeed > 0.3)) {
+                    if (swipeDistance > 80 || (swipeDistance > 50 && swipeSpeed > 0.3)) {
                         // ブラインドパネルを開く
                         blindPanel.style.transition = 'transform 0.3s ease';
                         toggleBlindPanel();
@@ -6274,15 +6281,21 @@
                         blindPanel.style.transition = 'transform 0.3s ease';
                         blindPanel.style.transform = 'translateY(-100%)';
                         blindPanel.classList.remove('active');
-                        document.getElementById('blindPanelOverlay').classList.remove('active');
+                        const overlay = document.getElementById('blindPanelOverlay');
+                        if (overlay) overlay.classList.remove('active');
+                        const toggle = document.getElementById('blindPanelToggle');
+                        if (toggle) toggle.classList.remove('active');
                         blindPanelOpen = false;
                     }
-                } else if (isSwiping && deltaY < -50) {
-                    // 上方向に50px以上スワイプした場合は閉じる
+                } else if (isSwiping && deltaY < -50 && blindPanelOpen) {
+                    // 上方向に50px以上スワイプした場合は閉じる（パネルが開いている時のみ）
                     blindPanel.style.transition = 'transform 0.3s ease';
                     blindPanel.style.transform = 'translateY(-100%)';
                     blindPanel.classList.remove('active');
-                    document.getElementById('blindPanelOverlay').classList.remove('active');
+                    const overlay = document.getElementById('blindPanelOverlay');
+                    if (overlay) overlay.classList.remove('active');
+                    const toggle = document.getElementById('blindPanelToggle');
+                    if (toggle) toggle.classList.remove('active');
                     blindPanelOpen = false;
                 }
                 
