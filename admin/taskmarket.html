@@ -3235,17 +3235,33 @@
                     badgeStartX = rect.left - gridRect.left;
                     badgeStartY = rect.top - gridRect.top;
                     
-                    // 長押し判定（300ms後にドラッグ開始）
-                    badgeTouchTimeout = setTimeout(() => {
+                    // 既に選択されているバッジの場合は即座にドラッグ可能にする
+                    if (this.classList.contains('selected') && selectedBadge === this) {
+                        // 選択済みの場合は即座にドラッグ可能にする
                         isBadgeDragging = true;
                         this.classList.add('dragging');
                         this.style.transition = 'none';
                         this.style.zIndex = '1000';
-                        
-                        // 視覚的フィードバック
                         this.style.opacity = '0.8';
                         this.style.transform += ' scale(1.1)';
-                    }, 300);
+                    } else {
+                        // 新規選択：まず選択状態にする
+                        deselectAllBadges();
+                        this.classList.add('selected');
+                        selectedBadge = this;
+                        
+                        // 選択後のドラッグ開始判定は短時間（50ms）にする
+                        badgeTouchTimeout = setTimeout(() => {
+                            if (this.classList.contains('selected') && selectedBadge === this) {
+                                isBadgeDragging = true;
+                                this.classList.add('dragging');
+                                this.style.transition = 'none';
+                                this.style.zIndex = '1000';
+                                this.style.opacity = '0.8';
+                                this.style.transform += ' scale(1.1)';
+                            }
+                        }, 50); // 限りなく短い時間に設定
+                    }
                 }
             }, { passive: false });
             
