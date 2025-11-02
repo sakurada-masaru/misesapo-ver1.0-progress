@@ -2698,6 +2698,11 @@
                 }
             }, { passive: true });
             
+            // プルリフレッシュ機能（スマホ版）
+            if (window.innerWidth <= 430) {
+                setupPullRefresh();
+            }
+            
             taskCards.forEach(card => {
                 const taskId = parseInt(card.dataset.taskId);
                 const task = tasks.find(t => t.id === taskId);
