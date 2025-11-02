@@ -1502,9 +1502,9 @@
                 height: 16px;
             }
 
-            /* タスクカードのツールチップ（モバイルでは非表示） */
+            /* タスクカードのツールチップ（スマホ版（SP）では表示） */
             .task-card-tooltip {
-                display: none;
+                display: block;
             }
 
             /* タスクグリッド（水平方向に3つ並ぶ） */
@@ -2642,19 +2642,23 @@
                             this.classList.add('selected');
                             selectedCard = this;
                             
-                            // ツールチップを表示（スマホ版）
-                            const tooltip = this.querySelector('.task-card-tooltip');
-                            if (tooltip && window.innerWidth <= 430) {
-                                tooltip.textContent = 'ダブルタップで詳細表示';
-                                tooltip.style.opacity = '1';
-                                tooltip.style.visibility = 'visible';
-                                // 3秒後に非表示
-                                setTimeout(() => {
-                                    if (tooltip && this.classList.contains('selected')) {
-                                        tooltip.style.opacity = '0';
-                                        tooltip.style.visibility = 'hidden';
-                                    }
-                                }, 3000);
+                            // ツールチップを表示（スマホ版（SP））
+                            if (window.innerWidth <= 430) {
+                                const tooltip = this.querySelector('.task-card-tooltip');
+                                if (tooltip) {
+                                    tooltip.textContent = 'ダブルタップで詳細表示';
+                                    // 強制的に表示（CSSも適用）
+                                    tooltip.style.display = 'block';
+                                    tooltip.style.opacity = '1';
+                                    tooltip.style.visibility = 'visible';
+                                    // 3秒後に非表示
+                                    setTimeout(() => {
+                                        if (tooltip && this.classList.contains('selected')) {
+                                            tooltip.style.opacity = '0';
+                                            tooltip.style.visibility = 'hidden';
+                                        }
+                                    }, 3000);
+                                }
                             }
                             
                             // 選択後のドラッグ開始判定は短時間（50ms）にする
@@ -2871,19 +2875,23 @@
                                 this.classList.add('selected');
                                 selectedCard = this;
                                 
-                                // ツールチップを表示（スマホ版）
-                                const tooltip = this.querySelector('.task-card-tooltip');
-                                if (tooltip && window.innerWidth <= 430) {
-                                    tooltip.textContent = 'ダブルタップで詳細表示';
-                                    tooltip.style.opacity = '1';
-                                    tooltip.style.visibility = 'visible';
-                                    // 3秒後に非表示
-                                    setTimeout(() => {
-                                        if (tooltip) {
-                                            tooltip.style.opacity = '0';
-                                            tooltip.style.visibility = 'hidden';
-                                        }
-                                    }, 3000);
+                                // ツールチップを表示（スマホ版（SP））
+                                if (window.innerWidth <= 430) {
+                                    const tooltip = this.querySelector('.task-card-tooltip');
+                                    if (tooltip) {
+                                        tooltip.textContent = 'ダブルタップで詳細表示';
+                                        // 強制的に表示（CSSも適用）
+                                        tooltip.style.display = 'block';
+                                        tooltip.style.opacity = '1';
+                                        tooltip.style.visibility = 'visible';
+                                        // 3秒後に非表示
+                                        setTimeout(() => {
+                                            if (tooltip) {
+                                                tooltip.style.opacity = '0';
+                                                tooltip.style.visibility = 'hidden';
+                                            }
+                                        }, 3000);
+                                    }
                                 }
                             }
                         }
