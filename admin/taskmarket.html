@@ -2008,8 +2008,8 @@
             
             /* ブラインドパネルトグルボタン */
             .blind-panel-toggle {
-                position: fixed;
-                top: 60px; /* ヘッダーの直下（ヘッダー高さ60px） */
+                position: absolute; /* fixedからabsoluteに変更（タスクボード内に配置） */
+                top: 0; /* タスクボードの上端 */
                 left: 0;
                 width: 50px;
                 height: 50px;
@@ -2034,17 +2034,18 @@
                 transform: translateY(2px);
             }
             
-            /* ブラインドパネルオーバーレイ */
+            /* ブラインドパネルオーバーレイ（タスクボード内のみ） */
             .blind-panel-overlay {
-                position: fixed;
+                position: absolute;
                 top: 0;
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: rgba(0, 0, 0, 0.3);
+                background: rgba(0, 0, 0, 0.1);
                 z-index: 1997;
                 display: none;
                 animation: fadeIn 0.3s ease;
+                pointer-events: none;
             }
             
             .blind-panel-overlay.active {
@@ -2053,8 +2054,8 @@
             
             /* ブラインドパネル */
             .blind-panel {
-                position: fixed;
-                top: 0;
+                position: absolute; /* fixedからabsoluteに変更（タスクボード内に配置） */
+                top: 0; /* タスクボードの上端から */
                 left: 0;
                 width: 200px;
                 background: var(--color-background);
@@ -2065,7 +2066,7 @@
                 overflow-y: auto;
                 border-bottom: 2px solid var(--color-border);
                 padding: var(--spacing-md);
-                padding-top: 60px;
+                padding-top: 10px;
                 max-height: 400px;
             }
             
@@ -2272,12 +2273,41 @@
     <!-- メインコンテナ -->
     <div class="main-container">
         <!-- メインボード -->
-        <div class="main-board">
+        <div class="main-board" id="mainBoard">
             <!-- SP版：ブラインドパネルトグルボタン（左上） -->
             <button class="blind-panel-toggle" id="blindPanelToggle" onclick="toggleBlindPanel()">
                 ☰
             </button>
-
+            
+            <!-- SP版：ブラインドパネル（タスクボード内に配置） -->
+            <div class="blind-panel" id="blindPanel" onclick="event.stopPropagation()">
+                <div class="blind-panel-content">
+                    <button class="blind-panel-button panel-1" onclick="toggleSlidePanelFromBlind(1)">
+                        <span>リンクパネル</span>
+                        <span>◀</span>
+                    </button>
+                    <button class="blind-panel-button panel-2" onclick="toggleSlidePanelFromBlind(2)">
+                        <span>フロントパネル</span>
+                        <span>◀</span>
+                    </button>
+                    <button class="blind-panel-button panel-3" onclick="toggleSlidePanelFromBlind(3)">
+                        <span>バックパネル</span>
+                        <span>◀</span>
+                    </button>
+                    <button class="blind-panel-button panel-4" onclick="toggleSlidePanelFromBlind(4)">
+                        <span>メディアパネル</span>
+                        <span>◀</span>
+                    </button>
+                    <button class="blind-panel-button panel-5" onclick="toggleSlidePanelFromBlind(5)">
+                        <span>アーカイブパネル</span>
+                        <span>◀</span>
+                    </button>
+                    <div class="blind-panel-hint">
+                        ← 左にスワイプでパネルを開く
+                    </div>
+                </div>
+            </div>
+            
             <!-- タスクグリッド -->
             <div class="task-grid" id="taskGrid">
                 <!-- プルリフレッシュインジケーター -->
@@ -2367,36 +2397,8 @@
         </div>
     </div>
     
-    <!-- SP版：ブラインドパネル（上から下にスライド） -->
-    <div class="blind-panel-overlay" id="blindPanelOverlay" onclick="closeBlindPanelOnOverlay(event)">
-        <div class="blind-panel" id="blindPanel" onclick="event.stopPropagation()">
-            <div class="blind-panel-content">
-                <button class="blind-panel-button panel-1" onclick="toggleSlidePanelFromBlind(1)">
-                    <span>リンクパネル</span>
-                    <span>◀</span>
-                </button>
-                <button class="blind-panel-button panel-2" onclick="toggleSlidePanelFromBlind(2)">
-                    <span>フロントパネル</span>
-                    <span>◀</span>
-                </button>
-                <button class="blind-panel-button panel-3" onclick="toggleSlidePanelFromBlind(3)">
-                    <span>バックパネル</span>
-                    <span>◀</span>
-                </button>
-                <button class="blind-panel-button panel-4" onclick="toggleSlidePanelFromBlind(4)">
-                    <span>メディアパネル</span>
-                    <span>◀</span>
-                </button>
-                <button class="blind-panel-button panel-5" onclick="toggleSlidePanelFromBlind(5)">
-                    <span>アーカイブパネル</span>
-                    <span>◀</span>
-                </button>
-                <div class="blind-panel-hint">
-                    ← 左にスワイプでパネルを開く
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- SP版：ブラインドパネルオーバーレイ -->
+    <div class="blind-panel-overlay" id="blindPanelOverlay" onclick="closeBlindPanelOnOverlay(event)"></div>
 
     <!-- スライドインパネルのハンドル（左端に固定、5つ） -->
     <button class="slide-panel-handle panel-1" id="slidePanelHandle1" onclick="toggleSlidePanel(1)">
@@ -6169,6 +6171,8 @@
                     taskGrid.classList.add('scroll-top');
                     updatePullRefreshHint();
                 }
+                // ブラインドパネルのスライドジェスチャーを設定
+                setupBlindPanelSwipe();
             }
         }, 100);
 
@@ -6177,6 +6181,8 @@
             const overlay = document.getElementById('blindPanelOverlay');
             const panel = document.getElementById('blindPanel');
             const toggle = document.getElementById('blindPanelToggle');
+            
+            if (!panel || !overlay || !toggle) return;
             
             if (panel.classList.contains('active')) {
                 // 閉じる
@@ -6193,6 +6199,111 @@
                     panel.classList.add('active');
                 }, 10);
             }
+        }
+        
+        // ブラインドパネルのスライドジェスチャー（SP版のみ）
+        function setupBlindPanelSwipe() {
+            if (window.innerWidth > 430) return; // SP版のみ
+            
+            const mainBoard = document.getElementById('mainBoard');
+            const blindPanel = document.getElementById('blindPanel');
+            if (!mainBoard || !blindPanel) return;
+            
+            let swipeStartY = 0;
+            let swipeStartTime = 0;
+            let isSwiping = false;
+            let blindPanelOpen = false;
+            
+            // タスクボードの上端付近をタッチした時の処理
+            mainBoard.addEventListener('touchstart', function(e) {
+                if (window.innerWidth > 430) return;
+                
+                const touch = e.touches[0];
+                const touchY = touch.clientY;
+                const mainBoardRect = mainBoard.getBoundingClientRect();
+                
+                // タスクボードの上端付近（60px以内）をタッチした場合
+                if (touchY - mainBoardRect.top <= 60) {
+                    swipeStartY = touch.clientY;
+                    swipeStartTime = Date.now();
+                    isSwiping = false;
+                }
+            }, { passive: true });
+            
+            mainBoard.addEventListener('touchmove', function(e) {
+                if (window.innerWidth > 430) return;
+                if (!swipeStartY) return;
+                
+                const touch = e.touches[0];
+                const deltaY = touch.clientY - swipeStartY;
+                
+                // 下方向に20px以上スワイプした場合
+                if (deltaY > 20 && !isSwiping) {
+                    isSwiping = true;
+                    e.preventDefault();
+                }
+                
+                // 下方向にスワイプ中はブラインドパネルを開く
+                if (isSwiping && deltaY > 0 && !blindPanelOpen) {
+                    const panelHeight = Math.min(deltaY, 400); // 最大400px
+                    blindPanel.style.transform = `translateY(${-400 + panelHeight}px)`;
+                    blindPanel.style.transition = 'none';
+                }
+            }, { passive: false });
+            
+            mainBoard.addEventListener('touchend', function(e) {
+                if (window.innerWidth > 430) return;
+                if (!swipeStartY) return;
+                
+                const touch = e.changedTouches[0];
+                const deltaY = touch.clientY - swipeStartY;
+                const deltaTime = Date.now() - swipeStartTime;
+                const swipeDistance = Math.abs(deltaY);
+                const swipeSpeed = swipeDistance / deltaTime;
+                
+                // スライドジェスチャー判定
+                if (isSwiping && deltaY > 50) {
+                    // 下方向に50px以上スワイプ、または速度が速い場合
+                    if (swipeDistance > 100 || (swipeDistance > 50 && swipeSpeed > 0.3)) {
+                        // ブラインドパネルを開く
+                        blindPanel.style.transition = 'transform 0.3s ease';
+                        toggleBlindPanel();
+                        blindPanelOpen = true;
+                    } else {
+                        // 閉じる（途中で離した場合）
+                        blindPanel.style.transition = 'transform 0.3s ease';
+                        blindPanel.style.transform = 'translateY(-100%)';
+                        blindPanel.classList.remove('active');
+                        document.getElementById('blindPanelOverlay').classList.remove('active');
+                        blindPanelOpen = false;
+                    }
+                } else if (isSwiping && deltaY < -50) {
+                    // 上方向に50px以上スワイプした場合は閉じる
+                    blindPanel.style.transition = 'transform 0.3s ease';
+                    blindPanel.style.transform = 'translateY(-100%)';
+                    blindPanel.classList.remove('active');
+                    document.getElementById('blindPanelOverlay').classList.remove('active');
+                    blindPanelOpen = false;
+                }
+                
+                // リセット
+                swipeStartY = 0;
+                isSwiping = false;
+            }, { passive: true });
+            
+            // パネルの開閉状態を監視
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.attributeName === 'class') {
+                        blindPanelOpen = blindPanel.classList.contains('active');
+                        if (!blindPanelOpen) {
+                            blindPanel.style.transform = 'translateY(-100%)';
+                        }
+                    }
+                });
+            });
+            
+            observer.observe(blindPanel, { attributes: true });
         }
         
         // オーバーレイクリックでブラインドパネルを閉じる
