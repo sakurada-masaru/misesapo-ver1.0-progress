@@ -2730,26 +2730,29 @@
         }
 
         // バッジ作成
-        document.getElementById('badgeInputForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const badge = {
-                id: Date.now(),
-                name: formData.get('name'),
-                icon: formData.get('icon') || '👤',
-                color: formData.get('color') || '#FF679C',
-                position: {
-                    top: Math.random() * 300 + 100,
-                    left: Math.random() * 300 + 100
-                },
-                attachedToTaskId: null // カードに吸着していない場合はnull
-            };
+        const badgeInputForm = document.getElementById('badgeInputForm');
+        if (badgeInputForm) {
+            badgeInputForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const badge = {
+                    id: Date.now(),
+                    name: formData.get('name'),
+                    icon: formData.get('icon') || '👤',
+                    color: formData.get('color') || '#FF679C',
+                    position: {
+                        top: Math.random() * 300 + 100,
+                        left: Math.random() * 300 + 100
+                    },
+                    attachedToTaskId: null // カードに吸着していない場合はnull
+                };
 
-            badges.push(badge);
-            updateBadges();
-            cancelBadgeForm();
-        });
+                badges.push(badge);
+                updateBadges();
+                cancelBadgeForm();
+            });
+        }
 
         // タスクグリッド更新（掲示板風のランダム配置）
         function updateTaskGrid() {
@@ -4727,10 +4730,17 @@
             `;
             
             // フォームの送信イベントを設定
-            document.getElementById('taskEditForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                saveTaskEdit();
-            });
+            const taskEditForm = document.getElementById('taskEditForm');
+            if (taskEditForm) {
+                // 既存のイベントリスナーを削除（重複防止）
+                const newTaskEditForm = taskEditForm.cloneNode(true);
+                taskEditForm.parentNode.replaceChild(newTaskEditForm, taskEditForm);
+                
+                newTaskEditForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    saveTaskEdit();
+                });
+            }
         }
 
         // 編集モードの切り替え
