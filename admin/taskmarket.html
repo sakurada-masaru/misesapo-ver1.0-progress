@@ -608,11 +608,16 @@
         .add-task-button:hover {
             background: var(--color-primary-hover);
             box-shadow: var(--shadow-xl);
-            transform: translateY(-2px) scale(1.1);
+            transform: translateX(-50%) translateY(-2px) scale(1.1);
         }
 
         .add-task-button:active {
-            transform: translateY(0) scale(1.05);
+            transform: translateX(-50%) translateY(0) scale(1.05);
+        }
+        
+        .add-task-button:focus {
+            outline: none;
+            box-shadow: var(--shadow-xl), 0 0 0 3px rgba(255, 103, 156, 0.3);
         }
 
         /* バッジを作るボタン（右上に固定・◯デザイン） */
@@ -1893,6 +1898,19 @@
                 transform: translateX(-50%);
                 z-index: 1000;
             }
+            
+            .add-task-button:hover {
+                transform: translateX(-50%) translateY(-2px) scale(1.1);
+            }
+            
+            .add-task-button:active {
+                transform: translateX(-50%) translateY(0) scale(1.05);
+            }
+            
+            .add-task-button:focus {
+                outline: none;
+                box-shadow: var(--shadow-xl), 0 0 0 3px rgba(255, 103, 156, 0.3);
+            }
 
             /* バッジボタン：画面右上に固定（下方向に80px移動） */
             .add-badge-button {
@@ -2139,7 +2157,7 @@
                 </div>
                 
                 <!-- 新規追加ボタン（下部中央に固定） -->
-                <button class="add-task-button" onclick="toggleTaskForm()">
+                <button class="add-task-button" type="button" onclick="toggleTaskForm(event)">
                     +
                     <span class="tooltip-text">新規タスクを追加</span>
                 </button>
@@ -2726,18 +2744,33 @@
         let draggedBadgeOffset = { x: 0, y: 0 };
 
         // フォーム表示切り替え（モーダル表示）
-        function toggleTaskForm() {
-            const modal = document.getElementById('taskFormModal');
-            modal.classList.toggle('active');
-            
-            // モーダルを開く時にフォームをリセット
-            if (modal.classList.contains('active')) {
-                document.getElementById('taskInputForm').reset();
-                // フォーカスを最初の入力欄に
-                setTimeout(() => {
-                    document.getElementById('taskTitle').focus();
-                }, 100);
+        function toggleTaskForm(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
             }
+            
+            const modal = document.getElementById('taskFormModal');
+            if (!modal) return;
+            
+            // 既に開いている場合は閉じる
+            if (modal.classList.contains('active')) {
+                modal.classList.remove('active');
+                document.getElementById('taskInputForm').reset();
+                return;
+            }
+            
+            // モーダルを開く
+            modal.classList.add('active');
+            document.getElementById('taskInputForm').reset();
+            
+            // フォーカスを最初の入力欄に
+            setTimeout(() => {
+                const titleInput = document.getElementById('taskTitle');
+                if (titleInput) {
+                    titleInput.focus();
+                }
+            }, 100);
         }
 
         // フォームキャンセル（モーダルを閉じる）
@@ -2928,8 +2961,13 @@
                 } else {
                     const button = document.createElement('button');
                     button.className = 'add-task-button';
-                    button.onclick = toggleTaskForm;
+                    button.type = 'button';
+                    button.setAttribute('onclick', 'toggleTaskForm(event)');
                     button.innerHTML = '+<span class="tooltip-text">新規タスクを追加</span>';
+                    // イベントリスナーを直接追加（onclick属性と併用）
+                    button.addEventListener('click', function(e) {
+                        toggleTaskForm(e);
+                    });
                     taskGrid.appendChild(button);
                 }
                 
