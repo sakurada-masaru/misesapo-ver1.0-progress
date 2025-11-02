@@ -507,9 +507,9 @@
             visibility: visible;
         }
 
-        /* 新規追加ボタン（タスクグリッド内下部中央に固定・円形デザイン） */
+        /* 新規追加ボタン（画面下部中央に固定・円形デザイン） */
         .add-task-button {
-            position: absolute;
+            position: fixed;
             bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
@@ -522,19 +522,22 @@
             font-size: 32px;
             font-weight: var(--font-weight-bold);
             cursor: pointer;
-            transition: var(--transition-normal);
+            transition: all 0.3s ease;
             box-shadow: var(--shadow-lg);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 100;
+            z-index: 1000;
             line-height: 1;
             padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
         }
         
-        /* 完了ボタン（タスクグリッド内左下に固定・円形デザイン） */
+        /* 完了ボタン（画面左下に固定・円形デザイン） */
         .complete-button {
-            position: absolute;
+            position: fixed;
             bottom: 24px;
             left: 24px;
             width: 64px;
@@ -547,10 +550,13 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 100;
+            z-index: 1000;
             box-shadow: var(--shadow-lg);
             transition: all 0.3s ease;
             opacity: 0.8;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
         }
         
         .complete-button:hover {
