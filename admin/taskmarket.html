@@ -558,7 +558,6 @@
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
-            position: relative; /* ツールチップの基準点 */
         }
         
         .complete-button:hover {
@@ -651,7 +650,7 @@
             line-height: 1;
             padding: 0;
         }
-        
+
         .add-badge-button .tooltip-text {
             left: auto;
             right: 100%;
@@ -2772,13 +2771,13 @@
             modal.classList.add('active');
             document.getElementById('taskInputForm').reset();
             
-            // フォーカスを最初の入力欄に
-            setTimeout(() => {
+                // フォーカスを最初の入力欄に
+                setTimeout(() => {
                 const titleInput = document.getElementById('taskTitle');
                 if (titleInput) {
                     titleInput.focus();
                 }
-            }, 100);
+                }, 100);
         }
 
         // フォームキャンセル（モーダルを閉じる）
