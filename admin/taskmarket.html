@@ -1464,28 +1464,31 @@
                 font-size: 24px;
             }
 
-            /* 新規追加ボタン：画面左下に固定（20px上に移動） */
+            /* 新規追加ボタン：画面左下に固定（内側に50px移動） */
             .add-task-button {
                 position: fixed;
                 bottom: 32px;
-                left: 12px;
+                left: 62px; /* 12px + 50px = 62px */
                 z-index: 1000;
             }
 
+            /* バッジボタン：画面右上に固定 */
             .add-badge-button {
+                position: fixed;
                 top: 12px;
                 right: 12px;
+                z-index: 1000;
             }
 
             .badge-icon-text {
                 font-size: 20px;
             }
 
-            /* ゴミ箱ボタン：画面右下に固定（20px上に移動） */
+            /* ゴミ箱ボタン：画面右下に固定（内側に50px移動） */
             .trash-bin {
                 position: fixed;
                 bottom: 32px;
-                right: 12px;
+                right: 62px; /* 12px + 50px = 62px */
                 z-index: 1001; /* カードのz-indexより上にして、常に上に表示 */
             }
 
@@ -3145,11 +3148,18 @@
                         trashBin.classList.remove('touch-drag-over');
                     }
                     
+                    // すべてのカードからドラッグオーバー状態を解除
+                    const taskCards = taskGrid.querySelectorAll('.task-card');
+                    taskCards.forEach(card => {
+                        card.classList.remove('drag-over-badge');
+                    });
+                    
                     if (isBadgeDragging && currentTouchedBadge === this) {
                         // ゴミ箱の上にドロップされたかチェック
                         const gridRect = taskGrid.getBoundingClientRect();
                         const badgeRect = this.getBoundingClientRect();
                         let droppedOnTrash = false;
+                        let droppedOnCard = null;
                         
                         if (trashBin) {
                             const trashRect = trashBin.getBoundingClientRect();
@@ -3163,9 +3173,66 @@
                             }
                         }
                         
+                        // カードの上にドロップされたかチェック（スマホ版：バッジ吸着機能）
+                        if (!droppedOnTrash) {
+                            taskCards.forEach(card => {
+                                const cardRect = card.getBoundingClientRect();
+                                const badgeCenterX = badgeRect.left + badgeRect.width / 2;
+                                const badgeCenterY = badgeRect.top + badgeRect.height / 2;
+                                
+                                // バッジの中心点がカードの範囲内にあるかチェック
+                                if (badgeCenterX >= cardRect.left && badgeCenterX <= cardRect.right &&
+                                    badgeCenterY >= cardRect.top && badgeCenterY <= cardRect.bottom) {
+                                    const taskId = parseInt(card.dataset.taskId);
+                                    if (taskId && badge.attachedToTaskId !== taskId) {
+                                        droppedOnCard = { card: card, taskId: taskId };
+                                    }
+                                }
+                            });
+                        }
+                        
                         if (droppedOnTrash) {
                             // バッジを削除（確認なし）
                             deleteBadge(badge.id);
+                        } else if (droppedOnCard) {
+                            // カードにバッジを吸着（スマホ版）
+                            const taskId = droppedOnCard.taskId;
+                            const card = droppedOnCard.card;
+                            
+                            // 以前のカードからバッジを外す
+                            if (badge.attachedToTaskId) {
+                                const prevTaskId = badge.attachedToTaskId;
+                                if (taskBadges[prevTaskId]) {
+                                    taskBadges[prevTaskId] = taskBadges[prevTaskId].filter(id => id !== badge.id);
+                                    if (taskBadges[prevTaskId].length === 0) {
+                                        delete taskBadges[prevTaskId];
+                                    }
+                                }
+                            }
+                            
+                            // 新しいカードにバッジを吸着
+                            badge.attachedToTaskId = taskId;
+                            if (!taskBadges[taskId]) {
+                                taskBadges[taskId] = [];
+                            }
+                            if (!taskBadges[taskId].includes(badge.id)) {
+                                taskBadges[taskId].push(badge.id);
+                            }
+                            
+                            // カードに直接バッジを追加
+                            const existingBadges = card.querySelectorAll('.badge.attached');
+                            const badgeIndex = existingBadges.length;
+                            const attachedBadgeElement = createAttachedBadgeElement(badge, badgeIndex);
+                            card.appendChild(attachedBadgeElement);
+                            card.classList.add('badge-attached');
+                            
+                            // グリッド上のバッジを削除
+                            this.remove();
+                            
+                            // バッジを更新（グリッド上のバッジを更新）
+                            updateBadges();
+                            
+                            console.log('バッジをカードに吸着しました:', badge.id, taskId);
                         } else {
                             // バッジの位置情報を更新
                             const newLeft = badgeRect.left - gridRect.left;
