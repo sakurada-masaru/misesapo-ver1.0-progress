@@ -6089,19 +6089,40 @@
             }, 300);
         }
 
-        // パネルの開閉を切り替える
+        // パネルの開閉を切り替える（PC版とSP版で動作が異なる）
         function toggleSlidePanel(panelNumber) {
-            const overlay = document.getElementById('slidePanelOverlay' + panelNumber);
-            if (overlay.classList.contains('active')) {
-                closeSlidePanel(panelNumber);
-            } else {
-                // 他のパネルを閉じる
-                for (let i = 1; i <= 5; i++) {
-                    if (i !== panelNumber) {
-                        closeSlidePanel(i);
-                    }
+            // SP版の場合はブラインドパネル経由で開く
+            if (window.innerWidth <= 430) {
+                const blindPanel = document.getElementById('blindPanel');
+                if (!blindPanel || !blindPanel.classList.contains('active')) {
+                    // ブラインドパネルが開いていない場合は開いてからパネルを開く
+                    toggleBlindPanel();
+                    setTimeout(function() {
+                        openSlidePanelOriginal(panelNumber);
+                        // パネルを開いた後にブラインドパネルを閉じる
+                        setTimeout(function() {
+                            toggleBlindPanel();
+                        }, 100);
+                    }, 300);
+                } else {
+                    // ブラインドパネルが開いている場合は直接パネルを開く
+                    openSlidePanelOriginal(panelNumber);
+                    toggleBlindPanel();
                 }
-                openSlidePanel(panelNumber);
+            } else {
+                // PC版の場合は通常通り
+                const overlay = document.getElementById('slidePanelOverlay' + panelNumber);
+                if (overlay.classList.contains('active')) {
+                    closeSlidePanel(panelNumber);
+                } else {
+                    // 他のパネルを閉じる
+                    for (let i = 1; i <= 5; i++) {
+                        if (i !== panelNumber) {
+                            closeSlidePanel(i);
+                        }
+                    }
+                    openSlidePanelOriginal(panelNumber);
+                }
             }
         }
 
