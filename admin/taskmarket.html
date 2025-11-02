@@ -2629,27 +2629,30 @@
         });
 
         // タスク作成
-        document.getElementById('taskInputForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const estimatedTime = formData.get('estimatedTime');
-            const task = {
-                id: Date.now(),
-                title: formData.get('title'),
-                description: formData.get('description'),
-                category: formData.get('category'),
-                priority: formData.get('priority'),
-                estimatedTime: estimatedTime ? parseInt(estimatedTime) : null, // 分単位
-                status: 'pending',
-                createdAt: new Date().toISOString()
-            };
+        const taskInputForm = document.getElementById('taskInputForm');
+        if (taskInputForm) {
+            taskInputForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const estimatedTime = formData.get('estimatedTime');
+                const task = {
+                    id: Date.now(),
+                    title: formData.get('title'),
+                    description: formData.get('description'),
+                    category: formData.get('category'),
+                    priority: formData.get('priority'),
+                    estimatedTime: estimatedTime ? parseInt(estimatedTime) : null, // 分単位
+                    status: 'pending',
+                    createdAt: new Date().toISOString()
+                };
 
-            tasks.push(task);
-            updateTaskGrid();
-            // モーダルを閉じる
-            cancelTaskForm();
-        });
+                tasks.push(task);
+                updateTaskGrid();
+                // モーダルを閉じる
+                cancelTaskForm();
+            });
+        }
 
         // バッジ作成フォーム表示
         function openBadgeForm() {
@@ -4501,7 +4504,6 @@
                             taskBadges[task.id].push(badge.id);
                             // タイムレコードを作成（バッジがタスクに付けられた時）
                             createTimeRecord(task.id, badge.id);
-                        }
                         }
                         
                         // カードに直接バッジを追加（updateTaskGrid()を呼ばない）
