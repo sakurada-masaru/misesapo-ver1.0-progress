@@ -1873,7 +1873,7 @@
 
     <!-- スライドインパネルのハンドル（左端に固定、5つ） -->
     <button class="slide-panel-handle panel-1" id="slidePanelHandle1" onclick="toggleSlidePanel(1)">
-        <span class="tooltip-text">デザイナーパネルを開く</span>
+        <span class="tooltip-text">リンクパネルを開く</span>
     </button>
     <button class="slide-panel-handle panel-2" id="slidePanelHandle2" onclick="toggleSlidePanel(2)">
         <span class="tooltip-text">フロントパネルを開く</span>
@@ -1961,20 +1961,39 @@
     </div>
 
     <!-- スライドインパネル（左から右にスライドイン、5つ） -->
-    <!-- パネル1（ピンク：デザイナー） -->
+    <!-- パネル1（ピンク：リンクパネル） -->
     <div class="slide-panel-overlay" id="slidePanelOverlay1" onclick="closeSlidePanelOnOverlay(event, 1)">
         <div class="slide-panel panel-1" id="slidePanel1" onclick="event.stopPropagation()">
             <div class="slide-panel-header panel-1">
-                <h2 class="slide-panel-title">デザイナー</h2>
+                <h2 class="slide-panel-title">リンクパネル</h2>
                 <button class="slide-panel-close-button" onclick="closeSlidePanel(1)" title="閉じる">×</button>
             </div>
             <div class="slide-panel-content">
-                <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-md);">
-                    デザイナーのタスク管理パネルです。
-                </p>
-                <div style="padding: var(--spacing-lg); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
-                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">デザイナーのコンテンツ</h3>
-                    <p style="color: var(--color-text-secondary);">ここにデザイナー関連のコンテンツを配置できます。</p>
+                <!-- リンク追加フォーム -->
+                <div style="padding: var(--spacing-md); margin-bottom: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
+                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">外部リンクを追加</h3>
+                    <form id="linkAddForm" style="display: flex; gap: var(--spacing-sm); align-items: flex-end;">
+                        <div style="flex: 1;">
+                            <label for="linkUrl" style="display: block; font-size: var(--font-size-sm); margin-bottom: 4px; color: var(--color-text-secondary);">URL *</label>
+                            <input type="url" id="linkUrl" required placeholder="https://example.com" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
+                        </div>
+                        <div style="flex: 1;">
+                            <label for="linkTitle" style="display: block; font-size: var(--font-size-sm); margin-bottom: 4px; color: var(--color-text-secondary);">タイトル（任意）</label>
+                            <input type="text" id="linkTitle" placeholder="リンク名" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="padding: var(--spacing-xs) var(--spacing-md); font-size: var(--font-size-sm);">追加</button>
+                    </form>
+                </div>
+                
+                <!-- リンクアイコングリッド -->
+                <div id="linkIconGrid" class="link-icon-grid">
+                    <!-- リンクアイコンがここに動的に生成されます -->
+                </div>
+                
+                <!-- パネル内ゴミ箱 -->
+                <div class="panel-trash-bin" id="panelTrashBin1">
+                    <span class="trash-icon">🗑️</span>
+                    <span class="tooltip-text">ドラッグ&ドロップで削除</span>
                 </div>
             </div>
         </div>
@@ -4310,12 +4329,279 @@
             }, 800); // 0.8秒後に完了（実際のデータ取得をシミュレート）
         }
 
+        // リンクパネル関連の変数
+        let externalLinks = JSON.parse(localStorage.getItem('externalLinks') || '[]');
+        let selectedLinkIds = new Set();
+        let linkDragStartPosition = { x: 0, y: 0 };
+        
+        // 外部リンクを追加
+        function addExternalLink(url, title = '') {
+            try {
+                const urlObj = new URL(url);
+                const domain = urlObj.hostname;
+                
+                // タイトルが未指定の場合はドメイン名を使用
+                const linkTitle = title || domain.replace('www.', '');
+                
+                // ファビコンURLを生成
+                const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+                
+                const link = {
+                    id: Date.now(),
+                    url: url,
+                    title: linkTitle,
+                    domain: domain,
+                    faviconUrl: faviconUrl,
+                    position: {
+                        x: Math.random() * 300,
+                        y: Math.random() * 300
+                    },
+                    groupId: null // グループID（nullはグループ未所属）
+                };
+                
+                externalLinks.push(link);
+                saveExternalLinks();
+                updateLinkIconGrid();
+                
+                return link;
+            } catch (error) {
+                alert('有効なURLを入力してください。');
+                console.error('URL解析エラー:', error);
+                return null;
+            }
+        }
+        
+        // 外部リンクを保存
+        function saveExternalLinks() {
+            localStorage.setItem('externalLinks', JSON.stringify(externalLinks));
+        }
+        
+        // 外部リンクを削除
+        function deleteExternalLink(linkId) {
+            externalLinks = externalLinks.filter(link => link.id !== linkId);
+            saveExternalLinks();
+            updateLinkIconGrid();
+        }
+        
+        // リンクアイコングリッドを更新
+        function updateLinkIconGrid() {
+            const linkIconGrid = document.getElementById('linkIconGrid');
+            if (!linkIconGrid) return;
+            
+            linkIconGrid.innerHTML = '';
+            
+            externalLinks.forEach(link => {
+                const linkIcon = document.createElement('div');
+                linkIcon.className = 'link-icon';
+                linkIcon.dataset.linkId = link.id;
+                linkIcon.draggable = true;
+                linkIcon.style.position = 'relative';
+                
+                // ファビコン画像
+                const img = document.createElement('img');
+                img.src = link.faviconUrl;
+                img.alt = link.title;
+                img.onerror = function() {
+                    // ファビコン読み込み失敗時はデフォルトアイコン
+                    this.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50"><rect fill="%23ccc" width="50" height="50"/><text x="25" y="30" font-size="20" text-anchor="middle" fill="%23666">🔗</text></svg>';
+                };
+                
+                // タイトル表示
+                const titleSpan = document.createElement('span');
+                titleSpan.className = 'link-icon-title';
+                titleSpan.textContent = link.title;
+                
+                linkIcon.appendChild(img);
+                linkIcon.appendChild(titleSpan);
+                
+                // クリックイベント（選択/グループ解除）
+                linkIcon.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    toggleLinkSelection(link.id);
+                });
+                
+                // ドラッグ&ドロップイベント
+                setupLinkDragAndDrop(linkIcon, link);
+                
+                linkIconGrid.appendChild(linkIcon);
+            });
+            
+            // ゴミ箱のドロップ処理を設定
+            setupPanelTrashBin();
+        }
+        
+        // リンクの選択状態を切り替え
+        function toggleLinkSelection(linkId) {
+            if (selectedLinkIds.has(linkId)) {
+                selectedLinkIds.delete(linkId);
+            } else {
+                selectedLinkIds.add(linkId);
+            }
+            
+            // UI更新
+            const linkIcon = document.querySelector(`.link-icon[data-link-id="${linkId}"]`);
+            if (linkIcon) {
+                if (selectedLinkIds.has(linkId)) {
+                    linkIcon.classList.add('selected');
+                } else {
+                    linkIcon.classList.remove('selected');
+                }
+            }
+            
+            // グループ化の確認
+            if (selectedLinkIds.size > 1) {
+                groupSelectedLinks();
+            } else {
+                ungroupLinks();
+            }
+        }
+        
+        // 選択されたリンクをグループ化
+        function groupSelectedLinks() {
+            const groupId = Date.now();
+            const selectedArray = Array.from(selectedLinkIds);
+            
+            selectedArray.forEach(linkId => {
+                const link = externalLinks.find(l => l.id === linkId);
+                if (link) {
+                    link.groupId = groupId;
+                }
+            });
+            
+            saveExternalLinks();
+        }
+        
+        // リンクのグループを解除
+        function ungroupLinks() {
+            externalLinks.forEach(link => {
+                if (selectedLinkIds.has(link.id)) {
+                    link.groupId = null;
+                }
+            });
+            saveExternalLinks();
+        }
+        
+        // リンクのドラッグ&ドロップ機能を設定
+        function setupLinkDragAndDrop(linkIcon, link) {
+            // PC版：ドラッグ&ドロップ
+            linkIcon.addEventListener('dragstart', function(e) {
+                this.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('linkId', link.id.toString());
+            });
+            
+            linkIcon.addEventListener('dragend', function(e) {
+                this.classList.remove('dragging');
+            });
+            
+            // スマホ版：タッチドラッグ
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let isDragging = false;
+            
+            linkIcon.addEventListener('touchstart', function(e) {
+                if (e.touches.length === 1) {
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                    isDragging = false;
+                }
+            }, { passive: true });
+            
+            linkIcon.addEventListener('touchmove', function(e) {
+                if (e.touches.length === 1) {
+                    const deltaX = Math.abs(e.touches[0].clientX - touchStartX);
+                    const deltaY = Math.abs(e.touches[0].clientY - touchStartY);
+                    
+                    if ((deltaX > 5 || deltaY > 5) && !isDragging) {
+                        isDragging = true;
+                        this.classList.add('dragging');
+                    }
+                }
+            }, { passive: true });
+            
+            linkIcon.addEventListener('touchend', function(e) {
+                if (isDragging) {
+                    isDragging = false;
+                    this.classList.remove('dragging');
+                }
+            }, { passive: true });
+        }
+        
+        // パネル内ゴミ箱のドロップ処理を設定
+        function setupPanelTrashBin() {
+            const panelTrashBin = document.getElementById('panelTrashBin1');
+            if (!panelTrashBin) return;
+            
+            // PC版：ドロップ
+            panelTrashBin.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('drag-over');
+            });
+            
+            panelTrashBin.addEventListener('dragleave', function(e) {
+                this.classList.remove('drag-over');
+            });
+            
+            panelTrashBin.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('drag-over');
+                
+                const linkId = parseInt(e.dataTransfer.getData('linkId'));
+                if (linkId) {
+                    if (confirm('このリンクを削除しますか？')) {
+                        deleteExternalLink(linkId);
+                    }
+                }
+            });
+            
+            // スマホ版：タッチドロップ（グリッド上で処理）
+            // タッチドラッグでゴミ箱に持っていく処理は、リンクアイコンのtouchendで実装
+        }
+        
+        // リンク追加フォームの処理
+        document.getElementById('linkAddForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const url = document.getElementById('linkUrl').value.trim();
+            const title = document.getElementById('linkTitle').value.trim();
+            
+            if (!url) {
+                alert('URLを入力してください。');
+                return;
+            }
+            
+            addExternalLink(url, title);
+            
+            // フォームをリセット
+            document.getElementById('linkUrl').value = '';
+            document.getElementById('linkTitle').value = '';
+        });
+        
+        // パネル1が開かれた時にリンクグリッドを更新
+        function updateLinkPanelOnOpen() {
+            if (document.getElementById('slidePanelOverlay1').classList.contains('active')) {
+                updateLinkIconGrid();
+            }
+        }
+        
+        // パネル開閉時にリンクグリッドを更新（ラッパー関数）
+        function openSlidePanel(panelNumber) {
+            openSlidePanelOriginal(panelNumber);
+            if (panelNumber === 1) {
+                setTimeout(() => {
+                    updateLinkIconGrid();
+                }, 100);
+            }
+        }
+
         // 初期化（ページロード時にも実行、スプラッシュ後に再実行される）
         setTimeout(function() {
             setupBadgeDragHandler(); // バッジドラッグハンドラーを設定
             setupTrashBinDrop(); // ゴミ箱のドロップ処理を初期化
             updateTaskGrid();
             updateBadges(); // バッジを表示
+            // リンクパネルの初期化
+            updateLinkIconGrid();
             // プルリフレッシュ機能を初期化（スマホ版のみ）
             if (window.innerWidth <= 430) {
                 setupPullRefresh();
