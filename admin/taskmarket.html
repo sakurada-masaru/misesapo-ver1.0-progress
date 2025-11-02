@@ -684,11 +684,13 @@
             line-height: 1;
         }
 
-        /* ゴミ箱 */
+        /* ゴミ箱（画面右下に固定） */
         .trash-bin {
-            position: absolute;
-            bottom: 24px;
-            right: 24px;
+            position: fixed !important;
+            bottom: 24px !important;
+            right: 24px !important;
+            top: auto !important;
+            left: auto !important;
             width: 64px;
             height: 64px;
             background: var(--color-danger, #ff4757);
@@ -699,10 +701,13 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 100;
+            z-index: 1000;
             box-shadow: var(--shadow-lg);
             transition: all 0.3s ease;
             opacity: 0.8;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
         }
         
         .trash-bin .tooltip-text {
@@ -1945,9 +1950,11 @@
             
             /* ゴミ箱ボタン：画面右下に固定（430px画面幅内に収める） */
             .trash-bin {
-                position: fixed;
-                bottom: 16px;
-                right: 16px;
+                position: fixed !important;
+                bottom: 16px !important;
+                right: 16px !important;
+                top: auto !important;
+                left: auto !important;
                 z-index: 1001; /* カードのz-indexより上にして、常に上に表示 */
             }
 
