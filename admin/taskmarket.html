@@ -366,7 +366,8 @@
             color: var(--color-text-primary);
         }
 
-        .detail-edit-button {
+        .detail-edit-button,
+        .detail-time-record-button {
             background: var(--color-primary);
             color: white;
             border: none;
@@ -384,7 +385,8 @@
             position: relative; /* ツールチップの基準点 */
         }
 
-        .detail-edit-button:hover {
+        .detail-edit-button:hover,
+        .detail-time-record-button:hover {
             background: var(--color-primary-hover);
             transform: scale(1.05);
         }
@@ -2054,6 +2056,10 @@
                     <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm); margin: 0;">モード切り替えボタンで詳細の「編集」が行えます。</p>
                 </div>
                 <div style="display: flex; gap: var(--spacing-sm); align-items: center;">
+                    <button class="detail-time-record-button" id="detailTimeRecordButton" onclick="showTimeRecords()" style="display: none;">
+                        <span style="font-size: 18px;">⏱️</span>
+                        <span class="tooltip-text">タイムレコード</span>
+                    </button>
                     <button class="detail-edit-button" id="detailEditButton" onclick="toggleTaskEditMode()" style="display: none;">
                         <img src="images/リロードアイコン.svg" alt="編集" class="detail-edit-icon">
                         <span class="tooltip-text">タスク情報の編集はこちらから</span>
@@ -2174,14 +2180,14 @@
                         <div style="flex: 1;">
                             <label for="linkUrl" style="display: block; font-size: var(--font-size-sm); margin-bottom: 4px; color: var(--color-text-secondary);">URL *</label>
                             <input type="url" id="linkUrl" required placeholder="https://example.com" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
-                        </div>
+                </div>
                         <div style="flex: 1;">
                             <label for="linkTitle" style="display: block; font-size: var(--font-size-sm); margin-bottom: 4px; color: var(--color-text-secondary);">タイトル（任意）</label>
                             <input type="text" id="linkTitle" placeholder="リンク名" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
-                        </div>
+            </div>
                         <button type="submit" class="btn btn-primary" style="padding: var(--spacing-xs) var(--spacing-md); font-size: var(--font-size-sm);">追加</button>
                     </form>
-                </div>
+        </div>
                 
                 <!-- リンクアイコングリッド -->
                 <div id="linkIconGrid" class="link-icon-grid">
@@ -2275,13 +2281,13 @@
                                 <option value="month">今月</option>
                                 <option value="year">今年</option>
                             </select>
-                        </div>
+                </div>
                         <div style="flex: 1; min-width: 120px;">
                             <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">担当者</label>
                             <select id="archiveFilterAssignee" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
                                 <option value="all">すべて</option>
                             </select>
-                        </div>
+            </div>
                         <div style="flex: 1; min-width: 120px;">
                             <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">カテゴリ</label>
                             <select id="archiveFilterCategory" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
@@ -2547,6 +2553,10 @@
 
         // タスクに紐づくバッジ（タスクIDをキーに、バッジIDの配列を値に）
         let taskBadges = {};
+        
+        // タイムレコード（バッジがタスクに付けられた時間から完了までの時間を記録）
+        let timeRecords = JSON.parse(localStorage.getItem('timeRecords') || '[]');
+        // timeRecords構造: [{ id, taskId, badgeId, startTime, endTime, duration, status }]
 
         // バッジのドラッグ状態管理
         let draggedBadgeGlobal = null;
@@ -2718,7 +2728,7 @@
             
             // ヒントの表示/非表示を更新（スマホ版のみ）
             if (window.innerWidth <= 430) {
-                if (tasks.length === 0) {
+            if (tasks.length === 0) {
                     taskGrid.classList.remove('has-tasks');
                     taskGrid.classList.add('scroll-top');
                 } else {
@@ -2869,7 +2879,7 @@
 
             // 完了していないタスクのみ表示（pendingタスクのみ）
             const pendingTasks = tasks.filter(task => task.status !== 'completed');
-            
+
             // 各タスクカードをランダムな位置に配置（または保存された位置を使用）
             pendingTasks.forEach((task, index) => {
                 const card = document.createElement('div');
@@ -3910,6 +3920,8 @@
                             }
                             if (!taskBadges[taskId].includes(badge.id)) {
                                 taskBadges[taskId].push(badge.id);
+                                // タイムレコードを作成（バッジがタスクに付けられた時）
+                                createTimeRecord(taskId, badge.id);
                             }
                             
                             // カードに直接バッジを追加
@@ -4099,6 +4111,9 @@
             task.completedAt = new Date().toISOString();
             task.updatedAt = new Date().toISOString();
             
+            // タイムレコードを終了（このタスクに紐づくすべてのアクティブなタイムレコード）
+            endTimeRecordsForTask(taskId);
+            
             // グリッドを更新（完了タスクは表示から除外）
             updateTaskGrid();
             
@@ -4108,6 +4123,161 @@
             }
             
             console.log('タスクを完了にしました:', task.title);
+        }
+        
+        // タイムレコードを作成（バッジがタスクに付けられた時）
+        function createTimeRecord(taskId, badgeId) {
+            const timeRecord = {
+                id: Date.now(),
+                taskId: taskId,
+                badgeId: badgeId,
+                startTime: new Date().toISOString(),
+                endTime: null,
+                duration: null, // 秒単位
+                status: 'active' // 'active' or 'completed'
+            };
+            
+            timeRecords.push(timeRecord);
+            saveTimeRecords();
+            
+            console.log('タイムレコードを作成しました:', timeRecord);
+            return timeRecord;
+        }
+        
+        // タスクに紐づくすべてのアクティブなタイムレコードを終了
+        function endTimeRecordsForTask(taskId) {
+            const endTime = new Date();
+            const endTimeISO = endTime.toISOString();
+            
+            timeRecords.forEach(record => {
+                if (record.taskId === taskId && record.status === 'active') {
+                    const startTime = new Date(record.startTime);
+                    const duration = Math.floor((endTime - startTime) / 1000); // 秒単位
+                    
+                    record.endTime = endTimeISO;
+                    record.duration = duration;
+                    record.status = 'completed';
+                }
+            });
+            
+            saveTimeRecords();
+            console.log('タイムレコードを終了しました:', taskId);
+        }
+        
+        // タイムレコードを保存
+        function saveTimeRecords() {
+            localStorage.setItem('timeRecords', JSON.stringify(timeRecords));
+        }
+        
+        // タスクのタイムレコードを取得
+        function getTimeRecordsForTask(taskId) {
+            return timeRecords.filter(record => record.taskId === taskId);
+        }
+        
+        // タイムレコードを表示
+        function showTimeRecords() {
+            if (!currentDetailTaskId) return;
+            
+            const taskRecords = getTimeRecordsForTask(currentDetailTaskId);
+            const detailContent = document.getElementById('detailContent');
+            
+            if (taskRecords.length === 0) {
+                detailContent.innerHTML = `
+                    <div style="background: var(--color-background); border-radius: var(--border-radius-lg); padding: var(--spacing-md);">
+                        <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">タイムレコード</h3>
+                        <p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">
+                            タイムレコードがありません
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // バッジ情報を取得
+            const badgeMap = {};
+            badges.forEach(badge => {
+                badgeMap[badge.id] = badge;
+            });
+            
+            // 時間をフォーマット
+            function formatDuration(seconds) {
+                if (!seconds && seconds !== 0) return '-';
+                const hours = Math.floor(seconds / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                const secs = seconds % 60;
+                if (hours > 0) {
+                    return `${hours}時間 ${minutes}分 ${secs}秒`;
+                } else if (minutes > 0) {
+                    return `${minutes}分 ${secs}秒`;
+                } else {
+                    return `${secs}秒`;
+                }
+            }
+            
+            function formatDateTime(isoString) {
+                if (!isoString) return '-';
+                const date = new Date(isoString);
+                return date.toLocaleString('ja-JP', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+            }
+            
+            // タイムレコードを表示
+            const recordsHTML = taskRecords.map(record => {
+                const badge = badgeMap[record.badgeId];
+                const badgeName = badge ? badge.name : '不明なバッジ';
+                const isActive = record.status === 'active';
+                
+                return `
+                    <div style="background: var(--color-background); border: 1px solid var(--color-border); border-radius: var(--border-radius-md); padding: var(--spacing-md); margin-bottom: var(--spacing-sm);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-xs);">
+                            <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">${escapeHtml(badgeName)}</span>
+                            <span style="font-size: var(--font-size-xs); color: ${isActive ? '#4CAF50' : 'var(--color-text-secondary)'};">
+                                ${isActive ? '作業中' : '完了'}
+                            </span>
+                        </div>
+                        <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                            <div>開始: ${formatDateTime(record.startTime)}</div>
+                            ${record.endTime ? `<div>終了: ${formatDateTime(record.endTime)}</div>` : ''}
+                            <div style="margin-top: var(--spacing-xs); font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">
+                                作業時間: ${formatDuration(record.duration)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // 合計時間を計算
+            const totalDuration = taskRecords
+                .filter(r => r.duration !== null)
+                .reduce((sum, r) => sum + r.duration, 0);
+            
+            detailContent.innerHTML = `
+                <div style="background: var(--color-background); border-radius: var(--border-radius-lg); padding: var(--spacing-md);">
+                    <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">タイムレコード</h3>
+                    <div style="margin-bottom: var(--spacing-md); padding: var(--spacing-sm); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
+                        <div style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">
+                            合計作業時間: ${formatDuration(totalDuration)}
+                        </div>
+                        <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-top: 4px;">
+                            記録数: ${taskRecords.length}件
+                        </div>
+                    </div>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        ${recordsHTML}
+                    </div>
+                    <div style="margin-top: var(--spacing-md); text-align: center;">
+                        <button onclick="renderTaskDetailView(tasks.find(t => t.id === currentDetailTaskId))" style="padding: var(--spacing-xs) var(--spacing-md); background: var(--color-primary); color: white; border: none; border-radius: var(--border-radius-sm); cursor: pointer;">
+                            タスク詳細に戻る
+                        </button>
+                    </div>
+                </div>
+            `;
         }
         
         // ゴミ箱のドロップ処理を設定（重複登録を防ぐ）
@@ -4303,6 +4473,9 @@
                         }
                         if (!taskBadges[task.id].includes(badge.id)) {
                             taskBadges[task.id].push(badge.id);
+                            // タイムレコードを作成（バッジがタスクに付けられた時）
+                            createTimeRecord(task.id, badge.id);
+                        }
                         }
                         
                         // カードに直接バッジを追加（updateTaskGrid()を呼ばない）
@@ -4420,9 +4593,9 @@
                         <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">優先度: </span>
                         <span style="color: ${getPriorityColor(task.priority)};">${getPriorityStars(task.priority)}</span>
                     </div>
-                    <div style="margin-bottom: var(--spacing-md);">
+                    <div style="margin-bottom: var(--spacing-md); display: flex; align-items: center; gap: var(--spacing-sm);">
                         <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">ステータス: </span>
-                        <span>未着手</span>
+                        <span>${task.status === 'completed' ? '完了' : '未着手'}</span>
                     </div>
                     <div style="margin-top: var(--spacing-md); padding-top: var(--spacing-md); border-top: 1px solid var(--color-border);">
                         <p style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary); margin-bottom: var(--spacing-sm);">説明:</p>
