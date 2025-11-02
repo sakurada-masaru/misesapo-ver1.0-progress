@@ -4396,9 +4396,11 @@
                 linkIcon.dataset.linkId = link.id;
                 linkIcon.draggable = true;
                 
-                // グループ化されている場合は選択状態にする
-                if (link.groupId && selectedLinkIds.has(link.id)) {
-                    linkIcon.classList.add('selected');
+                // 保存されている位置を適用
+                if (link.position && link.position.x !== undefined && link.position.y !== undefined) {
+                    linkIcon.style.position = 'absolute';
+                    linkIcon.style.left = link.position.x + 'px';
+                    linkIcon.style.top = link.position.y + 'px';
                 }
                 
                 // ファビコン画像
