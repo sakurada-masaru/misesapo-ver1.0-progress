@@ -4357,6 +4357,21 @@
             return timeRecords.filter(record => record.taskId === taskId);
         }
         
+        // 時間をフォーマット（グローバル関数として定義）
+        function formatDuration(seconds) {
+            if (!seconds && seconds !== 0) return '-';
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            if (hours > 0) {
+                return `${hours}時間 ${minutes}分 ${secs}秒`;
+            } else if (minutes > 0) {
+                return `${minutes}分 ${secs}秒`;
+            } else {
+                return `${secs}秒`;
+            }
+        }
+        
         // タイムレコードを表示（別パネルで表示）
         function showTimeRecords() {
             if (!currentDetailTaskId) return;
@@ -4376,21 +4391,6 @@
             badges.forEach(badge => {
                 badgeMap[badge.id] = badge;
             });
-            
-            // 時間をフォーマット
-            function formatDuration(seconds) {
-                if (!seconds && seconds !== 0) return '-';
-                const hours = Math.floor(seconds / 3600);
-                const minutes = Math.floor((seconds % 3600) / 60);
-                const secs = seconds % 60;
-                if (hours > 0) {
-                    return `${hours}時間 ${minutes}分 ${secs}秒`;
-                } else if (minutes > 0) {
-                    return `${minutes}分 ${secs}秒`;
-                } else {
-                    return `${secs}秒`;
-                }
-            }
             
             function formatDateTime(isoString) {
                 if (!isoString) return '-';
