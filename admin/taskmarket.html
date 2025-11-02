@@ -3476,8 +3476,27 @@
                         
                         isBadgeDragging = false;
                         currentTouchedBadge = null;
+                        
+                        // ドラッグ終了後も選択状態を維持
+                        this.classList.add('selected');
+                        selectedBadge = this;
                     } else if (currentTouchedBadge === this) {
                         // タップ判定（移動量が少ない場合）
+                        const touch = e.changedTouches[0];
+                        const deltaX = Math.abs(touch.clientX - touchStartX);
+                        const deltaY = Math.abs(touch.clientY - touchStartY);
+                        
+                        if (deltaX < 10 && deltaY < 10) {
+                            // タップ：選択状態を切り替え
+                            if (this.classList.contains('selected')) {
+                                this.classList.remove('selected');
+                                selectedBadge = null;
+                            } else {
+                                deselectAllBadges();
+                                this.classList.add('selected');
+                                selectedBadge = this;
+                            }
+                        }
                         currentTouchedBadge = null;
                     }
                 });
