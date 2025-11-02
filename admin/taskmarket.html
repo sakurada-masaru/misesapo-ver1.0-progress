@@ -2559,9 +2559,13 @@
                 }
             }
             
-            if (tasks.length === 0) {
+            // 完了していないタスクのみカウント
+            const pendingTasksCount = tasks.filter(task => task.status !== 'completed').length;
+            
+            if (pendingTasksCount === 0) {
                 // カードをクリア（ボタンとゴミ箱は残す）
                 const addButton = taskGrid.querySelector('.add-task-button');
+                const completeButton = taskGrid.querySelector('.complete-button');
                 const addBadgeButton = taskGrid.querySelector('.add-badge-button');
                 const trashBin = taskGrid.querySelector('.trash-bin');
                 taskGrid.innerHTML = '';
@@ -2575,6 +2579,18 @@
                     button.onclick = toggleTaskForm;
                     button.innerHTML = '+<span class="tooltip-text">新規タスクを追加</span>';
                     taskGrid.appendChild(button);
+                }
+                
+                // 完了ボタンを再追加
+                if (completeButton) {
+                    taskGrid.appendChild(completeButton);
+                } else {
+                    const complete = document.createElement('div');
+                    complete.className = 'complete-button';
+                    complete.id = 'completeButton';
+                    complete.innerHTML = '<span class="complete-icon">✓</span><span class="tooltip-text">ドラッグ&ドロップで完了</span>';
+                    taskGrid.appendChild(complete);
+                    setupCompleteButtonDrop(); // ドロップ処理を再設定
                 }
                 
                 // バッジボタンを再追加
@@ -2980,6 +2996,29 @@
                             }
                         }
                         
+                        // 完了ボタンとの重なりをチェック（カードの領域全体で判定）
+                        const completeButton = document.getElementById('completeButton');
+                        if (completeButton) {
+                            const completeRect = completeButton.getBoundingClientRect();
+                            // カードの領域全体を計算（グリッド座標系）
+                            const cardLeft = clampedX + gridRect.left;
+                            const cardRight = cardLeft + cardWidth;
+                            const cardTop = clampedY + gridRect.top;
+                            const cardBottom = cardTop + cardHeight;
+                            
+                            // カードの領域が完了ボタンの領域と重なっているかチェック
+                            const isOverlapping = !(cardRight < completeRect.left || 
+                                                   cardLeft > completeRect.right || 
+                                                   cardBottom < completeRect.top || 
+                                                   cardTop > completeRect.bottom);
+                            
+                            if (isOverlapping) {
+                                completeButton.classList.add('drag-over');
+                            } else {
+                                completeButton.classList.remove('drag-over');
+                            }
+                        }
+                        
                         e.preventDefault();
                     } else if (currentTouchedCard === this) {
                         // 選択済みカードの移動を検出したら即座にドラッグ開始
@@ -3039,11 +3078,18 @@
                         trashBin.classList.remove('touch-drag-over');
                     }
                     
+                    // 完了ボタンの拡大表示を解除
+                    const completeButton = document.getElementById('completeButton');
+                    if (completeButton) {
+                        completeButton.classList.remove('drag-over');
+                    }
+                    
                     if (isDragging && currentTouchedCard === this) {
-                        // ゴミ箱の上にドロップされたかチェック（カードの領域全体で判定）
+                        // ゴミ箱または完了ボタンの上にドロップされたかチェック（カードの領域全体で判定）
                         const gridRect = taskGrid.getBoundingClientRect();
                         const cardRect = this.getBoundingClientRect();
                         let droppedOnTrash = false;
+                        let droppedOnComplete = false;
                         
                         if (trashBin) {
                             const trashRect = trashBin.getBoundingClientRect();
@@ -3055,6 +3101,19 @@
                             
                             if (isOverlapping) {
                                 droppedOnTrash = true;
+                            }
+                        }
+                        
+                        if (completeButton && !droppedOnTrash) {
+                            const completeRect = completeButton.getBoundingClientRect();
+                            // カードの領域全体が完了ボタンの領域と重なっているかチェック
+                            const isOverlapping = !(cardRect.right < completeRect.left || 
+                                                   cardRect.left > completeRect.right || 
+                                                   cardRect.bottom < completeRect.top || 
+                                                   cardRect.top > completeRect.bottom);
+                            
+                            if (isOverlapping) {
+                                droppedOnComplete = true;
                             }
                         }
                         
@@ -3075,6 +3134,15 @@
                                 this.style.transform = this.style.transform.replace(' scale(1.05)', '');
                                 this.classList.remove('dragging');
                             }
+                        } else if (droppedOnComplete) {
+                            // タスクを完了にする
+                            completeTask(task.id);
+                            
+                            // ドラッグ状態を解除
+                            this.style.transition = '';
+                            this.style.opacity = '1';
+                            this.style.transform = this.style.transform.replace(' scale(1.05)', '');
+                            this.classList.remove('dragging');
                         } else {
                             // タスクの位置情報を更新
                             const newLeft = cardRect.left - gridRect.left;
@@ -3170,6 +3238,12 @@
                     const trashBin = document.getElementById('trashBin');
                     if (trashBin) {
                         trashBin.classList.remove('touch-drag-over');
+                    }
+                    
+                    // 完了ボタンの拡大表示を解除
+                    const completeButton = document.getElementById('completeButton');
+                    if (completeButton) {
+                        completeButton.classList.remove('drag-over');
                     }
                     
                     // 選択状態は維持
