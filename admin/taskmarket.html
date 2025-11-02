@@ -5889,19 +5889,25 @@
                     this.style.transition = '';
                     this.style.zIndex = '';
                     
-                    // ゴミ箱との重なりチェック
-                    const panelTrashBin = document.getElementById('panelTrashBin1');
-                    if (panelTrashBin && panelTrashBin.classList.contains('drag-over')) {
-                        if (confirm('このリンクを削除しますか？')) {
-                            deleteExternalLink(link.id);
+                    // パネル内ゴミ箱は削除されたため、メインのゴミ箱でチェック
+                    const trashBin = document.getElementById('trashBin');
+                    if (trashBin) {
+                        const trashRect = trashBin.getBoundingClientRect();
+                        const linkRect = this.getBoundingClientRect();
+                        
+                        // リンクの領域がゴミ箱の領域と重なっているかチェック
+                        if (linkRect.left < trashRect.right && linkRect.right > trashRect.left &&
+                            linkRect.top < trashRect.bottom && linkRect.bottom > trashRect.top) {
+                            // リンクを削除
+                            if (confirm('このリンクを削除しますか？')) {
+                                deleteExternalLink(link.id);
+                            } else {
+                                // 位置をリセット
+                                this.style.position = '';
+                                this.style.left = '';
+                                this.style.top = '';
+                            }
                         } else {
-                            // 位置をリセット
-                            this.style.position = '';
-                            this.style.left = '';
-                            this.style.top = '';
-                        }
-                        panelTrashBin.classList.remove('drag-over');
-                    } else {
                         // 位置を更新（グリッドから独立した位置に移動）
                         const rect = this.getBoundingClientRect();
                         const gridRect = document.getElementById('linkIconGrid').getBoundingClientRect();
