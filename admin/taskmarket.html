@@ -2410,12 +2410,6 @@
             </div>
         </div>
     </div>
-    
-    <!-- パネル内ゴミ箱（パネル1用、パネルが開いている時のみ表示） -->
-    <div class="panel-trash-bin" id="panelTrashBin1">
-        <span class="trash-icon">🗑️</span>
-        <span class="tooltip-text">ドラッグ&ドロップで削除</span>
-    </div>
 
     <!-- パネル2（ブルー：フロント） -->
     <div class="slide-panel-overlay" id="slidePanelOverlay2" onclick="closeSlidePanelOnOverlay(event, 2)">
@@ -5715,7 +5709,8 @@
             });
             
             // ゴミ箱のドロップ処理を設定
-            setupPanelTrashBin();
+            // パネル内ゴミ箱は削除されたため、この関数は呼ばない
+            // setupPanelTrashBin();
         }
         
         // リンクの選択状態を切り替え
@@ -5878,19 +5873,9 @@
                         this.style.left = clampedX + 'px';
                         this.style.top = clampedY + 'px';
                         
-                        // ゴミ箱との重なりチェック
-                        const panelTrashBin = document.getElementById('panelTrashBin1');
-                        if (panelTrashBin && panelTrashBin.style.opacity === '1') {
-                            const trashRect = panelTrashBin.getBoundingClientRect();
-                            const linkRect = this.getBoundingClientRect();
-                            
-                            if (linkRect.left < trashRect.right && linkRect.right > trashRect.left &&
-                                linkRect.top < trashRect.bottom && linkRect.bottom > trashRect.top) {
-                                panelTrashBin.classList.add('drag-over');
-                            } else {
-                                panelTrashBin.classList.remove('drag-over');
-                            }
-                        }
+                        // パネル内ゴミ箱は削除されたため、このチェックは不要
+                        // const panelTrashBin = document.getElementById('panelTrashBin1');
+                        // ...
                     }
                 }
             }, { passive: false });
@@ -5943,36 +5928,8 @@
             });
         }
         
-        // パネル内ゴミ箱のドロップ処理を設定
-        function setupPanelTrashBin() {
-            const panelTrashBin = document.getElementById('panelTrashBin1');
-            if (!panelTrashBin) return;
-            
-            // PC版：ドロップ
-            panelTrashBin.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                this.classList.add('drag-over');
-            });
-            
-            panelTrashBin.addEventListener('dragleave', function(e) {
-                this.classList.remove('drag-over');
-            });
-            
-            panelTrashBin.addEventListener('drop', function(e) {
-                e.preventDefault();
-                this.classList.remove('drag-over');
-                
-                const linkId = parseInt(e.dataTransfer.getData('linkId'));
-                if (linkId) {
-                    if (confirm('このリンクを削除しますか？')) {
-                        deleteExternalLink(linkId);
-                    }
-                }
-            });
-            
-            // スマホ版：タッチドロップ（グリッド上で処理）
-            // タッチドラッグでゴミ箱に持っていく処理は、リンクアイコンのtouchendで実装
-        }
+        // パネル内ゴミ箱は削除されたため、この関数は不要
+        // function setupPanelTrashBin() { ... }
         
         // リンク追加フォームの処理
         document.getElementById('linkAddForm')?.addEventListener('submit', function(e) {
