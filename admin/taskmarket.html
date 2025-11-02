@@ -1135,13 +1135,6 @@
             z-index: 500;
         }
 
-        .task-card.dragging {
-            opacity: 1;
-            cursor: grabbing;
-            transform: rotate(0deg) !important;
-            z-index: 1000 !important;
-        }
-
         /* スマホ版：選択状態のスタイル */
         @media (max-width: 430px) {
             .task-card.selected {
@@ -1149,6 +1142,13 @@
                 box-shadow: 0 0 10px rgba(255, 103, 156, 0.5);
                 transform: scale(1.05);
             }
+        }
+
+        .task-card.dragging {
+            opacity: 1;
+            cursor: grabbing;
+            transform: rotate(0deg) !important;
+            z-index: 1000 !important;
         }
 
         .task-grid.drag-over {
@@ -1692,7 +1692,7 @@
                         <img src="images/リロードアイコン.svg" alt="編集" class="detail-edit-icon">
                         <span class="tooltip-text">タスク情報の編集はこちらから</span>
                     </button>
-                    <button class="detail-board-close-button" onclick="closeDetailBoard()" title="閉じる">×</button>
+                <button class="detail-board-close-button" onclick="closeDetailBoard()" title="閉じる">×</button>
                 </div>
             </div>
             <div id="detailContent">
@@ -2257,7 +2257,7 @@
             
             console.log('Googleアカウントからバッジを作成しました:', badge);
         }
-        
+
         // バッジ作成
         document.getElementById('badgeInputForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -2525,9 +2525,7 @@
             let cardStartX = 0;
             let cardStartY = 0;
             let isDragging = false;
-            let isSelected = false;
             let touchTimeout = null;
-            let selectTimeout = null;
             let currentTouchedCard = null;
             let selectedCard = null;
             
@@ -2538,7 +2536,6 @@
                     c.classList.remove('selected');
                 });
                 selectedCard = null;
-                isSelected = false;
             }
             
             // グリッド外をタップしたら選択解除
@@ -2567,12 +2564,10 @@
                         cardStartX = rect.left - gridRect.left;
                         cardStartY = rect.top - gridRect.top;
                         
-                        // まずカードを選択（短いタップで選択）
-                        // 既に選択されている場合はドラッグ開始判定を早める
+                        // 既に選択されているカードの場合は即座にドラッグ可能にする
                         if (this.classList.contains('selected') && selectedCard === this) {
                             // 選択済みの場合は即座にドラッグ可能にする
                             isDragging = true;
-                            isSelected = true;
                             this.dataset.hasDragged = 'true';
                             this.classList.add('dragging');
                             this.style.transition = 'none';
@@ -2584,22 +2579,19 @@
                             deselectAllCards();
                             this.classList.add('selected');
                             selectedCard = this;
-                            isSelected = true;
                             
-                            // 選択後、長押し（200ms）でドラッグ開始
+                            // 選択後のドラッグ開始判定は短時間（50ms）にする
                             touchTimeout = setTimeout(() => {
-                                if (isSelected && selectedCard === this) {
+                                if (this.classList.contains('selected') && selectedCard === this) {
                                     isDragging = true;
                                     this.dataset.hasDragged = 'true';
                                     this.classList.add('dragging');
                                     this.style.transition = 'none';
                                     this.style.zIndex = '1000';
-                                    
-                                    // 視覚的フィードバック
                                     this.style.opacity = '0.8';
                                     this.style.transform += ' scale(1.05)';
                                 }
-                            }, 200);
+                            }, 50); // 限りなく短い時間に設定
                         }
                     }
                 }, { passive: false });
@@ -2647,24 +2639,49 @@
                         }
                         
                         e.preventDefault();
-                    } else if (touchTimeout && currentTouchedCard === this && isSelected) {
-                        // 移動が小さい場合は選択を維持
-                        const touch = e.touches[0];
-                        const deltaX = Math.abs(touch.clientX - touchStartX);
-                        const deltaY = Math.abs(touch.clientY - touchStartY);
-                        
-                        if (deltaX > 10 || deltaY > 10) {
-                            // 移動量が大きい場合はドラッグ開始
-                            clearTimeout(touchTimeout);
-                            touchTimeout = null;
-                            isDragging = true;
-                            this.dataset.hasDragged = 'true';
-                            this.classList.add('dragging');
-                            this.style.transition = 'none';
-                            this.style.zIndex = '1000';
-                            this.style.opacity = '0.8';
-                            this.style.transform += ' scale(1.05)';
-                            e.preventDefault();
+                    } else if (currentTouchedCard === this) {
+                        // 選択済みカードの移動を検出したら即座にドラッグ開始
+                        if (this.classList.contains('selected') && selectedCard === this) {
+                            const touch = e.touches[0];
+                            const deltaX = Math.abs(touch.clientX - touchStartX);
+                            const deltaY = Math.abs(touch.clientY - touchStartY);
+                            
+                            // 移動量が5px以上の場合、即座にドラッグ開始
+                            if (deltaX > 5 || deltaY > 5) {
+                                clearTimeout(touchTimeout);
+                                touchTimeout = null;
+                                isDragging = true;
+                                this.dataset.hasDragged = 'true';
+                                this.classList.add('dragging');
+                                this.style.transition = 'none';
+                                this.style.zIndex = '1000';
+                                this.style.opacity = '0.8';
+                                this.style.transform += ' scale(1.05)';
+                                e.preventDefault();
+                            }
+                        } else if (touchTimeout) {
+                            // 未選択カードの場合
+                            const touch = e.touches[0];
+                            const deltaX = Math.abs(touch.clientX - touchStartX);
+                            const deltaY = Math.abs(touch.clientY - touchStartY);
+                            
+                            if (deltaX < 5 && deltaY < 5) {
+                                // まだドラッグ開始していない
+                                return;
+                            } else {
+                                // 移動量が大きい場合はタイマーをクリアしてドラッグ開始
+                                clearTimeout(touchTimeout);
+                                touchTimeout = null;
+                                // 移動が検出されたら即座にドラッグ開始
+                                isDragging = true;
+                                this.dataset.hasDragged = 'true';
+                                this.classList.add('dragging');
+                                this.style.transition = 'none';
+                                this.style.zIndex = '1000';
+                                this.style.opacity = '0.8';
+                                this.style.transform += ' scale(1.05)';
+                                e.preventDefault();
+                            }
                         }
                     }
                 }, { passive: false });
@@ -2672,9 +2689,7 @@
                 // タッチ終了（スマホ対応）
                 card.addEventListener('touchend', function(e) {
                     clearTimeout(touchTimeout);
-                    clearTimeout(selectTimeout);
                     touchTimeout = null;
-                    selectTimeout = null;
                     
                     // ゴミ箱の拡大表示を解除
                     const trashBin = document.getElementById('trashBin');
@@ -2747,7 +2762,7 @@
                         // ドラッグ終了後も選択状態を維持
                         this.classList.add('selected');
                         selectedCard = this;
-                    } else if (currentTouchedCard === this && !isDragging) {
+                    } else if (currentTouchedCard === this) {
                         // タップ判定（移動量が少ない場合）
                         const touch = e.changedTouches[0];
                         const deltaX = Math.abs(touch.clientX - touchStartX);
@@ -2759,13 +2774,11 @@
                                 // 既に選択されている場合は選択解除
                                 this.classList.remove('selected');
                                 selectedCard = null;
-                                isSelected = false;
                             } else {
                                 // 新規選択
                                 deselectAllCards();
                                 this.classList.add('selected');
                                 selectedCard = this;
-                                isSelected = true;
                             }
                         }
                         
@@ -2776,9 +2789,7 @@
                 // タッチキャンセル（スマホ対応）
                 card.addEventListener('touchcancel', function(e) {
                     clearTimeout(touchTimeout);
-                    clearTimeout(selectTimeout);
                     touchTimeout = null;
-                    selectTimeout = null;
                     isDragging = false;
                     this.classList.remove('dragging');
                     this.style.transition = '';
