@@ -3293,23 +3293,29 @@
                     }
                 });
             
-                // タッチキャンセル（スマホ対応）
-                badgeElement.addEventListener('touchcancel', function(e) {
-                    clearTimeout(badgeTouchTimeout);
-                    badgeTouchTimeout = null;
-                    isBadgeDragging = false;
-                    this.classList.remove('dragging');
-                    this.style.transition = '';
-                    this.style.opacity = '1';
-                    this.style.transform = this.style.transform.replace(' scale(1.1)', '');
-                    currentTouchedBadge = null;
-                    
-                    // ゴミ箱の拡大表示を解除
-                    const trashBin = document.getElementById('trashBin');
-                    if (trashBin) {
-                        trashBin.classList.remove('touch-drag-over');
-                    }
+            // タッチキャンセル（スマホ対応）
+            badgeElement.addEventListener('touchcancel', function(e) {
+                clearTimeout(badgeTouchTimeout);
+                badgeTouchTimeout = null;
+                isBadgeDragging = false;
+                this.classList.remove('dragging');
+                this.style.transition = '';
+                this.style.opacity = '1';
+                this.style.transform = this.style.transform.replace(' scale(1.1)', '');
+                currentTouchedBadge = null;
+                
+                // ゴミ箱の拡大表示を解除
+                const trashBin = document.getElementById('trashBin');
+                if (trashBin) {
+                    trashBin.classList.remove('touch-drag-over');
+                }
+                
+                // すべてのカードからドラッグオーバー状態を解除
+                const taskCards = taskGrid.querySelectorAll('.task-card');
+                taskCards.forEach(card => {
+                    card.classList.remove('drag-over-badge');
                 });
+            });
             
             // ドラッグ開始（PC対応）
             badgeElement.addEventListener('dragstart', function(e) {
