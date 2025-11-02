@@ -780,36 +780,36 @@
 
         /* 各パネルのハンドルの位置と色（等間隔配置） */
         .slide-panel-handle.panel-1 {
-            top: calc(100vh / 6 + 100px);
+            top: calc(100vh / 6);
             transform: translateY(-50%);
             background: var(--panel-1-color);
         }
 
         .slide-panel-handle.panel-2 {
-            top: calc(100vh / 3 + 100px);
+            top: calc(100vh / 3);
             transform: translateY(-50%);
             background: var(--panel-2-color);
         }
 
         .slide-panel-handle.panel-3 {
-            top: calc(50% + 100px);
+            top: 50%;
             transform: translateY(-50%);
             background: var(--panel-3-color);
         }
 
         .slide-panel-handle.panel-4 {
-            top: calc(100vh * 2 / 3 + 100px);
+            top: calc(100vh * 2 / 3);
             transform: translateY(-50%);
             background: var(--panel-4-color);
         }
 
         .slide-panel-handle.panel-5 {
-            top: calc(100vh * 5 / 6 + 100px);
+            top: calc(100vh * 5 / 6);
             transform: translateY(-50%);
             background: var(--panel-5-color);
         }
 
-        /* スマホ版での左パネルハンドルの配置（100px下に移動） */
+        /* スマホ版での左パネルハンドルの配置（100px下に配置） */
         @media (max-width: 430px) {
             .slide-panel-handle.panel-1 {
                 top: 100px;
@@ -2556,6 +2556,22 @@
                         this.style.left = clampedX + 'px';
                         this.style.top = clampedY + 'px';
                         
+                        // ゴミ箱との重なりをチェック
+                        const trashBin = document.getElementById('trashBin');
+                        if (trashBin) {
+                            const trashRect = trashBin.getBoundingClientRect();
+                            const cardCenterX = clampedX + cardWidth / 2 + gridRect.left;
+                            const cardCenterY = clampedY + cardHeight / 2 + gridRect.top;
+                            
+                            // カードの中心点がゴミ箱の範囲内にあるかチェック
+                            if (cardCenterX >= trashRect.left && cardCenterX <= trashRect.right &&
+                                cardCenterY >= trashRect.top && cardCenterY <= trashRect.bottom) {
+                                trashBin.classList.add('touch-drag-over');
+                            } else {
+                                trashBin.classList.remove('touch-drag-over');
+                            }
+                        }
+                        
                         e.preventDefault();
                     } else if (touchTimeout && currentTouchedCard === this) {
                         // 移動が小さい場合はドラッグをキャンセル
@@ -2579,25 +2595,59 @@
                     clearTimeout(touchTimeout);
                     touchTimeout = null;
                     
+                    // ゴミ箱の拡大表示を解除
+                    const trashBin = document.getElementById('trashBin');
+                    if (trashBin) {
+                        trashBin.classList.remove('touch-drag-over');
+                    }
+                    
                     if (isDragging && currentTouchedCard === this) {
-                        // タスクの位置情報を更新
+                        // ゴミ箱の上にドロップされたかチェック
                         const gridRect = taskGrid.getBoundingClientRect();
                         const cardRect = this.getBoundingClientRect();
+                        let droppedOnTrash = false;
                         
-                        const newLeft = cardRect.left - gridRect.left;
-                        const newTop = cardRect.top - gridRect.top;
-                        
-                        // タスクデータの位置を更新
-                        if (!task.position) {
-                            task.position = {};
+                        if (trashBin) {
+                            const trashRect = trashBin.getBoundingClientRect();
+                            // カードの中心点がゴミ箱の範囲内にあるかチェック
+                            const cardCenterX = cardRect.left + cardRect.width / 2;
+                            const cardCenterY = cardRect.top + cardRect.height / 2;
+                            
+                            if (cardCenterX >= trashRect.left && cardCenterX <= trashRect.right &&
+                                cardCenterY >= trashRect.top && cardCenterY <= trashRect.bottom) {
+                                droppedOnTrash = true;
+                            }
                         }
-                        task.position.left = newLeft;
-                        task.position.top = newTop;
-                        task.position.rotation = task.position.rotation || 0;
-                        task.position.zIndex = task.position.zIndex || 0;
+                        
+                        if (droppedOnTrash) {
+                            // 削除確認ダイアログを表示
+                            const taskTitle = task.title || '無題のタスク';
+                            if (confirm(`「${taskTitle}」を削除してもよろしいですか？\nこの操作は取り消せません。`)) {
+                                deleteTask(task.id);
+                            } else {
+                                // キャンセル時は元の位置に戻す
+                                if (task.position) {
+                                    this.style.left = task.position.left + 'px';
+                                    this.style.top = task.position.top + 'px';
+                                }
+                            }
+                        } else {
+                            // タスクの位置情報を更新
+                            const newLeft = cardRect.left - gridRect.left;
+                            const newTop = cardRect.top - gridRect.top;
+                            
+                            // タスクデータの位置を更新
+                            if (!task.position) {
+                                task.position = {};
+                            }
+                            task.position.left = newLeft;
+                            task.position.top = newTop;
+                            task.position.rotation = task.position.rotation || 0;
+                            task.position.zIndex = task.position.zIndex || 0;
+                        }
                         
                         this.style.transition = '';
-                        this.style.zIndex = task.position.zIndex || 0;
+                        this.style.zIndex = task.position ? task.position.zIndex || 0 : 0;
                         this.style.opacity = '1';
                         this.style.transform = this.style.transform.replace(' scale(1.05)', '');
                         this.classList.remove('dragging');
@@ -2606,7 +2656,9 @@
                         this.dataset.hasDragged = 'false';
                         currentTouchedCard = null;
                         
-                        console.log('タスクの位置を更新しました:', task.id, task.position);
+                        if (!droppedOnTrash) {
+                            console.log('タスクの位置を更新しました:', task.id, task.position);
+                        }
                     } else if (currentTouchedCard === this) {
                         // タップ判定（移動量が少ない場合）
                         const touch = e.changedTouches[0];
@@ -2629,6 +2681,12 @@
                     this.style.transform = this.style.transform.replace(' scale(1.05)', '');
                     this.dataset.hasDragged = 'false';
                     currentTouchedCard = null;
+                    
+                    // ゴミ箱の拡大表示を解除
+                    const trashBin = document.getElementById('trashBin');
+                    if (trashBin) {
+                        trashBin.classList.remove('touch-drag-over');
+                    }
                 });
                 
                 // ドラッグ開始（PC対応）
@@ -2956,44 +3014,17 @@
                 badgeTouchTimeout = null;
                 
                 if (isBadgeDragging && currentTouchedBadge === this) {
-                    // ゴミ箱の上にドロップされたかチェック
-                    const trashBin = document.getElementById('trashBin');
+                    // バッジの位置情報を更新
+                    const gridRect = taskGrid.getBoundingClientRect();
                     const badgeRect = this.getBoundingClientRect();
-                    let droppedOnTrash = false;
                     
-                    if (trashBin) {
-                        const trashRect = trashBin.getBoundingClientRect();
-                        // バッジの中心点がゴミ箱の範囲内にあるかチェック
-                        const badgeCenterX = badgeRect.left + badgeRect.width / 2;
-                        const badgeCenterY = badgeRect.top + badgeRect.height / 2;
-                        
-                        if (badgeCenterX >= trashRect.left && badgeCenterX <= trashRect.right &&
-                            badgeCenterY >= trashRect.top && badgeCenterY <= trashRect.bottom) {
-                            droppedOnTrash = true;
-                        }
-                    }
+                    const newLeft = badgeRect.left - gridRect.left;
+                    const newTop = badgeRect.top - gridRect.top;
                     
-                    if (droppedOnTrash) {
-                        // 削除確認ダイアログを表示
-                        const badgeName = badge.name || 'バッジ';
-                        if (confirm(`「${badgeName}」を削除してもよろしいですか？\nこの操作は取り消せません。`)) {
-                            deleteBadge(badge.id);
-                        } else {
-                            // キャンセル時は元の位置に戻す
-                            this.style.left = badge.position.left + 'px';
-                            this.style.top = badge.position.top + 'px';
-                        }
-                    } else {
-                        // バッジの位置情報を更新
-                        const gridRect = taskGrid.getBoundingClientRect();
-                        const newLeft = badgeRect.left - gridRect.left;
-                        const newTop = badgeRect.top - gridRect.top;
-                        
-                        // バッジデータの位置を更新（カードに吸着していない場合のみ）
-                        if (!badge.attachedToTaskId) {
-                            badge.position.left = newLeft;
-                            badge.position.top = newTop;
-                        }
+                    // バッジデータの位置を更新（カードに吸着していない場合のみ）
+                    if (!badge.attachedToTaskId) {
+                        badge.position.left = newLeft;
+                        badge.position.top = newTop;
                     }
                     
                     this.style.transition = '';
@@ -3005,9 +3036,7 @@
                     isBadgeDragging = false;
                     currentTouchedBadge = null;
                     
-                    if (!droppedOnTrash) {
-                        console.log('バッジの位置を更新しました:', badge.id, badge.position);
-                    }
+                    console.log('バッジの位置を更新しました:', badge.id, badge.position);
                 } else if (currentTouchedBadge === this) {
                     // タップ判定（移動量が少ない場合）
                     currentTouchedBadge = null;
@@ -3113,29 +3142,7 @@
                 // バッジがドロップされた場合
                 const badgeId = e.dataTransfer.getData('badgeId');
                 if (badgeId) {
-                    // 削除確認ダイアログを表示
-                    const badge = badges.find(b => b.id === parseInt(badgeId));
-                    if (badge) {
-                        const badgeName = badge.name || 'バッジ';
-                        if (confirm(`「${badgeName}」を削除してもよろしいですか？\nこの操作は取り消せません。`)) {
-                            deleteBadge(parseInt(badgeId));
-                        }
-                    }
-                }
-                
-                // タッチドラッグでドロップされた場合（タッチイベントから直接）
-                const touchedBadge = taskGrid.querySelector('.badge.dragging');
-                if (touchedBadge && !e.dataTransfer.getData('badgeId')) {
-                    const badgeIdNum = parseInt(touchedBadge.dataset.badgeId);
-                    if (badgeIdNum) {
-                        const badge = badges.find(b => b.id === badgeIdNum);
-                        if (badge) {
-                            const badgeName = badge.name || 'バッジ';
-                            if (confirm(`「${badgeName}」を削除してもよろしいですか？\nこの操作は取り消せません。`)) {
-                                deleteBadge(badgeIdNum);
-                            }
-                        }
-                    }
+                    deleteBadge(parseInt(badgeId));
                 }
                 
                 // 処理完了後にフラグをリセット
