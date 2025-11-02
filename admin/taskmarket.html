@@ -1780,6 +1780,7 @@
         <div class="header-left">
             <div class="logo">📋 Task Market</div>
             <button class="nav-button">ホーム</button>
+            <button class="nav-button">タスク</button>
             <button class="nav-button">プロジェクト</button>
         </div>
         <div class="header-right">
@@ -1806,6 +1807,17 @@
         <div class="main-board">
             <!-- タスクグリッド -->
             <div class="task-grid" id="taskGrid">
+                <!-- プルリフレッシュインジケーター -->
+                <div class="pull-refresh-indicator" id="pullRefreshIndicator">
+                    <div class="pull-refresh-spinner"></div>
+                    <span>更新中...</span>
+                </div>
+                
+                <!-- プルリフレッシュヒント（スマホ版のみ） -->
+                <div class="pull-refresh-hint" id="pullRefreshHint">
+                    「更新」は画面を下にひいてください
+                </div>
+                
                 <!-- 新規追加ボタン（左下に固定） -->
                 <button class="add-task-button" onclick="toggleTaskForm()">
                     +
