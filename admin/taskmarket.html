@@ -1301,21 +1301,32 @@
         @media (max-width: 430px) {
             .task-card .badge.attached {
                 position: absolute;
-                bottom: -56px; /* カードの下に密着（-48px(バッジの高さ) - 8px(余白)） */
-                left: 50%;
-                transform: translateX(-50%);
+                bottom: -56px !important; /* カードの下に密着（-48px(バッジの高さ) - 8px(余白)） */
+                left: 50% !important;
+                right: auto !important;
+                transform: translateX(-50%) !important;
                 margin: 0;
             }
 
             /* 複数のバッジがある場合、横方向に並べる */
-            .task-card .badge.attached:nth-child(2) {
-                left: calc(50% - 28px); /* 中央から左に28px（48px/2 + 8px/2） */
-                transform: translateX(0);
+            .task-card .badge.attached:nth-of-type(2) {
+                left: calc(50% - 28px) !important; /* 中央から左に28px（48px/2 + 8px/2） */
+                transform: translateX(0) !important;
             }
 
-            .task-card .badge.attached:nth-child(3) {
-                left: calc(50% + 28px); /* 中央から右に28px */
-                transform: translateX(0);
+            .task-card .badge.attached:nth-of-type(3) {
+                left: calc(50% + 28px) !important; /* 中央から右に28px */
+                transform: translateX(0) !important;
+            }
+
+            .task-card .badge.attached:nth-of-type(4) {
+                left: calc(50% - 84px) !important; /* さらに左に */
+                transform: translateX(0) !important;
+            }
+
+            .task-card .badge.attached:nth-of-type(5) {
+                left: calc(50% + 84px) !important; /* さらに右に */
+                transform: translateX(0) !important;
             }
         }
 
@@ -2613,6 +2624,21 @@
                             this.classList.add('selected');
                             selectedCard = this;
                             
+                            // ツールチップを表示（スマホ版）
+                            const tooltip = this.querySelector('.task-card-tooltip');
+                            if (tooltip && window.innerWidth <= 430) {
+                                tooltip.textContent = 'ダブルタップで詳細表示';
+                                tooltip.style.opacity = '1';
+                                tooltip.style.visibility = 'visible';
+                                // 3秒後に非表示
+                                setTimeout(() => {
+                                    if (tooltip && this.classList.contains('selected')) {
+                                        tooltip.style.opacity = '0';
+                                        tooltip.style.visibility = 'hidden';
+                                    }
+                                }, 3000);
+                            }
+                            
                             // 選択後のドラッグ開始判定は短時間（50ms）にする
                             touchTimeout = setTimeout(() => {
                                 if (this.classList.contains('selected') && selectedCard === this) {
@@ -2620,7 +2646,7 @@
                                     this.dataset.hasDragged = 'true';
                                     this.classList.add('dragging');
                                     this.style.transition = 'none';
-                                    this.style.zIndex = '1000';
+                                    this.style.zIndex = '999'; /* ゴミ箱より下にする */
                                     this.style.opacity = '0.8';
                                     this.style.transform += ' scale(1.05)';
                                 }
