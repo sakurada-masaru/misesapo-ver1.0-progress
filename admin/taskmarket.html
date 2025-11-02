@@ -2173,6 +2173,10 @@
                 }
             }
             
+            /* パネルが開いている時はヒントを非表示（初期状態は表示） */
+            .blind-panel.active ~ * .blind-panel-call-hint {
+                display: none !important;
+            }
             
             /* 左パネルハンドルのツールチップを非表示 */
             .slide-panel-handle .tooltip-text {
@@ -6220,9 +6224,9 @@
             } else {
                 // 開く
                 overlay.classList.add('active');
-                if (hint) hint.style.display = 'none'; // ヒントを非表示
                 setTimeout(function() {
                     panel.classList.add('active');
+                    if (hint) hint.style.display = 'none'; // ヒントを非表示
                 }, 10);
             }
         }
