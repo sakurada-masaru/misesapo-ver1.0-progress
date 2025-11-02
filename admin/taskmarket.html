@@ -1898,11 +1898,17 @@
             /* 固定ボタンのサイズ調整 */
             .add-task-button,
             .complete-button,
-            .add-badge-button,
-            .trash-bin {
+            .add-badge-button {
                 width: 48px;
                 height: 48px;
                 font-size: 24px;
+            }
+            
+            /* ゴミ箱のサイズ調整（SP版） */
+            .trash-bin {
+                width: 48px !important;
+                height: 48px !important;
+                font-size: 24px !important;
             }
             
             .complete-icon {
@@ -1960,7 +1966,11 @@
                 right: 16px !important;
                 top: auto !important;
                 left: auto !important;
-                z-index: 1001; /* カードのz-indexより上にして、常に上に表示 */
+                width: 48px !important;
+                height: 48px !important;
+                z-index: 1001 !important; /* カードのz-indexより上にして、常に上に表示 */
+                /* 完了ボタンと同じ位置（左下）に表示されないようにする */
+                display: block !important;
             }
 
             .trash-icon {
