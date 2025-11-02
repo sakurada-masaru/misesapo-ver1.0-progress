@@ -6018,16 +6018,21 @@
 
         // 初期化（ページロード時にも実行、スプラッシュ後に再実行される）
         setTimeout(function() {
-            // ゴミ箱を確実に1つだけ作成（重複を防ぐ）
-            const existingTrashBin = document.getElementById('trashBin');
-            if (!existingTrashBin) {
-                // ゴミ箱が存在しない場合のみ作成
-                const trashBin = document.createElement('div');
-                trashBin.className = 'trash-bin';
-                trashBin.id = 'trashBin';
-                trashBin.innerHTML = '<span class="trash-icon">🗑️</span><span class="tooltip-text">ドラッグ&ドロップで削除</span>';
-                document.body.appendChild(trashBin);
-            }
+            // ゴミ箱を全て削除してから再作成（重複を完全に防ぐ）
+            const allTrashBins = document.querySelectorAll('.trash-bin[id="trashBin"]');
+            allTrashBins.forEach(function(trashBin) {
+                trashBin.remove();
+            });
+            
+            // 右下に1つだけゴミ箱を作成
+            const trashBin = document.createElement('div');
+            trashBin.className = 'trash-bin';
+            trashBin.id = 'trashBin';
+            trashBin.innerHTML = '<span class="trash-icon">🗑️</span><span class="tooltip-text">ドラッグ&ドロップで削除</span>';
+            document.body.appendChild(trashBin);
+            
+            // setupTrashBinDropのフラグをリセット（新しいゴミ箱にイベントリスナーを設定するため）
+            trashBinHandlerSet = false;
             
             setupBadgeDragHandler(); // バッジドラッグハンドラーを設定
             setupTrashBinDrop(); // ゴミ箱のドロップ処理を初期化
