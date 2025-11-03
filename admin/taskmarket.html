@@ -7113,7 +7113,16 @@
             const windowWidth = window.innerWidth;
             const windowHeight = window.innerHeight;
             
-            if (menuButtonPosition && menuButtonPosition.left !== undefined && menuButtonPosition.top !== undefined) {
+            // 保存された位置が有効かチェック（異常に小さい値や負の値を排除）
+            const isValidPosition = menuButtonPosition && 
+                menuButtonPosition.left !== undefined && 
+                menuButtonPosition.top !== undefined &&
+                menuButtonPosition.left >= 0 && 
+                menuButtonPosition.top >= 0 &&
+                menuButtonPosition.left < windowWidth &&
+                menuButtonPosition.top < windowHeight;
+            
+            if (isValidPosition) {
                 // 保存された絶対位置（px）を使用
                 menuButton.style.position = 'fixed';
                 menuButton.style.left = menuButtonPosition.left + 'px';
@@ -7122,10 +7131,16 @@
                 menuButton.style.bottom = 'auto';
                 menuButton.style.transform = 'none';
             } else {
+                // 無効な位置データがある場合はリセット
+                if (menuButtonPosition) {
+                    console.warn('メニューボタンの位置データが無効です。画面中央にリセットします。', menuButtonPosition);
+                    menuButtonPosition = null;
+                }
+                
                 // デフォルト位置：画面中央
                 // transformを使わずに、left/topで直接計算
-                const centerX = (windowWidth / 2) - (menuButtonWidth / 2);
-                const centerY = (windowHeight / 2) - (menuButtonHeight / 2);
+                const centerX = Math.max(0, (windowWidth / 2) - (menuButtonWidth / 2));
+                const centerY = Math.max(0, (windowHeight / 2) - (menuButtonHeight / 2));
                 
                 menuButton.style.position = 'fixed';
                 menuButton.style.left = centerX + 'px';
@@ -7250,21 +7265,34 @@
                     if (!menuBtn) return;
                     
                     const rect = menuBtn.getBoundingClientRect();
-                    const left = parseFloat(menuBtn.style.left) || rect.left;
-                    const top = parseFloat(menuBtn.style.top) || rect.top;
+                    let left = parseFloat(menuBtn.style.left);
+                    let top = parseFloat(menuBtn.style.top);
                     
-                    menuButtonPosition = {
-                        left: left,
-                        top: top
-                    };
-                    saveMenuButtonPosition();
+                    // 値が無効な場合はgetBoundingClientRect()から取得
+                    if (isNaN(left) || left < 0 || left >= window.innerWidth) {
+                        left = rect.left;
+                    }
+                    if (isNaN(top) || top < 0 || top >= window.innerHeight) {
+                        top = rect.top;
+                    }
                     
-                    // position: fixedを再度確認
-                    menuBtn.style.position = 'fixed';
-                    menuBtn.style.left = left + 'px';
-                    menuBtn.style.top = top + 'px';
-                    menuBtn.style.right = 'auto';
-                    menuBtn.style.bottom = 'auto';
+                    // 値が有効な場合のみ保存
+                    if (left >= 0 && top >= 0 && left < window.innerWidth && top < window.innerHeight) {
+                        menuButtonPosition = {
+                            left: left,
+                            top: top
+                        };
+                        saveMenuButtonPosition();
+                        
+                        // position: fixedを再度確認
+                        menuBtn.style.position = 'fixed';
+                        menuBtn.style.left = left + 'px';
+                        menuBtn.style.top = top + 'px';
+                        menuBtn.style.right = 'auto';
+                        menuBtn.style.bottom = 'auto';
+                    } else {
+                        console.warn('メニューボタンの位置が無効です。保存をスキップします。', {left, top});
+                    }
                 }, 10);
             });
 
