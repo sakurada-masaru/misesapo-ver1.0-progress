@@ -1506,6 +1506,190 @@
             color: var(--color-text-secondary);
         }
 
+        /* メニューボタンスタイル */
+        .menu-button-container {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 10000;
+            cursor: move;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+
+        .menu-button {
+            position: relative;
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .menu-button-icon {
+            width: 64px;
+            height: 64px;
+            position: relative;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .menu-button-background {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 64px;
+            height: 64px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            z-index: 1;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .menu-button-container:hover .menu-button-background {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        /* メニューオーバーレイ */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-overlay.active {
+            display: flex;
+        }
+
+        .menu-circle {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        @media (max-width: 430px) {
+            .menu-circle {
+                width: 300px;
+                height: 300px;
+            }
+        }
+
+        .menu-background-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 500px;
+            height: 500px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            opacity: 0.9;
+            animation: menuExpandBackground 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @media (max-width: 430px) {
+            .menu-background-circle {
+                width: 300px;
+                height: 300px;
+            }
+        }
+
+        @keyframes menuExpandBackground {
+            0% {
+                transform: translate(-50%, -50%) scale(0.3);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.9;
+            }
+        }
+
+        .menu-items {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .menu-item {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: white;
+            border: 2px solid var(--color-primary);
+            border-radius: var(--border-radius-md);
+            color: var(--color-text-primary);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            white-space: nowrap;
+            cursor: pointer;
+            pointer-events: auto;
+            opacity: 0;
+            transition: all 0.3s ease;
+            animation: menuItemFadeIn 0.3s ease forwards;
+        }
+
+        .menu-item:hover {
+            background: var(--color-primary);
+            color: white;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        @keyframes menuItemFadeIn {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        @media (max-width: 430px) {
+            .menu-button-container {
+                width: 48px;
+                height: 48px;
+                top: 16px;
+                left: 16px;
+            }
+
+            .menu-button {
+                width: 48px;
+                height: 48px;
+            }
+
+            .menu-button-icon {
+                width: 48px;
+                height: 48px;
+            }
+
+            .menu-button-background {
+                width: 48px;
+                height: 48px;
+            }
+        }
+
         .form-group {
             margin-bottom: var(--spacing-md);
         }
@@ -2518,6 +2702,24 @@
                 <div style="text-align: center; padding: var(--spacing-xl); color: var(--color-text-secondary);">
                     <p>読み込み中...</p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- メニューボタン（自由移動可能） -->
+    <div class="menu-button-container" id="menuButtonContainer">
+        <div class="menu-button" id="menuButton">
+            <img src="images/ログ.svg" alt="メニュー" class="menu-button-icon">
+            <div class="menu-button-background" id="menuButtonBackground"></div>
+        </div>
+    </div>
+
+    <!-- 円形メニューオーバーレイ -->
+    <div class="menu-overlay" id="menuOverlay" onclick="closeMenuOnOverlay(event)">
+        <div class="menu-circle" id="menuCircle">
+            <div class="menu-background-circle" id="menuBackgroundCircle"></div>
+            <div class="menu-items" id="menuItems">
+                <!-- メニュー項目が動的に生成されます -->
             </div>
         </div>
     </div>
@@ -6933,6 +7135,273 @@
             return div.innerHTML;
         }
 
+        /* ========================================
+           🎛️ メニューボタン機能 (Menu Button)
+           ======================================== */
+
+        // メニューボタンの位置管理
+        let menuButtonPosition = { top: 24, left: 24 };
+        
+        // メニューの開閉状態
+        let isMenuOpen = false;
+
+        // メニュー項目の定義（順序：マイページ、リソース管理、アーカイブ、設定、リンク、バック、メディア、取説）
+        const menuItemsList = [
+            { id: 'mypage', label: 'マイページ', action: () => console.log('マイページ') },
+            { id: 'resource', label: 'リソース管理', action: () => toggleSlidePanel(2) },
+            { id: 'archive', label: 'アーカイブ', action: () => toggleSlidePanel(5) },
+            { id: 'settings', label: '設定', action: () => console.log('設定') },
+            { id: 'link', label: 'リンク', action: () => toggleSlidePanel(1) },
+            { id: 'back', label: 'バック', action: () => toggleSlidePanel(3) },
+            { id: 'media', label: 'メディア', action: () => toggleSlidePanel(4) },
+            { id: 'help', label: '取説', action: () => console.log('取説') }
+        ];
+
+        // メニューボタンの初期化
+        function initializeMenuButton() {
+            const container = document.getElementById('menuButtonContainer');
+            const menuButton = document.getElementById('menuButton');
+            if (!container || !menuButton) return;
+
+            // 保存された位置を読み込み
+            const savedPosition = localStorage.getItem('menuButtonPosition');
+            if (savedPosition) {
+                try {
+                    menuButtonPosition = JSON.parse(savedPosition);
+                    container.style.top = menuButtonPosition.top + 'px';
+                    container.style.left = menuButtonPosition.left + 'px';
+                } catch (e) {
+                    console.warn('メニューボタンの位置読み込みエラー:', e);
+                }
+            }
+
+            // PC版：ドラッグ&ドロップ
+            let isDragging = false;
+            let dragStartX = 0;
+            let dragStartY = 0;
+            let dragStartLeft = 0;
+            let dragStartTop = 0;
+            let lastClickTime = 0;
+            let lastClickTarget = null;
+
+            menuButton.addEventListener('mousedown', function(e) {
+                if (e.button !== 0) return; // 左クリックのみ
+                
+                // ダブルクリック判定
+                const currentTime = Date.now();
+                if (currentTime - lastClickTime < 300 && lastClickTarget === menuButton) {
+                    e.preventDefault();
+                    toggleMenu();
+                    return;
+                }
+                lastClickTime = currentTime;
+                lastClickTarget = menuButton;
+
+                isDragging = true;
+                dragStartX = e.clientX;
+                dragStartY = e.clientY;
+                dragStartLeft = parseInt(container.style.left) || menuButtonPosition.left;
+                dragStartTop = parseInt(container.style.top) || menuButtonPosition.top;
+                
+                menuButton.style.cursor = 'grabbing';
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', function(e) {
+                if (!isDragging) return;
+                
+                const deltaX = e.clientX - dragStartX;
+                const deltaY = e.clientY - dragStartY;
+                
+                const newLeft = Math.max(0, Math.min(dragStartLeft + deltaX, window.innerWidth - container.offsetWidth));
+                const newTop = Math.max(0, Math.min(dragStartTop + deltaY, window.innerHeight - container.offsetHeight));
+                
+                container.style.left = newLeft + 'px';
+                container.style.top = newTop + 'px';
+            });
+
+            document.addEventListener('mouseup', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    menuButton.style.cursor = 'move';
+                    
+                    // 位置を保存
+                    menuButtonPosition.left = parseInt(container.style.left);
+                    menuButtonPosition.top = parseInt(container.style.top);
+                    localStorage.setItem('menuButtonPosition', JSON.stringify(menuButtonPosition));
+                }
+            });
+
+            // SP版：タッチドラッグ
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let touchStartLeft = 0;
+            let touchStartTop = 0;
+            let isTouchDragging = false;
+            let touchStartTime = 0;
+
+            menuButton.addEventListener('touchstart', function(e) {
+                const touch = e.touches[0];
+                touchStartX = touch.clientX;
+                touchStartY = touch.clientY;
+                touchStartLeft = parseInt(container.style.left) || menuButtonPosition.left;
+                touchStartTop = parseInt(container.style.top) || menuButtonPosition.top;
+                touchStartTime = Date.now();
+                isTouchDragging = false;
+            }, { passive: true });
+
+            menuButton.addEventListener('touchmove', function(e) {
+                const touch = e.touches[0];
+                const deltaX = Math.abs(touch.clientX - touchStartX);
+                const deltaY = Math.abs(touch.clientY - touchStartY);
+                
+                if (deltaX > 5 || deltaY > 5) {
+                    isTouchDragging = true;
+                    e.preventDefault();
+                    
+                    const newLeft = Math.max(0, Math.min(touchStartLeft + (touch.clientX - touchStartX), window.innerWidth - container.offsetWidth));
+                    const newTop = Math.max(0, Math.min(touchStartTop + (touch.clientY - touchStartY), window.innerHeight - container.offsetHeight));
+                    
+                    container.style.left = newLeft + 'px';
+                    container.style.top = newTop + 'px';
+                }
+            }, { passive: false });
+
+            menuButton.addEventListener('touchend', function(e) {
+                const touchDuration = Date.now() - touchStartTime;
+                
+                // ダブルタップ判定（ドラッグしていない場合のみ）
+                if (!isTouchDragging && touchDuration < 300) {
+                    const currentTime = Date.now();
+                    if (currentTime - lastClickTime < 300 && lastClickTarget === menuButton) {
+                        e.preventDefault();
+                        toggleMenu();
+                        return;
+                    }
+                    lastClickTime = currentTime;
+                    lastClickTarget = menuButton;
+                }
+                
+                if (isTouchDragging) {
+                    // 位置を保存
+                    menuButtonPosition.left = parseInt(container.style.left);
+                    menuButtonPosition.top = parseInt(container.style.top);
+                    localStorage.setItem('menuButtonPosition', JSON.stringify(menuButtonPosition));
+                }
+                
+                isTouchDragging = false;
+            }, { passive: true });
+        }
+
+        // メニューの開閉
+        function toggleMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            const menuCircle = document.getElementById('menuCircle');
+            const menuButtonContainer = document.getElementById('menuButtonContainer');
+            
+            if (!overlay || !menuCircle || !menuButtonContainer) return;
+
+            if (isMenuOpen) {
+                closeMenu();
+            } else {
+                openMenu();
+            }
+        }
+
+        // メニューを開く
+        function openMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            const menuCircle = document.getElementById('menuCircle');
+            const menuItems = document.getElementById('menuItems');
+            const menuButtonContainer = document.getElementById('menuButtonContainer');
+            
+            if (!overlay || !menuCircle || !menuItems || !menuButtonContainer) return;
+
+            // メニューボタンの位置を取得
+            const buttonRect = menuButtonContainer.getBoundingClientRect();
+            const buttonCenterX = buttonRect.left + buttonRect.width / 2;
+            const buttonCenterY = buttonRect.top + buttonRect.height / 2;
+
+            // 画面中央方向を計算
+            const screenCenterX = window.innerWidth / 2;
+            const screenCenterY = window.innerHeight / 2;
+            
+            // ボタンが画面左半分か右半分かを判定
+            const isLeftSide = buttonCenterX < screenCenterX;
+            
+            // メニューの半径（PC: 250px, SP: 150px）
+            const radius = window.innerWidth <= 430 ? 150 : 250;
+            
+            // メニューサークルの位置を設定（メニューボタンの位置に）
+            menuCircle.style.left = buttonCenterX + 'px';
+            menuCircle.style.top = buttonCenterY + 'px';
+            menuCircle.style.transform = 'translate(-50%, -50%)';
+
+            // メニュー項目を生成
+            menuItems.innerHTML = '';
+            
+            const totalItems = menuItemsList.length;
+            menuItemsList.forEach((item, index) => {
+                // 角度を計算（時計回り/反時計回り）
+                // 画面中央方向を基準に配置
+                // 各項目の角度（0から360度に均等に配置）
+                const baseAngle = (index / totalItems) * Math.PI * 2;
+                
+                // 画面中央方向へのオフセット角度を計算
+                const centerAngle = Math.atan2(screenCenterY - buttonCenterY, screenCenterX - buttonCenterX);
+                
+                let finalAngle;
+                if (isLeftSide) {
+                    // 左側：時計回り（画面中央方向を基準に時計回り）
+                    finalAngle = centerAngle + baseAngle;
+                } else {
+                    // 右側：反時計回り（画面中央方向を基準に反時計回り）
+                    finalAngle = centerAngle - baseAngle;
+                }
+                
+                // 位置を計算
+                const x = Math.cos(finalAngle) * radius;
+                const y = Math.sin(finalAngle) * radius;
+                
+                const menuItem = document.createElement('div');
+                menuItem.className = 'menu-item';
+                menuItem.textContent = item.label;
+                menuItem.style.left = `calc(50% + ${x}px)`;
+                menuItem.style.top = `calc(50% + ${y}px)`;
+                menuItem.style.animationDelay = `${index * 0.05}s`;
+                menuItem.onclick = function(e) {
+                    e.stopPropagation();
+                    item.action();
+                    closeMenu();
+                };
+                
+                menuItems.appendChild(menuItem);
+            });
+
+            overlay.classList.add('active');
+            isMenuOpen = true;
+        }
+
+        // メニューを閉じる
+        function closeMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            if (!overlay) return;
+            
+            overlay.classList.remove('active');
+            isMenuOpen = false;
+        }
+
+        // オーバーレイクリックでメニューを閉じる
+        function closeMenuOnOverlay(event) {
+            const menuCircle = document.getElementById('menuCircle');
+            if (menuCircle && event.target === event.currentTarget) {
+                closeMenu();
+            }
+        }
+
+        // ESCキーでメニューを閉じる（既存のESCキーハンドラーに追加）
+        // 注意：既存のESCキーハンドラーが定義されている場合は、そちらで処理される
+
         // 初期化（ページロード時にも実行、スプラッシュ後に再実行される）
         setTimeout(async function() {
             // Firebaseからデータを読み込み（最優先）
@@ -6957,6 +7426,7 @@
             setupBadgeDragHandler(); // バッジドラッグハンドラーを設定
             setupTrashBinDrop(); // ゴミ箱のドロップ処理を初期化
             setupCompleteButtonDrop(); // 完了ボタンのドロップ処理を初期化
+            initializeMenuButton(); // メニューボタンを初期化
             // データ読み込み時に既にupdateTaskGrid()が呼ばれているため、重複を避ける
             // ただし、ゴミ箱作成後にUIを更新
             if (!document.getElementById('taskGrid').hasChildNodes() || document.getElementById('taskGrid').childElementCount === 0) {
@@ -7034,6 +7504,12 @@
         // ESCキーで開いているパネルを閉じる
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
+                // メニューを閉じる（最優先）
+                if (isMenuOpen) {
+                    closeMenu();
+                    return;
+                }
+                
                 // 詳細パネルを閉じる
                 const detailOverlay = document.getElementById('detailBoardOverlay');
                 if (detailOverlay && detailOverlay.classList.contains('active')) {
