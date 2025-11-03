@@ -1320,14 +1320,12 @@
             -webkit-user-select: none;
         }
 
-        /* PC版：自由に移動可能（タスクグリッド内） */
+        /* PC版：左上に固定、ドラッグ不可 */
         .menu-button-pc {
-            cursor: move;
-            touch-action: none;
-            position: absolute;
+            top: 130px; /* ヘッダー（60px）の下、余白20px + 50px下に配置 */
             left: 24px;
-            top: 24px;
-            z-index: 10;
+            cursor: pointer;
+            touch-action: none;
         }
 
         /* SP版：自由に移動可能 */
@@ -2496,12 +2494,6 @@
         <div class="main-board">
             <!-- タスクグリッド -->
             <div class="task-grid" id="taskGrid">
-                <!-- PC版メニューボタン（タスクグリッド内で移動可能） -->
-                <div class="menu-button menu-button-pc" id="menuButtonPC" draggable="true" data-menu-button="true">
-                    <img src="images/menicon.svg" alt="メニュー" class="menu-button-icon">
-                    <span class="tooltip-text">ダブルクリックでメニュー展開</span>
-                </div>
-                
                 <!-- プルリフレッシュインジケーター -->
                 <div class="pull-refresh-indicator" id="pullRefreshIndicator">
                     <div class="pull-refresh-spinner"></div>
@@ -2589,9 +2581,15 @@
         </div>
     </div>
 
+    <!-- PC版メニューボタン（タスクグリッド左上に固定） -->
+    <div class="menu-button menu-button-pc" id="menuButtonPC" data-menu-button="true">
+        <img src="images/menu.svg" alt="メニュー" class="menu-button-icon">
+        <span class="tooltip-text">ダブルクリックでメニュー展開</span>
+    </div>
+
     <!-- SP版メニューボタン（自由に移動可能） -->
     <div class="menu-button menu-button-sp" id="menuButtonSP" draggable="true" data-menu-button="true">
-        <img src="images/menicon.svg" alt="メニュー" class="menu-button-icon">
+        <img src="images/menu.svg" alt="メニュー" class="menu-button-icon">
         <span class="tooltip-text">ダブルタップでメニュー展開</span>
     </div>
     
@@ -3112,7 +3110,6 @@
                     timeRecords: timeRecords,
                     externalLinks: externalLinks,
                     menuButtonPositionSP: menuButtonPositionSP,
-                    menuButtonPositionPC: menuButtonPositionPC,
                     _updatedAt: Date.now()
                 };
 
@@ -3145,7 +3142,6 @@
                         if (data.timeRecords) timeRecords = data.timeRecords;
                         if (data.externalLinks) externalLinks = data.externalLinks;
                         if (data.menuButtonPositionSP) menuButtonPositionSP = data.menuButtonPositionSP;
-                        if (data.menuButtonPositionPC) menuButtonPositionPC = data.menuButtonPositionPC;
                         
                         // リアルタイム更新を設定
                         setupRealtimeListener();
@@ -3178,15 +3174,9 @@
                 if (savedExternalLinks) externalLinks = JSON.parse(savedExternalLinks);
                 
                 // SP版メニューボタンの位置も読み込み
-                const savedMenuButtonPositionSP = localStorage.getItem('menuButtonPositionSP');
-                if (savedMenuButtonPositionSP) {
-                    menuButtonPositionSP = JSON.parse(savedMenuButtonPositionSP);
-                }
-                
-                // PC版メニューボタンの位置も読み込み
-                const savedMenuButtonPositionPC = localStorage.getItem('menuButtonPositionPC');
-                if (savedMenuButtonPositionPC) {
-                    menuButtonPositionPC = JSON.parse(savedMenuButtonPositionPC);
+                const savedMenuButtonPosition = localStorage.getItem('menuButtonPositionSP');
+                if (savedMenuButtonPosition) {
+                    menuButtonPositionSP = JSON.parse(savedMenuButtonPosition);
                 }
 
                 console.log('localStorageからタスクマーケットデータを読み込みました');
@@ -3224,7 +3214,6 @@
                         if (data.timeRecords) timeRecords = data.timeRecords;
                         if (data.externalLinks) externalLinks = data.externalLinks;
                         if (data.menuButtonPositionSP) menuButtonPositionSP = data.menuButtonPositionSP;
-                        if (data.menuButtonPositionPC) menuButtonPositionPC = data.menuButtonPositionPC;
                         
                         // UIを更新
                         updateTaskGrid();
@@ -6947,132 +6936,20 @@
 
         // SP版メニューボタンの位置データ（Firebaseに保存）
         let menuButtonPositionSP = null;
-        let menuButtonPositionPC = null;
 
-        // PC版メニューボタンの位置を保存
-        function saveMenuButtonPositionPC() {
-            if (menuButtonPositionPC) {
-                localStorage.setItem('menuButtonPositionPC', JSON.stringify(menuButtonPositionPC));
-                // Firebaseにも保存
-                if (firebaseInitialized && db) {
-                    db.collection('taskMarket').doc('main').update({
-                        menuButtonPositionPC: menuButtonPositionPC
-                    }).catch(err => {
-                        console.warn('メニューボタン位置の保存エラー:', err);
-                    });
-                }
-            }
-        }
-
-        // PC版メニューボタンの位置を読み込み
-        function loadMenuButtonPositionPC() {
-            // Firebaseから読み込み
-            if (firebaseInitialized && db) {
-                db.collection('taskMarket').doc('main').get().then(doc => {
-                    if (doc.exists && doc.data().menuButtonPositionPC) {
-                        menuButtonPositionPC = doc.data().menuButtonPositionPC;
-                        return;
-                    }
-                    // localStorageから読み込み
-                    const saved = localStorage.getItem('menuButtonPositionPC');
-                    if (saved) {
-                        menuButtonPositionPC = JSON.parse(saved);
-                    }
-                }).catch(err => {
-                    console.warn('メニューボタン位置の読み込みエラー:', err);
-                    // localStorageから読み込み
-                    const saved = localStorage.getItem('menuButtonPositionPC');
-                    if (saved) {
-                        menuButtonPositionPC = JSON.parse(saved);
-                    }
-                });
-            } else {
-                // localStorageから読み込み
-                const saved = localStorage.getItem('menuButtonPositionPC');
-                if (saved) {
-                    menuButtonPositionPC = JSON.parse(saved);
-                }
-            }
-        }
-
-        // PC版メニューボタンの初期化（タスクグリッド内でのみ移動可能）
+        // PC版メニューボタンの初期化（タスクグリッド左上に固定）
         function initMenuButtonPC() {
             const menuButtonPC = document.getElementById('menuButtonPC');
             const circularMenu = document.getElementById('circularMenu');
             const taskGrid = document.getElementById('taskGrid');
             
             if (!menuButtonPC || !circularMenu || !taskGrid) {
-                console.warn('PC版メニューボタンの初期化に失敗: 必要な要素が見つかりません', {
-                    menuButtonPC: !!menuButtonPC,
-                    circularMenu: !!circularMenu,
-                    taskGrid: !!taskGrid,
-                    menuButtonPCElement: menuButtonPC,
-                    menuButtonPCStyle: menuButtonPC ? window.getComputedStyle(menuButtonPC).display : 'N/A',
-                    menuButtonPCVisibility: menuButtonPC ? window.getComputedStyle(menuButtonPC).visibility : 'N/A'
-                });
+                console.warn('PC版メニューボタンの初期化に失敗: 必要な要素が見つかりません');
                 return;
             }
             
-            // PC版の場合のみ表示を確実にする
-            if (window.innerWidth > 430) {
-                menuButtonPC.style.display = 'flex';
-                menuButtonPC.style.visibility = 'visible';
-                menuButtonPC.style.opacity = '1';
-            }
-            
-            // メニューボタンがtaskGrid内にあることを確認（HTMLでは既にtaskGrid内に配置されている）
-            if (menuButtonPC.parentElement !== taskGrid) {
-                taskGrid.appendChild(menuButtonPC);
-            }
-            
-            const menuButtonWidth = 56; // メニューボタンの幅
-            const menuButtonHeight = 56; // メニューボタンの高さ
-            const gridRect = taskGrid.getBoundingClientRect();
-            const gridWidth = taskGrid.offsetWidth;
-            const gridHeight = Math.max(800, taskGrid.offsetHeight);
-            
-            // 保存された位置が有効かチェック（タスクグリッド内での相対位置）
-            const isValidPosition = menuButtonPositionPC && 
-                menuButtonPositionPC.left !== undefined && 
-                menuButtonPositionPC.top !== undefined &&
-                menuButtonPositionPC.left >= 0 && 
-                menuButtonPositionPC.top >= 0 &&
-                menuButtonPositionPC.left < gridWidth &&
-                menuButtonPositionPC.top < gridHeight;
-            
-            if (isValidPosition) {
-                // 保存された相対位置（タスクグリッド内）を使用
-                menuButtonPC.style.position = 'absolute';
-                menuButtonPC.style.left = menuButtonPositionPC.left + 'px';
-                menuButtonPC.style.top = menuButtonPositionPC.top + 'px';
-                menuButtonPC.style.right = 'auto';
-                menuButtonPC.style.bottom = 'auto';
-                menuButtonPC.style.transform = 'none';
-            } else {
-                // 無効な位置データがある場合はリセット
-                if (menuButtonPositionPC) {
-                    console.warn('PC版メニューボタンの位置データが無効です。タスクグリッド左上にリセットします。', menuButtonPositionPC);
-                    menuButtonPositionPC = null;
-                }
-                
-                // デフォルト位置：タスクグリッド内の左上
-                const defaultX = 24;
-                const defaultY = 24;
-                
-                menuButtonPC.style.position = 'absolute';
-                menuButtonPC.style.left = defaultX + 'px';
-                menuButtonPC.style.top = defaultY + 'px';
-                menuButtonPC.style.right = 'auto';
-                menuButtonPC.style.bottom = 'auto';
-                menuButtonPC.style.transform = 'none';
-                
-                // 初期位置を保存（タスクグリッド内での相対位置）
-                menuButtonPositionPC = {
-                    left: defaultX,
-                    top: defaultY
-                };
-                saveMenuButtonPositionPC();
-            }
+            // タスクグリッド左上に固定（すでにCSSで固定されている）
+            // PC版はドラッグ不可なので、位置管理は不要
             
             // 表示を確実にする
             if (window.innerWidth > 430) {
@@ -7080,135 +6957,9 @@
                 menuButtonPC.style.visibility = 'visible';
             }
             
-            // PC版：ドラッグ&ドロップ
-            let isDragging = false;
-            let dragStartX = 0;
-            let dragStartY = 0;
-            let startLeft = 0;
-            let startTop = 0;
-            let hasDragged = false;
-            
-            menuButtonPC.addEventListener('dragstart', function(e) {
-                isDragging = true;
-                hasDragged = false;
-                const rect = this.getBoundingClientRect();
-                const gridRect = taskGrid.getBoundingClientRect();
-                dragStartX = e.clientX;
-                dragStartY = e.clientY;
-                // タスクグリッド内での相対位置を開始位置として記録
-                startLeft = rect.left - gridRect.left;
-                startTop = rect.top - gridRect.top;
-                this.style.opacity = '0.7';
-                e.dataTransfer.effectAllowed = 'move';
-            });
-            
-            menuButtonPC.addEventListener('drag', function(e) {
-                if (!isDragging) return;
-                hasDragged = true;
-                
-                // メニューボタンがDOMに存在することを確認
-                if (!document.getElementById('menuButtonPC') || !taskGrid) {
-                    isDragging = false;
-                    return;
-                }
-                
-                // メニューボタンがtaskGrid内にあることを確認
-                if (this.parentElement !== taskGrid) {
-                    // taskGrid内に移動
-                    const currentLeft = parseFloat(this.style.left) || 0;
-                    const currentTop = parseFloat(this.style.top) || 0;
-                    taskGrid.appendChild(this);
-                    this.style.position = 'absolute';
-                    this.style.left = currentLeft + 'px';
-                    this.style.top = currentTop + 'px';
-                }
-                
-                const gridRect = taskGrid.getBoundingClientRect();
-                const deltaX = e.clientX - dragStartX;
-                const deltaY = e.clientY - dragStartY;
-                
-                let newLeft = startLeft + deltaX;
-                let newTop = startTop + deltaY;
-                
-                // タスクグリッドの境界内に制限
-                const maxX = taskGrid.offsetWidth - this.offsetWidth;
-                const maxY = Math.max(800, taskGrid.offsetHeight) - this.offsetHeight;
-                newLeft = Math.max(0, Math.min(newLeft, maxX));
-                newTop = Math.max(0, Math.min(newTop, maxY));
-                
-                // position: absoluteを明示的に設定（taskGrid内での相対位置）
-                this.style.position = 'absolute';
-                this.style.left = newLeft + 'px';
-                this.style.top = newTop + 'px';
-                this.style.right = 'auto';
-                this.style.bottom = 'auto';
-                this.style.display = 'flex';
-                this.style.visibility = 'visible';
-                
-                // 円形メニューの位置も更新
-                updateCircularMenuPositionPC();
-            });
-            
-            menuButtonPC.addEventListener('dragend', function(e) {
-                if (!isDragging) return;
-                isDragging = false;
-                
-                // メニューボタンがDOMに存在することを確認
-                const menuButtonElement = document.getElementById('menuButtonPC');
-                if (!menuButtonElement || !taskGrid) {
-                    console.error('PC版メニューボタンまたはタスクグリッドが見つかりません。再作成します。');
-                    if (menuButtonElement) {
-                        // メニューボタンを再作成
-                        const newMenuButton = document.createElement('div');
-                        newMenuButton.className = 'menu-button menu-button-pc';
-                        newMenuButton.id = 'menuButtonPC';
-                        newMenuButton.draggable = true;
-                        newMenuButton.dataset.menuButton = 'true';
-                        newMenuButton.innerHTML = '<img src="images/menicon.svg" alt="メニュー" class="menu-button-icon"><span class="tooltip-text">ダブルクリックでメニュー展開</span>';
-                        taskGrid.appendChild(newMenuButton);
-                        // メニューボタンを再初期化
-                        initMenuButtonPC();
-                    }
-                    return;
-                }
-                
-                this.style.opacity = '1';
-                
-                // 位置を保存（タスクグリッド内での相対位置）
-                // 少し遅延させて位置を取得（ブラウザのレンダリング完了を待つ）
-                setTimeout(() => {
-                    const menuBtn = document.getElementById('menuButtonPC');
-                    if (!menuBtn || !taskGrid) return;
-                    
-                    // タスクグリッド内での相対位置を取得
-                    const left = parseFloat(menuBtn.style.left) || 0;
-                    const top = parseFloat(menuBtn.style.top) || 0;
-                    
-                    const gridWidth = taskGrid.offsetWidth;
-                    const gridHeight = Math.max(800, taskGrid.offsetHeight);
-                    
-                    // 値が有効な場合のみ保存（タスクグリッド内の範囲内）
-                    if (left >= 0 && top >= 0 && left < gridWidth && top < gridHeight) {
-                        menuButtonPositionPC = {
-                            left: left,
-                            top: top
-                        };
-                        saveMenuButtonPositionPC();
-                        
-                        // position: absoluteを再度確認（taskGrid内での相対位置）
-                        menuBtn.style.position = 'absolute';
-                        menuBtn.style.left = left + 'px';
-                        menuBtn.style.top = top + 'px';
-                        menuBtn.style.right = 'auto';
-                        menuBtn.style.bottom = 'auto';
-                    } else {
-                        console.warn('PC版メニューボタンの位置が無効です。保存をスキップします。', {left, top, gridWidth, gridHeight});
-                    }
-                }, 10);
-            });
-            
             // ダブルクリックでメニュー展開
             let clickTimeout = null;
+            let hasDragged = false;
             
             menuButtonPC.addEventListener('click', function(e) {
                 if (hasDragged) {
@@ -7228,7 +6979,7 @@
                 }
             });
             
-            // 円形メニューの位置を更新
+            // 円形メニューの位置を更新（PC版は固定位置）
             updateCircularMenuPositionPC();
         }
 
@@ -7378,7 +7129,7 @@
                     newMenuButton.id = 'menuButtonSP';
                     newMenuButton.draggable = true;
                     newMenuButton.dataset.menuButton = 'true';
-                    newMenuButton.innerHTML = '<img src="images/menicon.svg" alt="メニュー" class="menu-button-icon"><span class="tooltip-text">ダブルタップでメニュー展開</span>';
+                    newMenuButton.innerHTML = '<img src="images/menu.svg" alt="メニュー" class="menu-button-icon"><span class="tooltip-text">ダブルタップでメニュー展開</span>';
                     document.body.appendChild(newMenuButton);
                     // メニューボタンを再初期化
                     initMenuButtonSP();
@@ -7900,34 +7651,20 @@
                         left: rect.left,
                         top: rect.top
                     };
-                    menuButtonPositionSP = currentPosition;
-                }
-                
-                // PC版メニューボタンの現在位置を取得
-                const menuButtonPC = document.getElementById('menuButtonPC');
-                if (menuButtonPC) {
-                    const rect = menuButtonPC.getBoundingClientRect();
-                    const currentPosition = {
-                        left: rect.left,
-                        top: rect.top
-                    };
                     
                     // 値が有効な場合のみ保存
                     if (currentPosition.left >= 0 && currentPosition.top >= 0 && 
                         currentPosition.left < window.innerWidth && currentPosition.top < window.innerHeight) {
-                        menuButtonPositionPC = currentPosition;
+                        menuButtonPositionSP = currentPosition;
+                        await saveTaskMarketData();
+                        alert('✅ 現在の状態をFirebaseに保存しました\n\nメニューボタン位置（SP版）: ' + JSON.stringify(currentPosition));
+                        console.log('✅ 保存完了:', { menuButtonPositionSP: currentPosition });
                     } else {
-                        alert('⚠️ PC版メニューボタンの位置が無効です');
+                        alert('⚠️ メニューボタンの位置が無効です\n画面中央にリセットします');
+                        resetMenuButtonPosition();
                     }
-                }
-                
-                // 両方の位置を保存
-                if (menuButtonPositionSP || menuButtonPositionPC) {
-                    await saveTaskMarketData();
-                    alert('✅ 現在の状態をFirebaseに保存しました\n\nメニューボタン位置（SP版）: ' + (menuButtonPositionSP ? JSON.stringify(menuButtonPositionSP) : 'なし') + '\nメニューボタン位置（PC版）: ' + (menuButtonPositionPC ? JSON.stringify(menuButtonPositionPC) : 'なし'));
-                    console.log('✅ 保存完了:', { menuButtonPositionSP, menuButtonPositionPC });
                 } else {
-                    alert('⚠️ メニューボタンが見つかりません');
+                    alert('⚠️ SP版メニューボタンが見つかりません');
                 }
             } catch (error) {
                 console.error('❌ 保存エラー:', error);
@@ -7935,27 +7672,23 @@
             }
         }
         
-        // メニューボタン位置をリセット（PC版・SP版両方）
+        // メニューボタン位置をリセット（SP版のみ）
         function resetMenuButtonPosition() {
             menuButtonPositionSP = null;
-            menuButtonPositionPC = null;
             localStorage.removeItem('menuButtonPositionSP');
-            localStorage.removeItem('menuButtonPositionPC');
             
             // Firebaseからも削除
             if (firebaseInitialized && db) {
                 db.collection('taskMarket').doc('main').update({
-                    menuButtonPositionSP: firebase.firestore.FieldValue.delete(),
-                    menuButtonPositionPC: firebase.firestore.FieldValue.delete()
+                    menuButtonPositionSP: firebase.firestore.FieldValue.delete()
                 }).catch(err => {
                     console.warn('Firebase削除エラー:', err);
                 });
             }
             
-            // PC版とSP版の両方を再初期化
-            initMenuButtonPC();
+            // 画面中央にリセット（SP版のみ）
             initMenuButtonSP();
-            alert('✅ メニューボタン位置をリセットしました');
+            alert('✅ メニューボタン位置を画面中央にリセットしました');
             console.log('✅ メニューボタン位置をリセット');
         }
         
@@ -7986,37 +7719,8 @@
                     return;
                 }
                 
-                // Firebaseのデータを削除
                 await db.collection('taskMarket').doc('main').delete();
-                
-                // localStorageもクリア（オプション）
-                localStorage.removeItem('taskMarketTasks');
-                localStorage.removeItem('taskMarketBadges');
-                localStorage.removeItem('taskMarketTaskBadges');
-                localStorage.removeItem('timeRecords');
-                localStorage.removeItem('externalLinks');
-                localStorage.removeItem('menuButtonPositionSP');
-                localStorage.removeItem('menuButtonPositionPC');
-                
-                // メモリ上のデータもリセット
-                tasks = [];
-                badges = [];
-                taskBadges = {};
-                timeRecords = [];
-                externalLinks = [];
-                menuButtonPositionSP = null;
-                menuButtonPositionPC = null;
-                // UIを更新
-                updateTaskGrid();
-                updateBadges();
-                updateLinkIconGrid();
-                updateArchivePanel();
-                
-                // メニューボタンの位置もリセット
-                initMenuButtonPC();
-                initMenuButtonSP();
-                
-                alert('✅ Firebaseのデータをクリアしました\n\n以下のデータが削除されました：\n- タスク\n- バッジ\n- タイムレコード\n- 外部リンク\n- メニューボタンの位置\n\nlocalStorageもクリアされました。\nページをリロードすると初期状態に戻ります。');
+                alert('✅ Firebaseのデータをクリアしました');
                 console.log('✅ Firebaseデータをクリア');
                 
                 // ページをリロード
@@ -8063,142 +7767,10 @@
             
             // SP版メニューボタンの位置を読み込み
             await loadMenuButtonPositionSP();
-            loadMenuButtonPositionPC();
             
-            // PC版とSP版のメニューボタンをそれぞれ初期化（DOMが完全に読み込まれた後に実行）
-            // DOMContentLoadedまたはwindow.onloadを待つ
-            function initMenuButtons() {
-                // まず、taskGrid内のすべての要素を確認
-                const taskGrid = document.getElementById('taskGrid');
-                if (!taskGrid) {
-                    console.error('❌ taskGridが見つかりません');
-                    return;
-                }
-                
-                console.log('🔍 taskGrid内容確認:', {
-                    taskGridExists: !!taskGrid,
-                    taskGridChildren: taskGrid.children.length,
-                    taskGridChildrenArray: Array.from(taskGrid.children).map(el => ({
-                        tagName: el.tagName,
-                        id: el.id,
-                        className: el.className,
-                        innerHTML: el.innerHTML.substring(0, 50)
-                    }))
-                });
-                
-                // querySelectorも試す（IDが正しくない場合の対策）
-                const menuButtonPC = document.getElementById('menuButtonPC') || document.querySelector('.menu-button-pc') || taskGrid.querySelector('.menu-button-pc');
-                const circularMenu = document.getElementById('circularMenu');
-                
-                console.log('🔍 メニューボタン要素検索:', {
-                    menuButtonPCById: !!document.getElementById('menuButtonPC'),
-                    menuButtonPCByQuery: !!document.querySelector('.menu-button-pc'),
-                    menuButtonPCByTaskGrid: !!taskGrid.querySelector('.menu-button-pc'),
-                    menuButtonPC: !!menuButtonPC,
-                    circularMenu: !!circularMenu,
-                    taskGrid: !!taskGrid,
-                    windowWidth: window.innerWidth,
-                    allMenuButtons: document.querySelectorAll('.menu-button').length,
-                    allMenuButtonsInTaskGrid: taskGrid.querySelectorAll('.menu-button').length
-                });
-                
-                // menuButtonPCが見つからない場合、taskGrid内を詳しく調べる
-                if (!menuButtonPC) {
-                    console.error('❌ menuButtonPCが見つかりません。taskGrid内を詳しく調査:');
-                    const allElements = taskGrid.querySelectorAll('*');
-                    console.log('taskGrid内の全要素:', allElements.length);
-                    allElements.forEach((el, index) => {
-                        if (el.id === 'menuButtonPC' || el.classList.contains('menu-button-pc')) {
-                            console.log(`✅ メニューボタン発見 (要素${index}):`, {
-                                id: el.id,
-                                className: el.className,
-                                tagName: el.tagName,
-                                display: window.getComputedStyle(el).display,
-                                visibility: window.getComputedStyle(el).visibility
-                            });
-                        }
-                    });
-                }
-                
-                if (menuButtonPC && circularMenu && taskGrid) {
-                    console.log('✅ メニューボタン初期化: 要素が見つかりました', {
-                        menuButtonPCId: menuButtonPC.id,
-                        menuButtonPCClass: menuButtonPC.className,
-                        menuButtonPCDisplay: window.getComputedStyle(menuButtonPC).display
-                    });
-                    initMenuButtonPC();
-                    initMenuButtonSP();
-                    } else {
-                    console.warn('⚠️ メニューボタン初期化をスキップ: 要素がまだ見つかりません', {
-                        menuButtonPC: !!menuButtonPC,
-                        circularMenu: !!circularMenu,
-                        taskGrid: !!taskGrid,
-                        allMenuButtons: document.querySelectorAll('.menu-button').length,
-                        taskGridChildren: taskGrid ? taskGrid.children.length : 0,
-                        taskGridHTML: taskGrid ? taskGrid.innerHTML.substring(0, 500) : 'N/A'
-                    });
-                    
-                    // menuButtonPCが見つからない場合、手動で作成を試みる
-                    if (!menuButtonPC && taskGrid) {
-                        console.log('🔧 menuButtonPCが見つからないため、手動で作成を試みます');
-                        const newMenuButtonPC = document.createElement('div');
-                        newMenuButtonPC.className = 'menu-button menu-button-pc';
-                        newMenuButtonPC.id = 'menuButtonPC';
-                        newMenuButtonPC.draggable = true;
-                        newMenuButtonPC.dataset.menuButton = 'true';
-                        newMenuButtonPC.innerHTML = '<img src="images/menicon.svg" alt="メニュー" class="menu-button-icon"><span class="tooltip-text">ダブルクリックでメニュー展開</span>';
-                        taskGrid.insertBefore(newMenuButtonPC, taskGrid.firstChild);
-                        console.log('✅ menuButtonPCを手動で作成しました');
-                        // 作成したボタンで初期化を再試行
-                        setTimeout(() => {
-                            initMenuButtonPC();
-                            initMenuButtonSP();
-                        }, 100);
-                        return;
-                    }
-                    // もう一度試す（最大5回）
-                    let retryCount = 0;
-                    const maxRetries = 5;
-                    const retryInterval = setInterval(() => {
-                        retryCount++;
-                        // querySelectorも試す
-                        const retryMenuButtonPC = document.getElementById('menuButtonPC') || document.querySelector('.menu-button-pc');
-                        const retryCircularMenu = document.getElementById('circularMenu');
-                        const retryTaskGrid = document.getElementById('taskGrid');
-                        
-                        if (retryMenuButtonPC && retryCircularMenu && retryTaskGrid) {
-                            console.log(`✅ メニューボタン初期化: リトライ${retryCount}回目で成功`);
-                            clearInterval(retryInterval);
-                            // PC版の場合のみ表示を確実にする
-                            if (window.innerWidth > 430 && retryMenuButtonPC) {
-                                retryMenuButtonPC.style.display = 'flex';
-                                retryMenuButtonPC.style.visibility = 'visible';
-                                retryMenuButtonPC.style.opacity = '1';
-                            }
-                            initMenuButtonPC();
-                            initMenuButtonSP();
-                        } else if (retryCount >= maxRetries) {
-                            console.error('❌ メニューボタン初期化: 最大リトライ回数に達しました', {
-                                menuButtonPC: !!retryMenuButtonPC,
-                                circularMenu: !!retryCircularMenu,
-                                taskGrid: !!retryTaskGrid,
-                                allMenuButtons: document.querySelectorAll('.menu-button').length,
-                                taskGridChildren: retryTaskGrid ? retryTaskGrid.children.length : 0,
-                                taskGridHTML: retryTaskGrid ? retryTaskGrid.innerHTML.substring(0, 200) : 'N/A'
-                            });
-                            clearInterval(retryInterval);
-                        }
-                    }, 200);
-                }
-            }
-            
-            // DOMが完全に読み込まれた後に実行
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initMenuButtons);
-            } else {
-                // 既に読み込まれている場合は少し待ってから実行
-                setTimeout(initMenuButtons, 100);
-            }
+            // PC版とSP版のメニューボタンをそれぞれ初期化
+            initMenuButtonPC();
+            initMenuButtonSP();
             
             // ゴミ箱を全て削除してから再作成（重複を完全に防ぐ）
             const allTrashBins = document.querySelectorAll('.trash-bin[id="trashBin"]');
