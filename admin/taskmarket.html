@@ -5308,6 +5308,14 @@
                 if (isProcessing) return;
                 isProcessing = true;
                 
+                // メニューボタンがドロップされた場合は削除しない
+                const draggedElement = e.target || document.querySelector('.dragging');
+                const menuButton = document.getElementById('menuButton');
+                if (menuButton && (draggedElement === menuButton || draggedElement === menuButton || draggedElement.closest && draggedElement.closest('.menu-button'))) {
+                    isProcessing = false;
+                    return;
+                }
+                
                 // タスクカードがドロップされた場合
                 const taskGrid = document.getElementById('taskGrid');
                 const draggedCard = taskGrid.querySelector('.task-card.dragging');
