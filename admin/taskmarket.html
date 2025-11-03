@@ -7387,21 +7387,38 @@
                     // 位置を保存（絶対位置（px）で保存）
                     // 少し遅延させて位置を取得（ブラウザのレンダリング完了を待つ）
                     setTimeout(() => {
-                        const left = parseFloat(this.style.left) || this.getBoundingClientRect().left;
-                        const top = parseFloat(this.style.top) || this.getBoundingClientRect().top;
+                        const menuBtn = document.getElementById('menuButton');
+                        if (!menuBtn) return;
                         
-                        menuButtonPosition = {
-                            left: left,
-                            top: top
-                        };
-                        saveMenuButtonPosition();
+                        let left = parseFloat(menuBtn.style.left);
+                        let top = parseFloat(menuBtn.style.top);
+                        const rect = menuBtn.getBoundingClientRect();
                         
-                        // position: fixedを明示的に設定
-                        this.style.position = 'fixed';
-                        this.style.left = left + 'px';
-                        this.style.top = top + 'px';
-                        this.style.right = 'auto';
-                        this.style.bottom = 'auto';
+                        // 値が無効な場合はgetBoundingClientRect()から取得
+                        if (isNaN(left) || left < 0 || left >= window.innerWidth) {
+                            left = rect.left;
+                        }
+                        if (isNaN(top) || top < 0 || top >= window.innerHeight) {
+                            top = rect.top;
+                        }
+                        
+                        // 値が有効な場合のみ保存
+                        if (left >= 0 && top >= 0 && left < window.innerWidth && top < window.innerHeight) {
+                            menuButtonPosition = {
+                                left: left,
+                                top: top
+                            };
+                            saveMenuButtonPosition();
+                            
+                            // position: fixedを明示的に設定
+                            menuBtn.style.position = 'fixed';
+                            menuBtn.style.left = left + 'px';
+                            menuBtn.style.top = top + 'px';
+                            menuBtn.style.right = 'auto';
+                            menuBtn.style.bottom = 'auto';
+                        } else {
+                            console.warn('メニューボタンの位置が無効です。保存をスキップします。', {left, top});
+                        }
                     }, 10);
                 } else if (!hasTouchDragged) {
                     // タップでダブルタップ判定
