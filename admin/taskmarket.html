@@ -7005,9 +7005,19 @@
                 console.warn('PC版メニューボタンの初期化に失敗: 必要な要素が見つかりません', {
                     menuButtonPC: !!menuButtonPC,
                     circularMenu: !!circularMenu,
-                    taskGrid: !!taskGrid
+                    taskGrid: !!taskGrid,
+                    menuButtonPCElement: menuButtonPC,
+                    menuButtonPCStyle: menuButtonPC ? window.getComputedStyle(menuButtonPC).display : 'N/A',
+                    menuButtonPCVisibility: menuButtonPC ? window.getComputedStyle(menuButtonPC).visibility : 'N/A'
                 });
                 return;
+            }
+            
+            // PC版の場合のみ表示を確実にする
+            if (window.innerWidth > 430) {
+                menuButtonPC.style.display = 'flex';
+                menuButtonPC.style.visibility = 'visible';
+                menuButtonPC.style.opacity = '1';
             }
             
             // メニューボタンがtaskGrid内にあることを確認（HTMLでは既にtaskGrid内に配置されている）
@@ -8058,39 +8068,66 @@
             // PC版とSP版のメニューボタンをそれぞれ初期化（DOMが完全に読み込まれた後に実行）
             // DOMContentLoadedまたはwindow.onloadを待つ
             function initMenuButtons() {
-                const menuButtonPC = document.getElementById('menuButtonPC');
+                // querySelectorも試す（IDが正しくない場合の対策）
+                const menuButtonPC = document.getElementById('menuButtonPC') || document.querySelector('.menu-button-pc');
                 const circularMenu = document.getElementById('circularMenu');
                 const taskGrid = document.getElementById('taskGrid');
                 
+                console.log('🔍 メニューボタン要素検索:', {
+                    menuButtonPCById: !!document.getElementById('menuButtonPC'),
+                    menuButtonPCByQuery: !!document.querySelector('.menu-button-pc'),
+                    menuButtonPC: !!menuButtonPC,
+                    circularMenu: !!circularMenu,
+                    taskGrid: !!taskGrid,
+                    windowWidth: window.innerWidth,
+                    allMenuButtons: document.querySelectorAll('.menu-button').length
+                });
+                
                 if (menuButtonPC && circularMenu && taskGrid) {
-                    console.log('✅ メニューボタン初期化: 要素が見つかりました');
+                    console.log('✅ メニューボタン初期化: 要素が見つかりました', {
+                        menuButtonPCId: menuButtonPC.id,
+                        menuButtonPCClass: menuButtonPC.className,
+                        menuButtonPCDisplay: window.getComputedStyle(menuButtonPC).display
+                    });
                     initMenuButtonPC();
                     initMenuButtonSP();
                 } else {
                     console.warn('⚠️ メニューボタン初期化をスキップ: 要素がまだ見つかりません', {
                         menuButtonPC: !!menuButtonPC,
                         circularMenu: !!circularMenu,
-                        taskGrid: !!taskGrid
+                        taskGrid: !!taskGrid,
+                        allMenuButtons: document.querySelectorAll('.menu-button').length,
+                        taskGridChildren: taskGrid ? taskGrid.children.length : 0
                     });
                     // もう一度試す（最大5回）
                     let retryCount = 0;
                     const maxRetries = 5;
                     const retryInterval = setInterval(() => {
                         retryCount++;
-                        const retryMenuButtonPC = document.getElementById('menuButtonPC');
+                        // querySelectorも試す
+                        const retryMenuButtonPC = document.getElementById('menuButtonPC') || document.querySelector('.menu-button-pc');
                         const retryCircularMenu = document.getElementById('circularMenu');
                         const retryTaskGrid = document.getElementById('taskGrid');
                         
                         if (retryMenuButtonPC && retryCircularMenu && retryTaskGrid) {
                             console.log(`✅ メニューボタン初期化: リトライ${retryCount}回目で成功`);
                             clearInterval(retryInterval);
+                            // PC版の場合のみ表示を確実にする
+                            if (window.innerWidth > 430 && retryMenuButtonPC) {
+                                retryMenuButtonPC.style.display = 'flex';
+                                retryMenuButtonPC.style.visibility = 'visible';
+                                retryMenuButtonPC.style.opacity = '1';
+                            }
                             initMenuButtonPC();
                             initMenuButtonSP();
                         } else if (retryCount >= maxRetries) {
                             console.error('❌ メニューボタン初期化: 最大リトライ回数に達しました', {
                                 menuButtonPC: !!retryMenuButtonPC,
                                 circularMenu: !!retryCircularMenu,
-                                taskGrid: !!retryTaskGrid
+                                taskGrid: !!retryTaskGrid,
+                                allMenuButtons: document.querySelectorAll('.menu-button').length,
+                                taskGridChildren: retryTaskGrid ? retryTaskGrid.children.length : 0,
+                                taskGridHTML: retryTaskGrid ? retryTaskGrid.innerHTML.substring(0, 200) : 'N/A'
                             });
                             clearInterval(retryInterval);
                         }
