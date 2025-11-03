@@ -3273,6 +3273,7 @@
             const pendingTasks = tasks.filter(task => task.status !== 'completed');
 
             // 各タスクカードをランダムな位置に配置（または保存された位置を使用）
+            let hasPositionUpdates = false;
             pendingTasks.forEach((task, index) => {
                 const card = document.createElement('div');
                 card.className = `task-card category-${task.category}`;
