@@ -1508,7 +1508,7 @@
 
         /* メニューボタンスタイル */
         .menu-button {
-            position: absolute;
+            position: fixed;
             width: 56px;
             height: 56px;
             background: var(--color-primary, #FF679C);
@@ -1517,7 +1517,7 @@
             align-items: center;
             justify-content: center;
             cursor: move;
-            z-index: 99999;
+            z-index: 10000;
             box-shadow: var(--shadow-lg);
             transition: transform 0.2s ease;
             user-select: none;
@@ -1569,7 +1569,7 @@
             width: 0;
             height: 0;
             pointer-events: none;
-            z-index: 99998;
+            z-index: 9999;
             transition: opacity 0.3s ease;
             opacity: 0;
         }
@@ -2633,6 +2633,11 @@
         </div>
     </div>
 
+    <!-- メニューボタン（自由に移動可能、最上層） -->
+    <div class="menu-button" id="menuButton" draggable="true">
+        <img src="images/menu icon.svg" alt="メニュー" class="menu-button-icon">
+        <span class="tooltip-text">ダブルクリック/タップでメニュー展開</span>
+    </div>
     
     <!-- 円形メニュー -->
     <div class="circular-menu" id="circularMenu">
@@ -3616,18 +3621,7 @@
                     taskGrid.appendChild(badgeButton);
                 }
                 
-                // メニューボタンを再追加（まだ存在しない場合）
-                let menuButton = document.getElementById('menuButton');
-                if (!menuButton) {
-                    menuButton = document.createElement('div');
-                    menuButton.className = 'menu-button';
-                    menuButton.id = 'menuButton';
-                    menuButton.draggable = true;
-                    menuButton.innerHTML = '<img src="images/menu icon.svg" alt="メニュー" class="menu-button-icon"><span class="tooltip-text">ダブルクリック/タップでメニュー展開</span>';
-                    taskGrid.appendChild(menuButton);
-                    // メニューボタンを初期化
-                    initMenuButton();
-                }
+                // メニューボタンは body 直下に配置済み（updateTaskGridでは追加しない）
                 
                 // ゴミ箱はtaskGrid外に配置（position: fixedで画面右下に固定）
                 // taskGrid内には追加しない
@@ -7105,44 +7099,28 @@
             const menuButtonWidth = 56; // メニューボタンの幅
             const menuButtonHeight = 56; // メニューボタンの高さ
 
-            // 初期位置を設定（保存された位置があれば使用、なければランダム配置）
-            if (menuButtonPosition && menuButtonPosition.leftPercent !== undefined && menuButtonPosition.topPercent !== undefined) {
-                // 相対位置（%）から絶対位置（px）に変換
-                const left = (menuButtonPosition.leftPercent / 100) * gridWidth;
-                const top = (menuButtonPosition.topPercent / 100) * gridHeight;
-                menuButton.style.left = left + 'px';
-                menuButton.style.top = top + 'px';
+            // position: fixedの場合の初期位置を設定（画面全体に対する位置）
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            if (menuButtonPosition && menuButtonPosition.left !== undefined && menuButtonPosition.top !== undefined) {
+                // 保存された絶対位置（px）を使用
+                menuButton.style.left = menuButtonPosition.left + 'px';
+                menuButton.style.top = menuButtonPosition.top + 'px';
                 menuButton.style.right = 'auto';
                 menuButton.style.bottom = 'auto';
-            } else if (menuButtonPosition && menuButtonPosition.left !== undefined && menuButtonPosition.top !== undefined) {
-                // 古い形式（絶対位置px）の後方互換性
-                const oldGridWidth = 1920;
-                const oldGridHeight = 1080;
-                const leftPercent = (menuButtonPosition.left / oldGridWidth) * 100;
-                const topPercent = (menuButtonPosition.top / oldGridHeight) * 100;
-                const left = (leftPercent / 100) * gridWidth;
-                const top = (topPercent / 100) * gridHeight;
-                menuButton.style.left = left + 'px';
-                menuButton.style.top = top + 'px';
-                menuButton.style.right = 'auto';
-                menuButton.style.bottom = 'auto';
-                // 相対位置として保存し直す
-                menuButtonPosition.leftPercent = leftPercent;
-                menuButtonPosition.topPercent = topPercent;
-                saveMenuButtonPosition();
             } else {
-                // ランダムな位置を計算（タスクグリッド内のランダムな位置）
-                const left = Math.random() * Math.max(0, gridWidth - menuButtonWidth);
-                const top = Math.random() * Math.max(0, gridHeight - menuButtonHeight);
-                menuButton.style.left = left + 'px';
-                menuButton.style.top = top + 'px';
-                menuButton.style.right = 'auto';
-                menuButton.style.bottom = 'auto';
+                // デフォルト位置：画面右下（タスクグリッドの外側）
+                menuButton.style.right = '24px';
+                menuButton.style.bottom = '24px';
+                menuButton.style.left = 'auto';
+                menuButton.style.top = 'auto';
                 
-                // 相対位置（%）を計算して保存
+                // 初期位置を保存
+                const rect = menuButton.getBoundingClientRect();
                 menuButtonPosition = {
-                    leftPercent: (left / gridWidth) * 100,
-                    topPercent: (top / gridHeight) * 100
+                    left: rect.left,
+                    top: rect.top
                 };
                 saveMenuButtonPosition();
             }
@@ -7161,10 +7139,11 @@
             menuButton.addEventListener('dragstart', function(e) {
                 isDragging = true;
                 hasDragged = false;
+                const rect = this.getBoundingClientRect();
                 dragStartX = e.clientX;
                 dragStartY = e.clientY;
-                startLeft = parseFloat(this.style.left) || 0;
-                startTop = parseFloat(this.style.top) || 0;
+                startLeft = rect.left;
+                startTop = rect.top;
                 this.style.opacity = '0.7';
                 e.dataTransfer.effectAllowed = 'move';
             });
@@ -7199,16 +7178,11 @@
                 isDragging = false;
                 this.style.opacity = '1';
                 
-                // 位置を保存（相対位置（%）で保存）
-                const taskGridRect = taskGrid.getBoundingClientRect();
-                const gridWidth = taskGridRect.width;
-                const gridHeight = taskGridRect.height;
-                const left = parseFloat(this.style.left) || 0;
-                const top = parseFloat(this.style.top) || 0;
-                
+                // 位置を保存（絶対位置（px）で保存）
+                const rect = this.getBoundingClientRect();
                 menuButtonPosition = {
-                    leftPercent: (left / gridWidth) * 100,
-                    topPercent: (top / gridHeight) * 100
+                    left: rect.left,
+                    top: rect.top
                 };
                 saveMenuButtonPosition();
             });
@@ -7245,10 +7219,11 @@
             menuButton.addEventListener('touchstart', function(e) {
                 if (e.touches.length === 1) {
                     const touch = e.touches[0];
+                    const rect = this.getBoundingClientRect();
                     touchStartX = touch.clientX;
                     touchStartY = touch.clientY;
-                    touchStartLeft = parseFloat(this.style.left) || 0;
-                    touchStartTop = parseFloat(this.style.top) || 0;
+                    touchStartLeft = rect.left;
+                    touchStartTop = rect.top;
                     isTouchDragging = false;
                     hasTouchDragged = false;
                     
@@ -7267,20 +7242,16 @@
                     e.preventDefault();
                     const touch = e.touches[0];
                     
-                    const taskGridRect = taskGrid.getBoundingClientRect();
-                    const gridWidth = taskGridRect.width;
-                    const gridHeight = taskGridRect.height;
-                    
                     const deltaX = touch.clientX - touchStartX;
                     const deltaY = touch.clientY - touchStartY;
                     
-                    // グリッド内の相対位置を計算
+                    // 画面内の絶対位置を計算
                     let newLeft = touchStartLeft + deltaX;
                     let newTop = touchStartTop + deltaY;
                     
-                    // タスクグリッド内に制限
-                    const maxX = gridWidth - this.offsetWidth;
-                    const maxY = gridHeight - this.offsetHeight;
+                    // 画面内に制限
+                    const maxX = window.innerWidth - this.offsetWidth;
+                    const maxY = window.innerHeight - this.offsetHeight;
                     newLeft = Math.max(0, Math.min(newLeft, maxX));
                     newTop = Math.max(0, Math.min(newTop, maxY));
                     
@@ -7302,16 +7273,11 @@
                     this.style.transition = '';
                     this.style.zIndex = '10000';
                     
-                    // 位置を保存（相対位置（%）で保存）
-                    const taskGridRect = taskGrid.getBoundingClientRect();
-                    const gridWidth = taskGridRect.width;
-                    const gridHeight = taskGridRect.height;
-                    const left = parseFloat(this.style.left) || 0;
-                    const top = parseFloat(this.style.top) || 0;
-                    
+                    // 位置を保存（絶対位置（px）で保存）
+                    const rect = this.getBoundingClientRect();
                     menuButtonPosition = {
-                        leftPercent: (left / gridWidth) * 100,
-                        topPercent: (top / gridHeight) * 100
+                        left: rect.left,
+                        top: rect.top
                     };
                     saveMenuButtonPosition();
                 } else if (!hasTouchDragged) {
