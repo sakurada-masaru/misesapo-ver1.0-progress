@@ -1264,6 +1264,248 @@
             border-bottom: 2px solid var(--panel-5-color);
         }
 
+        /* リソース管理パネルのタブスタイル */
+        .resource-tabs {
+            display: flex;
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-md);
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .resource-tab {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            background: transparent;
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: var(--transition-normal);
+            margin-bottom: -2px;
+        }
+
+        .resource-tab:hover {
+            color: var(--color-primary);
+            background: var(--color-primary-light);
+        }
+
+        .resource-tab.active {
+            color: var(--panel-2-color);
+            border-bottom-color: var(--panel-2-color);
+            font-weight: var(--font-weight-semibold);
+        }
+
+        .resource-tab-content {
+            display: none;
+        }
+
+        .resource-tab-content.active {
+            display: block;
+        }
+
+        /* メンバーカードスタイル */
+        .member-card {
+            background: var(--color-background);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+            transition: var(--transition-normal);
+        }
+
+        .member-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--panel-2-color);
+        }
+
+        .member-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .member-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-xl);
+            flex-shrink: 0;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-size: var(--font-size-md);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .member-stats {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-sm);
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+
+        .stat-label {
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+        }
+
+        .stat-value {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text-primary);
+        }
+
+        .load-indicator {
+            height: 8px;
+            background: var(--color-background-secondary);
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+            margin-top: var(--spacing-xs);
+        }
+
+        .load-bar {
+            height: 100%;
+            border-radius: var(--border-radius-sm);
+            transition: width 0.3s ease;
+        }
+
+        .load-bar.low {
+            background: #10b981;
+        }
+
+        .load-bar.medium {
+            background: #f59e0b;
+        }
+
+        .load-bar.high {
+            background: #ef4444;
+        }
+
+        /* 週次・月次計画スタイル */
+        .schedule-calendar {
+            display: grid;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-md);
+        }
+
+        .schedule-week {
+            display: grid;
+            grid-template-columns: 120px repeat(7, 1fr);
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .schedule-day-header {
+            padding: var(--spacing-xs);
+            background: var(--panel-2-color);
+            color: white;
+            text-align: center;
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-semibold);
+            border-radius: var(--border-radius-sm);
+        }
+
+        .schedule-member-row {
+            display: grid;
+            grid-template-columns: 120px repeat(7, 1fr);
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .schedule-member-name {
+            padding: var(--spacing-xs);
+            background: var(--color-background-secondary);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-medium);
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            align-items: center;
+        }
+
+        .schedule-cell {
+            padding: var(--spacing-xs);
+            background: var(--color-background-secondary);
+            border-radius: var(--border-radius-sm);
+            min-height: 40px;
+            font-size: var(--font-size-xs);
+        }
+
+        .schedule-cell.has-task {
+            background: var(--panel-2-color);
+            color: white;
+            cursor: pointer;
+        }
+
+        /* タイムラインスタイル */
+        .timeline-container {
+            position: relative;
+            padding: var(--spacing-md);
+            background: var(--color-background-secondary);
+            border-radius: var(--border-radius-md);
+            min-height: 400px;
+        }
+
+        .timeline-member {
+            margin-bottom: var(--spacing-lg);
+            border-left: 2px solid var(--panel-2-color);
+            padding-left: var(--spacing-md);
+            position: relative;
+        }
+
+        .timeline-member::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 0;
+            width: 10px;
+            height: 10px;
+            background: var(--panel-2-color);
+            border-radius: 50%;
+        }
+
+        .timeline-member-header {
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .timeline-task {
+            background: var(--color-background);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-sm);
+            padding: var(--spacing-sm);
+            margin-bottom: var(--spacing-xs);
+            font-size: var(--font-size-sm);
+        }
+
+        .timeline-task-title {
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .timeline-task-time {
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+        }
+
         .form-group {
             margin-bottom: var(--spacing-md);
         }
@@ -2285,7 +2527,7 @@
         <span class="tooltip-text">リンクパネルを開く</span>
     </button>
     <button class="slide-panel-handle panel-2" id="slidePanelHandle2" onclick="toggleSlidePanel(2)">
-        <span class="tooltip-text">フロントパネルを開く</span>
+        <span class="tooltip-text">リソース管理パネルを開く</span>
     </button>
     <button class="slide-panel-handle panel-3" id="slidePanelHandle3" onclick="toggleSlidePanel(3)">
         <span class="tooltip-text">バックパネルを開く</span>
@@ -2426,20 +2668,60 @@
         </div>
     </div>
 
-    <!-- パネル2（ブルー：フロント） -->
+    <!-- パネル2（ブルー：リソース管理） -->
     <div class="slide-panel-overlay" id="slidePanelOverlay2" onclick="closeSlidePanelOnOverlay(event, 2)">
         <div class="slide-panel panel-2" id="slidePanel2" onclick="event.stopPropagation()">
             <div class="slide-panel-header panel-2">
-                <h2 class="slide-panel-title">フロント</h2>
+                <h2 class="slide-panel-title">リソース管理</h2>
                 <button class="slide-panel-close-button" onclick="closeSlidePanel(2)" title="閉じる">×</button>
             </div>
             <div class="slide-panel-content">
-                <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-md);">
-                    フロントエンド開発のタスク管理パネルです。
-                </p>
-                <div style="padding: var(--spacing-lg); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
-                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">フロントのコンテンツ</h3>
-                    <p style="color: var(--color-text-secondary);">ここにフロントエンド関連のコンテンツを配置できます。</p>
+                <!-- タブ切り替え -->
+                <div class="resource-tabs" style="display: flex; gap: var(--spacing-xs); margin-bottom: var(--spacing-md); border-bottom: 2px solid var(--color-border);">
+                    <button class="resource-tab active" data-tab="members" onclick="switchResourceTab('members')">メンバー一覧</button>
+                    <button class="resource-tab" data-tab="schedule" onclick="switchResourceTab('schedule')">週次・月次計画</button>
+                    <button class="resource-tab" data-tab="timeline" onclick="switchResourceTab('timeline')">タイムライン</button>
+                </div>
+                
+                <!-- メンバー一覧タブ -->
+                <div id="resourceMembersTab" class="resource-tab-content active">
+                    <div id="resourceMembersContent">
+                        <!-- メンバー一覧がここに動的に生成されます -->
+                    </div>
+                </div>
+                
+                <!-- 週次・月次計画タブ -->
+                <div id="resourceScheduleTab" class="resource-tab-content">
+                    <div style="margin-bottom: var(--spacing-md);">
+                        <div style="display: flex; gap: var(--spacing-sm); align-items: center; margin-bottom: var(--spacing-md);">
+                            <select id="scheduleViewType" onchange="updateScheduleView()" style="padding: var(--spacing-xs) var(--spacing-sm); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
+                                <option value="week">週次表示</option>
+                                <option value="month">月次表示</option>
+                            </select>
+                            <button onclick="prevSchedulePeriod()" class="btn btn-secondary" style="padding: var(--spacing-xs) var(--spacing-sm); font-size: var(--font-size-sm);">← 前</button>
+                            <button onclick="nextSchedulePeriod()" class="btn btn-secondary" style="padding: var(--spacing-xs) var(--spacing-sm); font-size: var(--font-size-sm);">次 →</button>
+                            <button onclick="todaySchedulePeriod()" class="btn btn-secondary" style="padding: var(--spacing-xs) var(--spacing-sm); font-size: var(--font-size-sm);">今日</button>
+                        </div>
+                        <div id="scheduleContent">
+                            <!-- 週次・月次計画がここに動的に生成されます -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- タイムラインタブ -->
+                <div id="resourceTimelineTab" class="resource-tab-content">
+                    <div style="margin-bottom: var(--spacing-md);">
+                        <div style="display: flex; gap: var(--spacing-sm); align-items: center; margin-bottom: var(--spacing-md);">
+                            <label style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">フィルター:</label>
+                            <select id="timelineFilter" onchange="updateTimelineView()" style="padding: var(--spacing-xs) var(--spacing-sm); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
+                                <option value="all">全メンバー</option>
+                                <!-- メンバーオプションが動的に追加されます -->
+                            </select>
+                        </div>
+                        <div id="timelineContent" style="position: relative; min-height: 400px;">
+                            <!-- タイムラインがここに動的に生成されます -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -6230,6 +6512,11 @@
                 setTimeout(() => {
                     updateLinkIconGrid();
                 }, 100);
+            } else if (panelNumber === 2) {
+                // リソース管理パネルを開いた時に更新
+                setTimeout(() => {
+                    updateResourcePanel();
+                }, 100);
             } else if (panelNumber === 5) {
                 // アーカイブパネルを開いた時に更新
                 setTimeout(() => {
@@ -6237,6 +6524,413 @@
                     updateAssigneeFilterOptions();
                 }, 100);
             }
+        }
+
+        /* ========================================
+           📊 リソース管理パネル機能 (Resource Management Panel)
+           ======================================== */
+
+        // リソース管理パネルのデータ更新
+        function updateResourcePanel() {
+            updateResourceMembers();
+            updateScheduleView();
+            updateTimelineView();
+        }
+
+        // タブ切り替え
+        function switchResourceTab(tabName) {
+            // タブボタンのactiveクラスを切り替え
+            document.querySelectorAll('.resource-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`.resource-tab[data-tab="${tabName}"]`)?.classList.add('active');
+
+            // タブコンテンツのactiveクラスを切り替え
+            document.querySelectorAll('.resource-tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`resource${tabName.charAt(0).toUpperCase() + tabName.slice(1)}Tab`)?.classList.add('active');
+
+            // 各タブのデータを更新
+            if (tabName === 'members') {
+                updateResourceMembers();
+            } else if (tabName === 'schedule') {
+                updateScheduleView();
+            } else if (tabName === 'timeline') {
+                updateTimelineView();
+            }
+        }
+
+        // メンバー一覧を更新
+        function updateResourceMembers() {
+            const content = document.getElementById('resourceMembersContent');
+            if (!content) return;
+
+            if (badges.length === 0) {
+                content.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">メンバーが登録されていません。</p>';
+                return;
+            }
+
+            // 各メンバーの情報を計算
+            const membersData = badges.map(badge => {
+                // 現在のタスク数
+                const currentTasks = Object.keys(taskBadges).filter(taskId => 
+                    taskBadges[taskId] && taskBadges[taskId].includes(badge.id)
+                ).length;
+
+                // アクティブなタイムレコード数（稼働率）
+                const activeTimeRecords = timeRecords.filter(tr => 
+                    tr.badgeId === badge.id && tr.status === 'active'
+                ).length;
+
+                // 総作業時間（秒）を計算
+                const totalDuration = timeRecords
+                    .filter(tr => tr.badgeId === badge.id && tr.duration !== null)
+                    .reduce((sum, tr) => sum + tr.duration, 0);
+
+                // 負荷状態を判定（タスク数とアクティブなタイムレコード数から）
+                let loadLevel = 'low';
+                if (currentTasks >= 5 || activeTimeRecords >= 3) {
+                    loadLevel = 'high';
+                } else if (currentTasks >= 3 || activeTimeRecords >= 2) {
+                    loadLevel = 'medium';
+                }
+
+                return {
+                    badge,
+                    currentTasks,
+                    activeTimeRecords,
+                    totalDuration,
+                    loadLevel
+                };
+            });
+
+            // HTMLを生成
+            const html = membersData.map(member => {
+                const badgeIcon = member.badge.icon && member.badge.icon.startsWith('img:') 
+                    ? `<img src="${member.badge.icon.substring(4)}" alt="${member.badge.name}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`
+                    : member.badge.picture 
+                        ? `<img src="${member.badge.picture}" alt="${member.badge.name}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`
+                        : member.badge.icon || '👤';
+
+                function formatDuration(seconds) {
+                    if (!seconds || seconds === 0) return '0分';
+                    const hours = Math.floor(seconds / 3600);
+                    const minutes = Math.floor((seconds % 3600) / 60);
+                    if (hours > 0) {
+                        return `${hours}時間${minutes}分`;
+                    }
+                    return `${minutes}分`;
+                }
+
+                const loadPercent = Math.min((member.currentTasks / 5) * 100, 100);
+
+                return `
+                    <div class="member-card">
+                        <div class="member-header">
+                            <div class="member-icon" style="background: ${member.badge.color || '#FF679C'};">
+                                ${badgeIcon}
+                            </div>
+                            <div class="member-info">
+                                <div class="member-name">${escapeHtml(member.badge.name)}</div>
+                                <div class="load-indicator">
+                                    <div class="load-bar ${member.loadLevel}" style="width: ${loadPercent}%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="member-stats">
+                            <div class="stat-item">
+                                <div class="stat-label">現在のタスク</div>
+                                <div class="stat-value">${member.currentTasks}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">稼働中</div>
+                                <div class="stat-value">${member.activeTimeRecords}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">総作業時間</div>
+                                <div class="stat-value">${formatDuration(member.totalDuration)}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">負荷状態</div>
+                                <div class="stat-value" style="color: ${member.loadLevel === 'high' ? '#ef4444' : member.loadLevel === 'medium' ? '#f59e0b' : '#10b981'};">
+                                    ${member.loadLevel === 'high' ? '高' : member.loadLevel === 'medium' ? '中' : '低'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            content.innerHTML = html;
+        }
+
+        // 週次・月次計画の表示期間管理
+        let currentScheduleDate = new Date();
+        let scheduleViewType = 'week'; // 'week' or 'month'
+
+        // 週次・月次計画を更新
+        function updateScheduleView() {
+            const viewTypeSelect = document.getElementById('scheduleViewType');
+            if (viewTypeSelect) {
+                scheduleViewType = viewTypeSelect.value;
+            }
+            const content = document.getElementById('scheduleContent');
+            if (!content) return;
+
+            if (scheduleViewType === 'week') {
+                renderWeekSchedule();
+            } else {
+                renderMonthSchedule();
+            }
+        }
+
+        // 週次スケジュールを表示
+        function renderWeekSchedule() {
+            const content = document.getElementById('scheduleContent');
+            if (!content) return;
+
+            // 週の開始日（月曜日）を取得
+            const startOfWeek = new Date(currentScheduleDate);
+            const day = startOfWeek.getDay();
+            const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // 月曜日を週の始まりとする
+            startOfWeek.setDate(diff);
+            startOfWeek.setHours(0, 0, 0, 0);
+
+            // 週の各日を生成
+            const weekDays = [];
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(startOfWeek);
+                date.setDate(date.getDate() + i);
+                weekDays.push(date);
+            }
+
+            // 日付フォーマット
+            const formatDate = (date) => {
+                return date.toLocaleDateString('ja-JP', { month: 'short', day: 'numeric' });
+            };
+
+            const formatDayName = (date) => {
+                const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+                return dayNames[date.getDay()];
+            };
+
+            // ヘッダー
+            let html = `
+                <div style="margin-bottom: var(--spacing-md); font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">
+                    ${startOfWeek.getFullYear()}年${startOfWeek.getMonth() + 1}月 ${startOfWeek.getDate()}日 〜 ${weekDays[6].getMonth() + 1}月${weekDays[6].getDate()}日
+                </div>
+                <div class="schedule-calendar">
+                    <div class="schedule-week">
+                        <div class="schedule-day-header" style="background: var(--color-background-secondary);"></div>
+                        ${weekDays.map((date, i) => `
+                            <div class="schedule-day-header">
+                                ${formatDate(date)}<br>${formatDayName(date)}
+                            </div>
+                        `).join('')}
+                    </div>
+            `;
+
+            // 各メンバーの行を生成
+            badges.forEach(badge => {
+                html += `<div class="schedule-member-row">
+                    <div class="schedule-member-name">${escapeHtml(badge.name)}</div>
+                `;
+                
+                weekDays.forEach(date => {
+                    // その日のタスクを取得
+                    const dayTasks = tasks.filter(task => {
+                        if (task.status === 'completed') return false;
+                        const taskDate = task.createdAt ? new Date(task.createdAt) : null;
+                        if (!taskDate) return false;
+                        const taskBadgeIds = taskBadges[task.id] || [];
+                        const hasBadge = taskBadgeIds.includes(badge.id);
+                        return hasBadge && 
+                               taskDate.getDate() === date.getDate() &&
+                               taskDate.getMonth() === date.getMonth() &&
+                               taskDate.getFullYear() === date.getFullYear();
+                    });
+
+                    const taskCount = dayTasks.length;
+                    html += `<div class="schedule-cell ${taskCount > 0 ? 'has-task' : ''}" title="${taskCount > 0 ? taskCount + '件のタスク' : 'なし'}">
+                        ${taskCount > 0 ? taskCount + '件' : ''}
+                    </div>`;
+                });
+
+                html += `</div>`;
+            });
+
+            html += `</div>`;
+            content.innerHTML = html;
+        }
+
+        // 月次スケジュールを表示
+        function renderMonthSchedule() {
+            const content = document.getElementById('scheduleContent');
+            if (!content) return;
+
+            const year = currentScheduleDate.getFullYear();
+            const month = currentScheduleDate.getMonth();
+
+            // 月の最初の日と最後の日
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+
+            // 週ごとにグループ化
+            let html = `
+                <div style="margin-bottom: var(--spacing-md); font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">
+                    ${year}年${month + 1}月
+                </div>
+                <div class="schedule-calendar">
+            `;
+
+            // 各週を表示（簡略版：週ごとのタスク数を表示）
+            badges.forEach(badge => {
+                const badgeTasks = tasks.filter(task => {
+                    if (task.status === 'completed') return false;
+                    const taskBadgeIds = taskBadges[task.id] || [];
+                    return taskBadgeIds.includes(badge.id);
+                });
+
+                const monthTasks = badgeTasks.filter(task => {
+                    const taskDate = task.createdAt ? new Date(task.createdAt) : null;
+                    if (!taskDate) return false;
+                    return taskDate.getFullYear() === year && taskDate.getMonth() === month;
+                });
+
+                html += `
+                    <div style="padding: var(--spacing-sm); background: var(--color-background-secondary); border-radius: var(--border-radius-sm); margin-bottom: var(--spacing-xs);">
+                        <div style="font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-xs);">${escapeHtml(badge.name)}</div>
+                        <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">${monthTasks.length}件のタスク</div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            content.innerHTML = html;
+        }
+
+        // 期間移動関数
+        function prevSchedulePeriod() {
+            if (scheduleViewType === 'week') {
+                currentScheduleDate.setDate(currentScheduleDate.getDate() - 7);
+            } else {
+                currentScheduleDate.setMonth(currentScheduleDate.getMonth() - 1);
+            }
+            updateScheduleView();
+        }
+
+        function nextSchedulePeriod() {
+            if (scheduleViewType === 'week') {
+                currentScheduleDate.setDate(currentScheduleDate.getDate() + 7);
+            } else {
+                currentScheduleDate.setMonth(currentScheduleDate.getMonth() + 1);
+            }
+            updateScheduleView();
+        }
+
+        function todaySchedulePeriod() {
+            currentScheduleDate = new Date();
+            updateScheduleView();
+        }
+
+        // タイムライン表示を更新
+        function updateTimelineView() {
+            const filterSelect = document.getElementById('timelineFilter');
+            const selectedBadgeId = filterSelect ? parseInt(filterSelect.value) : null;
+            const content = document.getElementById('timelineContent');
+            if (!content) return;
+
+            // フィルター用のメンバーオプションを更新
+            if (filterSelect) {
+                const existingOptions = filterSelect.querySelectorAll('option[value!="all"]');
+                existingOptions.forEach(opt => opt.remove());
+                
+                badges.forEach(badge => {
+                    const option = document.createElement('option');
+                    option.value = badge.id;
+                    option.textContent = badge.name;
+                    if (selectedBadgeId === badge.id) {
+                        option.selected = true;
+                    }
+                    filterSelect.appendChild(option);
+                });
+            }
+
+            // 表示するメンバーをフィルター
+            const displayBadges = selectedBadgeId === null || isNaN(selectedBadgeId) 
+                ? badges 
+                : badges.filter(b => b.id === selectedBadgeId);
+
+            if (displayBadges.length === 0) {
+                content.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">メンバーが選択されていません。</p>';
+                return;
+            }
+
+            let html = '<div class="timeline-container">';
+
+            displayBadges.forEach(badge => {
+                // このメンバーに関連するタスクを取得
+                const memberTasks = tasks.filter(task => {
+                    if (task.status === 'completed') return false;
+                    const taskBadgeIds = taskBadges[task.id] || [];
+                    return taskBadgeIds.includes(badge.id);
+                });
+
+                // タイムレコードからアクティブなタスクを取得
+                const activeRecords = timeRecords.filter(tr => 
+                    tr.badgeId === badge.id && tr.status === 'active'
+                );
+
+                html += `
+                    <div class="timeline-member">
+                        <div class="timeline-member-header">${escapeHtml(badge.name)}</div>
+                `;
+
+                // アクティブなタスクを表示
+                activeRecords.forEach(record => {
+                    const task = tasks.find(t => t.id === record.taskId);
+                    if (task) {
+                        const startTime = new Date(record.startTime);
+                        html += `
+                            <div class="timeline-task">
+                                <div class="timeline-task-title">${escapeHtml(task.title)}</div>
+                                <div class="timeline-task-time">
+                                    開始: ${startTime.toLocaleString('ja-JP')} (稼働中)
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+
+                // その他のタスクを表示
+                memberTasks.forEach(task => {
+                    if (!activeRecords.find(r => r.taskId === task.id)) {
+                        const createdDate = task.createdAt ? new Date(task.createdAt) : null;
+                        html += `
+                            <div class="timeline-task">
+                                <div class="timeline-task-title">${escapeHtml(task.title)}</div>
+                                <div class="timeline-task-time">
+                                    ${createdDate ? '作成: ' + createdDate.toLocaleString('ja-JP') : '日付不明'}
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+
+                html += `</div>`;
+            });
+
+            html += '</div>';
+            content.innerHTML = html;
+        }
+
+        // HTMLエスケープ関数
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         // 初期化（ページロード時にも実行、スプラッシュ後に再実行される）
