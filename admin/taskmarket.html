@@ -1506,9 +1506,8 @@
             color: var(--color-text-secondary);
         }
 
-        /* メニューボタンスタイル */
+        /* メニューボタンスタイル（共通） */
         .menu-button {
-            position: fixed;
             width: 56px;
             height: 56px;
             background: var(--color-primary, #FF679C);
@@ -1516,13 +1515,52 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: move;
             z-index: 11;
             box-shadow: var(--shadow-lg);
             transition: transform 0.2s ease;
             user-select: none;
             -webkit-user-select: none;
+        }
+
+        /* PC版メニューボタン：タスクグリッド左上に固定 */
+        .menu-button-pc {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            cursor: pointer;
             touch-action: none;
+        }
+
+        /* SP版メニューボタン：自由に移動可能 */
+        .menu-button-sp {
+            position: fixed;
+            cursor: move;
+            touch-action: none;
+        }
+
+        /* PC版のみ表示 */
+        .menu-button-pc {
+            display: flex;
+        }
+
+        /* SP版のみ表示 */
+        @media (max-width: 430px) {
+            .menu-button-pc {
+                display: none !important;
+            }
+            .menu-button-sp {
+                display: flex;
+            }
+        }
+
+        /* PC版のみ表示（デスクトップ） */
+        @media (min-width: 431px) {
+            .menu-button-sp {
+                display: none !important;
+            }
+            .menu-button-pc {
+                display: flex;
+            }
         }
 
         .menu-button:hover {
@@ -2545,6 +2583,11 @@
         <div class="main-board">
             <!-- タスクグリッド -->
             <div class="task-grid" id="taskGrid">
+                <!-- PC版メニューボタン（タスクグリッド左上に固定） -->
+                <div class="menu-button menu-button-pc" id="menuButtonPC" data-menu-button="true">
+                    <img src="images/menu.svg" alt="メニュー" class="menu-button-icon">
+                    <span class="tooltip-text">ダブルクリックでメニュー展開</span>
+                </div>
                 <!-- プルリフレッシュインジケーター -->
                 <div class="pull-refresh-indicator" id="pullRefreshIndicator">
                     <div class="pull-refresh-spinner"></div>
@@ -2632,14 +2675,14 @@
         </div>
     </div>
 
-    <!-- メニューボタン（自由に移動可能、最上層） -->
-    <div class="menu-button" id="menuButton" draggable="true" data-menu-button="true">
+    <!-- SP版メニューボタン（自由に移動可能） -->
+    <div class="menu-button menu-button-sp" id="menuButtonSP" draggable="true" data-menu-button="true">
         <img src="images/menu.svg" alt="メニュー" class="menu-button-icon">
-        <span class="tooltip-text">ダブルクリック/タップでメニュー展開</span>
+        <span class="tooltip-text">ダブルタップでメニュー展開</span>
     </div>
     
-    <!-- 円形メニュー -->
-    <div class="circular-menu" id="circularMenu">
+    <!-- 円形メニュー（PC版用） -->
+    <div class="circular-menu" id="circularMenuPC">
         <div class="circular-menu-item" data-action="mypage" style="--angle: 30deg;">
             <span class="menu-item-label">マイページ</span>
         </div>
@@ -7091,16 +7134,53 @@
            🎯 メニューボタン機能 (Menu Button)
            ======================================== */
 
-        // メニューボタンの位置データ（Firebaseに保存、タスクカード同様に相対位置（%）で保存）
-        let menuButtonPosition = null;
+        // SP版メニューボタンの位置データ（Firebaseに保存）
+        let menuButtonPositionSP = null;
 
-        // メニューボタンの初期化
-        function initMenuButton() {
-            const menuButton = document.getElementById('menuButton');
-            const circularMenu = document.getElementById('circularMenu');
+        // PC版メニューボタンの初期化（タスクグリッド左上に固定）
+        function initMenuButtonPC() {
+            const menuButtonPC = document.getElementById('menuButtonPC');
+            const circularMenuPC = document.getElementById('circularMenuPC');
             const taskGrid = document.getElementById('taskGrid');
             
-            if (!menuButton || !circularMenu || !taskGrid) return;
+            if (!menuButtonPC || !circularMenuPC || !taskGrid) return;
+            
+            // タスクグリッド内の左上に配置（すでにCSSで固定されている）
+            // PC版はドラッグ不可なので、位置管理は不要
+            
+            // ダブルクリックでメニュー展開
+            let clickTimeout = null;
+            let hasDragged = false;
+            
+            menuButtonPC.addEventListener('click', function(e) {
+                if (hasDragged) {
+                    hasDragged = false;
+                    return;
+                }
+                
+                if (clickTimeout) {
+                    clearTimeout(clickTimeout);
+                    clickTimeout = null;
+                    // ダブルクリック
+                    toggleCircularMenuPC();
+                } else {
+                    clickTimeout = setTimeout(() => {
+                        clickTimeout = null;
+                    }, 300);
+                }
+            });
+            
+            // 円形メニューの位置を更新（PC版は固定位置）
+            updateCircularMenuPositionPC();
+        }
+
+        // SP版メニューボタンの初期化（自由に移動可能）
+        function initMenuButtonSP() {
+            const menuButtonSP = document.getElementById('menuButtonSP');
+            const circularMenuSP = document.getElementById('circularMenuSP');
+            const taskGrid = document.getElementById('taskGrid');
+            
+            if (!menuButtonSP || !circularMenuSP || !taskGrid) return;
 
             // タスクグリッドのサイズを取得
             const gridRect = taskGrid.getBoundingClientRect();
@@ -7114,27 +7194,27 @@
             const windowHeight = window.innerHeight;
             
             // 保存された位置が有効かチェック（異常に小さい値や負の値を排除）
-            const isValidPosition = menuButtonPosition && 
-                menuButtonPosition.left !== undefined && 
-                menuButtonPosition.top !== undefined &&
-                menuButtonPosition.left >= 0 && 
-                menuButtonPosition.top >= 0 &&
-                menuButtonPosition.left < windowWidth &&
-                menuButtonPosition.top < windowHeight;
+            const isValidPosition = menuButtonPositionSP && 
+                menuButtonPositionSP.left !== undefined && 
+                menuButtonPositionSP.top !== undefined &&
+                menuButtonPositionSP.left >= 0 && 
+                menuButtonPositionSP.top >= 0 &&
+                menuButtonPositionSP.left < windowWidth &&
+                menuButtonPositionSP.top < windowHeight;
             
             if (isValidPosition) {
                 // 保存された絶対位置（px）を使用
-                menuButton.style.position = 'fixed';
-                menuButton.style.left = menuButtonPosition.left + 'px';
-                menuButton.style.top = menuButtonPosition.top + 'px';
-                menuButton.style.right = 'auto';
-                menuButton.style.bottom = 'auto';
-                menuButton.style.transform = 'none';
+                menuButtonSP.style.position = 'fixed';
+                menuButtonSP.style.left = menuButtonPositionSP.left + 'px';
+                menuButtonSP.style.top = menuButtonPositionSP.top + 'px';
+                menuButtonSP.style.right = 'auto';
+                menuButtonSP.style.bottom = 'auto';
+                menuButtonSP.style.transform = 'none';
             } else {
                 // 無効な位置データがある場合はリセット
-                if (menuButtonPosition) {
-                    console.warn('メニューボタンの位置データが無効です。画面中央にリセットします。', menuButtonPosition);
-                    menuButtonPosition = null;
+                if (menuButtonPositionSP) {
+                    console.warn('メニューボタンの位置データが無効です。画面中央にリセットします。', menuButtonPositionSP);
+                    menuButtonPositionSP = null;
                 }
                 
                 // デフォルト位置：画面中央
@@ -7142,23 +7222,23 @@
                 const centerX = Math.max(0, (windowWidth / 2) - (menuButtonWidth / 2));
                 const centerY = Math.max(0, (windowHeight / 2) - (menuButtonHeight / 2));
                 
-                menuButton.style.position = 'fixed';
-                menuButton.style.left = centerX + 'px';
-                menuButton.style.top = centerY + 'px';
-                menuButton.style.right = 'auto';
-                menuButton.style.bottom = 'auto';
-                menuButton.style.transform = 'none';
+                menuButtonSP.style.position = 'fixed';
+                menuButtonSP.style.left = centerX + 'px';
+                menuButtonSP.style.top = centerY + 'px';
+                menuButtonSP.style.right = 'auto';
+                menuButtonSP.style.bottom = 'auto';
+                menuButtonSP.style.transform = 'none';
                 
                 // 初期位置を保存
-                menuButtonPosition = {
+                menuButtonPositionSP = {
                     left: centerX,
                     top: centerY
                 };
-                saveMenuButtonPosition();
+                saveMenuButtonPositionSP();
             }
 
             // 円形メニューの位置をメニューボタンに合わせて更新
-            updateCircularMenuPosition();
+            updateCircularMenuPositionSP();
 
             // PC版：ドラッグ&ドロップ
             let isDragging = false;
@@ -7168,7 +7248,7 @@
             let startTop = 0;
             let hasDragged = false;
 
-            menuButton.addEventListener('dragstart', function(e) {
+            menuButtonSP.addEventListener('dragstart', function(e) {
                 isDragging = true;
                 hasDragged = false;
                 const rect = this.getBoundingClientRect();
@@ -7180,12 +7260,12 @@
                 e.dataTransfer.effectAllowed = 'move';
             });
 
-            menuButton.addEventListener('drag', function(e) {
+            menuButtonSP.addEventListener('drag', function(e) {
                 if (!isDragging) return;
                 hasDragged = true;
                 
                 // メニューボタンがDOMに存在することを確認
-                if (!document.getElementById('menuButton')) {
+                if (!document.getElementById('menuButtonSP')) {
                     isDragging = false;
                     return;
                 }
@@ -7223,27 +7303,27 @@
                 this.style.visibility = 'visible';
                 
                 // 円形メニューの位置も更新
-                updateCircularMenuPosition();
+                updateCircularMenuPositionSP();
             });
 
-            menuButton.addEventListener('dragend', function(e) {
+            menuButtonSP.addEventListener('dragend', function(e) {
                 if (!isDragging) return;
                 isDragging = false;
                 
                 // メニューボタンがDOMに存在することを確認
-                const menuButtonElement = document.getElementById('menuButton');
+                const menuButtonElement = document.getElementById('menuButtonSP');
                 if (!menuButtonElement) {
                     console.error('メニューボタンがDOMから削除されました。再作成します。');
                     // メニューボタンを再作成
                     const newMenuButton = document.createElement('div');
-                    newMenuButton.className = 'menu-button';
-                    newMenuButton.id = 'menuButton';
+                    newMenuButton.className = 'menu-button menu-button-sp';
+                    newMenuButton.id = 'menuButtonSP';
                     newMenuButton.draggable = true;
                     newMenuButton.dataset.menuButton = 'true';
-                    newMenuButton.innerHTML = '<img src="images/menu.svg" alt="メニュー" class="menu-button-icon"><span class="tooltip-text">ダブルクリック/タップでメニュー展開</span>';
+                    newMenuButton.innerHTML = '<img src="images/menu.svg" alt="メニュー" class="menu-button-icon"><span class="tooltip-text">ダブルタップでメニュー展開</span>';
                     document.body.appendChild(newMenuButton);
                     // メニューボタンを再初期化
-                    initMenuButton();
+                    initMenuButtonSP();
                     return;
                 }
                 
@@ -7261,7 +7341,7 @@
                 // 位置を保存（絶対位置（px）で保存）
                 // 少し遅延させて位置を取得（ブラウザのレンダリング完了を待つ）
                 setTimeout(() => {
-                    const menuBtn = document.getElementById('menuButton');
+                    const menuBtn = document.getElementById('menuButtonSP');
                     if (!menuBtn) return;
                     
                     const rect = menuBtn.getBoundingClientRect();
@@ -7278,11 +7358,11 @@
                     
                     // 値が有効な場合のみ保存
                     if (left >= 0 && top >= 0 && left < window.innerWidth && top < window.innerHeight) {
-                        menuButtonPosition = {
+                        menuButtonPositionSP = {
                             left: left,
                             top: top
                         };
-                        saveMenuButtonPosition();
+                        saveMenuButtonPositionSP();
                         
                         // position: fixedを再度確認
                         menuBtn.style.position = 'fixed';
@@ -7296,26 +7376,6 @@
                 }, 10);
             });
 
-            // ダブルクリック（PC版）
-            let clickTimeout = null;
-            menuButton.addEventListener('click', function(e) {
-                if (hasDragged) {
-                    hasDragged = false;
-                    return;
-                }
-                
-                if (clickTimeout) {
-                    clearTimeout(clickTimeout);
-                    clickTimeout = null;
-                    // ダブルクリック
-                    toggleCircularMenu();
-                } else {
-                    clickTimeout = setTimeout(() => {
-                        clickTimeout = null;
-                    }, 300);
-                }
-            });
-
             // SP版：タッチドラッグ
             let touchStartX = 0;
             let touchStartY = 0;
@@ -7325,7 +7385,7 @@
             let touchTimeout = null;
             let hasTouchDragged = false;
 
-            menuButton.addEventListener('touchstart', function(e) {
+            menuButtonSP.addEventListener('touchstart', function(e) {
                 if (e.touches.length === 1) {
                     const touch = e.touches[0];
                     const rect = this.getBoundingClientRect();
@@ -7346,7 +7406,7 @@
                 }
             }, { passive: true });
 
-            menuButton.addEventListener('touchmove', function(e) {
+            menuButtonSP.addEventListener('touchmove', function(e) {
                 if (e.touches.length === 1 && isTouchDragging) {
                     e.preventDefault();
                     const touch = e.touches[0];
@@ -7372,11 +7432,11 @@
                     this.style.bottom = 'auto';
                     
                     // 円形メニューの位置も更新
-                    updateCircularMenuPosition();
+                    updateCircularMenuPositionSP();
                 }
             }, { passive: false });
 
-            menuButton.addEventListener('touchend', function(e) {
+            menuButtonSP.addEventListener('touchend', function(e) {
                 clearTimeout(touchTimeout);
                 
                 if (isTouchDragging) {
@@ -7387,7 +7447,7 @@
                     // 位置を保存（絶対位置（px）で保存）
                     // 少し遅延させて位置を取得（ブラウザのレンダリング完了を待つ）
                     setTimeout(() => {
-                        const menuBtn = document.getElementById('menuButton');
+                        const menuBtn = document.getElementById('menuButtonSP');
                         if (!menuBtn) return;
                         
                         let left = parseFloat(menuBtn.style.left);
@@ -7426,7 +7486,7 @@
                         clearTimeout(clickTimeout);
                         clickTimeout = null;
                         // ダブルタップ
-                        toggleCircularMenu();
+                        toggleCircularMenuSP();
                     } else {
                         clickTimeout = setTimeout(() => {
                             clickTimeout = null;
@@ -7437,32 +7497,32 @@
             }, { passive: true });
 
             // ダブルタップ（SP版）
-            menuButton.addEventListener('dblclick', function(e) {
+            menuButtonSP.addEventListener('dblclick', function(e) {
                 e.preventDefault();
-                toggleCircularMenu();
+                toggleCircularMenuSP();
             });
         }
 
-        // 円形メニューの位置を更新（メニューボタンの位置に合わせる）
-        function updateCircularMenuPosition() {
-            const menuButton = document.getElementById('menuButton');
-            const circularMenu = document.getElementById('circularMenu');
+        // PC版：円形メニューの位置を更新（メニューボタンの位置に合わせる）
+        function updateCircularMenuPositionPC() {
+            const menuButtonPC = document.getElementById('menuButtonPC');
+            const circularMenuPC = document.getElementById('circularMenuPC');
             
-            if (!menuButton || !circularMenu) return;
+            if (!menuButtonPC || !circularMenuPC) return;
 
-            const rect = menuButton.getBoundingClientRect();
+            const rect = menuButtonPC.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
 
             // 円形メニューの中心位置を設定
-            circularMenu.style.left = centerX + 'px';
-            circularMenu.style.top = centerY + 'px';
+            circularMenuPC.style.left = centerX + 'px';
+            circularMenuPC.style.top = centerY + 'px';
 
             // メニュー項目の位置を計算（半径100px、角度30度、60度、90度、120度）
             const radius = 100;
             const angles = [30, 60, 90, 120]; // 度
 
-            const menuItems = circularMenu.querySelectorAll('.circular-menu-item');
+            const menuItems = circularMenuPC.querySelectorAll('.circular-menu-item');
             menuItems.forEach((item, index) => {
                 const angle = angles[index];
                 // 角度をラジアンに変換（12時を0度とするため、-90度を加算）
@@ -7473,63 +7533,130 @@
                 item.style.left = x + 'px';
                 item.style.top = y + 'px';
                 
-                // ラベルにも回転角度を適用（メニューボタン中心から放射状に配置されるため、角度に応じて回転）
+                // ラベルにも回転角度を適用
                 const label = item.querySelector('.menu-item-label');
                 if (label) {
-                    // ラベルの回転角度（90度を基準に調整）
                     const labelRotation = angle - 90;
                     label.style.transform = `rotate(${labelRotation}deg)`;
                 }
             });
         }
 
-        // 円形メニューの展開/閉じる
-        function toggleCircularMenu() {
-            const circularMenu = document.getElementById('circularMenu');
-            if (!circularMenu) return;
+        // SP版：円形メニューの位置を更新（メニューボタンの位置に合わせる）
+        function updateCircularMenuPositionSP() {
+            const menuButtonSP = document.getElementById('menuButtonSP');
+            const circularMenuSP = document.getElementById('circularMenuSP');
+            
+            if (!menuButtonSP || !circularMenuSP) return;
 
-            if (circularMenu.classList.contains('active')) {
-                closeCircularMenu();
+            const rect = menuButtonSP.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            // 円形メニューの中心位置を設定
+            circularMenuSP.style.left = centerX + 'px';
+            circularMenuSP.style.top = centerY + 'px';
+
+            // メニュー項目の位置を計算（半径100px、角度30度、60度、90度、120度）
+            const radius = 100;
+            const angles = [30, 60, 90, 120]; // 度
+
+            const menuItems = circularMenuSP.querySelectorAll('.circular-menu-item');
+            menuItems.forEach((item, index) => {
+                const angle = angles[index];
+                const radian = ((angle - 90) * Math.PI) / 180;
+                const x = Math.cos(radian) * radius;
+                const y = Math.sin(radian) * radius;
+
+                item.style.left = x + 'px';
+                item.style.top = y + 'px';
+                
+                // ラベルにも回転角度を適用
+                const label = item.querySelector('.menu-item-label');
+                if (label) {
+                    const labelRotation = angle - 90;
+                    label.style.transform = `rotate(${labelRotation}deg)`;
+                }
+            });
+        }
+
+        // PC版：円形メニューの展開/閉じる
+        function toggleCircularMenuPC() {
+            const circularMenuPC = document.getElementById('circularMenuPC');
+            if (!circularMenuPC) return;
+
+            if (circularMenuPC.classList.contains('active')) {
+                closeCircularMenuPC();
             } else {
-                openCircularMenu();
+                openCircularMenuPC();
             }
         }
 
-        // 円形メニューを開く
-        function openCircularMenu() {
-            const circularMenu = document.getElementById('circularMenu');
-            if (!circularMenu) return;
+        // PC版：円形メニューを開く
+        function openCircularMenuPC() {
+            const circularMenuPC = document.getElementById('circularMenuPC');
+            if (!circularMenuPC) return;
 
-            // 位置を更新
-            updateCircularMenuPosition();
+            updateCircularMenuPositionPC();
             
-            // アニメーションのために少し遅延
             setTimeout(() => {
-                circularMenu.classList.add('active');
+                circularMenuPC.classList.add('active');
             }, 10);
         }
 
-        // 円形メニューを閉じる
-        function closeCircularMenu() {
-            const circularMenu = document.getElementById('circularMenu');
-            if (!circularMenu) return;
+        // PC版：円形メニューを閉じる
+        function closeCircularMenuPC() {
+            const circularMenuPC = document.getElementById('circularMenuPC');
+            if (!circularMenuPC) return;
             
-            circularMenu.classList.remove('active');
+            circularMenuPC.classList.remove('active');
         }
 
-        // メニュー項目のクリック処理
+        // SP版：円形メニューの展開/閉じる
+        function toggleCircularMenuSP() {
+            const circularMenuSP = document.getElementById('circularMenuSP');
+            if (!circularMenuSP) return;
+
+            if (circularMenuSP.classList.contains('active')) {
+                closeCircularMenuSP();
+            } else {
+                openCircularMenuSP();
+            }
+        }
+
+        // SP版：円形メニューを開く
+        function openCircularMenuSP() {
+            const circularMenuSP = document.getElementById('circularMenuSP');
+            if (!circularMenuSP) return;
+
+            updateCircularMenuPositionSP();
+            
+            setTimeout(() => {
+                circularMenuSP.classList.add('active');
+            }, 10);
+        }
+
+        // SP版：円形メニューを閉じる
+        function closeCircularMenuSP() {
+            const circularMenuSP = document.getElementById('circularMenuSP');
+            if (!circularMenuSP) return;
+            
+            circularMenuSP.classList.remove('active');
+        }
+
+        // メニュー項目のクリック処理（PC版とSP版共通）
         document.addEventListener('click', function(e) {
             const menuItem = e.target.closest('.circular-menu-item');
             if (menuItem) {
                 const action = menuItem.dataset.action;
                 
-                // メニューを閉じる
-                closeCircularMenu();
+                // PC版とSP版の両方のメニューを閉じる
+                closeCircularMenuPC();
+                closeCircularMenuSP();
                 
                 // アクションを実行
                 switch(action) {
                     case 'mypage':
-                        // マイページ機能（今後実装）
                         alert('マイページ機能は今後実装予定です。');
                         break;
                     case 'resource':
@@ -7539,31 +7666,32 @@
                         toggleSlidePanel(5);
                         break;
                     case 'settings':
-                        // 設定機能（今後実装）
                         alert('設定機能は今後実装予定です。');
                         break;
                 }
             } else if (!e.target.closest('.menu-button') && !e.target.closest('.circular-menu')) {
                 // メニューボタンと円形メニューの外側をクリックした場合は閉じる
-                closeCircularMenu();
+                closeCircularMenuPC();
+                closeCircularMenuSP();
             }
         });
 
-        // ESCキーで円形メニューを閉じる
+        // ESCキーで円形メニューを閉じる（PC版とSP版共通）
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                closeCircularMenu();
+                closeCircularMenuPC();
+                closeCircularMenuSP();
             }
         });
 
-        // メニューボタンの位置を保存
-        function saveMenuButtonPosition() {
-            if (menuButtonPosition) {
-                localStorage.setItem('menuButtonPosition', JSON.stringify(menuButtonPosition));
+        // SP版メニューボタンの位置を保存
+        function saveMenuButtonPositionSP() {
+            if (menuButtonPositionSP) {
+                localStorage.setItem('menuButtonPositionSP', JSON.stringify(menuButtonPositionSP));
                 // Firebaseにも保存
                 if (firebaseInitialized && db) {
                     db.collection('taskMarket').doc('main').update({
-                        menuButtonPosition: menuButtonPosition
+                        menuButtonPositionSP: menuButtonPositionSP
                     }).catch(err => {
                         console.warn('メニューボタン位置の保存エラー:', err);
                     });
@@ -7571,33 +7699,33 @@
             }
         }
 
-        // メニューボタンの位置を読み込み
-        function loadMenuButtonPosition() {
+        // SP版メニューボタンの位置を読み込み
+        function loadMenuButtonPositionSP() {
             // Firebaseから読み込み
             if (firebaseInitialized && db) {
                 db.collection('taskMarket').doc('main').get().then(doc => {
-                    if (doc.exists && doc.data().menuButtonPosition) {
-                        menuButtonPosition = doc.data().menuButtonPosition;
+                    if (doc.exists && doc.data().menuButtonPositionSP) {
+                        menuButtonPositionSP = doc.data().menuButtonPositionSP;
                         return;
                     }
                     // localStorageから読み込み
-                    const saved = localStorage.getItem('menuButtonPosition');
+                    const saved = localStorage.getItem('menuButtonPositionSP');
                     if (saved) {
-                        menuButtonPosition = JSON.parse(saved);
+                        menuButtonPositionSP = JSON.parse(saved);
                     }
                 }).catch(err => {
                     console.warn('メニューボタン位置の読み込みエラー:', err);
                     // localStorageから読み込み
-                    const saved = localStorage.getItem('menuButtonPosition');
+                    const saved = localStorage.getItem('menuButtonPositionSP');
                     if (saved) {
-                        menuButtonPosition = JSON.parse(saved);
+                        menuButtonPositionSP = JSON.parse(saved);
                     }
                 });
             } else {
                 // localStorageから読み込み
-                const saved = localStorage.getItem('menuButtonPosition');
+                const saved = localStorage.getItem('menuButtonPositionSP');
                 if (saved) {
-                    menuButtonPosition = JSON.parse(saved);
+                    menuButtonPositionSP = JSON.parse(saved);
                 }
             }
         }
