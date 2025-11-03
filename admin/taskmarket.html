@@ -1633,7 +1633,6 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
             padding: var(--spacing-sm) var(--spacing-md);
             background: white;
             border: 2px solid var(--color-primary);
@@ -1647,12 +1646,12 @@
             opacity: 0;
             transition: all 0.3s ease;
             animation: menuItemFadeIn 0.3s ease forwards;
+            transform-origin: center center;
         }
 
         .menu-item:hover {
             background: var(--color-primary);
             color: white;
-            transform: translate(-50%, -50%) scale(1.1);
         }
 
         @keyframes menuItemFadeIn {
@@ -2709,7 +2708,7 @@
     <!-- メニューボタン（自由移動可能） -->
     <div class="menu-button-container" id="menuButtonContainer">
         <div class="menu-button" id="menuButton">
-            <img src="images/ログ.svg" alt="メニュー" class="menu-button-icon">
+            <img src="images/menu icon.svg" alt="メニュー" class="menu-button-icon">
             <div class="menu-button-background" id="menuButtonBackground"></div>
         </div>
     </div>
@@ -7145,16 +7144,12 @@
         // メニューの開閉状態
         let isMenuOpen = false;
 
-        // メニュー項目の定義（順序：マイページ、リソース管理、アーカイブ、設定、リンク、バック、メディア、取説）
+        // メニュー項目の定義（順序：マイページ、リソース管理、アーカイブ、設定）
         const menuItemsList = [
             { id: 'mypage', label: 'マイページ', action: () => console.log('マイページ') },
             { id: 'resource', label: 'リソース管理', action: () => toggleSlidePanel(2) },
             { id: 'archive', label: 'アーカイブ', action: () => toggleSlidePanel(5) },
-            { id: 'settings', label: '設定', action: () => console.log('設定') },
-            { id: 'link', label: 'リンク', action: () => toggleSlidePanel(1) },
-            { id: 'back', label: 'バック', action: () => toggleSlidePanel(3) },
-            { id: 'media', label: 'メディア', action: () => toggleSlidePanel(4) },
-            { id: 'help', label: '取説', action: () => console.log('取説') }
+            { id: 'settings', label: '設定', action: () => console.log('設定') }
         ];
 
         // メニューボタンの初期化
@@ -7363,12 +7358,31 @@
                 const x = Math.cos(finalAngle) * radius;
                 const y = Math.sin(finalAngle) * radius;
                 
+                // ラベルの回転角度（度に変換、90度を引いてテキストを正しい向きに）
+                const rotationAngle = (finalAngle * 180 / Math.PI) - 90;
+                
                 const menuItem = document.createElement('div');
                 menuItem.className = 'menu-item';
                 menuItem.textContent = item.label;
                 menuItem.style.left = `calc(50% + ${x}px)`;
                 menuItem.style.top = `calc(50% + ${y}px)`;
+                // アニメーション終了後に回転を適用
+                menuItem.style.setProperty('--rotation', `${rotationAngle}deg`);
                 menuItem.style.animationDelay = `${index * 0.05}s`;
+                
+                // アニメーション終了後に回転を適用
+                setTimeout(() => {
+                    menuItem.style.transform = `translate(-50%, -50%) rotate(var(--rotation))`;
+                }, (index * 0.05 + 0.3) * 1000);
+                
+                // hover時のtransform（回転を維持）
+                menuItem.addEventListener('mouseenter', function() {
+                    this.style.transform = `translate(-50%, -50%) rotate(var(--rotation)) scale(1.1)`;
+                });
+                menuItem.addEventListener('mouseleave', function() {
+                    this.style.transform = `translate(-50%, -50%) rotate(var(--rotation)) scale(1)`;
+                });
+                
                 menuItem.onclick = function(e) {
                     e.stopPropagation();
                     item.action();
@@ -7430,10 +7444,10 @@
             // データ読み込み時に既にupdateTaskGrid()が呼ばれているため、重複を避ける
             // ただし、ゴミ箱作成後にUIを更新
             if (!document.getElementById('taskGrid').hasChildNodes() || document.getElementById('taskGrid').childElementCount === 0) {
-                updateTaskGrid();
+            updateTaskGrid();
             }
             if (badges.length > 0) {
-                updateBadges(); // バッジを表示
+            updateBadges(); // バッジを表示
             }
             // リンクパネルの初期化
             updateLinkIconGrid();
