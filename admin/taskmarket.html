@@ -1593,8 +1593,8 @@
             content: '';
             position: absolute;
             left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%) rotate(var(--angle, 0deg));
+            top: 0;
+            transform: translateX(-50%) rotate(var(--angle, 0deg));
             width: 2px;
             height: 100px;
             background: linear-gradient(to bottom, rgba(255, 103, 156, 0.3), transparent);
@@ -1602,6 +1602,7 @@
             transition: opacity 0.3s ease 0.2s;
             pointer-events: none;
             transform-origin: center top;
+            z-index: -1;
         }
 
         .circular-menu.active .circular-menu-item::before {
@@ -7471,8 +7472,10 @@
                 item.style.left = x + 'px';
                 item.style.top = y + 'px';
                 
-                // セグメント線の角度を設定
-                item.style.setProperty('--angle', (angle - 90) + 'deg');
+                // 放射状の線の角度を設定（中心から各項目への方向）
+                // angleは時計回り（12時が0度）、rotateは反時計回りなので調整が必要
+                const lineAngle = angle - 90; // 12時を0度にするための調整
+                item.style.setProperty('--angle', lineAngle + 'deg');
                 
                 // ラベルは回転させない（カード内で水平表示）
                 const label = item.querySelector('.menu-item-label');
@@ -7512,8 +7515,10 @@
                 item.style.left = x + 'px';
                 item.style.top = y + 'px';
                 
-                // セグメント線の角度を設定
-                item.style.setProperty('--angle', (angle - 90) + 'deg');
+                // 放射状の線の角度を設定（中心から各項目への方向）
+                // angleは時計回り（12時が0度）、rotateは反時計回りなので調整が必要
+                const lineAngle = angle - 90; // 12時を0度にするための調整
+                item.style.setProperty('--angle', lineAngle + 'deg');
                 
                 // ラベルは回転させない（カード内で水平表示）
                 const label = item.querySelector('.menu-item-label');
