@@ -7002,12 +7002,12 @@
             const windowWidth = window.innerWidth;
             const windowHeight = window.innerHeight;
             
-            // 保存された位置が有効かチェック（異常に小さい値や負の値を排除）
+            // 保存された位置が有効かチェック（異常に小さい値や負の値、左上(0,0)を排除）
             const isValidPosition = menuButtonPositionSP && 
                 menuButtonPositionSP.left !== undefined && 
                 menuButtonPositionSP.top !== undefined &&
-                menuButtonPositionSP.left >= 0 && 
-                menuButtonPositionSP.top >= 0 &&
+                menuButtonPositionSP.left > 0 && // 0は無効（左上）
+                menuButtonPositionSP.top > 0 && // 0は無効（左上）
                 menuButtonPositionSP.left < windowWidth &&
                 menuButtonPositionSP.top < windowHeight;
             
@@ -7020,10 +7020,17 @@
                 menuButtonSP.style.bottom = 'auto';
                 menuButtonSP.style.transform = 'none';
             } else {
-                // 無効な位置データがある場合はリセット
+                // 無効な位置データがある場合はリセット（{left: 0, top: 0} も無効）
                 if (menuButtonPositionSP) {
                     console.warn('メニューボタンの位置データが無効です。画面中央にリセットします。', menuButtonPositionSP);
                     menuButtonPositionSP = null;
+                    // FirebaseとlocalStorageからも無効な位置を削除
+                    if (firebaseInitialized && db) {
+                        db.collection('taskMarket').doc('main').update({
+                            menuButtonPositionSP: firebase.firestore.FieldValue.delete()
+                        }).catch(err => console.warn('Firebase位置削除エラー:', err));
+                    }
+                    localStorage.removeItem('menuButtonPositionSP');
                 }
                 
                 // デフォルト位置：画面中央
