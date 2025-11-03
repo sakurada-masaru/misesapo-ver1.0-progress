@@ -7976,8 +7976,37 @@
                     return;
                 }
                 
+                // Firebaseのデータを削除
                 await db.collection('taskMarket').doc('main').delete();
-                alert('✅ Firebaseのデータをクリアしました');
+                
+                // localStorageもクリア（オプション）
+                localStorage.removeItem('taskMarketTasks');
+                localStorage.removeItem('taskMarketBadges');
+                localStorage.removeItem('taskMarketTaskBadges');
+                localStorage.removeItem('timeRecords');
+                localStorage.removeItem('externalLinks');
+                localStorage.removeItem('menuButtonPositionSP');
+                localStorage.removeItem('menuButtonPositionPC');
+                
+                // メモリ上のデータもリセット
+                tasks = [];
+                badges = [];
+                taskBadges = {};
+                timeRecords = [];
+                externalLinks = [];
+                menuButtonPositionSP = null;
+                menuButtonPositionPC = null;
+                // UIを更新
+                updateTaskGrid();
+                updateBadges();
+                updateLinkIconGrid();
+                updateArchivePanel();
+                
+                // メニューボタンの位置もリセット
+                initMenuButtonPC();
+                initMenuButtonSP();
+                
+                alert('✅ Firebaseのデータをクリアしました\n\n以下のデータが削除されました：\n- タスク\n- バッジ\n- タイムレコード\n- 外部リンク\n- メニューボタンの位置\n\nlocalStorageもクリアされました。\nページをリロードすると初期状態に戻ります。');
                 console.log('✅ Firebaseデータをクリア');
                 
                 // ページをリロード
@@ -8027,29 +8056,55 @@
             loadMenuButtonPositionPC();
             
             // PC版とSP版のメニューボタンをそれぞれ初期化（DOMが完全に読み込まれた後に実行）
-            setTimeout(() => {
-                // 要素が存在することを再確認
+            // DOMContentLoadedまたはwindow.onloadを待つ
+            function initMenuButtons() {
                 const menuButtonPC = document.getElementById('menuButtonPC');
                 const circularMenu = document.getElementById('circularMenu');
                 const taskGrid = document.getElementById('taskGrid');
                 
                 if (menuButtonPC && circularMenu && taskGrid) {
+                    console.log('✅ メニューボタン初期化: 要素が見つかりました');
                     initMenuButtonPC();
+                    initMenuButtonSP();
                 } else {
-                    console.warn('メニューボタン初期化をスキップ: 要素がまだ見つかりません', {
+                    console.warn('⚠️ メニューボタン初期化をスキップ: 要素がまだ見つかりません', {
                         menuButtonPC: !!menuButtonPC,
                         circularMenu: !!circularMenu,
                         taskGrid: !!taskGrid
                     });
-                    // もう一度試す
-                    setTimeout(() => {
-                        initMenuButtonPC();
-                        initMenuButtonSP();
+                    // もう一度試す（最大5回）
+                    let retryCount = 0;
+                    const maxRetries = 5;
+                    const retryInterval = setInterval(() => {
+                        retryCount++;
+                        const retryMenuButtonPC = document.getElementById('menuButtonPC');
+                        const retryCircularMenu = document.getElementById('circularMenu');
+                        const retryTaskGrid = document.getElementById('taskGrid');
+                        
+                        if (retryMenuButtonPC && retryCircularMenu && retryTaskGrid) {
+                            console.log(`✅ メニューボタン初期化: リトライ${retryCount}回目で成功`);
+                            clearInterval(retryInterval);
+                            initMenuButtonPC();
+                            initMenuButtonSP();
+                        } else if (retryCount >= maxRetries) {
+                            console.error('❌ メニューボタン初期化: 最大リトライ回数に達しました', {
+                                menuButtonPC: !!retryMenuButtonPC,
+                                circularMenu: !!retryCircularMenu,
+                                taskGrid: !!retryTaskGrid
+                            });
+                            clearInterval(retryInterval);
+                        }
                     }, 200);
                 }
-                
-                initMenuButtonSP();
-            }, 100);
+            }
+            
+            // DOMが完全に読み込まれた後に実行
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initMenuButtons);
+            } else {
+                // 既に読み込まれている場合は少し待ってから実行
+                setTimeout(initMenuButtons, 100);
+            }
             
             // ゴミ箱を全て削除してから再作成（重複を完全に防ぐ）
             const allTrashBins = document.querySelectorAll('.trash-bin[id="trashBin"]');
