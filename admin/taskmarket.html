@@ -3314,6 +3314,8 @@
             let touchStartLeft = 0;
             let touchStartTop = 0;
             let isTouchDragging = false;
+            let touchHasDragged = false;
+            let touchClickTimeout = null;
             
             menuIcon.addEventListener('touchstart', function(e) {
                 if (e.touches.length === 1) {
