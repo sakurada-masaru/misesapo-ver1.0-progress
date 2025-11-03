@@ -3616,6 +3616,19 @@
                     taskGrid.appendChild(badgeButton);
                 }
                 
+                // メニューボタンを再追加（まだ存在しない場合）
+                let menuButton = document.getElementById('menuButton');
+                if (!menuButton) {
+                    menuButton = document.createElement('div');
+                    menuButton.className = 'menu-button';
+                    menuButton.id = 'menuButton';
+                    menuButton.draggable = true;
+                    menuButton.innerHTML = '<img src="images/menu icon.svg" alt="メニュー" class="menu-button-icon"><span class="tooltip-text">ダブルクリック/タップでメニュー展開</span>';
+                    taskGrid.appendChild(menuButton);
+                    // メニューボタンを初期化
+                    initMenuButton();
+                }
+                
                 // ゴミ箱はtaskGrid外に配置（position: fixedで画面右下に固定）
                 // taskGrid内には追加しない
                 
