@@ -6512,26 +6512,6 @@
             }
         }
         
-        // パネル開閉時にコンテンツを更新するラッパー関数
-        function openSlidePanelWithUpdate(panelNumber) {
-            openSlidePanel(panelNumber);
-            if (panelNumber === 1) {
-                setTimeout(() => {
-                    updateLinkIconGrid();
-                }, 100);
-            } else if (panelNumber === 2) {
-                // リソース管理パネルを開いた時に更新
-                setTimeout(() => {
-                    updateResourcePanel();
-                }, 100);
-            } else if (panelNumber === 5) {
-                // アーカイブパネルを開いた時に更新
-                setTimeout(() => {
-                    updateArchivePanel();
-                    updateAssigneeFilterOptions();
-                }, 100);
-            }
-        }
 
         /* ========================================
            📊 リソース管理パネル機能 (Resource Management Panel)
@@ -7834,16 +7814,32 @@
         }, 100);
 
         // スライドインパネルの開閉機能（5つのパネル対応）
-        function openSlidePanelOriginal(panelNumber) {
+        function openSlidePanel(panelNumber) {
             const overlay = document.getElementById('slidePanelOverlay' + panelNumber);
             const panel = document.getElementById('slidePanel' + panelNumber);
-            const handle = document.getElementById('slidePanelHandle' + panelNumber);
-            overlay.classList.add('active');
-            handle.classList.add('active');
-            // 少し遅延させてパネルを表示（オーバーレイの表示後に）
-            setTimeout(function() {
-                panel.classList.add('active');
-            }, 10);
+            if (overlay && panel) {
+                overlay.classList.add('active');
+                // 少し遅延させてパネルを表示（オーバーレイの表示後に）
+                setTimeout(function() {
+                    panel.classList.add('active');
+                }, 10);
+                
+                // コンテンツ更新
+                if (panelNumber === 1) {
+                    setTimeout(() => {
+                        updateLinkIconGrid();
+                    }, 100);
+                } else if (panelNumber === 2) {
+                    setTimeout(() => {
+                        updateResourcePanel();
+                    }, 100);
+                } else if (panelNumber === 5) {
+                    setTimeout(() => {
+                        updateArchivePanel();
+                        updateAssigneeFilterOptions();
+                    }, 100);
+                }
+            }
         }
 
         function closeSlidePanel(panelNumber) {
