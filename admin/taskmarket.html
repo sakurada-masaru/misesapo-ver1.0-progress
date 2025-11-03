@@ -3156,8 +3156,20 @@
                         if (data.taskBadges) taskBadges = data.taskBadges;
                         if (data.timeRecords) timeRecords = data.timeRecords;
                         if (data.externalLinks) externalLinks = data.externalLinks;
-                        if (data.menuButtonPositionPC) menuButtonPositionPC = data.menuButtonPositionPC;
-                        if (data.menuButtonPositionSP) menuButtonPositionSP = data.menuButtonPositionSP;
+                        // PC版メニューボタン位置（{left: 0, top: 0}は無効）
+                        if (data.menuButtonPositionPC && data.menuButtonPositionPC.left > 0 && data.menuButtonPositionPC.top > 0) {
+                            menuButtonPositionPC = data.menuButtonPositionPC;
+                        } else if (data.menuButtonPositionPC) {
+                            console.warn('PC版メニューボタン位置が無効です（{left: 0, top: 0}）。無視します。');
+                            menuButtonPositionPC = null;
+                        }
+                        // SP版メニューボタン位置（{left: 0, top: 0}は無効）
+                        if (data.menuButtonPositionSP && data.menuButtonPositionSP.left > 0 && data.menuButtonPositionSP.top > 0) {
+                            menuButtonPositionSP = data.menuButtonPositionSP;
+                        } else if (data.menuButtonPositionSP) {
+                            console.warn('SP版メニューボタン位置が無効です（{left: 0, top: 0}）。無視します。');
+                            menuButtonPositionSP = null;
+                        }
                         
                         // リアルタイム更新を設定
                         setupRealtimeListener();
@@ -3189,14 +3201,26 @@
                 if (savedTimeRecords) timeRecords = JSON.parse(savedTimeRecords);
                 if (savedExternalLinks) externalLinks = JSON.parse(savedExternalLinks);
                 
-                // PC版とSP版メニューボタンの位置も読み込み
+                // PC版とSP版メニューボタンの位置も読み込み（{left: 0, top: 0}は無効）
                 const savedMenuButtonPositionPC = localStorage.getItem('menuButtonPositionPC');
                 if (savedMenuButtonPositionPC) {
-                    menuButtonPositionPC = JSON.parse(savedMenuButtonPositionPC);
+                    const position = JSON.parse(savedMenuButtonPositionPC);
+                    if (position.left > 0 && position.top > 0) {
+                        menuButtonPositionPC = position;
+                    } else {
+                        console.warn('PC版メニューボタン位置が無効です（{left: 0, top: 0}）。無視します。');
+                        menuButtonPositionPC = null;
+                    }
                 }
                 const savedMenuButtonPositionSP = localStorage.getItem('menuButtonPositionSP');
                 if (savedMenuButtonPositionSP) {
-                    menuButtonPositionSP = JSON.parse(savedMenuButtonPositionSP);
+                    const position = JSON.parse(savedMenuButtonPositionSP);
+                    if (position.left > 0 && position.top > 0) {
+                        menuButtonPositionSP = position;
+                    } else {
+                        console.warn('SP版メニューボタン位置が無効です（{left: 0, top: 0}）。無視します。');
+                        menuButtonPositionSP = null;
+                    }
                 }
 
                 console.log('localStorageからタスクマーケットデータを読み込みました');
@@ -3233,8 +3257,20 @@
                         if (data.taskBadges) taskBadges = data.taskBadges;
                         if (data.timeRecords) timeRecords = data.timeRecords;
                         if (data.externalLinks) externalLinks = data.externalLinks;
-                        if (data.menuButtonPositionPC) menuButtonPositionPC = data.menuButtonPositionPC;
-                        if (data.menuButtonPositionSP) menuButtonPositionSP = data.menuButtonPositionSP;
+                        // PC版メニューボタン位置（{left: 0, top: 0}は無効）
+                        if (data.menuButtonPositionPC && data.menuButtonPositionPC.left > 0 && data.menuButtonPositionPC.top > 0) {
+                            menuButtonPositionPC = data.menuButtonPositionPC;
+                        } else if (data.menuButtonPositionPC) {
+                            console.warn('PC版メニューボタン位置が無効です（{left: 0, top: 0}）。無視します。');
+                            menuButtonPositionPC = null;
+                        }
+                        // SP版メニューボタン位置（{left: 0, top: 0}は無効）
+                        if (data.menuButtonPositionSP && data.menuButtonPositionSP.left > 0 && data.menuButtonPositionSP.top > 0) {
+                            menuButtonPositionSP = data.menuButtonPositionSP;
+                        } else if (data.menuButtonPositionSP) {
+                            console.warn('SP版メニューボタン位置が無効です（{left: 0, top: 0}）。無視します。');
+                            menuButtonPositionSP = null;
+                        }
                         
                         // UIを更新
                         updateTaskGrid();
@@ -7782,27 +7818,55 @@
             if (firebaseInitialized && db) {
                 db.collection('taskMarket').doc('main').get().then(doc => {
                     if (doc.exists && doc.data().menuButtonPositionPC) {
-                        menuButtonPositionPC = doc.data().menuButtonPositionPC;
+                        const position = doc.data().menuButtonPositionPC;
+                        // {left: 0, top: 0}を無効な位置として検出
+                        if (position.left > 0 && position.top > 0) {
+                            menuButtonPositionPC = position;
+                        } else {
+                            console.warn('PC版メニューボタン位置が無効です（{left: 0, top: 0}）。無視します。');
+                            menuButtonPositionPC = null;
+                        }
                         return;
                     }
                     // localStorageから読み込み
                     const saved = localStorage.getItem('menuButtonPositionPC');
                     if (saved) {
-                        menuButtonPositionPC = JSON.parse(saved);
+                        const position = JSON.parse(saved);
+                        // {left: 0, top: 0}を無効な位置として検出
+                        if (position.left > 0 && position.top > 0) {
+                            menuButtonPositionPC = position;
+                        } else {
+                            console.warn('PC版メニューボタン位置が無効です（{left: 0, top: 0}）。無視します。');
+                            menuButtonPositionPC = null;
+                        }
                     }
                 }).catch(err => {
                     console.warn('PC版メニューボタン位置の読み込みエラー:', err);
                     // localStorageから読み込み
                     const saved = localStorage.getItem('menuButtonPositionPC');
                     if (saved) {
-                        menuButtonPositionPC = JSON.parse(saved);
+                        const position = JSON.parse(saved);
+                        // {left: 0, top: 0}を無効な位置として検出
+                        if (position.left > 0 && position.top > 0) {
+                            menuButtonPositionPC = position;
+                        } else {
+                            console.warn('PC版メニューボタン位置が無効です（{left: 0, top: 0}）。無視します。');
+                            menuButtonPositionPC = null;
+                        }
                     }
                 });
             } else {
                 // localStorageから読み込み
                 const saved = localStorage.getItem('menuButtonPositionPC');
                 if (saved) {
-                    menuButtonPositionPC = JSON.parse(saved);
+                    const position = JSON.parse(saved);
+                    // {left: 0, top: 0}を無効な位置として検出
+                    if (position.left > 0 && position.top > 0) {
+                        menuButtonPositionPC = position;
+                    } else {
+                        console.warn('PC版メニューボタン位置が無効です（{left: 0, top: 0}）。無視します。');
+                        menuButtonPositionPC = null;
+                    }
                 }
             }
         }
