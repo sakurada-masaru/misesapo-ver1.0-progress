@@ -249,27 +249,11 @@
             border: 6px solid transparent;
         }
         
-        /* 左側ボタン（左パネル）のツールチップ */
-        .slide-panel-handle .tooltip-text {
-            left: 100%;
-            top: 50%;
-            transform: translateY(-50%);
-            margin-left: 8px;
-        }
-        
-        .slide-panel-handle .tooltip-text::before {
-            right: 100%;
-            top: 50%;
-            transform: translateY(-50%);
-            border-right-color: rgba(0, 0, 0, 0.85);
-        }
-
         /* ツールチップ表示（ホバー時） */
         .add-task-button:hover .tooltip-text,
         .add-badge-button:hover .tooltip-text,
         .trash-bin:hover .tooltip-text,
-        .complete-button:hover .tooltip-text,
-        .slide-panel-handle:hover .tooltip-text {
+        .complete-button:hover .tooltip-text {
             opacity: 1;
             visibility: visible;
         }
@@ -1063,165 +1047,7 @@
             color: var(--color-text-secondary);
         }
 
-        /* スライドインパネルのハンドル（左端に固定、5つのパネル用） */
-        .slide-panel-handle {
-            position: fixed;
-            left: 0;
-            width: 24px;
-            height: 80px;
-            border-radius: 0 12px 12px 0;
-            cursor: pointer;
-            z-index: 1999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s ease;
-            padding: 0;
-            border: none;
-        }
 
-        /* 各パネルのハンドルの位置と色（等間隔配置） */
-        .slide-panel-handle.panel-1 {
-            top: calc(100vh / 6);
-            transform: translateY(-50%);
-            background: var(--panel-1-color);
-        }
-
-        .slide-panel-handle.panel-2 {
-            top: calc(100vh / 3);
-            transform: translateY(-50%);
-            background: var(--panel-2-color);
-        }
-
-        .slide-panel-handle.panel-3 {
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--panel-3-color);
-        }
-
-        .slide-panel-handle.panel-4 {
-            top: calc(100vh * 2 / 3);
-            transform: translateY(-50%);
-            background: var(--panel-4-color);
-        }
-
-        .slide-panel-handle.panel-5 {
-            top: calc(100vh * 5 / 6);
-            transform: translateY(-50%);
-            background: var(--panel-5-color);
-        }
-
-        /* スマホ版での左パネルハンドルの配置（100px下に配置） */
-        @media (max-width: 430px) {
-            .slide-panel-handle.panel-1 {
-                top: 100px;
-                transform: none;
-            }
-
-            .slide-panel-handle.panel-2 {
-                top: calc(100px + 50px + 20px); /* 100px + 50px (高さ) + 20px (ギャップ) */
-                transform: none;
-            }
-
-            .slide-panel-handle.panel-3 {
-                top: calc(100px + (50px + 20px) * 2);
-                transform: none;
-            }
-
-            .slide-panel-handle.panel-4 {
-                top: calc(100px + (50px + 20px) * 3);
-                transform: none;
-            }
-
-            .slide-panel-handle.panel-5 {
-                top: calc(100px + (50px + 20px) * 4);
-                transform: none;
-            }
-        }
-
-        .slide-panel-handle:hover {
-            width: 32px;
-            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .slide-panel-handle.panel-1:hover {
-            background: var(--panel-1-hover);
-        }
-
-        .slide-panel-handle.panel-2:hover {
-            background: var(--panel-2-hover);
-        }
-
-        .slide-panel-handle.panel-3:hover {
-            background: var(--panel-3-hover);
-        }
-
-        .slide-panel-handle.panel-4:hover {
-            background: var(--panel-4-hover);
-        }
-
-        .slide-panel-handle.panel-5:hover {
-            background: var(--panel-5-hover);
-        }
-
-        .slide-panel-handle::before {
-            content: '◀';
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            transition: transform 0.3s ease;
-        }
-
-        .slide-panel-handle:hover::before {
-            transform: translateX(2px);
-        }
-
-        .slide-panel-handle.active {
-            left: 40%;
-        }
-
-        .slide-panel-handle.panel-1.active {
-            left: 40%;
-            top: calc(100vh / 6);
-            transform: translateY(-50%) translateX(-100%);
-        }
-
-        .slide-panel-handle.panel-2.active {
-            left: 40%;
-            top: calc(100vh / 3);
-            transform: translateY(-50%) translateX(-100%);
-        }
-
-        .slide-panel-handle.panel-3.active {
-            left: 40%;
-            transform: translateY(-50%) translateX(-100%);
-        }
-
-        .slide-panel-handle.panel-4.active {
-            left: 40%;
-            top: calc(100vh * 2 / 3);
-            transform: translateY(-50%) translateX(-100%);
-        }
-
-        .slide-panel-handle.panel-5.active {
-            left: 40%;
-            top: calc(100vh * 5 / 6);
-            transform: translateY(-50%) translateX(-100%);
-        }
-
-        .slide-panel-handle.active::before {
-            content: '▶';
-            transform: rotate(180deg);
-        }
-
-        .slide-panel-handle.panel-1.active::before,
-        .slide-panel-handle.panel-2.active::before,
-        .slide-panel-handle.panel-4.active::before,
-        .slide-panel-handle.panel-5.active::before {
-            content: '▶';
-            transform: rotate(180deg);
-        }
 
         /* 各パネルのスタイル（色分け） */
         .slide-panel.panel-1 {
@@ -2450,11 +2276,6 @@
                 width: 100%;
             }
 
-            .slide-panel-handle {
-                width: 20px;
-                height: 50px;
-                z-index: 1999;
-            }
 
 
             /* モーダル */
@@ -6693,7 +6514,7 @@
         
         // パネル開閉時にリンクグリッドを更新（ラッパー関数）
         function openSlidePanel(panelNumber) {
-            openSlidePanelOriginal(panelNumber);
+            openSlidePanel(panelNumber);
             if (panelNumber === 1) {
                 setTimeout(() => {
                     updateLinkIconGrid();
