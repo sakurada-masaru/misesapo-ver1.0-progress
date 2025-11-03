@@ -1511,14 +1511,14 @@
             position: fixed;
             width: 56px;
             height: 56px;
-            background: transparent;
+            background: var(--color-primary, #FF679C);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: move;
             z-index: 10000;
-            box-shadow: none;
+            box-shadow: var(--shadow-lg);
             transition: transform 0.2s ease;
             user-select: none;
             -webkit-user-select: none;
@@ -1581,17 +1581,20 @@
 
         .circular-menu-item {
             position: absolute;
+            width: 80px;
+            height: 80px;
+            background: var(--color-primary, #FF679C);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            box-shadow: var(--shadow-lg);
             transition: all 0.3s ease;
             transform: translate(-50%, -50%) scale(0);
             opacity: 0;
             user-select: none;
             -webkit-user-select: none;
-            background: transparent;
-            border: none;
             /* 位置はJavaScriptで計算して設定 */
         }
 
@@ -1601,23 +1604,17 @@
         }
 
         .circular-menu-item:hover {
+            background: var(--color-primary-hover, #FF4081);
             transform: translate(-50%, -50%) scale(1.1);
         }
 
         .menu-item-label {
-            color: var(--color-text-primary, #333);
+            color: white;
             font-size: var(--font-size-sm);
             font-weight: var(--font-weight-semibold);
             text-align: center;
             white-space: nowrap;
-            padding: var(--spacing-xs) var(--spacing-sm);
-            background: transparent;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            border: none;
-        }
-
-        .circular-menu-item:hover .menu-item-label {
-            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            padding: var(--spacing-xs);
         }
 
         .form-group {
@@ -2636,11 +2633,6 @@
         </div>
     </div>
 
-    <!-- メニューボタン（自由に移動可能、最上層） -->
-    <div class="menu-button" id="menuButton" draggable="true">
-        <img src="images/menu icon.svg" alt="メニュー" class="menu-button-icon">
-        <span class="tooltip-text">ダブルクリック/タップでメニュー展開</span>
-    </div>
     
     <!-- 円形メニュー -->
     <div class="circular-menu" id="circularMenu">
@@ -7082,26 +7074,64 @@
            🎯 メニューボタン機能 (Menu Button)
            ======================================== */
 
-        // メニューボタンの位置データ（Firebaseに保存）
+        // メニューボタンの位置データ（Firebaseに保存、タスクカード同様に相対位置（%）で保存）
         let menuButtonPosition = null;
 
         // メニューボタンの初期化
         function initMenuButton() {
             const menuButton = document.getElementById('menuButton');
             const circularMenu = document.getElementById('circularMenu');
+            const taskGrid = document.getElementById('taskGrid');
             
-            if (!menuButton || !circularMenu) return;
+            if (!menuButton || !circularMenu || !taskGrid) return;
 
-            // 初期位置を設定（右下、Firebaseから読み込んだ位置があれば使用）
-            if (menuButtonPosition) {
-                menuButton.style.left = menuButtonPosition.left + 'px';
-                menuButton.style.top = menuButtonPosition.top + 'px';
+            // タスクグリッドのサイズを取得
+            const gridRect = taskGrid.getBoundingClientRect();
+            const gridWidth = gridRect.width;
+            const gridHeight = gridRect.height;
+            const menuButtonWidth = 56; // メニューボタンの幅
+            const menuButtonHeight = 56; // メニューボタンの高さ
+
+            // 初期位置を設定（保存された位置があれば使用、なければランダム配置）
+            if (menuButtonPosition && menuButtonPosition.leftPercent !== undefined && menuButtonPosition.topPercent !== undefined) {
+                // 相対位置（%）から絶対位置（px）に変換
+                const left = (menuButtonPosition.leftPercent / 100) * gridWidth;
+                const top = (menuButtonPosition.topPercent / 100) * gridHeight;
+                menuButton.style.left = left + 'px';
+                menuButton.style.top = top + 'px';
+                menuButton.style.right = 'auto';
+                menuButton.style.bottom = 'auto';
+            } else if (menuButtonPosition && menuButtonPosition.left !== undefined && menuButtonPosition.top !== undefined) {
+                // 古い形式（絶対位置px）の後方互換性
+                const oldGridWidth = 1920;
+                const oldGridHeight = 1080;
+                const leftPercent = (menuButtonPosition.left / oldGridWidth) * 100;
+                const topPercent = (menuButtonPosition.top / oldGridHeight) * 100;
+                const left = (leftPercent / 100) * gridWidth;
+                const top = (topPercent / 100) * gridHeight;
+                menuButton.style.left = left + 'px';
+                menuButton.style.top = top + 'px';
+                menuButton.style.right = 'auto';
+                menuButton.style.bottom = 'auto';
+                // 相対位置として保存し直す
+                menuButtonPosition.leftPercent = leftPercent;
+                menuButtonPosition.topPercent = topPercent;
+                saveMenuButtonPosition();
             } else {
-                // デフォルト位置：画面右下
-                menuButton.style.right = '24px';
-                menuButton.style.bottom = '24px';
-                menuButton.style.left = 'auto';
-                menuButton.style.top = 'auto';
+                // ランダムな位置を計算（タスクグリッド内のランダムな位置）
+                const left = Math.random() * Math.max(0, gridWidth - menuButtonWidth);
+                const top = Math.random() * Math.max(0, gridHeight - menuButtonHeight);
+                menuButton.style.left = left + 'px';
+                menuButton.style.top = top + 'px';
+                menuButton.style.right = 'auto';
+                menuButton.style.bottom = 'auto';
+                
+                // 相対位置（%）を計算して保存
+                menuButtonPosition = {
+                    leftPercent: (left / gridWidth) * 100,
+                    topPercent: (top / gridHeight) * 100
+                };
+                saveMenuButtonPosition();
             }
 
             // 円形メニューの位置をメニューボタンに合わせて更新
@@ -7157,11 +7187,16 @@
                 isDragging = false;
                 this.style.opacity = '1';
                 
-                // 位置を保存
-                const rect = this.getBoundingClientRect();
+                // 位置を保存（相対位置（%）で保存）
+                const taskGridRect = taskGrid.getBoundingClientRect();
+                const gridWidth = taskGridRect.width;
+                const gridHeight = taskGridRect.height;
+                const left = parseFloat(this.style.left) || 0;
+                const top = parseFloat(this.style.top) || 0;
+                
                 menuButtonPosition = {
-                    left: rect.left,
-                    top: rect.top
+                    leftPercent: (left / gridWidth) * 100,
+                    topPercent: (top / gridHeight) * 100
                 };
                 saveMenuButtonPosition();
             });
@@ -7200,9 +7235,8 @@
                     const touch = e.touches[0];
                     touchStartX = touch.clientX;
                     touchStartY = touch.clientY;
-                    const rect = this.getBoundingClientRect();
-                    touchStartLeft = rect.left;
-                    touchStartTop = rect.top;
+                    touchStartLeft = parseFloat(this.style.left) || 0;
+                    touchStartTop = parseFloat(this.style.top) || 0;
                     isTouchDragging = false;
                     hasTouchDragged = false;
                     
@@ -7251,11 +7285,16 @@
                     this.style.transition = '';
                     this.style.zIndex = '10000';
                     
-                    // 位置を保存
-                    const rect = this.getBoundingClientRect();
+                    // 位置を保存（相対位置（%）で保存）
+                    const taskGridRect = taskGrid.getBoundingClientRect();
+                    const gridWidth = taskGridRect.width;
+                    const gridHeight = taskGridRect.height;
+                    const left = parseFloat(this.style.left) || 0;
+                    const top = parseFloat(this.style.top) || 0;
+                    
                     menuButtonPosition = {
-                        left: rect.left,
-                        top: rect.top
+                        leftPercent: (left / gridWidth) * 100,
+                        topPercent: (top / gridHeight) * 100
                     };
                     saveMenuButtonPosition();
                 } else if (!hasTouchDragged) {
