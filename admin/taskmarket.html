@@ -1415,8 +1415,8 @@
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 240px;
-            height: 240px;
+            width: 280px;
+            height: 280px;
             border-radius: 50%;
             background: radial-gradient(circle, rgba(255, 103, 156, 0.08) 0%, rgba(255, 103, 156, 0.02) 50%, transparent 100%);
             opacity: 0;
@@ -1478,14 +1478,16 @@
             -webkit-user-select: none;
             background: rgba(255, 255, 255, 0.95);
             border: 2px solid var(--color-primary, #FF679C);
-            border-radius: 12px;
-            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: 16px;
+            padding: var(--spacing-md);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             transform: translate(-50%, -50%) scale(0);
             opacity: 0;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            width: 70px;
-            min-width: 70px;
+            width: 64px;
+            height: 64px;
+            min-width: 64px;
+            min-height: 64px;
             /* 位置はJavaScriptで計算して設定 */
         }
 
@@ -1542,8 +1544,8 @@
 
         /* メニューアイコン */
         .menu-item-icon {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             object-fit: contain;
             display: block;
         }
@@ -1556,7 +1558,7 @@
             top: 0;
             transform: translateX(-50%) rotate(var(--angle, 0deg));
             width: 2px;
-            height: 100px;
+            height: 120px;
             background: linear-gradient(to bottom, rgba(255, 103, 156, 0.3), transparent);
             opacity: 0;
             transition: opacity 0.3s ease 0.2s;
@@ -1571,7 +1573,7 @@
 
         .circular-menu-item:hover::before {
             background: linear-gradient(to bottom, rgba(255, 103, 156, 0.6), transparent);
-            height: 110px;
+            height: 130px;
         }
 
         .form-group {
@@ -2599,16 +2601,16 @@
     
     <!-- 円形メニュー -->
     <div class="circular-menu" id="circularMenu">
-        <div class="circular-menu-item" data-action="mypage" style="--angle: 30deg;">
+        <div class="circular-menu-item" data-action="mypage" style="--angle: 0deg;">
             <img src="images/mypage.svg" alt="マイページ" class="menu-item-icon">
         </div>
         <div class="circular-menu-item" data-action="resource" style="--angle: 90deg;">
             <img src="images/resource.svg" alt="リソース管理" class="menu-item-icon">
         </div>
-        <div class="circular-menu-item" data-action="archive" style="--angle: 150deg;">
+        <div class="circular-menu-item" data-action="archive" style="--angle: 180deg;">
             <img src="images/archive.svg" alt="アーカイブ" class="menu-item-icon">
         </div>
-        <div class="circular-menu-item" data-action="settings" style="--angle: 210deg;">
+        <div class="circular-menu-item" data-action="settings" style="--angle: 270deg;">
             <img src="images/setup.svg" alt="設定" class="menu-item-icon">
         </div>
     </div>
@@ -7332,9 +7334,9 @@
             circularMenu.style.left = centerX + 'px';
             circularMenu.style.top = centerY + 'px';
 
-            // メニュー項目の位置を計算（半径100px、角度30度、90度、150度、210度）
-            const radius = 100;
-            const angles = [30, 90, 150, 210]; // 度
+            // メニュー項目の位置を計算（半径120px、角度0度、90度、180度、270度で均等配置）
+            const radius = 120;
+            const angles = [0, 90, 180, 270]; // 度（12時、3時、6時、9時の位置）
 
             const menuItems = circularMenu.querySelectorAll('.circular-menu-item');
             menuItems.forEach((item, index) => {
@@ -7375,9 +7377,9 @@
             circularMenu.style.left = centerX + 'px';
             circularMenu.style.top = centerY + 'px';
 
-            // メニュー項目の位置を計算（半径100px、角度30度、90度、150度、210度）
-            const radius = 100;
-            const angles = [30, 90, 150, 210]; // 度
+            // メニュー項目の位置を計算（半径120px、角度0度、90度、180度、270度で均等配置）
+            const radius = 120;
+            const angles = [0, 90, 180, 270]; // 度（12時、3時、6時、9時の位置）
 
             const menuItems = circularMenu.querySelectorAll('.circular-menu-item');
             menuItems.forEach((item, index) => {
