@@ -2492,6 +2492,12 @@
         <div class="main-board">
             <!-- タスクグリッド -->
             <div class="task-grid" id="taskGrid">
+                <!-- PC版メニューボタン（タスクグリッド内で移動可能） -->
+                <div class="menu-button menu-button-pc" id="menuButtonPC" draggable="true" data-menu-button="true">
+                    <img src="admin/images/menicon.svg" alt="メニュー" class="menu-button-icon">
+                    <span class="tooltip-text">ダブルクリックでメニュー展開</span>
+                </div>
+                
                 <!-- プルリフレッシュインジケーター -->
                 <div class="pull-refresh-indicator" id="pullRefreshIndicator">
                     <div class="pull-refresh-spinner"></div>
@@ -2577,12 +2583,6 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- PC版メニューボタン（タスクグリッド左上に固定） -->
-    <div class="menu-button menu-button-pc" id="menuButtonPC" draggable="true" data-menu-button="true">
-        <img src="admin/images/menicon.svg" alt="メニュー" class="menu-button-icon">
-        <span class="tooltip-text">ダブルクリックでメニュー展開</span>
     </div>
 
     <!-- SP版メニューボタン（自由に移動可能） -->
@@ -7002,7 +7002,7 @@
                 return;
             }
             
-            // メニューボタンをtaskGrid内に配置
+            // メニューボタンがtaskGrid内にあることを確認（HTMLでは既にtaskGrid内に配置されている）
             if (menuButtonPC.parentElement !== taskGrid) {
                 taskGrid.appendChild(menuButtonPC);
             }
