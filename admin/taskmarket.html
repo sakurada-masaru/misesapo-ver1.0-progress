@@ -1517,7 +1517,7 @@
             align-items: center;
             justify-content: center;
             cursor: move;
-            z-index: 10000;
+            z-index: 1;
             box-shadow: var(--shadow-lg);
             transition: transform 0.2s ease;
             user-select: none;
@@ -1569,7 +1569,7 @@
             width: 0;
             height: 0;
             pointer-events: none;
-            z-index: 9999;
+            z-index: 100;
             transition: opacity 0.3s ease;
             opacity: 0;
         }
@@ -7109,20 +7109,24 @@
                 menuButton.style.top = menuButtonPosition.top + 'px';
                 menuButton.style.right = 'auto';
                 menuButton.style.bottom = 'auto';
+                menuButton.style.position = 'fixed';
             } else {
                 // デフォルト位置：画面右下（タスクグリッドの外側）
                 menuButton.style.right = '24px';
                 menuButton.style.bottom = '24px';
                 menuButton.style.left = 'auto';
                 menuButton.style.top = 'auto';
+                menuButton.style.position = 'fixed';
                 
-                // 初期位置を保存
-                const rect = menuButton.getBoundingClientRect();
-                menuButtonPosition = {
-                    left: rect.left,
-                    top: rect.top
-                };
-                saveMenuButtonPosition();
+                // 初期位置を保存（少し遅延させて位置を取得）
+                setTimeout(() => {
+                    const rect = menuButton.getBoundingClientRect();
+                    menuButtonPosition = {
+                        left: rect.left,
+                        top: rect.top
+                    };
+                    saveMenuButtonPosition();
+                }, 100);
             }
 
             // 円形メニューの位置をメニューボタンに合わせて更新
@@ -7164,6 +7168,8 @@
                 newLeft = Math.max(0, Math.min(newLeft, maxX));
                 newTop = Math.max(0, Math.min(newTop, maxY));
                 
+                // position: fixedを明示的に設定
+                this.style.position = 'fixed';
                 this.style.left = newLeft + 'px';
                 this.style.top = newTop + 'px';
                 this.style.right = 'auto';
@@ -7179,12 +7185,25 @@
                 this.style.opacity = '1';
                 
                 // 位置を保存（絶対位置（px）で保存）
-                const rect = this.getBoundingClientRect();
-                menuButtonPosition = {
-                    left: rect.left,
-                    top: rect.top
-                };
-                saveMenuButtonPosition();
+                // 少し遅延させて位置を取得（ブラウザのレンダリング完了を待つ）
+                setTimeout(() => {
+                    const rect = this.getBoundingClientRect();
+                    const left = parseFloat(this.style.left) || rect.left;
+                    const top = parseFloat(this.style.top) || rect.top;
+                    
+                    menuButtonPosition = {
+                        left: left,
+                        top: top
+                    };
+                    saveMenuButtonPosition();
+                    
+                    // position: fixedを明示的に設定
+                    this.style.position = 'fixed';
+                    this.style.left = left + 'px';
+                    this.style.top = top + 'px';
+                    this.style.right = 'auto';
+                    this.style.bottom = 'auto';
+                }, 10);
             });
 
             // ダブルクリック（PC版）
@@ -7255,6 +7274,8 @@
                     newLeft = Math.max(0, Math.min(newLeft, maxX));
                     newTop = Math.max(0, Math.min(newTop, maxY));
                     
+                    // position: fixedを明示的に設定
+                    this.style.position = 'fixed';
                     this.style.left = newLeft + 'px';
                     this.style.top = newTop + 'px';
                     this.style.right = 'auto';
@@ -7271,15 +7292,27 @@
                 if (isTouchDragging) {
                     isTouchDragging = false;
                     this.style.transition = '';
-                    this.style.zIndex = '10000';
+                    this.style.zIndex = '1';
                     
                     // 位置を保存（絶対位置（px）で保存）
-                    const rect = this.getBoundingClientRect();
-                    menuButtonPosition = {
-                        left: rect.left,
-                        top: rect.top
-                    };
-                    saveMenuButtonPosition();
+                    // 少し遅延させて位置を取得（ブラウザのレンダリング完了を待つ）
+                    setTimeout(() => {
+                        const left = parseFloat(this.style.left) || this.getBoundingClientRect().left;
+                        const top = parseFloat(this.style.top) || this.getBoundingClientRect().top;
+                        
+                        menuButtonPosition = {
+                            left: left,
+                            top: top
+                        };
+                        saveMenuButtonPosition();
+                        
+                        // position: fixedを明示的に設定
+                        this.style.position = 'fixed';
+                        this.style.left = left + 'px';
+                        this.style.top = top + 'px';
+                        this.style.right = 'auto';
+                        this.style.bottom = 'auto';
+                    }, 10);
                 } else if (!hasTouchDragged) {
                     // タップでダブルタップ判定
                     if (clickTimeout) {
