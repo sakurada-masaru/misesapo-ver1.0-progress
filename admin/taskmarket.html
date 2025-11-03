@@ -3496,11 +3496,7 @@
                 }, { passive: false });
             });
             
-            // メニュー外をクリック/タッチしたら閉じる
-            setTimeout(() => {
-                document.addEventListener('click', closeMenuItemsOnOutsideClick, true);
-                document.addEventListener('touchend', closeMenuItemsOnOutsideClick, true);
-            }, 100);
+            // メニュー外をクリックしても閉じない（ダブルクリックでのみ閉じる）
         }
         
         // メニュー項目を閉じる
@@ -3518,9 +3514,7 @@
                 }, index * 50); // 逆順に閉じる
             });
             
-            // 外側クリック/タッチイベントリスナーを削除
-            document.removeEventListener('click', closeMenuItemsOnOutsideClick, true);
-            document.removeEventListener('touchend', closeMenuItemsOnOutsideClick, true);
+            // 外側クリック/タッチイベントリスナーは登録していない（ダブルクリックでのみ閉じる）
         }
         
         // メニュー外をクリックした時の処理
