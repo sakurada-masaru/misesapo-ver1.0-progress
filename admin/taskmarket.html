@@ -3390,6 +3390,8 @@
                     saveMenuIconPosition();
                 } else {
                     // タップでダブルタップ判定
+                    e.stopPropagation(); // イベント伝播を止める
+                    e.preventDefault(); // デフォルト動作を防止
                     if (touchClickTimeout) {
                         clearTimeout(touchClickTimeout);
                         touchClickTimeout = null;
@@ -3401,7 +3403,7 @@
                         }, 300);
                     }
                 }
-            }, { passive: true });
+            }, { passive: false });
             
             // ダブルクリック/ダブルタップでメニュー項目を表示
             let clickTimeout = null;
@@ -3478,17 +3480,26 @@
                     menuItem.classList.add('active');
                 }, index * 100); // 各項目に100msずつ遅延
                 
-                // クリックイベント
+                // クリックイベント（PC版）
                 menuItem.addEventListener('click', function(e) {
                     e.stopPropagation();
                     handleMenuItemClick(item.action);
                     closeMenuItems();
                 });
+                
+                // タッチイベント（SP版）
+                menuItem.addEventListener('touchend', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    handleMenuItemClick(item.action);
+                    closeMenuItems();
+                }, { passive: false });
             });
             
-            // メニュー外をクリックしたら閉じる
+            // メニュー外をクリック/タッチしたら閉じる
             setTimeout(() => {
                 document.addEventListener('click', closeMenuItemsOnOutsideClick, true);
+                document.addEventListener('touchend', closeMenuItemsOnOutsideClick, true);
             }, 100);
         }
         
@@ -3507,14 +3518,23 @@
                 }, index * 50); // 逆順に閉じる
             });
             
-            // 外側クリックイベントリスナーを削除
+            // 外側クリック/タッチイベントリスナーを削除
             document.removeEventListener('click', closeMenuItemsOnOutsideClick, true);
+            document.removeEventListener('touchend', closeMenuItemsOnOutsideClick, true);
         }
         
         // メニュー外をクリックした時の処理
         function closeMenuItemsOnOutsideClick(e) {
             const menuIcon = document.getElementById('menuIcon');
             if (!menuIcon) return;
+            
+            // タッチイベントの場合は除外（SP版での誤動作を防ぐ）
+            if (e.type === 'touchstart' || e.type === 'touchend' || e.type === 'touchmove') {
+                // メニューアイコンやメニュー項目内のタッチイベントは無視
+                if (menuIcon.contains(e.target)) {
+                    return;
+                }
+            }
             
             if (!menuIcon.contains(e.target)) {
                 closeMenuItems();
