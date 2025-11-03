@@ -2529,13 +2529,25 @@
                     <p style="font-size: var(--font-size-sm); margin-top: var(--spacing-sm);">左下の「+」ボタンからタスクを作成してください</p>
                 </div>
             </div>
+            
+            <!-- ゴミ箱（右下に固定、メインコンテナ内に配置） -->
+            <div class="trash-bin" id="trashBin">
+                <span class="trash-icon">🗑️</span>
+                <span class="tooltip-text">ドラッグ&ドロップで削除</span>
+            </div>
+            
+            <!-- PC版メニューボタン（タスクグリッド左上に固定、メインコンテナ内に配置） -->
+            <div class="menu-button menu-button-pc" id="menuButtonPC" data-menu-button="true">
+                <img src="images/menu.svg" alt="メニュー" class="menu-button-icon">
+                <span class="tooltip-text">ダブルクリックでメニュー展開</span>
+            </div>
+            
+            <!-- SP版メニューボタン（自由に移動可能、メインコンテナ内に配置） -->
+            <div class="menu-button menu-button-sp" id="menuButtonSP" draggable="true" data-menu-button="true">
+                <img src="images/menu.svg" alt="メニュー" class="menu-button-icon">
+                <span class="tooltip-text">ダブルタップでメニュー展開</span>
+            </div>
         </div>
-    </div>
-    
-    <!-- ゴミ箱（右下に固定、body直下に配置） -->
-    <div class="trash-bin" id="trashBin">
-        <span class="trash-icon">🗑️</span>
-        <span class="tooltip-text">ドラッグ&ドロップで削除</span>
     </div>
 
     <!-- タスク詳細パネル（右からスライドイン） -->
@@ -2581,18 +2593,6 @@
         </div>
     </div>
 
-    <!-- PC版メニューボタン（タスクグリッド左上に固定） -->
-    <div class="menu-button menu-button-pc" id="menuButtonPC" data-menu-button="true">
-        <img src="images/menu.svg" alt="メニュー" class="menu-button-icon">
-        <span class="tooltip-text">ダブルクリックでメニュー展開</span>
-    </div>
-
-    <!-- SP版メニューボタン（自由に移動可能） -->
-    <div class="menu-button menu-button-sp" id="menuButtonSP" draggable="true" data-menu-button="true">
-        <img src="images/menu.svg" alt="メニュー" class="menu-button-icon">
-        <span class="tooltip-text">ダブルタップでメニュー展開</span>
-    </div>
-    
     <!-- 円形メニュー -->
     <div class="circular-menu" id="circularMenu">
         <div class="circular-menu-item" data-action="mypage" style="--angle: 0deg;">
@@ -7079,12 +7079,13 @@
                     return;
                 }
                 
-                // メニューボタンがbodyの直接の子要素であることを確認
-                if (this.parentElement !== document.body) {
-                    // body直下に移動
+                // メニューボタンがメインコンテナ内にあることを確認
+                const mainContainer = document.querySelector('.main-container');
+                if (mainContainer && this.parentElement !== mainContainer) {
+                    // メインコンテナ内に移動
                     const currentLeft = parseFloat(this.style.left) || this.getBoundingClientRect().left;
                     const currentTop = parseFloat(this.style.top) || this.getBoundingClientRect().top;
-                    document.body.appendChild(this);
+                    mainContainer.appendChild(this);
                     this.style.position = 'fixed';
                     this.style.left = currentLeft + 'px';
                     this.style.top = currentTop + 'px';
@@ -7123,17 +7124,20 @@
                 const menuButtonElement = document.getElementById('menuButtonSP');
                 if (!menuButtonElement) {
                     console.error('メニューボタンがDOMから削除されました。再作成します。');
-                    // メニューボタンを再作成
-                    const newMenuButton = document.createElement('div');
-                    newMenuButton.className = 'menu-button menu-button-sp';
-                    newMenuButton.id = 'menuButtonSP';
-                    newMenuButton.draggable = true;
-                    newMenuButton.dataset.menuButton = 'true';
-                    newMenuButton.innerHTML = '<img src="images/menu.svg" alt="メニュー" class="menu-button-icon"><span class="tooltip-text">ダブルタップでメニュー展開</span>';
-                    document.body.appendChild(newMenuButton);
-                    // メニューボタンを再初期化
-                    initMenuButtonSP();
-                    return;
+                    // メニューボタンを再作成（メインコンテナ内に配置）
+                    const mainContainer = document.querySelector('.main-container');
+                    if (mainContainer) {
+                        const newMenuButton = document.createElement('div');
+                        newMenuButton.className = 'menu-button menu-button-sp';
+                        newMenuButton.id = 'menuButtonSP';
+                        newMenuButton.draggable = true;
+                        newMenuButton.dataset.menuButton = 'true';
+                        newMenuButton.innerHTML = '<img src="images/menu.svg" alt="メニュー" class="menu-button-icon"><span class="tooltip-text">ダブルタップでメニュー展開</span>';
+                        mainContainer.appendChild(newMenuButton);
+                        // メニューボタンを再初期化
+                        initMenuButtonSP();
+                        return;
+                    }
                 }
                 
                 this.style.opacity = '1';
@@ -7778,12 +7782,16 @@
                 trashBin.remove();
             });
             
-            // 右下に1つだけゴミ箱を作成
-            const trashBin = document.createElement('div');
-            trashBin.className = 'trash-bin';
-            trashBin.id = 'trashBin';
-            trashBin.innerHTML = '<span class="trash-icon">🗑️</span><span class="tooltip-text">ドラッグ&ドロップで削除</span>';
-            document.body.appendChild(trashBin);
+            // 右下に1つだけゴミ箱を作成（メインコンテナ内に配置）
+            const mainContainer = document.querySelector('.main-container');
+            const existingTrashBin = document.getElementById('trashBin');
+            if (!existingTrashBin && mainContainer) {
+                const trashBin = document.createElement('div');
+                trashBin.className = 'trash-bin';
+                trashBin.id = 'trashBin';
+                trashBin.innerHTML = '<span class="trash-icon">🗑️</span><span class="tooltip-text">ドラッグ&ドロップで削除</span>';
+                mainContainer.appendChild(trashBin);
+            }
             
             // setupTrashBinDropのフラグをリセット（新しいゴミ箱にイベントリスナーを設定するため）
             trashBinHandlerSet = false;
