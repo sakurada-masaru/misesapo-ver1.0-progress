@@ -3248,16 +3248,19 @@
                 const gridRect = taskGrid.getBoundingClientRect();
                 draggedOffset.x = e.clientX - rect.left;
                 draggedOffset.y = e.clientY - rect.top;
-                this.style.visibility = 'hidden';
+                // ドラッグ中もメニュー項目を表示するため、visibilityは変更しない
+                // this.style.visibility = 'hidden';
                 e.dataTransfer.effectAllowed = 'move';
                 e.dataTransfer.setData('text/html', this.outerHTML);
             });
             
             // PC版：ドラッグ終了
             menuIcon.addEventListener('dragend', function(e) {
-                this.style.visibility = 'visible';
+                // this.style.visibility = 'visible'; // ドラッグ中も表示しているため不要
                 this.classList.remove('dragging');
                 taskGrid.classList.remove('drag-over');
+                // メニュー項目が展開されている場合は位置を更新
+                updateMenuItemsPosition();
                 // ドラッグ終了後、少し遅延させてリセット（クリックイベントが発火しないように）
                 setTimeout(() => {
                     hasDragged = false;
@@ -3285,6 +3288,9 @@
                     
                     menuIcon.style.left = left + 'px';
                     menuIcon.style.top = top + 'px';
+                    
+                    // メニュー項目が展開されている場合は位置を更新
+                    updateMenuItemsPosition();
                 }
             });
             
@@ -3367,6 +3373,9 @@
                     
                     this.style.left = newLeft + 'px';
                     this.style.top = newTop + 'px';
+                    
+                    // メニュー項目が展開されている場合は位置を更新
+                    updateMenuItemsPosition();
                 }
             }, { passive: false });
             
@@ -3430,6 +3439,18 @@
                 e.preventDefault();
                 toggleMenuItems();
             });
+        }
+        
+        // メニュー項目の位置を更新（メニューアイコンが移動した時に呼び出す）
+        function updateMenuItemsPosition() {
+            const menuIcon = document.getElementById('menuIcon');
+            if (!menuIcon) return;
+            
+            const menuItems = menuIcon.querySelectorAll('.menu-item');
+            if (menuItems.length === 0) return;
+            
+            // メニュー項目は相対位置で配置されているので、自動的に更新される
+            // この関数は必要に応じて追加の処理を行う場合に使用
         }
         
         // メニュー項目の表示/非表示を切り替え
