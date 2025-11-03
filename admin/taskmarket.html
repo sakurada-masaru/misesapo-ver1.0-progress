@@ -8068,20 +8068,57 @@
             // PC版とSP版のメニューボタンをそれぞれ初期化（DOMが完全に読み込まれた後に実行）
             // DOMContentLoadedまたはwindow.onloadを待つ
             function initMenuButtons() {
-                // querySelectorも試す（IDが正しくない場合の対策）
-                const menuButtonPC = document.getElementById('menuButtonPC') || document.querySelector('.menu-button-pc');
-                const circularMenu = document.getElementById('circularMenu');
+                // まず、taskGrid内のすべての要素を確認
                 const taskGrid = document.getElementById('taskGrid');
+                if (!taskGrid) {
+                    console.error('❌ taskGridが見つかりません');
+                    return;
+                }
+                
+                console.log('🔍 taskGrid内容確認:', {
+                    taskGridExists: !!taskGrid,
+                    taskGridChildren: taskGrid.children.length,
+                    taskGridChildrenArray: Array.from(taskGrid.children).map(el => ({
+                        tagName: el.tagName,
+                        id: el.id,
+                        className: el.className,
+                        innerHTML: el.innerHTML.substring(0, 50)
+                    }))
+                });
+                
+                // querySelectorも試す（IDが正しくない場合の対策）
+                const menuButtonPC = document.getElementById('menuButtonPC') || document.querySelector('.menu-button-pc') || taskGrid.querySelector('.menu-button-pc');
+                const circularMenu = document.getElementById('circularMenu');
                 
                 console.log('🔍 メニューボタン要素検索:', {
                     menuButtonPCById: !!document.getElementById('menuButtonPC'),
                     menuButtonPCByQuery: !!document.querySelector('.menu-button-pc'),
+                    menuButtonPCByTaskGrid: !!taskGrid.querySelector('.menu-button-pc'),
                     menuButtonPC: !!menuButtonPC,
                     circularMenu: !!circularMenu,
                     taskGrid: !!taskGrid,
                     windowWidth: window.innerWidth,
-                    allMenuButtons: document.querySelectorAll('.menu-button').length
+                    allMenuButtons: document.querySelectorAll('.menu-button').length,
+                    allMenuButtonsInTaskGrid: taskGrid.querySelectorAll('.menu-button').length
                 });
+                
+                // menuButtonPCが見つからない場合、taskGrid内を詳しく調べる
+                if (!menuButtonPC) {
+                    console.error('❌ menuButtonPCが見つかりません。taskGrid内を詳しく調査:');
+                    const allElements = taskGrid.querySelectorAll('*');
+                    console.log('taskGrid内の全要素:', allElements.length);
+                    allElements.forEach((el, index) => {
+                        if (el.id === 'menuButtonPC' || el.classList.contains('menu-button-pc')) {
+                            console.log(`✅ メニューボタン発見 (要素${index}):`, {
+                                id: el.id,
+                                className: el.className,
+                                tagName: el.tagName,
+                                display: window.getComputedStyle(el).display,
+                                visibility: window.getComputedStyle(el).visibility
+                            });
+                        }
+                    });
+                }
                 
                 if (menuButtonPC && circularMenu && taskGrid) {
                     console.log('✅ メニューボタン初期化: 要素が見つかりました', {
@@ -8091,14 +8128,34 @@
                     });
                     initMenuButtonPC();
                     initMenuButtonSP();
-                } else {
+                    } else {
                     console.warn('⚠️ メニューボタン初期化をスキップ: 要素がまだ見つかりません', {
                         menuButtonPC: !!menuButtonPC,
                         circularMenu: !!circularMenu,
                         taskGrid: !!taskGrid,
                         allMenuButtons: document.querySelectorAll('.menu-button').length,
-                        taskGridChildren: taskGrid ? taskGrid.children.length : 0
+                        taskGridChildren: taskGrid ? taskGrid.children.length : 0,
+                        taskGridHTML: taskGrid ? taskGrid.innerHTML.substring(0, 500) : 'N/A'
                     });
+                    
+                    // menuButtonPCが見つからない場合、手動で作成を試みる
+                    if (!menuButtonPC && taskGrid) {
+                        console.log('🔧 menuButtonPCが見つからないため、手動で作成を試みます');
+                        const newMenuButtonPC = document.createElement('div');
+                        newMenuButtonPC.className = 'menu-button menu-button-pc';
+                        newMenuButtonPC.id = 'menuButtonPC';
+                        newMenuButtonPC.draggable = true;
+                        newMenuButtonPC.dataset.menuButton = 'true';
+                        newMenuButtonPC.innerHTML = '<img src="images/menicon.svg" alt="メニュー" class="menu-button-icon"><span class="tooltip-text">ダブルクリックでメニュー展開</span>';
+                        taskGrid.insertBefore(newMenuButtonPC, taskGrid.firstChild);
+                        console.log('✅ menuButtonPCを手動で作成しました');
+                        // 作成したボタンで初期化を再試行
+                        setTimeout(() => {
+                            initMenuButtonPC();
+                            initMenuButtonSP();
+                        }, 100);
+                        return;
+                    }
                     // もう一度試す（最大5回）
                     let retryCount = 0;
                     const maxRetries = 5;
