@@ -3272,6 +3272,7 @@
                         if (data.taskBadges) taskBadges = data.taskBadges;
                         if (data.timeRecords) timeRecords = data.timeRecords;
                         if (data.externalLinks) externalLinks = data.externalLinks;
+                        if (data.menuButtonPosition) menuButtonPosition = data.menuButtonPosition;
                         
                         // リアルタイム更新を設定
                         setupRealtimeListener();
@@ -3302,6 +3303,12 @@
                 if (savedTaskBadges) taskBadges = JSON.parse(savedTaskBadges);
                 if (savedTimeRecords) timeRecords = JSON.parse(savedTimeRecords);
                 if (savedExternalLinks) externalLinks = JSON.parse(savedExternalLinks);
+                
+                // メニューボタンの位置も読み込み
+                const savedMenuButtonPosition = localStorage.getItem('menuButtonPosition');
+                if (savedMenuButtonPosition) {
+                    menuButtonPosition = JSON.parse(savedMenuButtonPosition);
+                }
 
                 console.log('localStorageからタスクマーケットデータを読み込みました');
 
