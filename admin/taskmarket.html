@@ -1306,15 +1306,15 @@
         /* PC版メニューボタン：タスクグリッド左上に固定 */
         .menu-button {
             position: fixed;
-            width: 56px;
-            height: 56px;
-            background: var(--color-primary, #FF679C);
-            border-radius: 50%;
+            width: auto;
+            height: auto;
+            background: transparent;
+            border-radius: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 11;
-            box-shadow: var(--shadow-lg);
+            box-shadow: none;
             transition: transform 0.2s ease;
             user-select: none;
             -webkit-user-select: none;
@@ -1363,8 +1363,9 @@
         }
 
         .menu-button-icon {
-            width: 36px;
-            height: 59px;
+            width: auto;
+            height: 56px;
+            max-width: 56px;
             pointer-events: none;
             object-fit: contain;
         }
