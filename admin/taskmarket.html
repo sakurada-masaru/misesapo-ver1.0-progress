@@ -3354,11 +3354,11 @@
                     const iconWidth = 56;
                     const iconHeight = 56;
                     
-                    const deltaX = touch.clientX - touchStartX;
-                    const deltaY = touch.clientY - touchStartY;
+                    const moveDeltaX = touch.clientX - touchStartX;
+                    const moveDeltaY = touch.clientY - touchStartY;
                     
-                    let newLeft = touchStartLeft + deltaX;
-                    let newTop = touchStartTop + deltaY;
+                    let newLeft = touchStartLeft + moveDeltaX;
+                    let newTop = touchStartTop + moveDeltaY;
                     
                     newLeft = Math.max(0, Math.min(newLeft, gridWidth - iconWidth));
                     newTop = Math.max(0, Math.min(newTop, gridHeight - iconHeight));
@@ -3369,8 +3369,9 @@
             }, { passive: false });
             
             menuIcon.addEventListener('touchend', function(e) {
-                if (isTouchDragging) {
+                if (isTouchDragging || touchHasDragged) {
                     isTouchDragging = false;
+                    touchHasDragged = false;
                     this.style.transition = '';
                     this.style.zIndex = '100';
                     
@@ -3385,8 +3386,159 @@
                         topPercent: (absTop / gridHeight) * 100
                     };
                     saveMenuIconPosition();
+                } else {
+                    // タップでダブルタップ判定
+                    if (touchClickTimeout) {
+                        clearTimeout(touchClickTimeout);
+                        touchClickTimeout = null;
+                        // ダブルタップ
+                        toggleMenuItems();
+                    } else {
+                        touchClickTimeout = setTimeout(() => {
+                            touchClickTimeout = null;
+                        }, 300);
+                    }
                 }
             }, { passive: true });
+            
+            // ダブルクリック/ダブルタップでメニュー項目を表示
+            let clickTimeout = null;
+            
+            menuIcon.addEventListener('click', function(e) {
+                if (hasDragged) {
+                    hasDragged = false;
+                    return;
+                }
+                
+                if (clickTimeout) {
+                    clearTimeout(clickTimeout);
+                    clickTimeout = null;
+                    // ダブルクリック
+                    toggleMenuItems();
+                } else {
+                    clickTimeout = setTimeout(() => {
+                        clickTimeout = null;
+                    }, 300);
+                }
+            });
+            
+            menuIcon.addEventListener('dblclick', function(e) {
+                e.preventDefault();
+                toggleMenuItems();
+            });
+        }
+        
+        // メニュー項目の表示/非表示を切り替え
+        function toggleMenuItems() {
+            const menuIcon = document.getElementById('menuIcon');
+            if (!menuIcon) return;
+            
+            const menuItems = menuIcon.querySelectorAll('.menu-item');
+            const isActive = menuItems.length > 0 && menuItems[0].classList.contains('active');
+            
+            if (isActive) {
+                // メニューを閉じる
+                closeMenuItems();
+            } else {
+                // メニューを開く
+                openMenuItems();
+            }
+        }
+        
+        // メニュー項目を開く
+        function openMenuItems() {
+            const menuIcon = document.getElementById('menuIcon');
+            if (!menuIcon) return;
+            
+            // 既存のメニュー項目を削除
+            const existingItems = menuIcon.querySelectorAll('.menu-item');
+            existingItems.forEach(item => item.remove());
+            
+            // メニュー項目の定義（時計回り：上→右→下→左）
+            const menuItems = [
+                { position: 'top', icon: 'images/mypage.svg', action: 'mypage' },
+                { position: 'right', icon: 'images/setup.svg', action: 'setup' },
+                { position: 'bottom', icon: 'images/resource.svg', action: 'resource' },
+                { position: 'left', icon: 'images/archive.svg', action: 'archive' }
+            ];
+            
+            // メニュー項目を生成
+            menuItems.forEach((item, index) => {
+                const menuItem = document.createElement('div');
+                menuItem.className = `menu-item ${item.position}`;
+                menuItem.dataset.action = item.action;
+                menuItem.innerHTML = `<img src="${item.icon}" alt="${item.action}">`;
+                
+                menuIcon.appendChild(menuItem);
+                
+                // アニメーション遅延を設定（時計回りに順番に表示）
+                setTimeout(() => {
+                    menuItem.classList.add('active');
+                }, index * 100); // 各項目に100msずつ遅延
+                
+                // クリックイベント
+                menuItem.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    handleMenuItemClick(item.action);
+                    closeMenuItems();
+                });
+            });
+            
+            // メニュー外をクリックしたら閉じる
+            setTimeout(() => {
+                document.addEventListener('click', closeMenuItemsOnOutsideClick, true);
+            }, 100);
+        }
+        
+        // メニュー項目を閉じる
+        function closeMenuItems() {
+            const menuIcon = document.getElementById('menuIcon');
+            if (!menuIcon) return;
+            
+            const menuItems = menuIcon.querySelectorAll('.menu-item');
+            menuItems.forEach((item, index) => {
+                setTimeout(() => {
+                    item.classList.remove('active');
+                    setTimeout(() => {
+                        item.remove();
+                    }, 400); // アニメーション完了後に削除
+                }, index * 50); // 逆順に閉じる
+            });
+            
+            // 外側クリックイベントリスナーを削除
+            document.removeEventListener('click', closeMenuItemsOnOutsideClick, true);
+        }
+        
+        // メニュー外をクリックした時の処理
+        function closeMenuItemsOnOutsideClick(e) {
+            const menuIcon = document.getElementById('menuIcon');
+            if (!menuIcon) return;
+            
+            if (!menuIcon.contains(e.target)) {
+                closeMenuItems();
+            }
+        }
+        
+        // メニュー項目のクリック処理
+        function handleMenuItemClick(action) {
+            switch(action) {
+                case 'mypage':
+                    // マイページ機能（今後実装）
+                    alert('マイページ機能は今後実装予定です。');
+                    break;
+                case 'setup':
+                    // 設定機能（今後実装）
+                    alert('設定機能は今後実装予定です。');
+                    break;
+                case 'resource':
+                    // リソース管理パネルを開く
+                    toggleSlidePanel(2);
+                    break;
+                case 'archive':
+                    // アーカイブパネルを開く
+                    toggleSlidePanel(5);
+                    break;
+            }
         }
         
         // メニューアイコンの位置を保存
