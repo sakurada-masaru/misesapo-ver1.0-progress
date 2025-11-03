@@ -7115,33 +7115,31 @@
             
             if (menuButtonPosition && menuButtonPosition.left !== undefined && menuButtonPosition.top !== undefined) {
                 // 保存された絶対位置（px）を使用
+                menuButton.style.position = 'fixed';
                 menuButton.style.left = menuButtonPosition.left + 'px';
                 menuButton.style.top = menuButtonPosition.top + 'px';
                 menuButton.style.right = 'auto';
                 menuButton.style.bottom = 'auto';
-                menuButton.style.position = 'fixed';
+                menuButton.style.transform = 'none';
             } else {
                 // デフォルト位置：画面中央
-                menuButton.style.left = '50%';
-                menuButton.style.top = '50%';
-                menuButton.style.transform = 'translate(-50%, -50%)';
+                // transformを使わずに、left/topで直接計算
+                const centerX = (windowWidth / 2) - (menuButtonWidth / 2);
+                const centerY = (windowHeight / 2) - (menuButtonHeight / 2);
+                
+                menuButton.style.position = 'fixed';
+                menuButton.style.left = centerX + 'px';
+                menuButton.style.top = centerY + 'px';
                 menuButton.style.right = 'auto';
                 menuButton.style.bottom = 'auto';
-                menuButton.style.position = 'fixed';
+                menuButton.style.transform = 'none';
                 
-                // 初期位置を保存（少し遅延させて位置を取得）
-                setTimeout(() => {
-                    const rect = menuButton.getBoundingClientRect();
-                    menuButtonPosition = {
-                        left: rect.left,
-                        top: rect.top
-                    };
-                    saveMenuButtonPosition();
-                    // transformをリセットして、left/topで位置を管理
-                    menuButton.style.transform = 'none';
-                    menuButton.style.left = rect.left + 'px';
-                    menuButton.style.top = rect.top + 'px';
-                }, 100);
+                // 初期位置を保存
+                menuButtonPosition = {
+                    left: centerX,
+                    top: centerY
+                };
+                saveMenuButtonPosition();
             }
 
             // 円形メニューの位置をメニューボタンに合わせて更新
