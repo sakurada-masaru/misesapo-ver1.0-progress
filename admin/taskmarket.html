@@ -1526,7 +1526,7 @@
 
         /* PC版：左上に固定、ドラッグ不可 */
         .menu-button-pc {
-            top: 80px; /* ヘッダー（60px）の下、余白20px */
+            top: 130px; /* ヘッダー（60px）の下、余白20px + 50px下に配置 */
             left: 24px;
             cursor: pointer;
             touch-action: none;
@@ -2682,33 +2682,26 @@
         <div class="circular-menu-item" data-action="mypage" style="--angle: 30deg;">
             <span class="menu-item-label">マイページ</span>
         </div>
-        <div class="circular-menu-item" data-action="resource" style="--angle: 60deg;" onclick="toggleSlidePanel(2)">
+        <div class="circular-menu-item" data-action="resource" style="--angle: 60deg;">
             <span class="menu-item-label">リソース管理</span>
         </div>
-        <div class="circular-menu-item" data-action="archive" style="--angle: 90deg;" onclick="toggleSlidePanel(5)">
+        <div class="circular-menu-item" data-action="archive" style="--angle: 90deg;">
             <span class="menu-item-label">アーカイブ</span>
         </div>
         <div class="circular-menu-item" data-action="settings" style="--angle: 120deg;">
             <span class="menu-item-label">設定</span>
         </div>
+        <div class="circular-menu-item" data-action="link" style="--angle: 150deg;">
+            <span class="menu-item-label">リンク</span>
+        </div>
+        <div class="circular-menu-item" data-action="backend" style="--angle: 180deg;">
+            <span class="menu-item-label">バック</span>
+        </div>
+        <div class="circular-menu-item" data-action="media" style="--angle: 210deg;">
+            <span class="menu-item-label">メディア</span>
+        </div>
     </div>
 
-    <!-- スライドインパネルのハンドル（左端に固定、5つ） -->
-    <button class="slide-panel-handle panel-1" id="slidePanelHandle1" onclick="toggleSlidePanel(1)">
-        <span class="tooltip-text">リンクパネルを開く</span>
-    </button>
-    <button class="slide-panel-handle panel-2" id="slidePanelHandle2" onclick="toggleSlidePanel(2)">
-        <span class="tooltip-text">リソース管理パネルを開く</span>
-    </button>
-    <button class="slide-panel-handle panel-3" id="slidePanelHandle3" onclick="toggleSlidePanel(3)">
-        <span class="tooltip-text">バックパネルを開く</span>
-    </button>
-    <button class="slide-panel-handle panel-4" id="slidePanelHandle4" onclick="toggleSlidePanel(4)">
-        <span class="tooltip-text">メディアパネルを開く</span>
-    </button>
-    <button class="slide-panel-handle panel-5" id="slidePanelHandle5" onclick="toggleSlidePanel(5)">
-        <span class="tooltip-text">アーカイブパネルを開く</span>
-    </button>
 
     <!-- モーダル：タスク入力フォーム -->
     <div class="modal-overlay" id="taskFormModal" onclick="closeModalOnOverlay(event)">
@@ -7524,9 +7517,9 @@
             circularMenu.style.left = centerX + 'px';
             circularMenu.style.top = centerY + 'px';
 
-            // メニュー項目の位置を計算（半径100px、角度30度、60度、90度、120度）
+            // メニュー項目の位置を計算（半径100px、角度30度、60度、90度、120度、150度、180度、210度）
             const radius = 100;
-            const angles = [30, 60, 90, 120]; // 度
+            const angles = [30, 60, 90, 120, 150, 180, 210]; // 度
 
             const menuItems = circularMenu.querySelectorAll('.circular-menu-item');
             menuItems.forEach((item, index) => {
@@ -7564,9 +7557,9 @@
             circularMenu.style.left = centerX + 'px';
             circularMenu.style.top = centerY + 'px';
 
-            // メニュー項目の位置を計算（半径100px、角度30度、60度、90度、120度）
+            // メニュー項目の位置を計算（半径100px、角度30度、60度、90度、120度、150度、180度、210度）
             const radius = 100;
-            const angles = [30, 60, 90, 120]; // 度
+            const angles = [30, 60, 90, 120, 150, 180, 210]; // 度
 
             const menuItems = circularMenu.querySelectorAll('.circular-menu-item');
             menuItems.forEach((item, index) => {
@@ -7682,6 +7675,18 @@
                     case 'settings':
                         // 設定機能（今後実装）
                         alert('設定機能は今後実装予定です。');
+                        break;
+                    case 'link':
+                        // リンクパネル（Panel 1）
+                        toggleSlidePanel(1);
+                        break;
+                    case 'backend':
+                        // バックパネル（Panel 3）
+                        toggleSlidePanel(3);
+                        break;
+                    case 'media':
+                        // メディアパネル（Panel 4）
+                        toggleSlidePanel(4);
                         break;
                 }
             } else if (!e.target.closest('.menu-button') && !e.target.closest('.circular-menu')) {
