@@ -7161,11 +7161,10 @@
             menuButton.addEventListener('dragstart', function(e) {
                 isDragging = true;
                 hasDragged = false;
-                const rect = this.getBoundingClientRect();
                 dragStartX = e.clientX;
                 dragStartY = e.clientY;
-                startLeft = rect.left;
-                startTop = rect.top;
+                startLeft = parseFloat(this.style.left) || 0;
+                startTop = parseFloat(this.style.top) || 0;
                 this.style.opacity = '0.7';
                 e.dataTransfer.effectAllowed = 'move';
             });
@@ -7268,15 +7267,20 @@
                     e.preventDefault();
                     const touch = e.touches[0];
                     
+                    const taskGridRect = taskGrid.getBoundingClientRect();
+                    const gridWidth = taskGridRect.width;
+                    const gridHeight = taskGridRect.height;
+                    
                     const deltaX = touch.clientX - touchStartX;
                     const deltaY = touch.clientY - touchStartY;
                     
+                    // グリッド内の相対位置を計算
                     let newLeft = touchStartLeft + deltaX;
                     let newTop = touchStartTop + deltaY;
                     
-                    // 画面内に制限
-                    const maxX = window.innerWidth - this.offsetWidth;
-                    const maxY = window.innerHeight - this.offsetHeight;
+                    // タスクグリッド内に制限
+                    const maxX = gridWidth - this.offsetWidth;
+                    const maxY = gridHeight - this.offsetHeight;
                     newLeft = Math.max(0, Math.min(newLeft, maxX));
                     newTop = Math.max(0, Math.min(newTop, maxY));
                     
