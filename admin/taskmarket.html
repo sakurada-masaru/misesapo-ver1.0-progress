@@ -7946,8 +7946,9 @@
             // SP版メニューボタンの位置を読み込み
             await loadMenuButtonPositionSP();
             
-            // メニューボタンを初期化
-            initMenuButton();
+            // PC版とSP版のメニューボタンをそれぞれ初期化
+            initMenuButtonPC();
+            initMenuButtonSP();
             
             // ゴミ箱を全て削除してから再作成（重複を完全に防ぐ）
             const allTrashBins = document.querySelectorAll('.trash-bin[id="trashBin"]');
