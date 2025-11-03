@@ -3114,10 +3114,25 @@
                     _updatedAt: Date.now()
                 };
 
-                await db.collection('taskMarket').doc('main').set(payload, { merge: true });
+                // nullやundefinedの値は除外
+                const cleanPayload = {};
+                Object.keys(payload).forEach(key => {
+                    if (payload[key] !== null && payload[key] !== undefined) {
+                        cleanPayload[key] = payload[key];
+                    }
+                });
+
+                await db.collection('taskMarket').doc('main').set(cleanPayload, { merge: true });
                 console.log('✅ タスクマーケットデータをFirebaseに保存しました');
             } catch (error) {
                 console.error('❌ Firebase保存エラー:', error);
+                // 400エラーの場合は詳細をログ出力
+                if (error.code === 'invalid-argument' || error.code === 'failed-precondition' || error.code === 'permission-denied') {
+                    console.error('Firestoreリクエストエラー詳細:', {
+                        code: error.code,
+                        message: error.message
+                    });
+                }
                 // エラー時はlocalStorageにフォールバック
                 localStorage.setItem('taskMarketTasks', JSON.stringify(tasks));
                 localStorage.setItem('taskMarketBadges', JSON.stringify(badges));
