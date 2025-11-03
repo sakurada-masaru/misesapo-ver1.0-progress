@@ -7853,15 +7853,15 @@
             }
         }
         
-        // メニューボタン位置をリセット
+        // メニューボタン位置をリセット（SP版のみ）
         function resetMenuButtonPosition() {
-            menuButtonPosition = null;
-            localStorage.removeItem('menuButtonPosition');
+            menuButtonPositionSP = null;
+            localStorage.removeItem('menuButtonPositionSP');
             
             // Firebaseからも削除
             if (firebaseInitialized && db) {
                 db.collection('taskMarket').doc('main').update({
-                    menuButtonPosition: firebase.firestore.FieldValue.delete()
+                    menuButtonPositionSP: firebase.firestore.FieldValue.delete()
                 }).catch(err => {
                     console.warn('Firebase削除エラー:', err);
                 });
