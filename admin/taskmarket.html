@@ -6844,7 +6844,7 @@
 
             // フィルター用のメンバーオプションを更新
             if (filterSelect) {
-                const existingOptions = filterSelect.querySelectorAll('option[value!="all"]');
+                const existingOptions = filterSelect.querySelectorAll('option:not([value="all"])');
                 existingOptions.forEach(opt => opt.remove());
                 
                 badges.forEach(badge => {
