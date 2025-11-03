@@ -1050,40 +1050,16 @@
 
 
         /* 各パネルのスタイル（色分け） */
-        .slide-panel.panel-1 {
-            border-right: 4px solid var(--panel-1-color);
-        }
-
         .slide-panel.panel-2 {
             border-right: 4px solid var(--panel-2-color);
-        }
-
-        .slide-panel.panel-3 {
-            border-right: 4px solid var(--panel-3-color);
-        }
-
-        .slide-panel.panel-4 {
-            border-right: 4px solid var(--panel-4-color);
         }
 
         .slide-panel.panel-5 {
             border-right: 4px solid var(--panel-5-color);
         }
 
-        .slide-panel-header.panel-1 {
-            border-bottom: 2px solid var(--panel-1-color);
-        }
-
         .slide-panel-header.panel-2 {
             border-bottom: 2px solid var(--panel-2-color);
-        }
-
-        .slide-panel-header.panel-3 {
-            border-bottom: 2px solid var(--panel-3-color);
-        }
-
-        .slide-panel-header.panel-4 {
-            border-bottom: 2px solid var(--panel-4-color);
         }
 
         .slide-panel-header.panel-5 {
@@ -1529,34 +1505,16 @@
         .circular-menu.active .circular-menu-item:nth-child(2) {
             transform: translate(-50%, -50%) scale(1);
             opacity: 1;
-            transition-delay: 0.1s;
+            transition-delay: 0.15s;
         }
 
         .circular-menu.active .circular-menu-item:nth-child(3) {
             transform: translate(-50%, -50%) scale(1);
             opacity: 1;
-            transition-delay: 0.15s;
-        }
-
-        .circular-menu.active .circular-menu-item:nth-child(4) {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-            transition-delay: 0.2s;
-        }
-
-        .circular-menu.active .circular-menu-item:nth-child(5) {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
             transition-delay: 0.25s;
         }
 
-        .circular-menu.active .circular-menu-item:nth-child(6) {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-            transition-delay: 0.3s;
-        }
-
-        .circular-menu.active .circular-menu-item:nth-child(7) {
+        .circular-menu.active .circular-menu-item:nth-child(4) {
             transform: translate(-50%, -50%) scale(1);
             opacity: 1;
             transition-delay: 0.35s;
@@ -1586,6 +1544,14 @@
             border: none;
             background: transparent;
             margin-top: var(--spacing-xs);
+        }
+
+        /* メニューアイコン */
+        .menu-item-icon {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            display: block;
         }
 
         /* 放射状の線（中央から各項目へのガイド） */
@@ -2640,25 +2606,16 @@
     <!-- 円形メニュー -->
     <div class="circular-menu" id="circularMenu">
         <div class="circular-menu-item" data-action="mypage" style="--angle: 30deg;">
-            <span class="menu-item-label">マイページ</span>
+            <img src="images/mypage.svg" alt="マイページ" class="menu-item-icon">
         </div>
-        <div class="circular-menu-item" data-action="resource" style="--angle: 60deg;">
-            <span class="menu-item-label">リソース管理</span>
+        <div class="circular-menu-item" data-action="resource" style="--angle: 90deg;">
+            <img src="images/resource.svg" alt="リソース管理" class="menu-item-icon">
         </div>
-        <div class="circular-menu-item" data-action="archive" style="--angle: 90deg;">
-            <span class="menu-item-label">アーカイブ</span>
+        <div class="circular-menu-item" data-action="archive" style="--angle: 150deg;">
+            <img src="images/archive.svg" alt="アーカイブ" class="menu-item-icon">
         </div>
-        <div class="circular-menu-item" data-action="settings" style="--angle: 120deg;">
-            <span class="menu-item-label">設定</span>
-        </div>
-        <div class="circular-menu-item" data-action="link" style="--angle: 150deg;">
-            <span class="menu-item-label">リンク</span>
-        </div>
-        <div class="circular-menu-item" data-action="backend" style="--angle: 180deg;">
-            <span class="menu-item-label">バック</span>
-        </div>
-        <div class="circular-menu-item" data-action="media" style="--angle: 210deg;">
-            <span class="menu-item-label">メディア</span>
+        <div class="circular-menu-item" data-action="settings" style="--angle: 210deg;">
+            <img src="images/setup.svg" alt="設定" class="menu-item-icon">
         </div>
     </div>
 
@@ -2846,44 +2803,6 @@
                             <!-- タイムラインがここに動的に生成されます -->
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- パネル3（グリーン：バック） -->
-    <div class="slide-panel-overlay" id="slidePanelOverlay3" onclick="closeSlidePanelOnOverlay(event, 3)">
-        <div class="slide-panel panel-3" id="slidePanel3" onclick="event.stopPropagation()">
-            <div class="slide-panel-header panel-3">
-                <h2 class="slide-panel-title">バック</h2>
-                <button class="slide-panel-close-button" onclick="closeSlidePanel(3)" title="閉じる">×</button>
-            </div>
-            <div class="slide-panel-content">
-                <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-md);">
-                    バックエンド開発のタスク管理パネルです。
-                </p>
-                <div style="padding: var(--spacing-lg); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
-                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">バックのコンテンツ</h3>
-                    <p style="color: var(--color-text-secondary);">ここにバックエンド関連のコンテンツを配置できます。</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- パネル4（オレンジ：メディア） -->
-    <div class="slide-panel-overlay" id="slidePanelOverlay4" onclick="closeSlidePanelOnOverlay(event, 4)">
-        <div class="slide-panel panel-4" id="slidePanel4" onclick="event.stopPropagation()">
-            <div class="slide-panel-header panel-4">
-                <h2 class="slide-panel-title">メディア</h2>
-                <button class="slide-panel-close-button" onclick="closeSlidePanel(4)" title="閉じる">×</button>
-            </div>
-            <div class="slide-panel-content">
-                <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-md);">
-                    メディア関連のタスク管理パネルです。
-                </p>
-                <div style="padding: var(--spacing-lg); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
-                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">メディアのコンテンツ</h3>
-                    <p style="color: var(--color-text-secondary);">ここにメディア関連のコンテンツを配置できます。</p>
                 </div>
             </div>
         </div>
@@ -7457,9 +7376,9 @@
             circularMenu.style.left = centerX + 'px';
             circularMenu.style.top = centerY + 'px';
 
-            // メニュー項目の位置を計算（半径100px、角度30度、60度、90度、120度、150度、180度、210度）
+            // メニュー項目の位置を計算（半径100px、角度30度、90度、150度、210度）
             const radius = 100;
-            const angles = [30, 60, 90, 120, 150, 180, 210]; // 度
+            const angles = [30, 90, 150, 210]; // 度
 
             const menuItems = circularMenu.querySelectorAll('.circular-menu-item');
             menuItems.forEach((item, index) => {
@@ -7477,10 +7396,10 @@
                 const lineAngle = angle - 90; // 12時を0度にするための調整
                 item.style.setProperty('--angle', lineAngle + 'deg');
                 
-                // ラベルは回転させない（カード内で水平表示）
-                const label = item.querySelector('.menu-item-label');
-                if (label) {
-                    label.style.transform = 'none';
+                // アイコンは回転させない（カード内で水平表示）
+                const icon = item.querySelector('.menu-item-icon');
+                if (icon) {
+                    icon.style.transform = 'none';
                 }
             });
         }
@@ -7500,9 +7419,9 @@
             circularMenu.style.left = centerX + 'px';
             circularMenu.style.top = centerY + 'px';
 
-            // メニュー項目の位置を計算（半径100px、角度30度、60度、90度、120度、150度、180度、210度）
+            // メニュー項目の位置を計算（半径100px、角度30度、90度、150度、210度）
             const radius = 100;
-            const angles = [30, 60, 90, 120, 150, 180, 210]; // 度
+            const angles = [30, 90, 150, 210]; // 度
 
             const menuItems = circularMenu.querySelectorAll('.circular-menu-item');
             menuItems.forEach((item, index) => {
@@ -7520,10 +7439,10 @@
                 const lineAngle = angle - 90; // 12時を0度にするための調整
                 item.style.setProperty('--angle', lineAngle + 'deg');
                 
-                // ラベルは回転させない（カード内で水平表示）
-                const label = item.querySelector('.menu-item-label');
-                if (label) {
-                    label.style.transform = 'none';
+                // アイコンは回転させない（カード内で水平表示）
+                const icon = item.querySelector('.menu-item-icon');
+                if (icon) {
+                    icon.style.transform = 'none';
                 }
             });
         }
@@ -7621,18 +7540,6 @@
                     case 'settings':
                         // 設定機能（今後実装）
                         alert('設定機能は今後実装予定です。');
-                        break;
-                    case 'link':
-                        // リンクパネル（Panel 1）
-                        toggleSlidePanel(1);
-                        break;
-                    case 'backend':
-                        // バックパネル（Panel 3）
-                        toggleSlidePanel(3);
-                        break;
-                    case 'media':
-                        // メディアパネル（Panel 4）
-                        toggleSlidePanel(4);
                         break;
                 }
             } else if (!e.target.closest('.menu-button') && !e.target.closest('.circular-menu')) {
@@ -7970,11 +7877,7 @@
                 }, 10);
                 
                 // コンテンツ更新
-                if (panelNumber === 1) {
-                    setTimeout(() => {
-                        updateLinkIconGrid();
-                    }, 100);
-                } else if (panelNumber === 2) {
+                if (panelNumber === 2) {
                     setTimeout(() => {
                         updateResourcePanel();
                     }, 100);
@@ -8004,15 +7907,12 @@
         // パネルの開閉を切り替える
         function toggleSlidePanel(panelNumber) {
             const overlay = document.getElementById('slidePanelOverlay' + panelNumber);
-            if (overlay.classList.contains('active')) {
+            if (overlay && overlay.classList.contains('active')) {
                 closeSlidePanel(panelNumber);
             } else {
-                // 他のパネルを閉じる
-                for (let i = 1; i <= 5; i++) {
-                    if (i !== panelNumber) {
-                        closeSlidePanel(i);
-                    }
-                }
+                // 他のパネルを閉じる（2と5のみ）
+                if (panelNumber !== 2) closeSlidePanel(2);
+                if (panelNumber !== 5) closeSlidePanel(5);
                 openSlidePanel(panelNumber);
             }
         }
@@ -8034,8 +7934,8 @@
                     return;
                 }
                 
-                // 開いているスライドインパネルをすべて閉じる
-                for (let i = 1; i <= 5; i++) {
+                // 開いているスライドインパネルをすべて閉じる（2と5のみ）
+                for (let i of [2, 5]) {
                     const overlay = document.getElementById('slidePanelOverlay' + i);
                     if (overlay && overlay.classList.contains('active')) {
                         closeSlidePanel(i);
