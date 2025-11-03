@@ -1438,30 +1438,142 @@
             opacity: 1;
         }
 
-        .circular-menu-item {
+        /* 背景円とセグメント線 */
+        .circular-menu::before {
+            content: '';
             position: absolute;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            transform: translate(-50%, -50%) scale(0);
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 103, 156, 0.08) 0%, rgba(255, 103, 156, 0.02) 50%, transparent 100%);
             opacity: 0;
-            user-select: none;
-            -webkit-user-select: none;
-            background: transparent;
-            border: none;
-            padding: 0;
-            /* 位置はJavaScriptで計算して設定 */
+            transition: opacity 0.4s ease 0.2s;
+            pointer-events: none;
         }
 
-        .circular-menu.active .circular-menu-item {
-            transform: translate(-50%, -50%) scale(1);
+        .circular-menu.active::before {
             opacity: 1;
         }
 
+        /* セグメント線（扇形の区切り） */
+        .circular-menu::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                transparent 0deg 25deg,
+                rgba(255, 103, 156, 0.15) 25deg 35deg,
+                transparent 35deg 55deg,
+                rgba(255, 103, 156, 0.15) 55deg 65deg,
+                transparent 65deg 85deg,
+                rgba(255, 103, 156, 0.15) 85deg 95deg,
+                transparent 95deg 115deg,
+                rgba(255, 103, 156, 0.15) 115deg 125deg,
+                transparent 125deg 145deg,
+                rgba(255, 103, 156, 0.15) 145deg 155deg,
+                transparent 155deg 175deg,
+                rgba(255, 103, 156, 0.15) 175deg 185deg,
+                transparent 185deg 205deg,
+                rgba(255, 103, 156, 0.15) 205deg 215deg,
+                transparent 215deg 360deg
+            );
+            opacity: 0;
+            transition: opacity 0.4s ease 0.3s;
+            pointer-events: none;
+            mask: radial-gradient(circle, transparent 90px, black 120px);
+            -webkit-mask: radial-gradient(circle, transparent 90px, black 120px);
+        }
+
+        .circular-menu.active::after {
+            opacity: 1;
+        }
+
+        .circular-menu-item {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid var(--color-primary, #FF679C);
+            border-radius: 12px;
+            padding: var(--spacing-sm) var(--spacing-md);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            width: 70px;
+            min-width: 70px;
+            /* 位置はJavaScriptで計算して設定 */
+        }
+
+        /* 時差アニメーション（各項目が順番に出現） */
+        .circular-menu.active .circular-menu-item:nth-child(1) {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            transition-delay: 0.05s;
+        }
+
+        .circular-menu.active .circular-menu-item:nth-child(2) {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            transition-delay: 0.1s;
+        }
+
+        .circular-menu.active .circular-menu-item:nth-child(3) {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            transition-delay: 0.15s;
+        }
+
+        .circular-menu.active .circular-menu-item:nth-child(4) {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            transition-delay: 0.2s;
+        }
+
+        .circular-menu.active .circular-menu-item:nth-child(5) {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            transition-delay: 0.25s;
+        }
+
+        .circular-menu.active .circular-menu-item:nth-child(6) {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            transition-delay: 0.3s;
+        }
+
+        .circular-menu.active .circular-menu-item:nth-child(7) {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            transition-delay: 0.35s;
+        }
+
+        /* ホバーエフェクト（拡大＋影の強化） */
         .circular-menu-item:hover {
+            transform: translate(-50%, -50%) scale(1.15);
+            box-shadow: 0 8px 20px rgba(255, 103, 156, 0.4);
+            border-color: var(--color-primary, #FF679C);
+            background: rgba(255, 103, 156, 0.1);
+        }
+
+        /* クリック時の波紋エフェクト */
+        .circular-menu-item:active {
             transform: translate(-50%, -50%) scale(1.05);
+            box-shadow: 0 4px 12px rgba(255, 103, 156, 0.3);
         }
 
         .menu-item-label {
@@ -1470,9 +1582,35 @@
             font-weight: var(--font-weight-semibold);
             text-align: center;
             white-space: nowrap;
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-bottom: 3px solid var(--color-primary, #FF679C);
+            padding: 0;
+            border: none;
             background: transparent;
+            margin-top: var(--spacing-xs);
+        }
+
+        /* 放射状の線（中央から各項目へのガイド） */
+        .circular-menu-item::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) rotate(var(--angle, 0deg));
+            width: 2px;
+            height: 100px;
+            background: linear-gradient(to bottom, rgba(255, 103, 156, 0.3), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease 0.2s;
+            pointer-events: none;
+            transform-origin: center top;
+        }
+
+        .circular-menu.active .circular-menu-item::before {
+            opacity: 1;
+        }
+
+        .circular-menu-item:hover::before {
+            background: linear-gradient(to bottom, rgba(255, 103, 156, 0.6), transparent);
+            height: 110px;
         }
 
         .form-group {
@@ -7333,12 +7471,13 @@
                 item.style.left = x + 'px';
                 item.style.top = y + 'px';
                 
-                // ラベルにも回転角度を適用（メニューボタン中心から放射状に配置されるため、角度に応じて回転）
+                // セグメント線の角度を設定
+                item.style.setProperty('--angle', (angle - 90) + 'deg');
+                
+                // ラベルは回転させない（カード内で水平表示）
                 const label = item.querySelector('.menu-item-label');
                 if (label) {
-                    // ラベルの回転角度（90度を基準に調整）
-                    const labelRotation = angle - 90;
-                    label.style.transform = `rotate(${labelRotation}deg)`;
+                    label.style.transform = 'none';
                 }
             });
         }
@@ -7373,12 +7512,13 @@
                 item.style.left = x + 'px';
                 item.style.top = y + 'px';
                 
-                // ラベルにも回転角度を適用（メニューボタン中心から放射状に配置されるため、角度に応じて回転）
+                // セグメント線の角度を設定
+                item.style.setProperty('--angle', (angle - 90) + 'deg');
+                
+                // ラベルは回転させない（カード内で水平表示）
                 const label = item.querySelector('.menu-item-label');
                 if (label) {
-                    // ラベルの回転角度（90度を基準に調整）
-                    const labelRotation = angle - 90;
-                    label.style.transform = `rotate(${labelRotation}deg)`;
+                    label.style.transform = 'none';
                 }
             });
         }
