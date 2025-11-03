@@ -2591,7 +2591,7 @@
 
     <!-- SP版メニューボタン（自由に移動可能） -->
     <div class="menu-button menu-button-sp" id="menuButtonSP" draggable="true" data-menu-button="true">
-        <img src="admin/images/menicon.svg" alt="メニュー" class="menu-button-icon">
+        <img src="images/menicon.svg" alt="メニュー" class="menu-button-icon">
         <span class="tooltip-text">ダブルタップでメニュー展開</span>
     </div>
     
@@ -7154,7 +7154,7 @@
                         newMenuButton.id = 'menuButtonPC';
                         newMenuButton.draggable = true;
                         newMenuButton.dataset.menuButton = 'true';
-                        newMenuButton.innerHTML = '<img src="admin/images/menicon.svg" alt="メニュー" class="menu-button-icon"><span class="tooltip-text">ダブルクリックでメニュー展開</span>';
+                        newMenuButton.innerHTML = '<img src="images/menicon.svg" alt="メニュー" class="menu-button-icon"><span class="tooltip-text">ダブルクリックでメニュー展開</span>';
                         taskGrid.appendChild(newMenuButton);
                         // メニューボタンを再初期化
                         initMenuButtonPC();
@@ -7368,7 +7368,7 @@
                     newMenuButton.id = 'menuButtonSP';
                     newMenuButton.draggable = true;
                     newMenuButton.dataset.menuButton = 'true';
-                    newMenuButton.innerHTML = '<img src="admin/images/menicon.svg" alt="メニュー" class="menu-button-icon"><span class="tooltip-text">ダブルタップでメニュー展開</span>';
+                    newMenuButton.innerHTML = '<img src="images/menicon.svg" alt="メニュー" class="menu-button-icon"><span class="tooltip-text">ダブルタップでメニュー展開</span>';
                     document.body.appendChild(newMenuButton);
                     // メニューボタンを再初期化
                     initMenuButtonSP();
@@ -8028,7 +8028,26 @@
             
             // PC版とSP版のメニューボタンをそれぞれ初期化（DOMが完全に読み込まれた後に実行）
             setTimeout(() => {
-                initMenuButtonPC();
+                // 要素が存在することを再確認
+                const menuButtonPC = document.getElementById('menuButtonPC');
+                const circularMenu = document.getElementById('circularMenu');
+                const taskGrid = document.getElementById('taskGrid');
+                
+                if (menuButtonPC && circularMenu && taskGrid) {
+                    initMenuButtonPC();
+                } else {
+                    console.warn('メニューボタン初期化をスキップ: 要素がまだ見つかりません', {
+                        menuButtonPC: !!menuButtonPC,
+                        circularMenu: !!circularMenu,
+                        taskGrid: !!taskGrid
+                    });
+                    // もう一度試す
+                    setTimeout(() => {
+                        initMenuButtonPC();
+                        initMenuButtonSP();
+                    }, 200);
+                }
+                
                 initMenuButtonSP();
             }, 100);
             
