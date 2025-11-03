@@ -3294,12 +3294,35 @@
                 let top, left, rotation, zIndex;
                 
                 // 保存された位置があれば使用、なければランダム配置
-                if (task.position && task.position.top !== undefined && task.position.left !== undefined) {
-                    top = task.position.top;
-                    left = task.position.left;
+                // 相対位置（%）を優先的に使用し、絶対位置（px）は後方互換性のためサポート
+                if (task.position) {
+                    if (task.position.leftPercent !== undefined && task.position.topPercent !== undefined) {
+                        // 相対位置（%）から絶対位置（px）に変換
+                        left = (task.position.leftPercent / 100) * gridWidth;
+                        top = (task.position.topPercent / 100) * gridHeight;
+                    } else if (task.position.left !== undefined && task.position.top !== undefined) {
+                        // 既存の絶対位置（後方互換性）- 現在のグリッドサイズに合わせて正規化
+                        // 古いデータは100%幅を1920px、100%高さを1080pxと仮定して変換
+                        const oldGridWidth = 1920 - 48;
+                        const oldGridHeight = 1080 - 48;
+                        const leftPercent = (task.position.left / oldGridWidth) * 100;
+                        const topPercent = (task.position.top / oldGridHeight) * 100;
+                        // 新しいグリッドサイズに変換
+                        left = (leftPercent / 100) * gridWidth;
+                        top = (topPercent / 100) * gridHeight;
+                        // 相対位置として保存し直す
+                        if (!task.position.leftPercent) task.position.leftPercent = leftPercent;
+                        if (!task.position.topPercent) task.position.topPercent = topPercent;
+                    } else {
+                        // 位置情報なし - ランダム配置に続く
+                        left = undefined;
+                        top = undefined;
+                    }
                     rotation = task.position.rotation || (Math.random() - 0.5) * 8;
                     zIndex = task.position.zIndex || Math.floor(Math.random() * 11);
-                } else {
+                }
+                
+                if (left === undefined || top === undefined) {
                     // ランダムな位置を計算（重なりを避ける）
                     let attempts = 0;
                     const maxAttempts = 50;
@@ -3331,14 +3354,21 @@
                     // ランダムなz-indexを設定（0〜10の範囲）
                     zIndex = Math.floor(Math.random() * 11);
                     
-                    // タスクデータに位置情報を保存
+                    // タスクデータに位置情報を保存（相対位置（%）で保存）
                     if (!task.position) {
                         task.position = {};
                     }
-                    task.position.top = top;
-                    task.position.left = left;
+                    // 相対位置（%）を計算して保存
+                    task.position.leftPercent = (left / gridWidth) * 100;
+                    task.position.topPercent = (top / gridHeight) * 100;
                     task.position.rotation = rotation;
                     task.position.zIndex = zIndex;
+                } else {
+                    // 既存の位置から相対位置を更新（グリッドサイズが変わった場合の調整）
+                    if (task.position.leftPercent !== undefined && task.position.topPercent !== undefined) {
+                        // 相対位置から新しい絶対位置を計算（既に計算済み）
+                        // 相対位置はそのまま保持
+                    }
                 }
                 
                 // 配置済みカードの位置を記録
@@ -3743,12 +3773,16 @@
                             const newLeft = cardRect.left - gridRect.left;
                             const newTop = cardRect.top - gridRect.top;
                             
-                            // タスクデータの位置を更新
+                            // タスクデータの位置を更新（相対位置（%）で保存）
                             if (!task.position) {
                                 task.position = {};
                             }
-                            task.position.left = newLeft;
-                            task.position.top = newTop;
+                            // 相対位置（%）を計算して保存
+                            const taskGrid = document.getElementById('taskGrid');
+                            const gridWidth = taskGrid.offsetWidth - 48;
+                            const gridHeight = Math.max(800, taskGrid.offsetHeight - 48);
+                            task.position.leftPercent = (newLeft / gridWidth) * 100;
+                            task.position.topPercent = (newTop / gridHeight) * 100;
                             task.position.rotation = task.position.rotation || 0;
                             task.position.zIndex = task.position.zIndex || 0;
                             
@@ -3927,12 +3961,18 @@
                     const task = tasks.find(t => t.id === taskId);
                     
                     if (task) {
-                        // タスクデータに新しい位置を保存
+                        // タスクデータに新しい位置を保存（相対位置（%）で保存）
                         if (!task.position) {
                             task.position = {};
                         }
-                        task.position.left = parseInt(draggedCard.style.left);
-                        task.position.top = parseInt(draggedCard.style.top);
+                        const absLeft = parseInt(draggedCard.style.left);
+                        const absTop = parseInt(draggedCard.style.top);
+                        // 相対位置（%）を計算して保存
+                        const taskGrid = document.getElementById('taskGrid');
+                        const gridWidth = taskGrid.offsetWidth - 48;
+                        const gridHeight = Math.max(800, taskGrid.offsetHeight - 48);
+                        task.position.leftPercent = (absLeft / gridWidth) * 100;
+                        task.position.topPercent = (absTop / gridHeight) * 100;
                         // ドロップ後は回転を保持（元の回転があれば使用、なければランダム）
                         if (!task.position.rotation) {
                             task.position.rotation = (Math.random() - 0.5) * 8;
