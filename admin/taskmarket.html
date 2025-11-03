@@ -1511,14 +1511,14 @@
             position: fixed;
             width: 56px;
             height: 56px;
-            background: var(--color-primary, #FF679C);
+            background: transparent;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: move;
             z-index: 10000;
-            box-shadow: var(--shadow-lg);
+            box-shadow: none;
             transition: transform 0.2s ease;
             user-select: none;
             -webkit-user-select: none;
@@ -1534,9 +1534,10 @@
         }
 
         .menu-button-icon {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 59px;
             pointer-events: none;
+            object-fit: contain;
         }
 
         .menu-button .tooltip-text {
@@ -1580,20 +1581,17 @@
 
         .circular-menu-item {
             position: absolute;
-            width: 80px;
-            height: 80px;
-            background: var(--color-primary, #FF679C);
-            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: var(--shadow-lg);
             transition: all 0.3s ease;
             transform: translate(-50%, -50%) scale(0);
             opacity: 0;
             user-select: none;
             -webkit-user-select: none;
+            background: transparent;
+            border: none;
             /* 位置はJavaScriptで計算して設定 */
         }
 
@@ -1603,17 +1601,23 @@
         }
 
         .circular-menu-item:hover {
-            background: var(--color-primary-hover, #FF4081);
             transform: translate(-50%, -50%) scale(1.1);
         }
 
         .menu-item-label {
-            color: white;
+            color: var(--color-text-primary, #333);
             font-size: var(--font-size-sm);
             font-weight: var(--font-weight-semibold);
             text-align: center;
             white-space: nowrap;
-            padding: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            border: none;
+        }
+
+        .circular-menu-item:hover .menu-item-label {
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
         }
 
         .form-group {
@@ -2634,7 +2638,7 @@
 
     <!-- メニューボタン（自由に移動可能、最上層） -->
     <div class="menu-button" id="menuButton" draggable="true">
-        <img src="images/ログ.svg" alt="メニュー" class="menu-button-icon">
+        <img src="images/menu icon.svg" alt="メニュー" class="menu-button-icon">
         <span class="tooltip-text">ダブルクリック/タップでメニュー展開</span>
     </div>
     
