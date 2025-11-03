@@ -1517,7 +1517,7 @@
             align-items: center;
             justify-content: center;
             cursor: move;
-            z-index: 1;
+            z-index: 11;
             box-shadow: var(--shadow-lg);
             transition: transform 0.2s ease;
             user-select: none;
@@ -1569,7 +1569,7 @@
             width: 0;
             height: 0;
             pointer-events: none;
-            z-index: 100;
+            z-index: 11;
             transition: opacity 0.3s ease;
             opacity: 0;
         }
@@ -1581,20 +1581,18 @@
 
         .circular-menu-item {
             position: absolute;
-            width: 80px;
-            height: 80px;
-            background: var(--color-primary, #FF679C);
-            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: var(--shadow-lg);
             transition: all 0.3s ease;
             transform: translate(-50%, -50%) scale(0);
             opacity: 0;
             user-select: none;
             -webkit-user-select: none;
+            background: transparent;
+            border: none;
+            padding: 0;
             /* 位置はJavaScriptで計算して設定 */
         }
 
@@ -1604,17 +1602,18 @@
         }
 
         .circular-menu-item:hover {
-            background: var(--color-primary-hover, #FF4081);
-            transform: translate(-50%, -50%) scale(1.1);
+            transform: translate(-50%, -50%) scale(1.05);
         }
 
         .menu-item-label {
-            color: white;
+            color: var(--color-text-primary, #333);
             font-size: var(--font-size-sm);
             font-weight: var(--font-weight-semibold);
             text-align: center;
             white-space: nowrap;
-            padding: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-bottom: 3px solid var(--color-primary, #FF679C);
+            background: transparent;
         }
 
         .form-group {
@@ -2634,8 +2633,8 @@
     </div>
 
     <!-- メニューボタン（自由に移動可能、最上層） -->
-    <div class="menu-button" id="menuButton" draggable="true">
-        <img src="images/menu icon.svg" alt="メニュー" class="menu-button-icon">
+    <div class="menu-button" id="menuButton" draggable="true" data-menu-button="true">
+        <img src="images/menu.svg" alt="メニュー" class="menu-button-icon">
         <span class="tooltip-text">ダブルクリック/タップでメニュー展開</span>
     </div>
     
@@ -7111,11 +7110,12 @@
                 menuButton.style.bottom = 'auto';
                 menuButton.style.position = 'fixed';
             } else {
-                // デフォルト位置：画面右下（タスクグリッドの外側）
-                menuButton.style.right = '24px';
-                menuButton.style.bottom = '24px';
-                menuButton.style.left = 'auto';
-                menuButton.style.top = 'auto';
+                // デフォルト位置：画面中央
+                menuButton.style.left = '50%';
+                menuButton.style.top = '50%';
+                menuButton.style.transform = 'translate(-50%, -50%)';
+                menuButton.style.right = 'auto';
+                menuButton.style.bottom = 'auto';
                 menuButton.style.position = 'fixed';
                 
                 // 初期位置を保存（少し遅延させて位置を取得）
@@ -7126,6 +7126,10 @@
                         top: rect.top
                     };
                     saveMenuButtonPosition();
+                    // transformをリセットして、left/topで位置を管理
+                    menuButton.style.transform = 'none';
+                    menuButton.style.left = rect.left + 'px';
+                    menuButton.style.top = rect.top + 'px';
                 }, 100);
             }
 
@@ -7351,8 +7355,8 @@
             circularMenu.style.left = centerX + 'px';
             circularMenu.style.top = centerY + 'px';
 
-            // メニュー項目の位置を計算（半径100px、角度30度、60度、90度、120度）
-            const radius = 100;
+            // メニュー項目の位置を計算（半径50px、角度30度、60度、90度、120度）
+            const radius = 50;
             const angles = [30, 60, 90, 120]; // 度
 
             const menuItems = circularMenu.querySelectorAll('.circular-menu-item');
@@ -7365,6 +7369,14 @@
 
                 item.style.left = x + 'px';
                 item.style.top = y + 'px';
+                
+                // ラベルにも回転角度を適用（メニューボタン中心から放射状に配置されるため、角度に応じて回転）
+                const label = item.querySelector('.menu-item-label');
+                if (label) {
+                    // ラベルの回転角度（90度を基準に調整）
+                    const labelRotation = angle - 90;
+                    label.style.transform = `rotate(${labelRotation}deg)`;
+                }
             });
         }
 
