@@ -2581,13 +2581,13 @@
 
     <!-- PC版メニューボタン（タスクグリッド左上に固定） -->
     <div class="menu-button menu-button-pc" id="menuButtonPC" draggable="true" data-menu-button="true">
-        <img src="images/menicon.svg" alt="メニュー" class="menu-button-icon">
+        <img src="admin/images/menicon.svg" alt="メニュー" class="menu-button-icon">
         <span class="tooltip-text">ダブルクリックでメニュー展開</span>
     </div>
 
     <!-- SP版メニューボタン（自由に移動可能） -->
     <div class="menu-button menu-button-sp" id="menuButtonSP" draggable="true" data-menu-button="true">
-        <img src="images/menicon.svg" alt="メニュー" class="menu-button-icon">
+        <img src="admin/images/menicon.svg" alt="メニュー" class="menu-button-icon">
         <span class="tooltip-text">ダブルタップでメニュー展開</span>
     </div>
     
@@ -6991,7 +6991,7 @@
             }
         }
 
-        // PC版メニューボタンの初期化（自由に移動可能）
+        // PC版メニューボタンの初期化（タスクグリッド内でのみ移動可能）
         function initMenuButtonPC() {
             const menuButtonPC = document.getElementById('menuButtonPC');
             const circularMenu = document.getElementById('circularMenu');
@@ -7002,23 +7002,29 @@
                 return;
             }
             
+            // メニューボタンをtaskGrid内に配置
+            if (menuButtonPC.parentElement !== taskGrid) {
+                taskGrid.appendChild(menuButtonPC);
+            }
+            
             const menuButtonWidth = 56; // メニューボタンの幅
             const menuButtonHeight = 56; // メニューボタンの高さ
-            const windowWidth = window.innerWidth;
-            const windowHeight = window.innerHeight;
+            const gridRect = taskGrid.getBoundingClientRect();
+            const gridWidth = taskGrid.offsetWidth;
+            const gridHeight = Math.max(800, taskGrid.offsetHeight);
             
-            // 保存された位置が有効かチェック（異常に小さい値や負の値を排除）
+            // 保存された位置が有効かチェック（タスクグリッド内での相対位置）
             const isValidPosition = menuButtonPositionPC && 
                 menuButtonPositionPC.left !== undefined && 
                 menuButtonPositionPC.top !== undefined &&
                 menuButtonPositionPC.left >= 0 && 
                 menuButtonPositionPC.top >= 0 &&
-                menuButtonPositionPC.left < windowWidth &&
-                menuButtonPositionPC.top < windowHeight;
+                menuButtonPositionPC.left < gridWidth &&
+                menuButtonPositionPC.top < gridHeight;
             
             if (isValidPosition) {
-                // 保存された絶対位置（px）を使用
-                menuButtonPC.style.position = 'fixed';
+                // 保存された相対位置（タスクグリッド内）を使用
+                menuButtonPC.style.position = 'absolute';
                 menuButtonPC.style.left = menuButtonPositionPC.left + 'px';
                 menuButtonPC.style.top = menuButtonPositionPC.top + 'px';
                 menuButtonPC.style.right = 'auto';
@@ -7027,22 +7033,22 @@
             } else {
                 // 無効な位置データがある場合はリセット
                 if (menuButtonPositionPC) {
-                    console.warn('PC版メニューボタンの位置データが無効です。画面左上にリセットします。', menuButtonPositionPC);
+                    console.warn('PC版メニューボタンの位置データが無効です。タスクグリッド左上にリセットします。', menuButtonPositionPC);
                     menuButtonPositionPC = null;
                 }
                 
-                // デフォルト位置：画面左上（ヘッダーの下）
+                // デフォルト位置：タスクグリッド内の左上
                 const defaultX = 24;
-                const defaultY = 130; // ヘッダー（60px）の下、余白20px + 50px下
+                const defaultY = 24;
                 
-                menuButtonPC.style.position = 'fixed';
+                menuButtonPC.style.position = 'absolute';
                 menuButtonPC.style.left = defaultX + 'px';
                 menuButtonPC.style.top = defaultY + 'px';
                 menuButtonPC.style.right = 'auto';
                 menuButtonPC.style.bottom = 'auto';
                 menuButtonPC.style.transform = 'none';
                 
-                // 初期位置を保存
+                // 初期位置を保存（タスクグリッド内での相対位置）
                 menuButtonPositionPC = {
                     left: defaultX,
                     top: defaultY
@@ -7068,10 +7074,12 @@
                 isDragging = true;
                 hasDragged = false;
                 const rect = this.getBoundingClientRect();
+                const gridRect = taskGrid.getBoundingClientRect();
                 dragStartX = e.clientX;
                 dragStartY = e.clientY;
-                startLeft = rect.left;
-                startTop = rect.top;
+                // タスクグリッド内での相対位置を開始位置として記録
+                startLeft = rect.left - gridRect.left;
+                startTop = rect.top - gridRect.top;
                 this.style.opacity = '0.7';
                 e.dataTransfer.effectAllowed = 'move';
             });
@@ -7081,36 +7089,37 @@
                 hasDragged = true;
                 
                 // メニューボタンがDOMに存在することを確認
-                if (!document.getElementById('menuButtonPC')) {
+                if (!document.getElementById('menuButtonPC') || !taskGrid) {
                     isDragging = false;
                     return;
                 }
                 
-                // メニューボタンがbodyの直接の子要素であることを確認
-                if (this.parentElement !== document.body) {
-                    // body直下に移動
-                    const currentLeft = parseFloat(this.style.left) || this.getBoundingClientRect().left;
-                    const currentTop = parseFloat(this.style.top) || this.getBoundingClientRect().top;
-                    document.body.appendChild(this);
-                    this.style.position = 'fixed';
+                // メニューボタンがtaskGrid内にあることを確認
+                if (this.parentElement !== taskGrid) {
+                    // taskGrid内に移動
+                    const currentLeft = parseFloat(this.style.left) || 0;
+                    const currentTop = parseFloat(this.style.top) || 0;
+                    taskGrid.appendChild(this);
+                    this.style.position = 'absolute';
                     this.style.left = currentLeft + 'px';
                     this.style.top = currentTop + 'px';
                 }
                 
+                const gridRect = taskGrid.getBoundingClientRect();
                 const deltaX = e.clientX - dragStartX;
                 const deltaY = e.clientY - dragStartY;
                 
                 let newLeft = startLeft + deltaX;
                 let newTop = startTop + deltaY;
                 
-                // 画面内に制限
-                const maxX = window.innerWidth - this.offsetWidth;
-                const maxY = window.innerHeight - this.offsetHeight;
+                // タスクグリッドの境界内に制限
+                const maxX = taskGrid.offsetWidth - this.offsetWidth;
+                const maxY = Math.max(800, taskGrid.offsetHeight) - this.offsetHeight;
                 newLeft = Math.max(0, Math.min(newLeft, maxX));
                 newTop = Math.max(0, Math.min(newTop, maxY));
                 
-                // position: fixedを明示的に設定
-                this.style.position = 'fixed';
+                // position: absoluteを明示的に設定（taskGrid内での相対位置）
+                this.style.position = 'absolute';
                 this.style.left = newLeft + 'px';
                 this.style.top = newTop + 'px';
                 this.style.right = 'auto';
@@ -7128,66 +7137,54 @@
                 
                 // メニューボタンがDOMに存在することを確認
                 const menuButtonElement = document.getElementById('menuButtonPC');
-                if (!menuButtonElement) {
-                    console.error('PC版メニューボタンがDOMから削除されました。再作成します。');
-                    // メニューボタンを再作成
-                    const newMenuButton = document.createElement('div');
-                    newMenuButton.className = 'menu-button menu-button-pc';
-                    newMenuButton.id = 'menuButtonPC';
-                    newMenuButton.draggable = true;
-                    newMenuButton.dataset.menuButton = 'true';
-                    newMenuButton.innerHTML = '<img src="images/menicon.svg" alt="メニュー" class="menu-button-icon"><span class="tooltip-text">ダブルクリックでメニュー展開</span>';
-                    document.body.appendChild(newMenuButton);
-                    // メニューボタンを再初期化
-                    initMenuButtonPC();
+                if (!menuButtonElement || !taskGrid) {
+                    console.error('PC版メニューボタンまたはタスクグリッドが見つかりません。再作成します。');
+                    if (menuButtonElement) {
+                        // メニューボタンを再作成
+                        const newMenuButton = document.createElement('div');
+                        newMenuButton.className = 'menu-button menu-button-pc';
+                        newMenuButton.id = 'menuButtonPC';
+                        newMenuButton.draggable = true;
+                        newMenuButton.dataset.menuButton = 'true';
+                        newMenuButton.innerHTML = '<img src="images/menicon.svg" alt="メニュー" class="menu-button-icon"><span class="tooltip-text">ダブルクリックでメニュー展開</span>';
+                        taskGrid.appendChild(newMenuButton);
+                        // メニューボタンを再初期化
+                        initMenuButtonPC();
+                    }
                     return;
                 }
                 
                 this.style.opacity = '1';
                 
-                // position: fixedを明示的に設定（すぐに適用）
-                const currentLeft = parseFloat(this.style.left) || this.getBoundingClientRect().left;
-                const currentTop = parseFloat(this.style.top) || this.getBoundingClientRect().top;
-                this.style.position = 'fixed';
-                this.style.left = currentLeft + 'px';
-                this.style.top = currentTop + 'px';
-                this.style.right = 'auto';
-                this.style.bottom = 'auto';
-                
-                // 位置を保存（絶対位置（px）で保存）
+                // 位置を保存（タスクグリッド内での相対位置）
                 // 少し遅延させて位置を取得（ブラウザのレンダリング完了を待つ）
                 setTimeout(() => {
                     const menuBtn = document.getElementById('menuButtonPC');
-                    if (!menuBtn) return;
+                    if (!menuBtn || !taskGrid) return;
                     
-                    const rect = menuBtn.getBoundingClientRect();
-                    let left = parseFloat(menuBtn.style.left);
-                    let top = parseFloat(menuBtn.style.top);
+                    // タスクグリッド内での相対位置を取得
+                    const left = parseFloat(menuBtn.style.left) || 0;
+                    const top = parseFloat(menuBtn.style.top) || 0;
                     
-                    // 値が無効な場合はgetBoundingClientRect()から取得
-                    if (isNaN(left) || left < 0 || left >= window.innerWidth) {
-                        left = rect.left;
-                    }
-                    if (isNaN(top) || top < 0 || top >= window.innerHeight) {
-                        top = rect.top;
-                    }
+                    const gridWidth = taskGrid.offsetWidth;
+                    const gridHeight = Math.max(800, taskGrid.offsetHeight);
                     
-                    // 値が有効な場合のみ保存
-                    if (left >= 0 && top >= 0 && left < window.innerWidth && top < window.innerHeight) {
+                    // 値が有効な場合のみ保存（タスクグリッド内の範囲内）
+                    if (left >= 0 && top >= 0 && left < gridWidth && top < gridHeight) {
                         menuButtonPositionPC = {
                             left: left,
                             top: top
                         };
                         saveMenuButtonPositionPC();
                         
-                        // position: fixedを再度確認
-                        menuBtn.style.position = 'fixed';
+                        // position: absoluteを再度確認（taskGrid内での相対位置）
+                        menuBtn.style.position = 'absolute';
                         menuBtn.style.left = left + 'px';
                         menuBtn.style.top = top + 'px';
                         menuBtn.style.right = 'auto';
                         menuBtn.style.bottom = 'auto';
                     } else {
-                        console.warn('PC版メニューボタンの位置が無効です。保存をスキップします。', {left, top});
+                        console.warn('PC版メニューボタンの位置が無効です。保存をスキップします。', {left, top, gridWidth, gridHeight});
                     }
                 }, 10);
             });
