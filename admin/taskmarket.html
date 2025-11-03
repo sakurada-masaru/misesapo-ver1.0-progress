@@ -1529,6 +1529,7 @@
             left: 16px;
             cursor: pointer;
             touch-action: none;
+            display: flex; /* デフォルトで表示（PC版） */
         }
 
         /* SP版メニューボタン：自由に移動可能 */
@@ -1536,21 +1537,7 @@
             position: fixed;
             cursor: move;
             touch-action: none;
-        }
-
-        /* PC版のみ表示 */
-        .menu-button-pc {
-            display: flex;
-        }
-
-        /* SP版のみ表示 */
-        @media (max-width: 430px) {
-            .menu-button-pc {
-                display: none !important;
-            }
-            .menu-button-sp {
-                display: flex;
-            }
+            display: none; /* デフォルトで非表示（SP版） */
         }
 
         /* PC版のみ表示（デスクトップ） */
@@ -1559,7 +1546,17 @@
                 display: none !important;
             }
             .menu-button-pc {
-                display: flex;
+                display: flex !important;
+            }
+        }
+
+        /* SP版のみ表示 */
+        @media (max-width: 430px) {
+            .menu-button-pc {
+                display: none !important;
+            }
+            .menu-button-sp {
+                display: flex !important;
             }
         }
 
@@ -7143,10 +7140,19 @@
             const circularMenuPC = document.getElementById('circularMenuPC');
             const taskGrid = document.getElementById('taskGrid');
             
-            if (!menuButtonPC || !circularMenuPC || !taskGrid) return;
+            if (!menuButtonPC || !circularMenuPC || !taskGrid) {
+                console.warn('PC版メニューボタンの初期化に失敗: 必要な要素が見つかりません');
+                return;
+            }
             
             // タスクグリッド内の左上に配置（すでにCSSで固定されている）
             // PC版はドラッグ不可なので、位置管理は不要
+            
+            // 表示を確実にする
+            if (window.innerWidth > 430) {
+                menuButtonPC.style.display = 'flex';
+                menuButtonPC.style.visibility = 'visible';
+            }
             
             // ダブルクリックでメニュー展開
             let clickTimeout = null;
