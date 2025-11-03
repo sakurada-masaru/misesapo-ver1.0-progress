@@ -77,15 +77,9 @@
             /* トランジション */
             --transition-normal: 0.3s ease;
 
-            /* パネルカラー（5つのパネル用） */
-            --panel-1-color: #FF679C;
-            --panel-1-hover: #FF4081;
+            /* パネルカラー（2つのパネル用） */
             --panel-2-color: #4A90E2;
             --panel-2-hover: #357ABD;
-            --panel-3-color: #50C878;
-            --panel-3-hover: #3FA863;
-            --panel-4-color: #FF8C42;
-            --panel-4-hover: #FF6B1F;
             --panel-5-color: #4CAF50;
             --panel-5-hover: #45a049;
 
@@ -2716,39 +2710,7 @@
         </div>
     </div>
 
-    <!-- スライドインパネル（左から右にスライドイン、5つ） -->
-    <!-- パネル1（ピンク：リンクパネル） -->
-    <div class="slide-panel-overlay" id="slidePanelOverlay1" onclick="closeSlidePanelOnOverlay(event, 1)">
-        <div class="slide-panel panel-1" id="slidePanel1" onclick="event.stopPropagation()">
-            <div class="slide-panel-header panel-1">
-                <h2 class="slide-panel-title">リンクパネル</h2>
-                <button class="slide-panel-close-button" onclick="closeSlidePanel(1)" title="閉じる">×</button>
-            </div>
-            <div class="slide-panel-content">
-                <!-- リンク追加フォーム -->
-                <div style="padding: var(--spacing-md); margin-bottom: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
-                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">外部リンクを追加</h3>
-                    <form id="linkAddForm" style="display: flex; gap: var(--spacing-sm); align-items: flex-end;">
-                        <div style="flex: 1;">
-                            <label for="linkUrl" style="display: block; font-size: var(--font-size-sm); margin-bottom: 4px; color: var(--color-text-secondary);">URL *</label>
-                            <input type="url" id="linkUrl" required placeholder="https://example.com" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
-                </div>
-                        <div style="flex: 1;">
-                            <label for="linkTitle" style="display: block; font-size: var(--font-size-sm); margin-bottom: 4px; color: var(--color-text-secondary);">タイトル（任意）</label>
-                            <input type="text" id="linkTitle" placeholder="リンク名" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
-            </div>
-                        <button type="submit" class="btn btn-primary" style="padding: var(--spacing-xs) var(--spacing-md); font-size: var(--font-size-sm);">追加</button>
-                    </form>
-        </div>
-                
-                <!-- リンクアイコングリッド -->
-                <div id="linkIconGrid" class="link-icon-grid">
-                    <!-- リンクアイコンがここに動的に生成されます -->
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- スライドインパネル（左から右にスライドイン） -->
     <!-- パネル2（ブルー：リソース管理） -->
     <div class="slide-panel-overlay" id="slidePanelOverlay2" onclick="closeSlidePanelOnOverlay(event, 2)">
         <div class="slide-panel panel-2" id="slidePanel2" onclick="event.stopPropagation()">
