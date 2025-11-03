@@ -1428,39 +1428,33 @@
             opacity: 1;
         }
 
-        /* セグメント線（扇形の区切り） */
+        /* セグメント線（扇形の区切り）- 4項目対応（十字配置：0度、90度、180度、270度） */
         .circular-menu::after {
             content: '';
             position: absolute;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 240px;
-            height: 240px;
+            width: 280px;
+            height: 280px;
             border-radius: 50%;
             background: conic-gradient(
                 from 0deg,
-                transparent 0deg 25deg,
-                rgba(255, 103, 156, 0.15) 25deg 35deg,
-                transparent 35deg 55deg,
-                rgba(255, 103, 156, 0.15) 55deg 65deg,
-                transparent 65deg 85deg,
-                rgba(255, 103, 156, 0.15) 85deg 95deg,
-                transparent 95deg 115deg,
-                rgba(255, 103, 156, 0.15) 115deg 125deg,
-                transparent 125deg 145deg,
-                rgba(255, 103, 156, 0.15) 145deg 155deg,
-                transparent 155deg 175deg,
-                rgba(255, 103, 156, 0.15) 175deg 185deg,
-                transparent 185deg 205deg,
-                rgba(255, 103, 156, 0.15) 205deg 215deg,
-                transparent 215deg 360deg
+                transparent 0deg 80deg,
+                rgba(255, 103, 156, 0.15) 80deg 85deg,
+                transparent 85deg 170deg,
+                rgba(255, 103, 156, 0.15) 170deg 175deg,
+                transparent 175deg 260deg,
+                rgba(255, 103, 156, 0.15) 260deg 265deg,
+                transparent 265deg 350deg,
+                rgba(255, 103, 156, 0.15) 350deg 355deg,
+                transparent 355deg 360deg
             );
             opacity: 0;
             transition: opacity 0.4s ease 0.3s;
             pointer-events: none;
-            mask: radial-gradient(circle, transparent 90px, black 120px);
-            -webkit-mask: radial-gradient(circle, transparent 90px, black 120px);
+            mask: radial-gradient(circle, transparent 100px, black 140px);
+            -webkit-mask: radial-gradient(circle, transparent 100px, black 140px);
         }
 
         .circular-menu.active::after {
