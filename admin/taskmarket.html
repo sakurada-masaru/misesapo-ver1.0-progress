@@ -6512,8 +6512,8 @@
             }
         }
         
-        // パネル開閉時にリンクグリッドを更新（ラッパー関数）
-        function openSlidePanel(panelNumber) {
+        // パネル開閉時にコンテンツを更新するラッパー関数
+        function openSlidePanelWithUpdate(panelNumber) {
             openSlidePanel(panelNumber);
             if (panelNumber === 1) {
                 setTimeout(() => {
@@ -7849,12 +7849,14 @@
         function closeSlidePanel(panelNumber) {
             const overlay = document.getElementById('slidePanelOverlay' + panelNumber);
             const panel = document.getElementById('slidePanel' + panelNumber);
-            const handle = document.getElementById('slidePanelHandle' + panelNumber);
-            panel.classList.remove('active');
-            handle.classList.remove('active');
+            if (panel) {
+                panel.classList.remove('active');
+            }
             // アニメーション完了後にオーバーレイを非表示
             setTimeout(function() {
-                overlay.classList.remove('active');
+                if (overlay) {
+                    overlay.classList.remove('active');
+                }
             }, 300);
         }
 
