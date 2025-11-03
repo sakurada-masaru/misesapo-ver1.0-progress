@@ -7171,6 +7171,23 @@
                 if (!isDragging) return;
                 hasDragged = true;
                 
+                // メニューボタンがDOMに存在することを確認
+                if (!document.getElementById('menuButton')) {
+                    isDragging = false;
+                    return;
+                }
+                
+                // メニューボタンがbodyの直接の子要素であることを確認
+                if (this.parentElement !== document.body) {
+                    // body直下に移動
+                    const currentLeft = parseFloat(this.style.left) || this.getBoundingClientRect().left;
+                    const currentTop = parseFloat(this.style.top) || this.getBoundingClientRect().top;
+                    document.body.appendChild(this);
+                    this.style.position = 'fixed';
+                    this.style.left = currentLeft + 'px';
+                    this.style.top = currentTop + 'px';
+                }
+                
                 const deltaX = e.clientX - dragStartX;
                 const deltaY = e.clientY - dragStartY;
                 
@@ -7189,6 +7206,8 @@
                 this.style.top = newTop + 'px';
                 this.style.right = 'auto';
                 this.style.bottom = 'auto';
+                this.style.display = 'flex';
+                this.style.visibility = 'visible';
                 
                 // 円形メニューの位置も更新
                 updateCircularMenuPosition();
@@ -7197,14 +7216,44 @@
             menuButton.addEventListener('dragend', function(e) {
                 if (!isDragging) return;
                 isDragging = false;
+                
+                // メニューボタンがDOMに存在することを確認
+                const menuButtonElement = document.getElementById('menuButton');
+                if (!menuButtonElement) {
+                    console.error('メニューボタンがDOMから削除されました。再作成します。');
+                    // メニューボタンを再作成
+                    const newMenuButton = document.createElement('div');
+                    newMenuButton.className = 'menu-button';
+                    newMenuButton.id = 'menuButton';
+                    newMenuButton.draggable = true;
+                    newMenuButton.dataset.menuButton = 'true';
+                    newMenuButton.innerHTML = '<img src="images/menu.svg" alt="メニュー" class="menu-button-icon"><span class="tooltip-text">ダブルクリック/タップでメニュー展開</span>';
+                    document.body.appendChild(newMenuButton);
+                    // メニューボタンを再初期化
+                    initMenuButton();
+                    return;
+                }
+                
                 this.style.opacity = '1';
+                
+                // position: fixedを明示的に設定（すぐに適用）
+                const currentLeft = parseFloat(this.style.left) || this.getBoundingClientRect().left;
+                const currentTop = parseFloat(this.style.top) || this.getBoundingClientRect().top;
+                this.style.position = 'fixed';
+                this.style.left = currentLeft + 'px';
+                this.style.top = currentTop + 'px';
+                this.style.right = 'auto';
+                this.style.bottom = 'auto';
                 
                 // 位置を保存（絶対位置（px）で保存）
                 // 少し遅延させて位置を取得（ブラウザのレンダリング完了を待つ）
                 setTimeout(() => {
-                    const rect = this.getBoundingClientRect();
-                    const left = parseFloat(this.style.left) || rect.left;
-                    const top = parseFloat(this.style.top) || rect.top;
+                    const menuBtn = document.getElementById('menuButton');
+                    if (!menuBtn) return;
+                    
+                    const rect = menuBtn.getBoundingClientRect();
+                    const left = parseFloat(menuBtn.style.left) || rect.left;
+                    const top = parseFloat(menuBtn.style.top) || rect.top;
                     
                     menuButtonPosition = {
                         left: left,
@@ -7212,12 +7261,12 @@
                     };
                     saveMenuButtonPosition();
                     
-                    // position: fixedを明示的に設定
-                    this.style.position = 'fixed';
-                    this.style.left = left + 'px';
-                    this.style.top = top + 'px';
-                    this.style.right = 'auto';
-                    this.style.bottom = 'auto';
+                    // position: fixedを再度確認
+                    menuBtn.style.position = 'fixed';
+                    menuBtn.style.left = left + 'px';
+                    menuBtn.style.top = top + 'px';
+                    menuBtn.style.right = 'auto';
+                    menuBtn.style.bottom = 'auto';
                 }, 10);
             });
 
