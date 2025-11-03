@@ -7602,8 +7602,210 @@
             }
         }
 
+        /* ========================================
+           🔧 開発者用デバッグ機能 (Developer Debug Functions)
+           ======================================== */
+        
+        // タイトル6回連続クリックで開発者機能を有効化
+        let titleClickCount = 0;
+        let titleClickTimer = null;
+        
+        function setupDeveloperMode() {
+            const logoElement = document.querySelector('.logo');
+            if (!logoElement) return;
+            
+            logoElement.addEventListener('click', function() {
+                // カウントをリセットするタイマー（2秒以内に連続クリックが必要）
+                if (titleClickTimer) {
+                    clearTimeout(titleClickTimer);
+                }
+                
+                titleClickCount++;
+                
+                // 6回クリックされたら開発者機能を実行
+                if (titleClickCount >= 6) {
+                    titleClickCount = 0;
+                    if (titleClickTimer) {
+                        clearTimeout(titleClickTimer);
+                        titleClickTimer = null;
+                    }
+                    triggerDeveloperMode();
+                } else {
+                    // 2秒以内に次のクリックがないとリセット
+                    titleClickTimer = setTimeout(() => {
+                        titleClickCount = 0;
+                        titleClickTimer = null;
+                    }, 2000);
+                }
+            });
+        }
+        
+        // 開発者モード機能
+        async function triggerDeveloperMode() {
+            console.log('🔧 開発者モードが有効化されました');
+            
+            // メニューを表示
+            const options = [
+                '1. 現在の状態をFirebaseに保存',
+                '2. メニューボタン位置をリセット（画面中央）',
+                '3. すべてのデータをFirebaseに保存',
+                '4. Firebaseのデータをクリア（確認が必要）',
+                '5. デバッグ情報を表示',
+                '6. キャンセル'
+            ];
+            
+            const choice = prompt(`🔧 開発者モード\n\n${options.join('\n')}\n\n選択してください（1-6）:`);
+            
+            switch(choice) {
+                case '1':
+                    await forceSaveCurrentState();
+                    break;
+                case '2':
+                    resetMenuButtonPosition();
+                    break;
+                case '3':
+                    await saveAllDataToFirebase();
+                    break;
+                case '4':
+                    const confirm = window.confirm('⚠️ 警告: Firebaseのデータをクリアしますか？\nこの操作は元に戻せません。');
+                    if (confirm) {
+                        await clearFirebaseData();
+                    }
+                    break;
+                case '5':
+                    showDebugInfo();
+                    break;
+                case '6':
+                default:
+                    console.log('キャンセルされました');
+                    return;
+            }
+        }
+        
+        // 現在の状態をFirebaseに強制保存
+        async function forceSaveCurrentState() {
+            try {
+                if (!firebaseInitialized || !db) {
+                    alert('❌ Firebaseが初期化されていません');
+                    return;
+                }
+                
+                // メニューボタンの現在位置を取得
+                const menuButton = document.getElementById('menuButton');
+                if (menuButton) {
+                    const rect = menuButton.getBoundingClientRect();
+                    const currentPosition = {
+                        left: rect.left,
+                        top: rect.top
+                    };
+                    
+                    // 値が有効な場合のみ保存
+                    if (currentPosition.left >= 0 && currentPosition.top >= 0 && 
+                        currentPosition.left < window.innerWidth && currentPosition.top < window.innerHeight) {
+                        menuButtonPosition = currentPosition;
+                        await saveTaskMarketData();
+                        alert('✅ 現在の状態をFirebaseに保存しました\n\nメニューボタン位置: ' + JSON.stringify(currentPosition));
+                        console.log('✅ 保存完了:', { menuButtonPosition: currentPosition });
+                    } else {
+                        alert('⚠️ メニューボタンの位置が無効です\n画面中央にリセットします');
+                        resetMenuButtonPosition();
+                    }
+                } else {
+                    alert('⚠️ メニューボタンが見つかりません');
+                }
+            } catch (error) {
+                console.error('❌ 保存エラー:', error);
+                alert('❌ 保存に失敗しました: ' + error.message);
+            }
+        }
+        
+        // メニューボタン位置をリセット
+        function resetMenuButtonPosition() {
+            menuButtonPosition = null;
+            localStorage.removeItem('menuButtonPosition');
+            
+            // Firebaseからも削除
+            if (firebaseInitialized && db) {
+                db.collection('taskMarket').doc('main').update({
+                    menuButtonPosition: firebase.firestore.FieldValue.delete()
+                }).catch(err => {
+                    console.warn('Firebase削除エラー:', err);
+                });
+            }
+            
+            // 画面中央にリセット
+            initMenuButton();
+            alert('✅ メニューボタン位置を画面中央にリセットしました');
+            console.log('✅ メニューボタン位置をリセット');
+        }
+        
+        // すべてのデータをFirebaseに保存
+        async function saveAllDataToFirebase() {
+            try {
+                await saveTaskMarketData();
+                alert('✅ すべてのデータをFirebaseに保存しました');
+                console.log('✅ すべてのデータを保存:', {
+                    tasks: tasks.length,
+                    badges: badges.length,
+                    taskBadges: Object.keys(taskBadges).length,
+                    timeRecords: timeRecords.length,
+                    externalLinks: externalLinks.length,
+                    menuButtonPosition: menuButtonPosition
+                });
+            } catch (error) {
+                console.error('❌ 保存エラー:', error);
+                alert('❌ 保存に失敗しました: ' + error.message);
+            }
+        }
+        
+        // Firebaseのデータをクリア
+        async function clearFirebaseData() {
+            try {
+                if (!firebaseInitialized || !db) {
+                    alert('❌ Firebaseが初期化されていません');
+                    return;
+                }
+                
+                await db.collection('taskMarket').doc('main').delete();
+                alert('✅ Firebaseのデータをクリアしました');
+                console.log('✅ Firebaseデータをクリア');
+                
+                // ページをリロード
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } catch (error) {
+                console.error('❌ クリアエラー:', error);
+                alert('❌ クリアに失敗しました: ' + error.message);
+            }
+        }
+        
+        // デバッグ情報を表示
+        function showDebugInfo() {
+            const menuButton = document.getElementById('menuButton');
+            const menuButtonRect = menuButton ? menuButton.getBoundingClientRect() : null;
+            
+            const info = {
+                'Firebase初期化': firebaseInitialized ? '✅' : '❌',
+                'タスク数': tasks.length,
+                'バッジ数': badges.length,
+                'タイムレコード数': timeRecords.length,
+                '外部リンク数': externalLinks.length,
+                'メニューボタン位置（保存済み）': menuButtonPosition ? JSON.stringify(menuButtonPosition) : '未設定',
+                'メニューボタン位置（現在）': menuButtonRect ? `left: ${menuButtonRect.left.toFixed(2)}, top: ${menuButtonRect.top.toFixed(2)}` : '見つかりません',
+                '画面サイズ': `${window.innerWidth}x${window.innerHeight}`,
+                'ウィンドウサイズ': `${window.outerWidth}x${window.outerHeight}`
+            };
+            
+            console.log('🔍 デバッグ情報:', info);
+            alert('🔍 デバッグ情報\n\n' + Object.entries(info).map(([key, value]) => `${key}: ${value}`).join('\n') + '\n\n詳細はコンソールを確認してください');
+        }
+        
         // 初期化（ページロード時にも実行、スプラッシュ後に再実行される）
         setTimeout(async function() {
+            // 開発者モードを設定
+            setupDeveloperMode();
+            
             // Firebaseからデータを読み込み（最優先）
             await loadTaskMarketData();
             
