@@ -4150,7 +4150,10 @@
                                                    cardRect.top > trashRect.bottom);
                             
                             if (isOverlapping) {
-                                droppedOnTrash = true;
+                                // メニューボタンでないことを確認
+                                if (!this.dataset.menuButton && !this.closest('.menu-button')) {
+                                    droppedOnTrash = true;
+                                }
                             }
                         }
                         
