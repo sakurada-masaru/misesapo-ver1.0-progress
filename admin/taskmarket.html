@@ -3203,7 +3203,7 @@
             if (!firebaseInitialized || !db) return;
 
             try {
-                db.collection('taskMarket').doc('main').onSnapshot((doc) => {
+                const unsubscribe = db.collection('taskMarket').doc('main').onSnapshot((doc) => {
                     if (doc.exists) {
                         const data = doc.data();
                         console.log('🔄 リアルタイム更新を受信しました:', data);
@@ -3223,7 +3223,12 @@
                         updateArchivePanel();
                     }
                 }, (error) => {
-                    console.error('リアルタイム更新エラー:', error);
+                    // 400エラーなど、一時的なエラーの場合は警告のみ
+                    if (error.code === 'permission-denied' || error.code === 'unavailable') {
+                        console.warn('Firestoreリアルタイム更新エラー（再接続を試みます）:', error.code);
+                    } else {
+                        console.error('Firestoreリアルタイム更新エラー:', error);
+                    }
                 });
             } catch (error) {
                 console.error('リアルタイムリスナー設定エラー:', error);
@@ -7027,9 +7032,17 @@
                     menuButtonPositionSP = null;
                     // FirebaseとlocalStorageからも無効な位置を削除
                     if (firebaseInitialized && db) {
-                        db.collection('taskMarket').doc('main').update({
-                            menuButtonPositionSP: firebase.firestore.FieldValue.delete()
-                        }).catch(err => console.warn('Firebase位置削除エラー:', err));
+                        // ドキュメントの存在確認してから削除
+                        db.collection('taskMarket').doc('main').get().then(doc => {
+                            if (doc.exists && doc.data().menuButtonPositionSP) {
+                                return db.collection('taskMarket').doc('main').update({
+                                    menuButtonPositionSP: firebase.firestore.FieldValue.delete()
+                                });
+                            }
+                        }).catch(err => {
+                            // エラーは無視（ドキュメントが存在しない場合など）
+                            console.warn('Firebase位置削除エラー（無視可能）:', err);
+                        });
                     }
                     localStorage.removeItem('menuButtonPositionSP');
                 }
@@ -7691,10 +7704,16 @@
             
             // Firebaseからも削除
             if (firebaseInitialized && db) {
-                db.collection('taskMarket').doc('main').update({
-                    menuButtonPositionSP: firebase.firestore.FieldValue.delete()
+                // ドキュメントの存在確認してから削除
+                db.collection('taskMarket').doc('main').get().then(doc => {
+                    if (doc.exists && doc.data().menuButtonPositionSP) {
+                        return db.collection('taskMarket').doc('main').update({
+                            menuButtonPositionSP: firebase.firestore.FieldValue.delete()
+                        });
+                    }
                 }).catch(err => {
-                    console.warn('Firebase削除エラー:', err);
+                    // エラーは無視（ドキュメントが存在しない場合など）
+                    console.warn('Firebase削除エラー（無視可能）:', err);
                 });
             }
             
