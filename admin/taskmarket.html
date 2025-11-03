@@ -1320,10 +1320,14 @@
             -webkit-user-select: none;
         }
 
-        /* PC版：自由に移動可能 */
+        /* PC版：自由に移動可能（タスクグリッド内） */
         .menu-button-pc {
             cursor: move;
             touch-action: none;
+            position: absolute;
+            left: 24px;
+            top: 24px;
+            z-index: 10;
         }
 
         /* SP版：自由に移動可能 */
