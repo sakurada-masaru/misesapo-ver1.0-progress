@@ -3397,6 +3397,9 @@
                         topPercent: (absTop / gridHeight) * 100
                     };
                     saveMenuIconPosition();
+                    
+                    // メニュー項目が展開されている場合は位置を更新
+                    updateMenuItemsPosition();
                 } else {
                     // タップでダブルタップ判定
                     e.stopPropagation(); // イベント伝播を止める
