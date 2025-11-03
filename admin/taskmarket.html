@@ -2498,7 +2498,7 @@
             <div class="task-grid" id="taskGrid">
                 <!-- PC版メニューボタン（タスクグリッド内で移動可能） -->
                 <div class="menu-button menu-button-pc" id="menuButtonPC" draggable="true" data-menu-button="true">
-                    <img src="admin/images/menicon.svg" alt="メニュー" class="menu-button-icon">
+                    <img src="images/menicon.svg" alt="メニュー" class="menu-button-icon">
                     <span class="tooltip-text">ダブルクリックでメニュー展開</span>
                 </div>
                 
@@ -7002,7 +7002,11 @@
             const taskGrid = document.getElementById('taskGrid');
             
             if (!menuButtonPC || !circularMenu || !taskGrid) {
-                console.warn('PC版メニューボタンの初期化に失敗: 必要な要素が見つかりません');
+                console.warn('PC版メニューボタンの初期化に失敗: 必要な要素が見つかりません', {
+                    menuButtonPC: !!menuButtonPC,
+                    circularMenu: !!circularMenu,
+                    taskGrid: !!taskGrid
+                });
                 return;
             }
             
@@ -8022,9 +8026,11 @@
             await loadMenuButtonPositionSP();
             loadMenuButtonPositionPC();
             
-            // PC版とSP版のメニューボタンをそれぞれ初期化
-            initMenuButtonPC();
-            initMenuButtonSP();
+            // PC版とSP版のメニューボタンをそれぞれ初期化（DOMが完全に読み込まれた後に実行）
+            setTimeout(() => {
+                initMenuButtonPC();
+                initMenuButtonSP();
+            }, 100);
             
             // ゴミ箱を全て削除してから再作成（重複を完全に防ぐ）
             const allTrashBins = document.querySelectorAll('.trash-bin[id="trashBin"]');
