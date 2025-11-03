@@ -1507,186 +1507,113 @@
         }
 
         /* メニューボタンスタイル */
-        .menu-button-container {
+        .menu-button {
             position: fixed;
-            top: 24px;
-            left: 24px;
-            z-index: 10000;
+            width: 56px;
+            height: 56px;
+            background: var(--color-primary, #FF679C);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: move;
+            z-index: 10000;
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.2s ease;
             user-select: none;
             -webkit-user-select: none;
             touch-action: none;
         }
 
-        .menu-button {
-            position: relative;
-            width: 64px;
-            height: 64px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
+        .menu-button:hover {
+            transform: scale(1.1);
+        }
+
+        .menu-button:active {
+            transform: scale(0.95);
         }
 
         .menu-button-icon {
-            width: 64px;
-            height: 64px;
-            position: relative;
-            z-index: 2;
+            width: 32px;
+            height: 32px;
             pointer-events: none;
         }
 
-        .menu-button-background {
+        .menu-button .tooltip-text {
             position: absolute;
-            top: 50%;
+            bottom: 100%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            width: 64px;
-            height: 64px;
-            background: var(--color-primary);
-            border-radius: 50%;
-            z-index: 1;
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--border-radius-sm);
+            font-size: var(--font-size-xs);
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            pointer-events: none;
+            margin-bottom: var(--spacing-xs);
         }
 
-        .menu-button-container:hover .menu-button-background {
+        .menu-button:hover .tooltip-text {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 円形メニュースタイル */
+        .circular-menu {
+            position: fixed;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .circular-menu.active {
+            pointer-events: auto;
+            opacity: 1;
+        }
+
+        .circular-menu-item {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: var(--color-primary, #FF679C);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            /* 位置はJavaScriptで計算して設定 */
+        }
+
+        .circular-menu.active .circular-menu-item {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .circular-menu-item:hover {
+            background: var(--color-primary-hover, #FF4081);
             transform: translate(-50%, -50%) scale(1.1);
         }
 
-        /* メニューオーバーレイ */
-        .menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .menu-overlay.active {
-            display: flex;
-        }
-
-        .menu-circle {
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            pointer-events: none;
-        }
-
-        @media (max-width: 430px) {
-            .menu-circle {
-                width: 300px;
-                height: 300px;
-            }
-        }
-
-        .menu-background-circle {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            width: 500px;
-            height: 500px;
-            background: var(--color-primary);
-            border-radius: 50%;
-            opacity: 0.9;
-            animation: menuExpandBackground 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-
-        @media (max-width: 430px) {
-            .menu-background-circle {
-                width: 300px;
-                height: 300px;
-            }
-        }
-
-        @keyframes menuExpandBackground {
-            0% {
-                transform: translate(-50%, -50%) scale(0.3);
-                opacity: 0;
-            }
-            50% {
-                transform: translate(-50%, -50%) scale(0.8);
-                opacity: 0.7;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0.9;
-            }
-        }
-
-        .menu-items {
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
-
-        .menu-item {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            padding: var(--spacing-sm) var(--spacing-md);
-            background: white;
-            border: 2px solid var(--color-primary);
-            border-radius: var(--border-radius-md);
-            color: var(--color-text-primary);
+        .menu-item-label {
+            color: white;
             font-size: var(--font-size-sm);
             font-weight: var(--font-weight-semibold);
+            text-align: center;
             white-space: nowrap;
-            cursor: pointer;
-            pointer-events: auto;
-            opacity: 0;
-            transition: all 0.3s ease;
-            animation: menuItemFadeIn 0.3s ease forwards;
-            transform-origin: center center;
-        }
-
-        .menu-item:hover {
-            background: var(--color-primary);
-            color: white;
-        }
-
-        @keyframes menuItemFadeIn {
-            0% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.8);
-            }
-            100% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-        }
-
-        @media (max-width: 430px) {
-            .menu-button-container {
-                width: 48px;
-                height: 48px;
-                top: 16px;
-                left: 16px;
-            }
-
-            .menu-button {
-                width: 48px;
-                height: 48px;
-            }
-
-            .menu-button-icon {
-                width: 48px;
-                height: 48px;
-            }
-
-            .menu-button-background {
-                width: 48px;
-                height: 48px;
-            }
+            padding: var(--spacing-xs);
         }
 
         .form-group {
@@ -2705,21 +2632,25 @@
         </div>
     </div>
 
-    <!-- メニューボタン（自由移動可能） -->
-    <div class="menu-button-container" id="menuButtonContainer">
-        <div class="menu-button" id="menuButton">
-            <img src="images/menu icon.svg" alt="メニュー" class="menu-button-icon">
-            <div class="menu-button-background" id="menuButtonBackground"></div>
-        </div>
+    <!-- メニューボタン（自由に移動可能、最上層） -->
+    <div class="menu-button" id="menuButton" draggable="true">
+        <img src="images/ログ.svg" alt="メニュー" class="menu-button-icon">
+        <span class="tooltip-text">ダブルクリック/タップでメニュー展開</span>
     </div>
-
-    <!-- 円形メニューオーバーレイ -->
-    <div class="menu-overlay" id="menuOverlay" onclick="closeMenuOnOverlay(event)">
-        <div class="menu-circle" id="menuCircle">
-            <div class="menu-background-circle" id="menuBackgroundCircle"></div>
-            <div class="menu-items" id="menuItems">
-                <!-- メニュー項目が動的に生成されます -->
-            </div>
+    
+    <!-- 円形メニュー -->
+    <div class="circular-menu" id="circularMenu">
+        <div class="circular-menu-item" data-action="mypage" style="--angle: 30deg;">
+            <span class="menu-item-label">マイページ</span>
+        </div>
+        <div class="circular-menu-item" data-action="resource" style="--angle: 60deg;" onclick="toggleSlidePanel(2)">
+            <span class="menu-item-label">リソース管理</span>
+        </div>
+        <div class="circular-menu-item" data-action="archive" style="--angle: 90deg;" onclick="toggleSlidePanel(5)">
+            <span class="menu-item-label">アーカイブ</span>
+        </div>
+        <div class="circular-menu-item" data-action="settings" style="--angle: 120deg;">
+            <span class="menu-item-label">設定</span>
         </div>
     </div>
 
@@ -3309,6 +3240,7 @@
                     taskBadges: taskBadges,
                     timeRecords: timeRecords,
                     externalLinks: externalLinks,
+                    menuButtonPosition: menuButtonPosition,
                     _updatedAt: Date.now()
                 };
 
@@ -3405,6 +3337,7 @@
                         if (data.taskBadges) taskBadges = data.taskBadges;
                         if (data.timeRecords) timeRecords = data.timeRecords;
                         if (data.externalLinks) externalLinks = data.externalLinks;
+                        if (data.menuButtonPosition) menuButtonPosition = data.menuButtonPosition;
                         
                         // UIを更新
                         updateTaskGrid();
@@ -7135,95 +7068,110 @@
         }
 
         /* ========================================
-           🎛️ メニューボタン機能 (Menu Button)
+           🎯 メニューボタン機能 (Menu Button)
            ======================================== */
 
-        // メニューボタンの位置管理
-        let menuButtonPosition = { top: 24, left: 24 };
-        
-        // メニューの開閉状態
-        let isMenuOpen = false;
-
-        // メニュー項目の定義（順序：マイページ、リソース管理、アーカイブ、設定）
-        const menuItemsList = [
-            { id: 'mypage', label: 'マイページ', action: () => console.log('マイページ') },
-            { id: 'resource', label: 'リソース管理', action: () => toggleSlidePanel(2) },
-            { id: 'archive', label: 'アーカイブ', action: () => toggleSlidePanel(5) },
-            { id: 'settings', label: '設定', action: () => console.log('設定') }
-        ];
+        // メニューボタンの位置データ（Firebaseに保存）
+        let menuButtonPosition = null;
 
         // メニューボタンの初期化
-        function initializeMenuButton() {
-            const container = document.getElementById('menuButtonContainer');
+        function initMenuButton() {
             const menuButton = document.getElementById('menuButton');
-            if (!container || !menuButton) return;
+            const circularMenu = document.getElementById('circularMenu');
+            
+            if (!menuButton || !circularMenu) return;
 
-            // 保存された位置を読み込み
-            const savedPosition = localStorage.getItem('menuButtonPosition');
-            if (savedPosition) {
-                try {
-                    menuButtonPosition = JSON.parse(savedPosition);
-                    container.style.top = menuButtonPosition.top + 'px';
-                    container.style.left = menuButtonPosition.left + 'px';
-                } catch (e) {
-                    console.warn('メニューボタンの位置読み込みエラー:', e);
-                }
+            // 初期位置を設定（右下、Firebaseから読み込んだ位置があれば使用）
+            if (menuButtonPosition) {
+                menuButton.style.left = menuButtonPosition.left + 'px';
+                menuButton.style.top = menuButtonPosition.top + 'px';
+            } else {
+                // デフォルト位置：画面右下
+                menuButton.style.right = '24px';
+                menuButton.style.bottom = '24px';
+                menuButton.style.left = 'auto';
+                menuButton.style.top = 'auto';
             }
+
+            // 円形メニューの位置をメニューボタンに合わせて更新
+            updateCircularMenuPosition();
 
             // PC版：ドラッグ&ドロップ
             let isDragging = false;
             let dragStartX = 0;
             let dragStartY = 0;
-            let dragStartLeft = 0;
-            let dragStartTop = 0;
-            let lastClickTime = 0;
-            let lastClickTarget = null;
+            let startLeft = 0;
+            let startTop = 0;
+            let hasDragged = false;
 
-            menuButton.addEventListener('mousedown', function(e) {
-                if (e.button !== 0) return; // 左クリックのみ
-                
-                // ダブルクリック判定
-                const currentTime = Date.now();
-                if (currentTime - lastClickTime < 300 && lastClickTarget === menuButton) {
-                    e.preventDefault();
-                    toggleMenu();
-                    return;
-                }
-                lastClickTime = currentTime;
-                lastClickTarget = menuButton;
-
+            menuButton.addEventListener('dragstart', function(e) {
                 isDragging = true;
+                hasDragged = false;
+                const rect = this.getBoundingClientRect();
                 dragStartX = e.clientX;
                 dragStartY = e.clientY;
-                dragStartLeft = parseInt(container.style.left) || menuButtonPosition.left;
-                dragStartTop = parseInt(container.style.top) || menuButtonPosition.top;
-                
-                menuButton.style.cursor = 'grabbing';
-                e.preventDefault();
+                startLeft = rect.left;
+                startTop = rect.top;
+                this.style.opacity = '0.7';
+                e.dataTransfer.effectAllowed = 'move';
             });
 
-            document.addEventListener('mousemove', function(e) {
+            menuButton.addEventListener('drag', function(e) {
                 if (!isDragging) return;
+                hasDragged = true;
                 
                 const deltaX = e.clientX - dragStartX;
                 const deltaY = e.clientY - dragStartY;
                 
-                const newLeft = Math.max(0, Math.min(dragStartLeft + deltaX, window.innerWidth - container.offsetWidth));
-                const newTop = Math.max(0, Math.min(dragStartTop + deltaY, window.innerHeight - container.offsetHeight));
+                let newLeft = startLeft + deltaX;
+                let newTop = startTop + deltaY;
                 
-                container.style.left = newLeft + 'px';
-                container.style.top = newTop + 'px';
+                // 画面内に制限
+                const maxX = window.innerWidth - this.offsetWidth;
+                const maxY = window.innerHeight - this.offsetHeight;
+                newLeft = Math.max(0, Math.min(newLeft, maxX));
+                newTop = Math.max(0, Math.min(newTop, maxY));
+                
+                this.style.left = newLeft + 'px';
+                this.style.top = newTop + 'px';
+                this.style.right = 'auto';
+                this.style.bottom = 'auto';
+                
+                // 円形メニューの位置も更新
+                updateCircularMenuPosition();
             });
 
-            document.addEventListener('mouseup', function() {
-                if (isDragging) {
-                    isDragging = false;
-                    menuButton.style.cursor = 'move';
-                    
-                    // 位置を保存
-                    menuButtonPosition.left = parseInt(container.style.left);
-                    menuButtonPosition.top = parseInt(container.style.top);
-                    localStorage.setItem('menuButtonPosition', JSON.stringify(menuButtonPosition));
+            menuButton.addEventListener('dragend', function(e) {
+                if (!isDragging) return;
+                isDragging = false;
+                this.style.opacity = '1';
+                
+                // 位置を保存
+                const rect = this.getBoundingClientRect();
+                menuButtonPosition = {
+                    left: rect.left,
+                    top: rect.top
+                };
+                saveMenuButtonPosition();
+            });
+
+            // ダブルクリック（PC版）
+            let clickTimeout = null;
+            menuButton.addEventListener('click', function(e) {
+                if (hasDragged) {
+                    hasDragged = false;
+                    return;
+                }
+                
+                if (clickTimeout) {
+                    clearTimeout(clickTimeout);
+                    clickTimeout = null;
+                    // ダブルクリック
+                    toggleCircularMenu();
+                } else {
+                    clickTimeout = setTimeout(() => {
+                        clickTimeout = null;
+                    }, 300);
                 }
             });
 
@@ -7233,193 +7181,256 @@
             let touchStartLeft = 0;
             let touchStartTop = 0;
             let isTouchDragging = false;
-            let touchStartTime = 0;
+            let touchTimeout = null;
+            let hasTouchDragged = false;
 
             menuButton.addEventListener('touchstart', function(e) {
-                const touch = e.touches[0];
-                touchStartX = touch.clientX;
-                touchStartY = touch.clientY;
-                touchStartLeft = parseInt(container.style.left) || menuButtonPosition.left;
-                touchStartTop = parseInt(container.style.top) || menuButtonPosition.top;
-                touchStartTime = Date.now();
-                isTouchDragging = false;
+                if (e.touches.length === 1) {
+                    const touch = e.touches[0];
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
+                    const rect = this.getBoundingClientRect();
+                    touchStartLeft = rect.left;
+                    touchStartTop = rect.top;
+                    isTouchDragging = false;
+                    hasTouchDragged = false;
+                    
+                    // 長押しでドラッグ開始（300ms）
+                    touchTimeout = setTimeout(() => {
+                        isTouchDragging = true;
+                        hasTouchDragged = true;
+                        this.style.transition = 'none';
+                        this.style.zIndex = '10001';
+                    }, 300);
+                }
             }, { passive: true });
 
             menuButton.addEventListener('touchmove', function(e) {
-                const touch = e.touches[0];
-                const deltaX = Math.abs(touch.clientX - touchStartX);
-                const deltaY = Math.abs(touch.clientY - touchStartY);
-                
-                if (deltaX > 5 || deltaY > 5) {
-                    isTouchDragging = true;
+                if (e.touches.length === 1 && isTouchDragging) {
                     e.preventDefault();
+                    const touch = e.touches[0];
                     
-                    const newLeft = Math.max(0, Math.min(touchStartLeft + (touch.clientX - touchStartX), window.innerWidth - container.offsetWidth));
-                    const newTop = Math.max(0, Math.min(touchStartTop + (touch.clientY - touchStartY), window.innerHeight - container.offsetHeight));
+                    const deltaX = touch.clientX - touchStartX;
+                    const deltaY = touch.clientY - touchStartY;
                     
-                    container.style.left = newLeft + 'px';
-                    container.style.top = newTop + 'px';
+                    let newLeft = touchStartLeft + deltaX;
+                    let newTop = touchStartTop + deltaY;
+                    
+                    // 画面内に制限
+                    const maxX = window.innerWidth - this.offsetWidth;
+                    const maxY = window.innerHeight - this.offsetHeight;
+                    newLeft = Math.max(0, Math.min(newLeft, maxX));
+                    newTop = Math.max(0, Math.min(newTop, maxY));
+                    
+                    this.style.left = newLeft + 'px';
+                    this.style.top = newTop + 'px';
+                    this.style.right = 'auto';
+                    this.style.bottom = 'auto';
+                    
+                    // 円形メニューの位置も更新
+                    updateCircularMenuPosition();
                 }
             }, { passive: false });
 
             menuButton.addEventListener('touchend', function(e) {
-                const touchDuration = Date.now() - touchStartTime;
-                
-                // ダブルタップ判定（ドラッグしていない場合のみ）
-                if (!isTouchDragging && touchDuration < 300) {
-                    const currentTime = Date.now();
-                    if (currentTime - lastClickTime < 300 && lastClickTarget === menuButton) {
-                        e.preventDefault();
-                        toggleMenu();
-                        return;
-                    }
-                    lastClickTime = currentTime;
-                    lastClickTarget = menuButton;
-                }
+                clearTimeout(touchTimeout);
                 
                 if (isTouchDragging) {
+                    isTouchDragging = false;
+                    this.style.transition = '';
+                    this.style.zIndex = '10000';
+                    
                     // 位置を保存
-                    menuButtonPosition.left = parseInt(container.style.left);
-                    menuButtonPosition.top = parseInt(container.style.top);
-                    localStorage.setItem('menuButtonPosition', JSON.stringify(menuButtonPosition));
+                    const rect = this.getBoundingClientRect();
+                    menuButtonPosition = {
+                        left: rect.left,
+                        top: rect.top
+                    };
+                    saveMenuButtonPosition();
+                } else if (!hasTouchDragged) {
+                    // タップでダブルタップ判定
+                    if (clickTimeout) {
+                        clearTimeout(clickTimeout);
+                        clickTimeout = null;
+                        // ダブルタップ
+                        toggleCircularMenu();
+                    } else {
+                        clickTimeout = setTimeout(() => {
+                            clickTimeout = null;
+                        }, 300);
+                    }
                 }
-                
-                isTouchDragging = false;
+                hasTouchDragged = false;
             }, { passive: true });
-        }
 
-        // メニューの開閉
-        function toggleMenu() {
-            const overlay = document.getElementById('menuOverlay');
-            const menuCircle = document.getElementById('menuCircle');
-            const menuButtonContainer = document.getElementById('menuButtonContainer');
-            
-            if (!overlay || !menuCircle || !menuButtonContainer) return;
-
-            if (isMenuOpen) {
-                closeMenu();
-            } else {
-                openMenu();
-            }
-        }
-
-        // メニューを開く
-        function openMenu() {
-            const overlay = document.getElementById('menuOverlay');
-            const menuCircle = document.getElementById('menuCircle');
-            const menuItems = document.getElementById('menuItems');
-            const menuButtonContainer = document.getElementById('menuButtonContainer');
-            
-            if (!overlay || !menuCircle || !menuItems || !menuButtonContainer) return;
-
-            // メニューボタンの位置を取得
-            const buttonRect = menuButtonContainer.getBoundingClientRect();
-            const buttonCenterX = buttonRect.left + buttonRect.width / 2;
-            const buttonCenterY = buttonRect.top + buttonRect.height / 2;
-
-            // 画面中央方向を計算
-            const screenCenterX = window.innerWidth / 2;
-            const screenCenterY = window.innerHeight / 2;
-            
-            // ボタンが画面左半分か右半分かを判定
-            const isLeftSide = buttonCenterX < screenCenterX;
-            
-            // メニューの半径（PC: 250px, SP: 150px）
-            const radius = window.innerWidth <= 430 ? 150 : 250;
-            
-            // メニューサークルの位置を設定（メニューボタンの位置に）
-            menuCircle.style.left = buttonCenterX + 'px';
-            menuCircle.style.top = buttonCenterY + 'px';
-            menuCircle.style.transform = 'translate(-50%, -50%)';
-
-            // メニュー項目を生成
-            menuItems.innerHTML = '';
-            
-            const totalItems = menuItemsList.length;
-            menuItemsList.forEach((item, index) => {
-                // 角度を計算（時計回り/反時計回り）
-                // 画面中央方向を基準に配置
-                // 各項目の角度（0から360度に均等に配置）
-                const baseAngle = (index / totalItems) * Math.PI * 2;
-                
-                // 画面中央方向へのオフセット角度を計算
-                const centerAngle = Math.atan2(screenCenterY - buttonCenterY, screenCenterX - buttonCenterX);
-                
-                let finalAngle;
-                if (isLeftSide) {
-                    // 左側：時計回り（画面中央方向を基準に時計回り）
-                    finalAngle = centerAngle + baseAngle;
-                } else {
-                    // 右側：反時計回り（画面中央方向を基準に反時計回り）
-                    finalAngle = centerAngle - baseAngle;
-                }
-                
-                // 位置を計算
-                const x = Math.cos(finalAngle) * radius;
-                const y = Math.sin(finalAngle) * radius;
-                
-                // ラベルの回転角度（度に変換、90度を引いてテキストを正しい向きに）
-                const rotationAngle = (finalAngle * 180 / Math.PI) - 90;
-                
-                const menuItem = document.createElement('div');
-                menuItem.className = 'menu-item';
-                menuItem.textContent = item.label;
-                menuItem.style.left = `calc(50% + ${x}px)`;
-                menuItem.style.top = `calc(50% + ${y}px)`;
-                // アニメーション終了後に回転を適用
-                menuItem.style.setProperty('--rotation', `${rotationAngle}deg`);
-                menuItem.style.animationDelay = `${index * 0.05}s`;
-                
-                // アニメーション終了後に回転を適用
-                setTimeout(() => {
-                    menuItem.style.transform = `translate(-50%, -50%) rotate(var(--rotation))`;
-                }, (index * 0.05 + 0.3) * 1000);
-                
-                // hover時のtransform（回転を維持）
-                menuItem.addEventListener('mouseenter', function() {
-                    this.style.transform = `translate(-50%, -50%) rotate(var(--rotation)) scale(1.1)`;
-                });
-                menuItem.addEventListener('mouseleave', function() {
-                    this.style.transform = `translate(-50%, -50%) rotate(var(--rotation)) scale(1)`;
-                });
-                
-                menuItem.onclick = function(e) {
-                    e.stopPropagation();
-                    item.action();
-                    closeMenu();
-                };
-                
-                menuItems.appendChild(menuItem);
+            // ダブルタップ（SP版）
+            menuButton.addEventListener('dblclick', function(e) {
+                e.preventDefault();
+                toggleCircularMenu();
             });
-
-            overlay.classList.add('active');
-            isMenuOpen = true;
         }
 
-        // メニューを閉じる
-        function closeMenu() {
-            const overlay = document.getElementById('menuOverlay');
-            if (!overlay) return;
+        // 円形メニューの位置を更新（メニューボタンの位置に合わせる）
+        function updateCircularMenuPosition() {
+            const menuButton = document.getElementById('menuButton');
+            const circularMenu = document.getElementById('circularMenu');
             
-            overlay.classList.remove('active');
-            isMenuOpen = false;
+            if (!menuButton || !circularMenu) return;
+
+            const rect = menuButton.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            // 円形メニューの中心位置を設定
+            circularMenu.style.left = centerX + 'px';
+            circularMenu.style.top = centerY + 'px';
+
+            // メニュー項目の位置を計算（半径100px、角度30度、60度、90度、120度）
+            const radius = 100;
+            const angles = [30, 60, 90, 120]; // 度
+
+            const menuItems = circularMenu.querySelectorAll('.circular-menu-item');
+            menuItems.forEach((item, index) => {
+                const angle = angles[index];
+                // 角度をラジアンに変換（12時を0度とするため、-90度を加算）
+                const radian = ((angle - 90) * Math.PI) / 180;
+                const x = Math.cos(radian) * radius;
+                const y = Math.sin(radian) * radius;
+
+                item.style.left = x + 'px';
+                item.style.top = y + 'px';
+            });
         }
 
-        // オーバーレイクリックでメニューを閉じる
-        function closeMenuOnOverlay(event) {
-            const menuCircle = document.getElementById('menuCircle');
-            if (menuCircle && event.target === event.currentTarget) {
-                closeMenu();
+        // 円形メニューの展開/閉じる
+        function toggleCircularMenu() {
+            const circularMenu = document.getElementById('circularMenu');
+            if (!circularMenu) return;
+
+            if (circularMenu.classList.contains('active')) {
+                closeCircularMenu();
+            } else {
+                openCircularMenu();
             }
         }
 
-        // ESCキーでメニューを閉じる（既存のESCキーハンドラーに追加）
-        // 注意：既存のESCキーハンドラーが定義されている場合は、そちらで処理される
+        // 円形メニューを開く
+        function openCircularMenu() {
+            const circularMenu = document.getElementById('circularMenu');
+            if (!circularMenu) return;
+
+            // 位置を更新
+            updateCircularMenuPosition();
+            
+            // アニメーションのために少し遅延
+            setTimeout(() => {
+                circularMenu.classList.add('active');
+            }, 10);
+        }
+
+        // 円形メニューを閉じる
+        function closeCircularMenu() {
+            const circularMenu = document.getElementById('circularMenu');
+            if (!circularMenu) return;
+            
+            circularMenu.classList.remove('active');
+        }
+
+        // メニュー項目のクリック処理
+        document.addEventListener('click', function(e) {
+            const menuItem = e.target.closest('.circular-menu-item');
+            if (menuItem) {
+                const action = menuItem.dataset.action;
+                
+                // メニューを閉じる
+                closeCircularMenu();
+                
+                // アクションを実行
+                switch(action) {
+                    case 'mypage':
+                        // マイページ機能（今後実装）
+                        alert('マイページ機能は今後実装予定です。');
+                        break;
+                    case 'resource':
+                        toggleSlidePanel(2);
+                        break;
+                    case 'archive':
+                        toggleSlidePanel(5);
+                        break;
+                    case 'settings':
+                        // 設定機能（今後実装）
+                        alert('設定機能は今後実装予定です。');
+                        break;
+                }
+            } else if (!e.target.closest('.menu-button') && !e.target.closest('.circular-menu')) {
+                // メニューボタンと円形メニューの外側をクリックした場合は閉じる
+                closeCircularMenu();
+            }
+        });
+
+        // ESCキーで円形メニューを閉じる
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeCircularMenu();
+            }
+        });
+
+        // メニューボタンの位置を保存
+        function saveMenuButtonPosition() {
+            if (menuButtonPosition) {
+                localStorage.setItem('menuButtonPosition', JSON.stringify(menuButtonPosition));
+                // Firebaseにも保存
+                if (firebaseInitialized && db) {
+                    db.collection('taskMarket').doc('main').update({
+                        menuButtonPosition: menuButtonPosition
+                    }).catch(err => {
+                        console.warn('メニューボタン位置の保存エラー:', err);
+                    });
+                }
+            }
+        }
+
+        // メニューボタンの位置を読み込み
+        function loadMenuButtonPosition() {
+            // Firebaseから読み込み
+            if (firebaseInitialized && db) {
+                db.collection('taskMarket').doc('main').get().then(doc => {
+                    if (doc.exists && doc.data().menuButtonPosition) {
+                        menuButtonPosition = doc.data().menuButtonPosition;
+                        return;
+                    }
+                    // localStorageから読み込み
+                    const saved = localStorage.getItem('menuButtonPosition');
+                    if (saved) {
+                        menuButtonPosition = JSON.parse(saved);
+                    }
+                }).catch(err => {
+                    console.warn('メニューボタン位置の読み込みエラー:', err);
+                    // localStorageから読み込み
+                    const saved = localStorage.getItem('menuButtonPosition');
+                    if (saved) {
+                        menuButtonPosition = JSON.parse(saved);
+                    }
+                });
+            } else {
+                // localStorageから読み込み
+                const saved = localStorage.getItem('menuButtonPosition');
+                if (saved) {
+                    menuButtonPosition = JSON.parse(saved);
+                }
+            }
+        }
 
         // 初期化（ページロード時にも実行、スプラッシュ後に再実行される）
         setTimeout(async function() {
             // Firebaseからデータを読み込み（最優先）
             await loadTaskMarketData();
+            
+            // メニューボタンの位置を読み込み
+            await loadMenuButtonPosition();
+            
+            // メニューボタンを初期化
+            initMenuButton();
             
             // ゴミ箱を全て削除してから再作成（重複を完全に防ぐ）
             const allTrashBins = document.querySelectorAll('.trash-bin[id="trashBin"]');
@@ -7440,7 +7451,6 @@
             setupBadgeDragHandler(); // バッジドラッグハンドラーを設定
             setupTrashBinDrop(); // ゴミ箱のドロップ処理を初期化
             setupCompleteButtonDrop(); // 完了ボタンのドロップ処理を初期化
-            initializeMenuButton(); // メニューボタンを初期化
             // データ読み込み時に既にupdateTaskGrid()が呼ばれているため、重複を避ける
             // ただし、ゴミ箱作成後にUIを更新
             if (!document.getElementById('taskGrid').hasChildNodes() || document.getElementById('taskGrid').childElementCount === 0) {
@@ -7518,12 +7528,6 @@
         // ESCキーで開いているパネルを閉じる
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                // メニューを閉じる（最優先）
-                if (isMenuOpen) {
-                    closeMenu();
-                    return;
-                }
-                
                 // 詳細パネルを閉じる
                 const detailOverlay = document.getElementById('detailBoardOverlay');
                 if (detailOverlay && detailOverlay.classList.contains('active')) {
