@@ -4581,8 +4581,11 @@
             // グリッドのサイズを取得
             const gridWidth = taskGrid.offsetWidth - 48; // padding分を引く
             const gridHeight = Math.max(800, taskGrid.offsetHeight - 48);
-            const cardWidth = 280;
-            const cardHeight = 180;
+            const baseCardWidth = 280;
+            const baseCardHeight = 180;
+            const cardSizeScale = settings.cardSize / 100;
+            const cardWidth = baseCardWidth * cardSizeScale;
+            const cardHeight = baseCardHeight * cardSizeScale;
 
             // カードをクリア（ボタンは残す、ゴミ箱はtaskGrid外に固定されているので除外）
             const addButton = taskGrid.querySelector('.add-task-button');
@@ -4788,6 +4791,8 @@
                 card.style.left = left + 'px';
                 card.style.transform = `rotate(${rotation}deg)`;
                 card.style.zIndex = zIndex;
+                card.style.width = cardWidth + 'px';
+                card.style.height = cardHeight + 'px';
                 
                 // カテゴリアイコンのパスを取得
                 const categoryIconPath = getCategoryIconPath(task.category);
