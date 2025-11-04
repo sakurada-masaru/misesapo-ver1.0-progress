@@ -1479,7 +1479,7 @@
         }
 
         .mypage-tab-content.active {
-            display: block;
+            display: block !important;
         }
 
         /* メンバーカードスタイル */
@@ -2608,7 +2608,18 @@
             }
 
             .task-card-footer {
-                font-size: calc(var(--font-size-sm) * 0.9);
+                font-size: calc(var(--font-size-sm) * 0.85);
+            }
+            
+            /* SP版：報酬ラベル（「報酬:」「応援:」）を非表示 */
+            .task-card-reward .reward-label,
+            .task-card-reward .support-label {
+                display: none;
+            }
+            
+            /* SP版：報酬のフォントサイズを少し小さく */
+            .task-card-reward {
+                font-size: calc(var(--font-size-xs) * 0.9) !important;
             }
 
             /* タスクカードのツールチップ（スマホ版（SP）では表示） */
@@ -3016,22 +3027,6 @@
         </div>
     </div>
 
-    <!-- スライドインパネルのハンドル（左端に固定、5つ） -->
-    <button class="slide-panel-handle panel-1" id="slidePanelHandle1" onclick="toggleSlidePanel(1)">
-        <span class="tooltip-text">リンクパネルを開く</span>
-    </button>
-    <button class="slide-panel-handle panel-2" id="slidePanelHandle2" onclick="toggleSlidePanel(2)">
-        <span class="tooltip-text">リソース管理パネルを開く</span>
-    </button>
-    <button class="slide-panel-handle panel-3" id="slidePanelHandle3" onclick="toggleSlidePanel(3)">
-        <span class="tooltip-text">設定パネルを開く</span>
-    </button>
-    <button class="slide-panel-handle panel-4" id="slidePanelHandle4" onclick="toggleSlidePanel(4)">
-        <span class="tooltip-text">マイページを開く</span>
-    </button>
-    <button class="slide-panel-handle panel-5" id="slidePanelHandle5" onclick="toggleSlidePanel(5)">
-        <span class="tooltip-text">アーカイブパネルを開く</span>
-    </button>
 
     <!-- モーダル：タスク入力フォーム -->
     <div class="modal-overlay" id="taskFormModal" onclick="closeModalOnOverlay(event)">
@@ -3132,38 +3127,6 @@
     </div>
 
     <!-- スライドインパネル（左から右にスライドイン、5つ） -->
-    <!-- パネル1（ピンク：リンクパネル） -->
-    <div class="slide-panel-overlay" id="slidePanelOverlay1" onclick="closeSlidePanelOnOverlay(event, 1)">
-        <div class="slide-panel panel-1" id="slidePanel1" onclick="event.stopPropagation()">
-            <div class="slide-panel-header panel-1">
-                <h2 class="slide-panel-title">リンクパネル</h2>
-                <button class="slide-panel-close-button" onclick="closeSlidePanel(1)" title="閉じる">×</button>
-            </div>
-            <div class="slide-panel-content">
-                <!-- リンク追加フォーム -->
-                <div style="padding: var(--spacing-md); margin-bottom: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
-                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">外部リンクを追加</h3>
-                    <form id="linkAddForm" style="display: flex; gap: var(--spacing-sm); align-items: flex-end;">
-                        <div style="flex: 1;">
-                            <label for="linkUrl" style="display: block; font-size: var(--font-size-sm); margin-bottom: 4px; color: var(--color-text-secondary);">URL *</label>
-                            <input type="url" id="linkUrl" required placeholder="https://example.com" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
-                </div>
-                        <div style="flex: 1;">
-                            <label for="linkTitle" style="display: block; font-size: var(--font-size-sm); margin-bottom: 4px; color: var(--color-text-secondary);">タイトル（任意）</label>
-                            <input type="text" id="linkTitle" placeholder="リンク名" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
-            </div>
-                        <button type="submit" class="btn btn-primary" style="padding: var(--spacing-xs) var(--spacing-md); font-size: var(--font-size-sm);">追加</button>
-                    </form>
-        </div>
-                
-                <!-- リンクアイコングリッド -->
-                <div id="linkIconGrid" class="link-icon-grid">
-                    <!-- リンクアイコンがここに動的に生成されます -->
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- パネル2（ブルー：リソース管理） -->
     <div class="slide-panel-overlay" id="slidePanelOverlay2" onclick="closeSlidePanelOnOverlay(event, 2)">
         <div class="slide-panel panel-2" id="slidePanel2" onclick="event.stopPropagation()">
@@ -5116,8 +5079,8 @@
                         <div class="task-card-reward" style="margin-top: var(--spacing-xs); font-size: var(--font-size-xs); color: var(--color-text-secondary);">
                             <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
                                 <span>💰</span>
-                                <span>報酬: ${baseReward}コイン</span>
-                                ${supportCoins > 0 ? `<span style="color: var(--panel-5-color);">応援: +${supportCoins}コイン</span>` : ''}
+                                <span class="reward-label">報酬:</span><span class="reward-value">${baseReward}コイン</span>
+                                ${supportCoins > 0 ? `<span class="support-label">応援:</span><span class="support-value" style="color: var(--panel-5-color);">+${supportCoins}コイン</span>` : ''}
                             </div>
                         </div>
                     </div>
@@ -6846,6 +6809,34 @@
                     content.classList.add('active');
                     content.style.display = 'block';
                     updateArchiveReports();
+                } else {
+                    content.classList.remove('active');
+                    content.style.display = 'none';
+                }
+            });
+        }
+
+        // マイページタブを切り替え
+        function switchMyPageTab(tabName) {
+            const tabs = document.querySelectorAll('.mypage-tab');
+            const contents = document.querySelectorAll('.mypage-tab-content');
+            
+            tabs.forEach(tab => {
+                if (tab.dataset.tab === tabName) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            contents.forEach(content => {
+                if (content.id === 'mypageStatusTab' && tabName === 'status') {
+                    content.classList.add('active');
+                    content.style.display = 'block';
+                } else if (content.id === 'mypageReportTab' && tabName === 'report') {
+                    content.classList.add('active');
+                    content.style.display = 'block';
+                    updateMyPageReports(); // 日報一覧を更新
                 } else {
                     content.classList.remove('active');
                     content.style.display = 'none';
@@ -8976,40 +8967,10 @@
         // パネル内ゴミ箱は削除されたため、この関数は不要
         // function setupPanelTrashBin() { ... }
         
-        // リンク追加フォームの処理
-        document.getElementById('linkAddForm')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const url = document.getElementById('linkUrl').value.trim();
-            const title = document.getElementById('linkTitle').value.trim();
-            
-            if (!url) {
-                alert('URLを入力してください。');
-                return;
-            }
-            
-            addExternalLink(url, title);
-            
-            // フォームをリセット
-            document.getElementById('linkUrl').value = '';
-            document.getElementById('linkTitle').value = '';
-        });
-        
-        // パネル1が開かれた時にリンクグリッドを更新
-        function updateLinkPanelOnOpen() {
-            if (document.getElementById('slidePanelOverlay1').classList.contains('active')) {
-                updateLinkIconGrid();
-            }
-        }
-        
         // パネル開閉時にリンクグリッドを更新（ラッパー関数）
         function openSlidePanel(panelNumber) {
             openSlidePanelOriginal(panelNumber);
-            if (panelNumber === 1) {
-                setTimeout(() => {
-                    updateLinkIconGrid();
-                }, 100);
-            } else if (panelNumber === 2) {
+            if (panelNumber === 2) {
                 // リソース管理パネルを開いた時に更新
                 setTimeout(() => {
                     updateResourcePanel();
@@ -9492,8 +9453,6 @@
             if (badges.length > 0) {
             updateBadges(); // バッジを表示
             }
-            // リンクパネルの初期化
-            updateLinkIconGrid();
             // アーカイブパネルの初期化
             setupArchiveFilters();
             updateArchivePanel();
@@ -9515,8 +9474,9 @@
             const overlay = document.getElementById('slidePanelOverlay' + panelNumber);
             const panel = document.getElementById('slidePanel' + panelNumber);
             const handle = document.getElementById('slidePanelHandle' + panelNumber);
+            if (!overlay || !panel) return;
             overlay.classList.add('active');
-            handle.classList.add('active');
+            if (handle) handle.classList.add('active');
             // 少し遅延させてパネルを表示（オーバーレイの表示後に）
             setTimeout(function() {
                 panel.classList.add('active');
@@ -9533,11 +9493,12 @@
             const overlay = document.getElementById('slidePanelOverlay' + panelNumber);
             const panel = document.getElementById('slidePanel' + panelNumber);
             const handle = document.getElementById('slidePanelHandle' + panelNumber);
+            if (!panel) return;
             panel.classList.remove('active');
-            handle.classList.remove('active');
+            if (handle) handle.classList.remove('active');
             // アニメーション完了後にオーバーレイを非表示
             setTimeout(function() {
-                overlay.classList.remove('active');
+                if (overlay) overlay.classList.remove('active');
             }, 300);
         }
 
