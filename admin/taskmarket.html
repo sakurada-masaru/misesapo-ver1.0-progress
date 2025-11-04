@@ -2885,7 +2885,7 @@
         <span class="tooltip-text">設定パネルを開く</span>
     </button>
     <button class="slide-panel-handle panel-4" id="slidePanelHandle4" onclick="toggleSlidePanel(4)">
-        <span class="tooltip-text">メディアパネルを開く</span>
+        <span class="tooltip-text">マイページを開く</span>
     </button>
     <button class="slide-panel-handle panel-5" id="slidePanelHandle5" onclick="toggleSlidePanel(5)">
         <span class="tooltip-text">アーカイブパネルを開く</span>
@@ -3153,20 +3153,33 @@
         </div>
     </div>
 
-    <!-- パネル4（オレンジ：メディア） -->
+    <!-- パネル4（オレンジ：マイページ） -->
     <div class="slide-panel-overlay" id="slidePanelOverlay4" onclick="closeSlidePanelOnOverlay(event, 4)">
         <div class="slide-panel panel-4" id="slidePanel4" onclick="event.stopPropagation()">
             <div class="slide-panel-header panel-4">
-                <h2 class="slide-panel-title">メディア</h2>
+                <h2 class="slide-panel-title">マイページ</h2>
                 <button class="slide-panel-close-button" onclick="closeSlidePanel(4)" title="閉じる">×</button>
             </div>
             <div class="slide-panel-content">
-                <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-md);">
-                    メディア関連のタスク管理パネルです。
-                </p>
-                <div style="padding: var(--spacing-lg); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
-                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">メディアのコンテンツ</h3>
-                    <p style="color: var(--color-text-secondary);">ここにメディア関連のコンテンツを配置できます。</p>
+                <!-- 日報作成セクション -->
+                <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
+                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-4-color); padding-bottom: var(--spacing-sm);">日報作成</h3>
+                    <div style="margin-bottom: var(--spacing-md);">
+                        <label style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-xs);">日報内容</label>
+                        <textarea id="dailyReportText" rows="10" style="width: 100%; padding: var(--spacing-sm); border: 1px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-family: var(--font-family-primary); resize: vertical; min-height: 200px; background: var(--color-background); color: var(--color-text-primary);" placeholder="今日の作業内容や成果を記入してください..."></textarea>
+                        <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-sm);">
+                            <button id="saveDailyReportButton" class="settings-button" style="flex: 1; padding: var(--spacing-sm); background: var(--panel-4-color); color: white; border: none; border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer;">保存</button>
+                            <button id="clearDailyReportButton" class="settings-button" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background-secondary); color: var(--color-text-primary); border: 1px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer;">クリア</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 着手タスクとタイムレコードセクション -->
+                <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
+                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-4-color); padding-bottom: var(--spacing-sm);">着手したタスク</h3>
+                    <div id="myTasksContent" style="min-height: 200px;">
+                        <p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">データを読み込み中...</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -3509,6 +3522,11 @@
             darkMode: false
         };
 
+        // マイページデータ
+        let myPageData = {
+            dailyReport: '' // 日報テキスト
+        };
+
         // 設定を読み込み
         function loadSettings() {
             // デフォルト設定をリセット
@@ -3687,6 +3705,32 @@
                 resetButton.addEventListener('click', function() {
                     if (confirm('⚠️ 警告: すべてのデータを削除しますか？\nこの操作は元に戻せません。')) {
                         resetData();
+                    }
+                });
+            }
+        }
+
+        // マイページパネルのイベントリスナーを設定
+        function setupMyPagePanel() {
+            // 日報保存ボタン
+            const saveDailyReportButton = document.getElementById('saveDailyReportButton');
+            if (saveDailyReportButton) {
+                saveDailyReportButton.addEventListener('click', function() {
+                    saveMyPageData();
+                });
+            }
+            
+            // 日報クリアボタン
+            const clearDailyReportButton = document.getElementById('clearDailyReportButton');
+            if (clearDailyReportButton) {
+                clearDailyReportButton.addEventListener('click', function() {
+                    if (confirm('日報をクリアしますか？')) {
+                        const dailyReportText = document.getElementById('dailyReportText');
+                        if (dailyReportText) {
+                            dailyReportText.value = '';
+                            myPageData.dailyReport = '';
+                            saveMyPageData();
+                        }
                     }
                 });
             }
@@ -6098,10 +6142,177 @@
         function getTimeRecordsForTask(taskId) {
             return timeRecords.filter(record => record.taskId === taskId);
         }
-        
+
+        // マイページデータを読み込み
+        function loadMyPageData() {
+            // デフォルト値をリセット
+            myPageData = {
+                dailyReport: ''
+            };
+            
+            // ログイン中の場合、ユーザーデータを読み込む
+            if (currentUser && currentUser.id && firebaseInitialized && db) {
+                db.collection('users').doc(currentUser.id).get().then(doc => {
+                    if (doc.exists && doc.data().myPageData) {
+                        myPageData = { ...myPageData, ...doc.data().myPageData };
+                        console.log('✅ マイページデータを読み込みました:', currentUser.name);
+                    } else {
+                        console.log('ℹ️ マイページデータが見つかりません。デフォルト値を使用します。');
+                    }
+                    
+                    // UIを更新
+                    const dailyReportText = document.getElementById('dailyReportText');
+                    if (dailyReportText) {
+                        dailyReportText.value = myPageData.dailyReport || '';
+                    }
+                }).catch(err => {
+                    console.warn('マイページデータの読み込みエラー:', err);
+                    const dailyReportText = document.getElementById('dailyReportText');
+                    if (dailyReportText) {
+                        dailyReportText.value = myPageData.dailyReport || '';
+                    }
+                });
+            } else {
+                // 未ログイン時はlocalStorageから読み込む
+                const savedData = localStorage.getItem('myPageDataDefault');
+                if (savedData) {
+                    myPageData = { ...myPageData, ...JSON.parse(savedData) };
+                }
+                
+                const dailyReportText = document.getElementById('dailyReportText');
+                if (dailyReportText) {
+                    dailyReportText.value = myPageData.dailyReport || '';
+                }
+            }
+        }
+
+        // マイページデータを保存
+        function saveMyPageData() {
+            const dailyReportText = document.getElementById('dailyReportText');
+            if (dailyReportText) {
+                myPageData.dailyReport = dailyReportText.value;
+            }
+            
+            // ログイン中の場合、ユーザーデータをFirebaseに保存
+            if (currentUser && currentUser.id && firebaseInitialized && db) {
+                db.collection('users').doc(currentUser.id).set({
+                    myPageData: myPageData,
+                    _updatedAt: Date.now(),
+                    userId: currentUser.id,
+                    userName: currentUser.name,
+                    userEmail: currentUser.email
+                }, { merge: true }).then(() => {
+                    console.log('✅ マイページデータをFirebaseに保存しました:', currentUser.name);
+                    alert('日報を保存しました');
+                }).catch(err => {
+                    console.warn('マイページデータの保存エラー:', err);
+                    // エラー時はlocalStorageにも保存（バックアップ）
+                    localStorage.setItem('myPageDataDefault', JSON.stringify(myPageData));
+                    alert('日報を保存しました（ローカル保存）');
+                });
+            } else {
+                // 未ログイン時はlocalStorageに保存
+                localStorage.setItem('myPageDataDefault', JSON.stringify(myPageData));
+                console.log('✅ マイページデータを保存しました（デフォルト）');
+                alert('日報を保存しました');
+            }
+        }
+
+        // 着手したタスクとタイムレコードを表示
+        function updateMyTasksDisplay() {
+            const content = document.getElementById('myTasksContent');
+            if (!content) return;
+            
+            // ログインしていない場合はメッセージを表示
+            if (!currentUser || !currentUser.id) {
+                content.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">ログインが必要です</p>';
+                return;
+            }
+            
+            // 現在のユーザーのバッジを取得
+            const userBadges = badges.filter(b => b.userId === currentUser.id);
+            if (userBadges.length === 0) {
+                content.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">バッジが作成されていません。バッジを作成してください。</p>';
+                return;
+            }
+            
+            const userBadgeIds = userBadges.map(b => b.id);
+            
+            // ユーザーのバッジに紐づくタイムレコードを取得
+            const userTimeRecords = timeRecords.filter(record => userBadgeIds.includes(record.badgeId));
+            
+            if (userTimeRecords.length === 0) {
+                content.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">着手したタスクがありません。</p>';
+                return;
+            }
+            
+            // タスク情報を取得
+            const taskMap = {};
+            tasks.forEach(task => {
+                taskMap[task.id] = task;
+            });
+            
+            // バッジ情報を取得
+            const badgeMap = {};
+            badges.forEach(badge => {
+                badgeMap[badge.id] = badge;
+            });
+            
+            // 日付でグループ化
+            const recordsByDate = {};
+            userTimeRecords.forEach(record => {
+                const date = new Date(record.startTime);
+                const dateKey = date.toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' });
+                
+                if (!recordsByDate[dateKey]) {
+                    recordsByDate[dateKey] = [];
+                }
+                recordsByDate[dateKey].push(record);
+            });
+            
+            // HTMLを生成
+            let html = '';
+            const sortedDates = Object.keys(recordsByDate).sort().reverse();
+            
+            sortedDates.forEach(dateKey => {
+                const dateRecords = recordsByDate[dateKey];
+                html += `<div style="margin-bottom: var(--spacing-lg); padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); border-left: 4px solid var(--panel-4-color);">`;
+                html += `<h4 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">${dateKey}</h4>`;
+                
+                dateRecords.forEach(record => {
+                    const task = taskMap[record.taskId];
+                    const badge = badgeMap[record.badgeId];
+                    
+                    if (!task) return;
+                    
+                    const startTime = new Date(record.startTime);
+                    const endTime = record.endTime ? new Date(record.endTime) : null;
+                    const duration = record.duration ? formatDuration(record.duration) : (endTime ? formatDuration(Math.floor((endTime - startTime) / 1000)) : '作業中');
+                    
+                    html += `<div style="margin-bottom: var(--spacing-md); padding: var(--spacing-sm); background: var(--color-background); border-radius: var(--border-radius-sm); border: 1px solid var(--color-border);">`;
+                    html += `<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--spacing-xs);">`;
+                    html += `<div style="flex: 1;">`;
+                    html += `<div style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--spacing-xs);">${escapeHtml(task.title)}</div>`;
+                    html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">カテゴリ: ${getCategoryName(task.category)}</div>`;
+                    html += `</div>`;
+                    html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary); text-align: right;">`;
+                    html += `<div>${startTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })} - ${endTime ? endTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }) : '作業中'}</div>`;
+                    html += `<div style="font-weight: var(--font-weight-semibold); color: var(--panel-4-color); margin-top: var(--spacing-xs);">${duration}</div>`;
+                    html += `</div>`;
+                    html += `</div>`;
+                    html += `</div>`;
+                });
+                
+                html += `</div>`;
+            });
+            
+            content.innerHTML = html;
+        }
+
         // 時間をフォーマット（グローバル関数として定義）
         function formatDuration(seconds) {
             if (!seconds && seconds !== 0) return '-';
+            if (seconds === 0) return '0分';
             const hours = Math.floor(seconds / 3600);
             const minutes = Math.floor((seconds % 3600) / 60);
             const secs = seconds % 60;
@@ -7661,6 +7872,13 @@
                     updateSettingsUI();
                     setupSettingsPanel();
                 }, 100);
+            } else if (panelNumber === 4) {
+                // マイページパネルを開いた時にデータを読み込む
+                setTimeout(() => {
+                    loadMyPageData();
+                    updateMyTasksDisplay();
+                    setupMyPagePanel();
+                }, 100);
             } else if (panelNumber === 5) {
                 // アーカイブパネルを開いた時に更新
                 setTimeout(() => {
@@ -8144,6 +8362,12 @@
             // 少し遅延させてパネルを表示（オーバーレイの表示後に）
             setTimeout(function() {
                 panel.classList.add('active');
+                
+                // パネル4（マイページ）が開かれたときにデータを読み込む
+                if (panelNumber === 4) {
+                    loadMyPageData();
+                    updateMyTasksDisplay();
+                }
             }, 10);
         }
 
