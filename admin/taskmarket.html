@@ -2844,10 +2844,10 @@
                         </div>
                         <div id="scheduleContent">
                             <!-- 週次・月次計画がここに動的に生成されます -->
-                        </div>
-                    </div>
-                </div>
-                
+            </div>
+        </div>
+    </div>
+
                 <!-- タイムラインタブ -->
                 <div id="resourceTimelineTab" class="resource-tab-content">
                     <div style="margin-bottom: var(--spacing-md);">
@@ -2887,18 +2887,6 @@
                         </div>
                         <label class="toggle-switch">
                             <input type="checkbox" id="settingTooltipEnabled" checked>
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                    
-                    <!-- アニメーションの有効/無効 -->
-                    <div class="settings-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm);">
-                        <div>
-                            <label style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-xs);">アニメーション</label>
-                            <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0;">カードの揺れやフェードインなどのアニメーション</p>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="settingAnimationEnabled" checked>
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
@@ -3271,8 +3259,7 @@
 
         // 設定データ
         let settings = {
-            tooltipEnabled: true,
-            animationEnabled: true
+            tooltipEnabled: true
         };
 
         // 設定を読み込み
@@ -3305,10 +3292,8 @@
         // 設定UIを更新
         function updateSettingsUI() {
             const tooltipCheckbox = document.getElementById('settingTooltipEnabled');
-            const animationCheckbox = document.getElementById('settingAnimationEnabled');
             
             if (tooltipCheckbox) tooltipCheckbox.checked = settings.tooltipEnabled;
-            if (animationCheckbox) animationCheckbox.checked = settings.animationEnabled;
         }
 
         // 設定を適用
@@ -3319,28 +3304,6 @@
             } else {
                 document.body.classList.add('tooltips-disabled');
             }
-            
-            // アニメーションの有効/無効
-            const style = document.createElement('style');
-            style.id = 'settings-animation-style';
-            if (!settings.animationEnabled) {
-                style.textContent = `
-                    .task-card:hover {
-                        animation: none !important;
-                        transform: none !important;
-                    }
-                    .menu-item {
-                        transition: none !important;
-                    }
-                `;
-            }
-            const existingStyle = document.getElementById('settings-animation-style');
-            if (existingStyle) {
-                existingStyle.remove();
-            }
-            if (!settings.animationEnabled) {
-                document.head.appendChild(style);
-            }
         }
 
         // 設定パネルのイベントリスナーを設定
@@ -3348,18 +3311,12 @@
             // ツールチップの表示/非表示
             const tooltipCheckbox = document.getElementById('settingTooltipEnabled');
             if (tooltipCheckbox) {
-                tooltipCheckbox.addEventListener('change', function(e) {
+                // 既存のイベントリスナーを削除（重複を防ぐ）
+                const newTooltipCheckbox = tooltipCheckbox.cloneNode(true);
+                tooltipCheckbox.parentNode.replaceChild(newTooltipCheckbox, tooltipCheckbox);
+                
+                newTooltipCheckbox.addEventListener('change', function(e) {
                     settings.tooltipEnabled = e.target.checked;
-                    saveSettings();
-                    applySettings();
-                });
-            }
-            
-            // アニメーションの有効/無効
-            const animationCheckbox = document.getElementById('settingAnimationEnabled');
-            if (animationCheckbox) {
-                animationCheckbox.addEventListener('change', function(e) {
-                    settings.animationEnabled = e.target.checked;
                     saveSettings();
                     applySettings();
                 });
