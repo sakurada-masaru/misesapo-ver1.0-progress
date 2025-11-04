@@ -1442,6 +1442,46 @@
             display: block;
         }
 
+        /* マイページタブスタイル */
+        .mypage-tabs {
+            display: flex;
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-md);
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .mypage-tab {
+            flex: 1;
+            padding: var(--spacing-sm);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            cursor: pointer;
+            color: var(--color-text-secondary);
+            transition: var(--transition-normal);
+        }
+
+        .mypage-tab:hover {
+            color: var(--color-text-primary);
+            background: var(--color-background-secondary);
+        }
+
+        .mypage-tab.active {
+            color: var(--panel-4-color);
+            border-bottom-color: var(--panel-4-color);
+            font-weight: var(--font-weight-bold);
+        }
+
+        .mypage-tab-content {
+            display: none;
+        }
+
+        .mypage-tab-content.active {
+            display: block;
+        }
+
         /* メンバーカードスタイル */
         .member-card {
             background: var(--color-background);
@@ -1960,6 +2000,29 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            overflow: hidden;
+        }
+        
+        /* カテゴリアイコンをカードの背景に設定 */
+        .task-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: var(--category-icon-url, none);
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.1;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .task-card > * {
+            position: relative;
+            z-index: 1;
         }
 
         /* カードサイズ：大 */
@@ -2161,8 +2224,9 @@
             margin-top: var(--spacing-md);
             padding-top: var(--spacing-sm);
             border-top: 1px solid var(--color-border);
-            font-size: var(--font-size-xs);
+            font-size: var(--font-size-sm);
             color: var(--color-text-secondary);
+            position: relative;
         }
 
         .task-card-category {
@@ -2172,8 +2236,8 @@
         }
 
         .task-card-footer-icon {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             opacity: 0.7;
         }
 
@@ -2240,47 +2304,90 @@
             max-width: 100%;
         }
 
-        /* カードに吸着したバッジ */
-        .task-card .badge {
+        /* カードに吸着したバッジ - カードフッターの左、カードの左下に配置 */
+        .task-card .badge.attached {
             position: absolute;
-            bottom: 8px;
-            right: 8px;
-            width: 48px;
-            height: 48px;
+            bottom: var(--spacing-sm);
+            left: var(--spacing-sm);
+            width: 24px;
+            height: 24px;
             cursor: pointer;
-            z-index: 5;
+            z-index: 10;
+            border: 2px solid var(--color-background);
+            padding: 2px;
+        }
+        
+        /* 吸着したバッジ内のアイコンと名前のサイズ調整 */
+        .task-card .badge.attached .badge-icon {
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+        
+        .task-card .badge.attached .badge-name {
+            font-size: 6px;
+            line-height: 1;
+        }
+        
+        /* 複数のバッジがある場合、横方向に並べる（24pxバッジ + 4px間隔） */
+        .task-card .badge.attached:nth-of-type(2) {
+            left: calc(var(--spacing-sm) + 28px);
+        }
+        
+        .task-card .badge.attached:nth-of-type(3) {
+            left: calc(var(--spacing-sm) + 56px);
+        }
+        
+        .task-card .badge.attached:nth-of-type(4) {
+            left: calc(var(--spacing-sm) + 84px);
+        }
+        
+        .task-card .badge.attached:nth-of-type(5) {
+            left: calc(var(--spacing-sm) + 112px);
+        }
+        
+        /* スマホ版：吸着したバッジ内のアイコンと名前のサイズ調整 */
+        @media (max-width: 430px) {
+            .task-card .badge.attached .badge-icon {
+                font-size: 12px;
+                margin-bottom: 0;
+            }
+            
+            .task-card .badge.attached .badge-name {
+                font-size: 5px;
+                line-height: 1;
+            }
         }
 
-        /* スマホ版（SP）：カードの直下（カード外）に密着して吸着 */
+        /* スマホ版（SP）：カードフッターの左、カードの左下に配置 */
         @media (max-width: 430px) {
             .task-card .badge.attached {
                 position: absolute;
-                bottom: -48px !important; /* カード下部とバッジ上部が密着（-48px = バッジの高さ） */
-                left: 50% !important;
-                right: auto !important;
-                transform: translateX(-50%) !important;
+                bottom: var(--spacing-sm);
+                left: var(--spacing-sm);
+                width: 20px;
+                height: 20px;
+                cursor: pointer;
+                z-index: 10;
+                border: 2px solid var(--color-background);
+                padding: 2px;
                 margin: 0;
             }
 
-            /* 複数のバッジがある場合、横方向に並べる */
+            /* 複数のバッジがある場合、横方向に並べる（20pxバッジ + 4px間隔） */
             .task-card .badge.attached:nth-of-type(2) {
-                left: calc(50% - 28px) !important; /* 中央から左に28px（48px/2 + 8px/2） */
-                transform: translateX(0) !important;
+                left: calc(var(--spacing-sm) + 24px);
             }
 
             .task-card .badge.attached:nth-of-type(3) {
-                left: calc(50% + 28px) !important; /* 中央から右に28px */
-                transform: translateX(0) !important;
+                left: calc(var(--spacing-sm) + 48px);
             }
 
             .task-card .badge.attached:nth-of-type(4) {
-                left: calc(50% - 84px) !important; /* さらに左に */
-                transform: translateX(0) !important;
+                left: calc(var(--spacing-sm) + 72px);
             }
 
             .task-card .badge.attached:nth-of-type(5) {
-                left: calc(50% + 84px) !important; /* さらに右に */
-                transform: translateX(0) !important;
+                left: calc(var(--spacing-sm) + 96px);
             }
         }
 
@@ -2501,12 +2608,7 @@
             }
 
             .task-card-footer {
-                font-size: calc(var(--font-size-xs) * 0.8);
-            }
-
-            .task-card-category-icon {
-                width: 16px; /* 20px * 0.8 = 16px */
-                height: 16px;
+                font-size: calc(var(--font-size-sm) * 0.9);
             }
 
             /* タスクカードのツールチップ（スマホ版（SP）では表示） */
@@ -2959,11 +3061,13 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="taskPriority">優先度</label>
+                    <label for="taskPriority">難易度</label>
                     <select id="taskPriority" name="priority">
-                        <option value="low">低</option>
-                        <option value="medium" selected>中</option>
-                        <option value="high">高</option>
+                        <option value="1">⭐️1 (10コイン)</option>
+                        <option value="2" selected>⭐️2 (30コイン)</option>
+                        <option value="3">⭐️3 (50コイン)</option>
+                        <option value="4">⭐️4 (100コイン)</option>
+                        <option value="5">⭐️5 (150コイン)</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -3201,25 +3305,53 @@
                 <button class="slide-panel-close-button" onclick="closeSlidePanel(4)" title="閉じる">×</button>
             </div>
             <div class="slide-panel-content">
-                <!-- 日報作成セクション -->
-                <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
-                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-4-color); padding-bottom: var(--spacing-sm);">日報作成</h3>
-                    <div style="margin-bottom: var(--spacing-md);">
-                        <label style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-xs);">日報内容</label>
-                        <textarea id="dailyReportText" rows="10" style="width: 100%; padding: var(--spacing-sm); border: 1px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-family: var(--font-family-primary); resize: vertical; min-height: 200px; background: var(--color-background); color: var(--color-text-primary);" placeholder="今日の作業内容や成果を記入してください..."></textarea>
-                        <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-sm);">
-                            <button id="saveDailyReportButton" class="settings-button" style="flex: 1; padding: var(--spacing-sm); background: var(--panel-4-color); color: white; border: none; border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer;">保存</button>
-                            <button id="submitDailyReportButton" class="settings-button" style="flex: 1; padding: var(--spacing-sm); background: var(--panel-5-color); color: white; border: none; border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer;">アーカイブに送信</button>
-                            <button id="clearDailyReportButton" class="settings-button" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background-secondary); color: var(--color-text-primary); border: 1px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer;">クリア</button>
+                <!-- タブ切り替え -->
+                <div class="mypage-tabs" style="display: flex; gap: var(--spacing-xs); margin-bottom: var(--spacing-md); border-bottom: 2px solid var(--color-border);">
+                    <button class="mypage-tab active" data-tab="status" onclick="switchMyPageTab('status')" style="flex: 1; padding: var(--spacing-sm); background: transparent; border: none; border-bottom: 2px solid transparent; font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; color: var(--color-text-secondary); transition: var(--transition-normal);">ステータス</button>
+                    <button class="mypage-tab" data-tab="report" onclick="switchMyPageTab('report')" style="flex: 1; padding: var(--spacing-sm); background: transparent; border: none; border-bottom: 2px solid transparent; font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; color: var(--color-text-secondary); transition: var(--transition-normal);">報告</button>
+                </div>
+                
+                <!-- ステータスタブ -->
+                <div id="mypageStatusTab" class="mypage-tab-content active">
+                    <!-- ステータス表示セクション -->
+                    <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
+                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-4-color); padding-bottom: var(--spacing-sm);">ステータス</h3>
+                        <div id="myStatusContent" style="min-height: 200px;">
+                            <p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">データを読み込み中...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 着手タスクとタイムレコードセクション -->
+                    <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
+                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-4-color); padding-bottom: var(--spacing-sm);">着手したタスク</h3>
+                        <div id="myTasksContent" style="min-height: 200px;">
+                            <p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">データを読み込み中...</p>
                         </div>
                     </div>
                 </div>
                 
-                <!-- 着手タスクとタイムレコードセクション -->
-                <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
-                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-4-color); padding-bottom: var(--spacing-sm);">着手したタスク</h3>
-                    <div id="myTasksContent" style="min-height: 200px;">
-                        <p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">データを読み込み中...</p>
+                <!-- 報告タブ -->
+                <div id="mypageReportTab" class="mypage-tab-content" style="display: none;">
+                    <!-- 日報作成セクション -->
+                    <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
+                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-4-color); padding-bottom: var(--spacing-sm);">日報作成</h3>
+                        <div style="margin-bottom: var(--spacing-md);">
+                            <label for="dailyReportText" style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-xs);">日報内容</label>
+                            <textarea id="dailyReportText" rows="10" style="width: 100%; padding: var(--spacing-sm); border: 1px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-family: var(--font-family-primary); resize: vertical; min-height: 200px; background: var(--color-background); color: var(--color-text-primary);" placeholder="今日の作業内容や成果を記入してください..."></textarea>
+                            <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-sm);">
+                                <button id="saveDailyReportButton" class="settings-button" style="flex: 1; padding: var(--spacing-sm); background: var(--panel-4-color); color: white; border: none; border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer;">保存</button>
+                                <button id="submitDailyReportButton" class="settings-button" style="flex: 1; padding: var(--spacing-sm); background: var(--panel-5-color); color: white; border: none; border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer;">アーカイブに送信</button>
+                                <button id="clearDailyReportButton" class="settings-button" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background-secondary); color: var(--color-text-primary); border: 1px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer;">クリア</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 日報一覧セクション -->
+                    <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
+                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-4-color); padding-bottom: var(--spacing-sm);">日報一覧</h3>
+                        <div id="mypageReportList" class="archive-task-list">
+                            <!-- 日報がここに動的に生成されます -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -3275,8 +3407,8 @@
                                 </select>
                             </div>
                             <div style="flex: 1; min-width: 120px;">
-                                <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">検索</label>
-                                <input type="text" id="archiveFilterSearch" placeholder="タイトルで検索" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
+                            <label for="archiveFilterSearch" style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">検索</label>
+                            <input type="text" id="archiveFilterSearch" placeholder="タイトルで検索" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
                             </div>
                         </div>
                     </div>
@@ -3478,6 +3610,9 @@
             
             // ログイン後にユーザー設定を読み込む
             loadSettings();
+            loadMyPageData();
+            loadCoinHistory();
+            loadSupportHistory();
         }
         
         // JWTトークンをパース（簡易版）
@@ -3580,12 +3715,34 @@
 
         // マイページデータ
         let myPageData = {
-            dailyReport: '' // 日報テキスト
+            dailyReport: '', // 日報テキスト
+            profession: '', // 職業名（デザイナー/コーダー/エンジニア/ディレクター/プランナー）
+            totalCoins: 0, // 総獲得コイン数
+            monthlyCoins: 0, // 今月の獲得コイン数
+            monthlyCompletedTasks: 0, // 今月のタスク完了数
+            monthlyTotalTime: 0 // 今月の作業総時間（秒）
         };
+
+        // コイン履歴データ（ユーザーごと）
+        let coinHistory = [];
+        // coinHistory構造: [{ id, userId, taskId, taskTitle, coins, type: 'support'|'reward', createdAt }]
+
+        // タスク応援履歴（1日10回制限のため）
+        let supportHistory = [];
+        // supportHistory構造: [{ taskId, date, count }] - 1日ごとの応援回数
 
         // 日報データ（全ユーザー共有）
         let dailyReports = [];
         // dailyReports構造: [{ id, date, userId, userName, userEmail, userPicture, content, comments: [{ id, userId, userName, userEmail, userPicture, content, createdAt }], createdAt }]
+
+        // ランクに応じた基本報酬
+        const rankRewards = {
+            1: 10,   // ⭐️1 = 10コイン
+            2: 30,   // ⭐️2 = 30コイン
+            3: 50,   // ⭐️3 = 50コイン
+            4: 100,  // ⭐️4 = 100コイン
+            5: 150   // ⭐️5 = 150コイン
+        };
 
         // 設定を読み込み
         function loadSettings() {
@@ -4236,8 +4393,8 @@
         function handleMenuItemClick(action) {
             switch(action) {
                 case 'mypage':
-                    // マイページ機能（今後実装）
-                    alert('マイページ機能は今後実装予定です。');
+                    // マイページパネルを開く
+                    toggleSlidePanel(4);
                     break;
                 case 'setup':
                     // 設定パネルを開く
@@ -4503,13 +4660,16 @@
             
             const formData = new FormData(this);
                 const estimatedTime = formData.get('estimatedTime');
+                const priority = formData.get('priority');
             const task = {
                 id: Date.now(),
                 title: formData.get('title'),
                 description: formData.get('description'),
                 category: formData.get('category'),
-                priority: formData.get('priority'),
-                    estimatedTime: estimatedTime ? parseInt(estimatedTime) : null, // 分単位
+                priority: priority ? parseInt(priority) : 2, // 難易度（1-5、デフォルトは⭐️2）
+                estimatedTime: estimatedTime ? parseInt(estimatedTime) : null, // 分単位
+                supportCoins: 0, // 応援コイン（初期値は0）
+                createdBy: currentUser ? currentUser.id : null, // 作成者ID
                 status: 'pending',
                 createdAt: new Date().toISOString()
             };
@@ -4930,23 +5090,35 @@
                 card.style.transform = `rotate(${rotation}deg)`;
                 card.style.zIndex = zIndex;
                 
-                // カテゴリアイコンのパスを取得
+                // カテゴリアイコンのパスを取得して背景画像として設定
                 const categoryIconPath = getCategoryIconPath(task.category);
-                const categoryIconHtml = categoryIconPath ? 
-                    `<img src="${categoryIconPath}" alt="${getCategoryName(task.category)}" class="task-card-footer-icon">` : 
-                    '';
+                if (categoryIconPath) {
+                    card.style.setProperty('--category-icon-url', `url(${categoryIconPath})`);
+                }
+                
+                // 難易度（priority）に応じた基本報酬を計算
+                // priorityが数値（1-5）の場合はそのまま、文字列の場合は互換性のため変換
+                const difficulty = typeof task.priority === 'number' ? task.priority : 
+                                   (task.priority === 'low' ? 1 : task.priority === 'medium' ? 2 : task.priority === 'high' ? 3 : 2);
+                const baseReward = rankRewards[difficulty] || rankRewards[2] || 0;
+                const supportCoins = task.supportCoins || 0;
                 
                 card.innerHTML = `
                     <span class="tooltip-text task-card-tooltip">ダブルクリックで詳細を表示</span>
                     <div class="task-card-header">
                         <div class="task-card-title">${task.title}</div>
-                        <div class="task-card-priority">${getPriorityStars(task.priority)}</div>
+                        <div class="task-card-priority">${getDifficultyStars(difficulty)}</div>
                     </div>
                     <div class="task-card-description">${task.description || '説明なし'}</div>
                     <div class="task-card-footer">
                         <div class="task-card-category">
-                            ${categoryIconHtml}
-                            <span>${getCategoryName(task.category)}</span>
+                        </div>
+                        <div class="task-card-reward" style="margin-top: var(--spacing-xs); font-size: var(--font-size-xs); color: var(--color-text-secondary);">
+                            <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
+                                <span>💰</span>
+                                <span>報酬: ${baseReward}コイン</span>
+                                ${supportCoins > 0 ? `<span style="color: var(--panel-5-color);">応援: +${supportCoins}コイン</span>` : ''}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -4995,6 +5167,17 @@
             let selectedCard = null;
             let selectedBadge = null;
             
+            // 回転検知用の変数
+            let rotationHistory = []; // 移動履歴 [{x, y, time}]
+            let rotationCount = 0; // 回転回数（1回転=1コイン）
+            let rotationStartTime = null; // 回転検知開始時間
+            let currentRotationTaskId = null; // 現在回転しているタスクID
+            let rotationCenter = { x: 0, y: 0 }; // 回転の中心点
+            let lastAngle = null; // 最後の角度
+            let totalAngleChange = 0; // 累積角度変化（ラジアン）
+            let minRotationRadius = 30; // 最小回転半径（30px以上）
+            let isDroppedOnTrashOrComplete = false; // ゴミ箱や完了ボタンにドロップされたかどうか
+            
             // カード選択を解除する関数
             function deselectAllCards() {
                 const allCards = taskGrid.querySelectorAll('.task-card');
@@ -5017,6 +5200,119 @@
                     b.classList.remove('selected');
                 });
                 selectedBadge = null;
+            }
+            
+            // 回転検知を初期化
+            function initRotationDetection(taskId) {
+                rotationHistory = [];
+                rotationCount = 0;
+                rotationStartTime = Date.now();
+                currentRotationTaskId = taskId;
+                rotationCenter = { x: 0, y: 0 };
+                lastAngle = null;
+                totalAngleChange = 0;
+            }
+            
+            // 回転検知をリセット
+            function resetRotationDetection() {
+                rotationHistory = [];
+                rotationCount = 0;
+                rotationStartTime = null;
+                currentRotationTaskId = null;
+                rotationCenter = { x: 0, y: 0 };
+                lastAngle = null;
+                totalAngleChange = 0;
+                isDroppedOnTrashOrComplete = false;
+            }
+            
+            // 回転を検知（移動履歴から円を描く動作を検出）
+            function detectRotation(currentX, currentY, currentTime) {
+                if (!rotationStartTime || !currentRotationTaskId) return;
+                
+                // 移動履歴に追加
+                rotationHistory.push({ x: currentX, y: currentY, time: currentTime });
+                
+                // 履歴が少ない場合は処理しない（最低5点必要）
+                if (rotationHistory.length < 5) return;
+                
+                // 回転の中心点を推定（移動履歴の重心）
+                let sumX = 0, sumY = 0;
+                rotationHistory.forEach(point => {
+                    sumX += point.x;
+                    sumY += point.y;
+                });
+                rotationCenter.x = sumX / rotationHistory.length;
+                rotationCenter.y = sumY / rotationHistory.length;
+                
+                // 最新の点から中心点への角度を計算
+                const dx = currentX - rotationCenter.x;
+                const dy = currentY - rotationCenter.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                // 最小回転半径をチェック
+                if (distance < minRotationRadius) return;
+                
+                // 角度を計算（-π から π の範囲）
+                let currentAngle = Math.atan2(dy, dx);
+                
+                // 前回の角度がある場合、角度変化を計算
+                if (lastAngle !== null) {
+                    // 角度の差分を計算（-π から π の範囲に正規化）
+                    let angleDiff = currentAngle - lastAngle;
+                    
+                    // -π から π の範囲に正規化
+                    if (angleDiff > Math.PI) {
+                        angleDiff -= 2 * Math.PI;
+                    } else if (angleDiff < -Math.PI) {
+                        angleDiff += 2 * Math.PI;
+                    }
+                    
+                    // 累積角度変化を更新
+                    totalAngleChange += Math.abs(angleDiff);
+                    
+                    // 360度（2πラジアン）回転したら1回転とカウント
+                    if (totalAngleChange >= 2 * Math.PI) {
+                        rotationCount++;
+                        totalAngleChange -= 2 * Math.PI; // 残りの角度を保持
+                    }
+                }
+                
+                lastAngle = currentAngle;
+                
+                // 履歴を一定数に制限（メモリ節約）
+                if (rotationHistory.length > 50) {
+                    rotationHistory.shift();
+                }
+            }
+            
+            // 回転検知を評価してコインを付与
+            function evaluateRotationDetection() {
+                // ゴミ箱や完了ボタンにドロップされた場合は評価しない
+                if (isDroppedOnTrashOrComplete) {
+                    resetRotationDetection();
+                    return;
+                }
+                
+                if (!rotationStartTime || !currentRotationTaskId || rotationCount === 0) {
+                    resetRotationDetection();
+                    return;
+                }
+                
+                // 1回転=1コイン
+                if (rotationCount > 0) {
+                    // コインを付与
+                    grantSupportCoins(currentRotationTaskId, rotationCount);
+                }
+                
+                resetRotationDetection();
+            }
+            
+            // 応援コインを付与（ローカル関数）
+            function grantSupportCoins(taskId, rotationCount) {
+                // コイン付与システムの実装（グローバル関数として定義）
+                if (typeof grantSupportCoinsGlobal === 'function') {
+                    grantSupportCoinsGlobal(taskId, rotationCount);
+                }
             }
             
             // グリッド外をタップしたら選択解除とツールチップ非表示
@@ -5066,6 +5362,10 @@
                         const gridRect = taskGrid.getBoundingClientRect();
                         cardStartX = rect.left - gridRect.left;
                         cardStartY = rect.top - gridRect.top;
+                        
+                        // 回転検知を初期化
+                        const taskId = parseInt(this.dataset.taskId);
+                        initRotationDetection(taskId);
                         
                         // 既に選択されているカードの場合は即座にドラッグ可能にする
                         if (this.classList.contains('selected') && selectedCard === this) {
@@ -5143,6 +5443,9 @@
                         
                         this.style.left = clampedX + 'px';
                         this.style.top = clampedY + 'px';
+                        
+                        // 回転検知を実行
+                        detectRotation(clampedX, clampedY, Date.now());
                         
                         // ゴミ箱との重なりをチェック（カードの領域全体で判定）
                         const trashBin = document.getElementById('trashBin');
@@ -5289,6 +5592,10 @@
                         }
                         
                         if (droppedOnTrash) {
+                            // 回転検知をリセット（ゴミ箱にドロップされた場合）
+                            isDroppedOnTrashOrComplete = true;
+                            evaluateRotationDetection(); // リセットのみ（評価しない）
+                            
                             // 削除確認ダイアログを表示
                             const taskTitle = task.title || '無題のタスク';
                             if (confirm(`「${taskTitle}」を削除してもよろしいですか？\nこの操作は取り消せません。`)) {
@@ -5306,6 +5613,10 @@
                                 this.classList.remove('dragging');
                             }
                         } else if (droppedOnComplete) {
+                            // 回転検知をリセット（完了ボタンにドロップされた場合）
+                            isDroppedOnTrashOrComplete = true;
+                            evaluateRotationDetection(); // リセットのみ（評価しない）
+                            
                             // タスクを完了にする
                             completeTask(task.id);
                             
@@ -5315,6 +5626,9 @@
                             this.style.transform = this.style.transform.replace(' scale(1.05)', '');
                             this.classList.remove('dragging');
                         } else {
+                            // 回転検知を評価（ゴミ箱や完了ボタンにドロップされなかった場合）
+                            evaluateRotationDetection();
+                            
                             // タスクの位置情報を更新
                             const newLeft = cardRect.left - gridRect.left;
                             const newTop = cardRect.top - gridRect.top;
@@ -5438,6 +5752,10 @@
                     draggedOffset.x = e.clientX - rect.left;
                     draggedOffset.y = e.clientY - rect.top;
                     
+                    // 回転検知を初期化
+                    const taskId = parseInt(this.dataset.taskId);
+                    initRotationDetection(taskId);
+                    
                     // 元のカードを一時的に非表示にして残像を防止
                     this.style.visibility = 'hidden';
                     
@@ -5448,6 +5766,9 @@
                 
                 // ドラッグ終了（PC対応）
                 card.addEventListener('dragend', function(e) {
+                    // 回転検知を評価（ゴミ箱や完了ボタンにドロップされなかった場合）
+                    evaluateRotationDetection();
+                    
                     // 元のカードを再度表示
                     this.style.visibility = 'visible';
                     this.classList.remove('dragging');
@@ -5486,6 +5807,9 @@
                     draggedCard.style.left = left + 'px';
                     draggedCard.style.top = top + 'px';
                     draggedCard.style.transform = 'rotate(0deg)'; // ドラッグ中は回転なし
+                    
+                    // 回転検知を実行
+                    detectRotation(left, top, Date.now());
                 }
             });
             
@@ -5592,31 +5916,7 @@
             badgeDiv.style.background = badge.color;
             badgeDiv.title = badge.name + 'が着手中（クリックで外す）';
             
-            // PC版：カード内に配置（右下）
-            // スマホ版：カードの直下（カード外）に密着して配置（CSSで制御）
-            const badgeSize = 48;
-            const badgeSpacing = 12; // バッジ間のスペース
-            const baseRight = 8;
-            const baseBottom = 8; // フッター右に配置
-            
-            // PC版用の配置（デフォルト）
-            if (window.innerWidth > 430) {
-                // 右側から左側へ、少し上にずらす配置
-                // 最大3つまで横に並べ、それ以上は上に配置（2列目）
-                if (index < 3) {
-                    // 最初の3つは横に並べる
-                    badgeDiv.style.right = (baseRight + (index * (badgeSize + badgeSpacing))) + 'px';
-                    badgeDiv.style.bottom = baseBottom + 'px';
-                } else {
-                    // 4つ目以降は上に配置（2列目）
-                    const colIndex = index - 3;
-                    badgeDiv.style.right = (baseRight + (colIndex * (badgeSize + badgeSpacing))) + 'px';
-                    badgeDiv.style.bottom = (baseBottom + badgeSize + badgeSpacing) + 'px';
-                }
-            } else {
-                // スマホ版：カードの直下に配置（CSSクラスで制御されるため、スタイルは最小限）
-                // CSSの.attachedクラスで位置が制御される
-            }
+            // 位置はCSSで制御される（カテゴリアイコンの隣に配置）
             
             // Googleアカウントの画像を使用する場合
             let iconHtml = badge.icon;
@@ -6098,6 +6398,7 @@
             // 完了ボタンにドロップ（一度だけ処理されるようにフラグを使用）
             let isProcessing = false;
             completeButton.addEventListener('drop', function(e) {
+                isDroppedOnTrashOrComplete = true;
                 e.preventDefault();
                 e.stopPropagation();
                 this.classList.remove('drag-over');
@@ -6229,7 +6530,12 @@
         function loadMyPageData() {
             // デフォルト値をリセット
             myPageData = {
-                dailyReport: ''
+                dailyReport: '',
+                profession: '',
+                totalCoins: 0,
+                monthlyCoins: 0,
+                monthlyCompletedTasks: 0,
+                monthlyTotalTime: 0
             };
             
             // ログイン中の場合、ユーザーデータを読み込む
@@ -6247,6 +6553,9 @@
                     if (dailyReportText) {
                         dailyReportText.value = myPageData.dailyReport || '';
                     }
+                    
+                    // ステータス表示を更新
+                    updateMyStatusDisplay();
                 }).catch(err => {
                     console.warn('マイページデータの読み込みエラー:', err);
                     const dailyReportText = document.getElementById('dailyReportText');
@@ -6267,12 +6576,136 @@
                 }
             }
         }
+        
+        // マイページのステータス表示を更新
+        function updateMyStatusDisplay() {
+            const content = document.getElementById('myStatusContent');
+            if (!content) return;
+            
+            if (!currentUser) {
+                content.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">ログインしてください</p>';
+                return;
+            }
+            
+            // 今月のタスク完了数と作業時間を計算
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+            
+            // ユーザーのバッジを取得
+            const userBadges = badges.filter(b => b.userId === currentUser.id);
+            const userBadgeIds = userBadges.map(b => b.id);
+            
+            // 今月完了したタスクを取得
+            const monthlyCompletedTasks = tasks.filter(task => {
+                if (task.status !== 'completed' || !task.completedAt) return false;
+                const completedDate = new Date(task.completedAt);
+                return completedDate.getMonth() === currentMonth && completedDate.getFullYear() === currentYear;
+            });
+            
+            // 今月の作業時間を計算
+            const monthlyTimeRecords = timeRecords.filter(tr => {
+                if (!tr.duration || !tr.startTime) return false;
+                const recordDate = new Date(tr.startTime);
+                return recordDate.getMonth() === currentMonth && recordDate.getFullYear() === currentYear && userBadgeIds.includes(tr.badgeId);
+            });
+            const monthlyTotalTime = monthlyTimeRecords.reduce((sum, tr) => sum + (tr.duration || 0), 0);
+            
+            // 職業名の選択肢
+            const professionOptions = ['デザイナー', 'コーダー', 'エンジニア', 'ディレクター', 'プランナー'];
+            
+            let html = '';
+            html += `<div style="margin-bottom: var(--spacing-md); padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">`;
+            html += `<div style="display: flex; align-items: center; margin-bottom: var(--spacing-md);">`;
+            if (currentUser.picture) {
+                html += `<img src="${currentUser.picture}" alt="${currentUser.name}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; margin-right: var(--spacing-sm);">`;
+            }
+            html += `<div style="flex: 1;">`;
+            html += `<div style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary); font-size: var(--font-size-md);">${escapeHtml(currentUser.name || currentUser.email || 'ユーザー')}</div>`;
+            html += `<div style="margin-top: var(--spacing-xs);">`;
+            html += `<label for="professionSelect" style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-right: var(--spacing-xs);">職業:</label>`;
+            html += `<select id="professionSelect" style="padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm); background: var(--color-background); color: var(--color-text-primary);">`;
+            html += `<option value="">選択してください</option>`;
+            professionOptions.forEach(prof => {
+                html += `<option value="${prof}" ${myPageData.profession === prof ? 'selected' : ''}>${prof}</option>`;
+            });
+            html += `</select>`;
+            html += `</div>`;
+            html += `</div>`;
+            html += `</div>`;
+            html += `</div>`;
+            
+            html += `<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">`;
+            html += `<div style="padding: var(--spacing-sm); background: var(--color-background); border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">`;
+            html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--spacing-xs);">総獲得コイン</div>`;
+            html += `<div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--panel-4-color);">💰 ${myPageData.totalCoins || 0}</div>`;
+            html += `</div>`;
+            html += `<div style="padding: var(--spacing-sm); background: var(--color-background); border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">`;
+            html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--spacing-xs);">今月の獲得コイン</div>`;
+            html += `<div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--panel-4-color);">💰 ${myPageData.monthlyCoins || 0}</div>`;
+            html += `</div>`;
+            html += `<div style="padding: var(--spacing-sm); background: var(--color-background); border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">`;
+            html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--spacing-xs);">今月の完了タスク</div>`;
+            html += `<div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-text-primary);">✓ ${monthlyCompletedTasks.length}</div>`;
+            html += `</div>`;
+            html += `<div style="padding: var(--spacing-sm); background: var(--color-background); border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">`;
+            html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--spacing-xs);">今月の作業時間</div>`;
+            html += `<div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-text-primary);">⏱️ ${formatDuration(monthlyTotalTime)}</div>`;
+            html += `</div>`;
+            html += `</div>`;
+            
+            // コイン履歴
+            html += `<div style="margin-top: var(--spacing-md);">`;
+            html += `<div style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--spacing-sm);">コイン履歴</div>`;
+            const recentHistory = coinHistory
+                .filter(h => h.userId === currentUser.id)
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .slice(0, 10);
+            
+            if (recentHistory.length > 0) {
+                html += `<div style="max-height: 300px; overflow-y: auto;">`;
+                recentHistory.forEach(entry => {
+                    const date = new Date(entry.createdAt);
+                    const typeLabel = entry.type === 'support' ? '応援' : '報酬';
+                    const typeColor = entry.type === 'support' ? 'var(--panel-5-color)' : 'var(--panel-4-color)';
+                    html += `<div style="padding: var(--spacing-sm); margin-bottom: var(--spacing-xs); background: var(--color-background); border-radius: var(--border-radius-sm); border-left: 3px solid ${typeColor};">`;
+                    html += `<div style="display: flex; justify-content: space-between; align-items: center;">`;
+                    html += `<div style="flex: 1;">`;
+                    html += `<div style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">${escapeHtml(entry.taskTitle || 'タスク')}</div>`;
+                    html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">${date.toLocaleString('ja-JP')} - ${typeLabel}</div>`;
+                    html += `</div>`;
+                    html += `<div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); color: ${typeColor};">+${entry.coins}コイン</div>`;
+                    html += `</div>`;
+                    html += `</div>`;
+                });
+                html += `</div>`;
+            } else {
+                html += `<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-md);">コイン履歴がありません</p>`;
+            }
+            html += `</div>`;
+            
+            content.innerHTML = html;
+            
+            // 職業選択のイベントリスナーを設定
+            const professionSelect = document.getElementById('professionSelect');
+            if (professionSelect) {
+                professionSelect.addEventListener('change', function(e) {
+                    myPageData.profession = e.target.value;
+                    saveMyPageData();
+                });
+            }
+        }
 
         // マイページデータを保存
         function saveMyPageData() {
             const dailyReportText = document.getElementById('dailyReportText');
             if (dailyReportText) {
                 myPageData.dailyReport = dailyReportText.value;
+            }
+            
+            const professionSelect = document.getElementById('professionSelect');
+            if (professionSelect) {
+                myPageData.profession = professionSelect.value;
             }
             
             // ログイン中の場合、ユーザーデータをFirebaseに保存
@@ -6465,6 +6898,10 @@
             
             alert('日報をアーカイブに送信しました');
             console.log('日報をアーカイブに送信しました:', dailyReport);
+            
+            // マイページの日報表示を更新
+            updateArchiveReports();
+            updateMyPageReports();
         }
 
         // 日報をFirebaseに保存
@@ -6520,6 +6957,90 @@
             }
         }
 
+        // マイページで日報を表示
+        function updateMyPageReports() {
+            const content = document.getElementById('mypageReportList');
+            if (!content) return;
+            
+            if (dailyReports.length === 0) {
+                content.innerHTML = '<p class="archive-empty">日報がありません</p>';
+                return;
+            }
+            
+            // 日付でグループ化
+            const reportsByDate = {};
+            dailyReports.forEach(report => {
+                if (!reportsByDate[report.date]) {
+                    reportsByDate[report.date] = [];
+                }
+                reportsByDate[report.date].push(report);
+            });
+            
+            // HTMLを生成
+            let html = '';
+            const sortedDates = Object.keys(reportsByDate).sort().reverse();
+            
+            sortedDates.forEach(dateKey => {
+                const dateReports = reportsByDate[dateKey];
+                html += `<div style="margin-bottom: var(--spacing-lg); padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); border-left: 4px solid var(--panel-4-color);">`;
+                html += `<h4 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">${dateKey}</h4>`;
+                
+                dateReports.forEach(report => {
+                    const userAvatar = report.userPicture ? `<img src="${report.userPicture}" alt="${report.userName}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: var(--spacing-sm);">` : '<div style="width: 32px; height: 32px; border-radius: 50%; background: var(--panel-4-color); display: flex; align-items: center; justify-content: center; color: white; font-weight: var(--font-weight-bold); margin-right: var(--spacing-sm);">' + (report.userName.charAt(0).toUpperCase() || 'U') + '</div>';
+                    
+                    html += `<div style="margin-bottom: var(--spacing-md); padding: var(--spacing-md); background: var(--color-background); border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">`;
+                    
+                    // 日報ヘッダー（ユーザー情報）
+                    html += `<div style="display: flex; align-items: center; margin-bottom: var(--spacing-md); padding-bottom: var(--spacing-sm); border-bottom: 1px solid var(--color-border);">`;
+                    html += userAvatar;
+                    html += `<div style="flex: 1;">`;
+                    html += `<div style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">${escapeHtml(report.userName)}</div>`;
+                    html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">${new Date(report.createdAt).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}</div>`;
+                    html += `</div>`;
+                    html += `</div>`;
+                    
+                    // 日報内容
+                    html += `<div style="margin-bottom: var(--spacing-md); color: var(--color-text-primary); white-space: pre-wrap; line-height: 1.6;">${escapeHtml(report.content)}</div>`;
+                    
+                    // コメントセクション
+                    html += `<div style="margin-top: var(--spacing-md); padding-top: var(--spacing-md); border-top: 1px solid var(--color-border);">`;
+                    html += `<div style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">コメント (${report.comments ? report.comments.length : 0})</div>`;
+                    
+                    // コメント入力フォーム
+                    html += `<div style="margin-bottom: var(--spacing-md);">`;
+                    html += `<label for="mypageCommentInput_${report.id}" style="display: block; font-size: var(--font-size-xs); margin-bottom: var(--spacing-xs); color: var(--color-text-secondary);">コメントを入力</label>`;
+                    html += `<textarea id="mypageCommentInput_${report.id}" rows="3" style="width: 100%; padding: var(--spacing-sm); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm); font-family: var(--font-family-primary); resize: vertical; background: var(--color-background); color: var(--color-text-primary);" placeholder="コメントを入力..."></textarea>`;
+                    html += `<button onclick="addComment(${report.id})" style="margin-top: var(--spacing-xs); padding: var(--spacing-xs) var(--spacing-md); background: var(--panel-4-color); color: white; border: none; border-radius: var(--border-radius-sm); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer;">コメントを投稿</button>`;
+                    html += `</div>`;
+                    
+                    // コメント一覧
+                    if (report.comments && report.comments.length > 0) {
+                        report.comments.forEach(comment => {
+                            const commentAvatar = comment.userPicture ? `<img src="${comment.userPicture}" alt="${comment.userName}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: var(--spacing-xs);">` : '<div style="width: 24px; height: 24px; border-radius: 50%; background: var(--panel-4-color); display: flex; align-items: center; justify-content: center; color: white; font-size: var(--font-size-xs); font-weight: var(--font-weight-bold); margin-right: var(--spacing-xs);">' + (comment.userName.charAt(0).toUpperCase() || 'U') + '</div>';
+                            
+                            html += `<div style="margin-bottom: var(--spacing-sm); padding: var(--spacing-sm); background: var(--color-background-secondary); border-radius: var(--border-radius-sm);">`;
+                            html += `<div style="display: flex; align-items: center; margin-bottom: var(--spacing-xs);">`;
+                            html += commentAvatar;
+                            html += `<div style="flex: 1;">`;
+                            html += `<div style="font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">${escapeHtml(comment.userName)}</div>`;
+                            html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">${new Date(comment.createdAt).toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}</div>`;
+                            html += `</div>`;
+                            html += `</div>`;
+                            html += `<div style="font-size: var(--font-size-sm); color: var(--color-text-primary); white-space: pre-wrap; line-height: 1.5; margin-left: calc(24px + var(--spacing-xs));">${escapeHtml(comment.content)}</div>`;
+                            html += `</div>`;
+                        });
+                    }
+                    
+                    html += `</div>`;
+                    html += `</div>`;
+                });
+                
+                html += `</div>`;
+            });
+            
+            content.innerHTML = html;
+        }
+
         // アーカイブで日報を表示
         function updateArchiveReports() {
             const content = document.getElementById('archiveReportList');
@@ -6571,6 +7092,7 @@
                     
                     // コメント入力フォーム
                     html += `<div style="margin-bottom: var(--spacing-md);">`;
+                    html += `<label for="commentInput_${report.id}" style="display: block; font-size: var(--font-size-xs); margin-bottom: var(--spacing-xs); color: var(--color-text-secondary);">コメントを入力</label>`;
                     html += `<textarea id="commentInput_${report.id}" rows="3" style="width: 100%; padding: var(--spacing-sm); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm); font-family: var(--font-family-primary); resize: vertical; background: var(--color-background); color: var(--color-text-primary);" placeholder="コメントを入力..."></textarea>`;
                     html += `<button onclick="addComment(${report.id})" style="margin-top: var(--spacing-xs); padding: var(--spacing-xs) var(--spacing-md); background: var(--panel-5-color); color: white; border: none; border-radius: var(--border-radius-sm); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer;">コメントを投稿</button>`;
                     html += `</div>`;
@@ -6610,7 +7132,8 @@
                 return;
             }
             
-            const commentInput = document.getElementById(`commentInput_${reportId}`);
+            // マイページとアーカイブの両方のコメント入力欄をチェック
+            const commentInput = document.getElementById(`commentInput_${reportId}`) || document.getElementById(`mypageCommentInput_${reportId}`);
             if (!commentInput) return;
             
             const content = commentInput.value.trim();
@@ -6640,11 +7163,15 @@
             // Firebaseに保存
             saveDailyReports();
             
-            // コメント入力欄をクリア
-            commentInput.value = '';
+            // コメント入力欄をクリア（両方の入力欄をクリア）
+            const archiveInput = document.getElementById(`commentInput_${reportId}`);
+            const mypageInput = document.getElementById(`mypageCommentInput_${reportId}`);
+            if (archiveInput) archiveInput.value = '';
+            if (mypageInput) mypageInput.value = '';
             
             // 日報を再表示
             updateArchiveReports();
+            updateMyPageReports();
             
             console.log('コメントを追加しました:', comment);
         }
@@ -6662,6 +7189,251 @@
                 return `${minutes}分 ${secs}秒`;
             } else {
                 return `${secs}秒`;
+            }
+        }
+
+        // 応援コインを付与（グローバル関数）
+        function grantSupportCoinsGlobal(taskId, rotationCount) {
+            if (!currentUser || !currentUser.id) {
+                console.log('ログインが必要です');
+                return;
+            }
+            
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) {
+                console.log('タスクが見つかりません');
+                return;
+            }
+            
+            // 自分が作成したタスクには応援できない
+            if (task.createdBy === currentUser.id) {
+                console.log('自分が作成したタスクには応援できません');
+                return;
+            }
+            
+            // バッジが付いているか確認
+            if (!taskBadges[taskId] || taskBadges[taskId].length === 0) {
+                console.log('バッジが付いていないタスクには応援できません');
+                return;
+            }
+            
+            // 1日10回制限をチェック
+            const today = new Date().toLocaleDateString('ja-JP');
+            const todaySupport = supportHistory.find(sh => sh.taskId === taskId && sh.date === today);
+            if (todaySupport && todaySupport.count >= 10) {
+                alert('1日10回まで応援できます。今日の応援回数が上限に達しています。');
+                return;
+            }
+            
+            // コイン数を計算（1回転=1コイン）
+            const coinsToGrant = rotationCount;
+            
+            // タスクに応援コインを追加
+            task.supportCoins = (task.supportCoins || 0) + coinsToGrant;
+            
+            // 応援履歴を更新
+            if (todaySupport) {
+                todaySupport.count++;
+            } else {
+                supportHistory.push({ taskId: taskId, date: today, count: 1 });
+            }
+            
+            // 担当者にコインを配分
+            const assigneeBadges = taskBadges[taskId].map(badgeId => badges.find(b => b.id === badgeId)).filter(b => b);
+            
+            if (assigneeBadges.length === 0) {
+                console.log('担当者バッジが見つかりません');
+                return;
+            }
+            
+            // 複数担当者の場合、作業時間で配分
+            if (assigneeBadges.length > 1) {
+                // 各担当者の作業時間を計算
+                const assigneeWorkTimes = assigneeBadges.map(badge => {
+                    const badgeTimeRecords = timeRecords.filter(tr => tr.badgeId === badge.id && tr.taskId === taskId && tr.duration !== null);
+                    const totalTime = badgeTimeRecords.reduce((sum, tr) => sum + tr.duration, 0);
+                    return { badge, totalTime };
+                });
+                
+                // 作業時間でソート（降順）
+                assigneeWorkTimes.sort((a, b) => b.totalTime - a.totalTime);
+                
+                // 作業時間が長い人に6割、短い人に4割
+                const longTimeWorker = assigneeWorkTimes[0];
+                const shortTimeWorker = assigneeWorkTimes[1];
+                
+                const longTimeCoins = Math.floor(coinsToGrant * 0.6);
+                const shortTimeCoins = coinsToGrant - longTimeCoins;
+                
+                // コインを付与
+                grantCoinsToUser(longTimeWorker.badge.userId, longTimeCoins, taskId, task.title, 'support');
+                
+                if (shortTimeWorker) {
+                    grantCoinsToUser(shortTimeWorker.badge.userId, shortTimeCoins, taskId, task.title, 'support');
+                }
+            } else {
+                // 単一担当者の場合、全額付与
+                grantCoinsToUser(assigneeBadges[0].userId, coinsToGrant, taskId, task.title, 'support');
+            }
+            
+            // タスクグリッドを更新
+            updateTaskGrid();
+            
+            // データを保存
+            saveTaskMarketData();
+            saveMyPageData();
+            saveSupportHistory();
+            
+            console.log(`✅ ${coinsToGrant}コインを応援しました！`);
+        }
+        
+        // ユーザーにコインを付与
+        function grantCoinsToUser(userId, coins, taskId, taskTitle, type) {
+            // コイン履歴に追加
+            const historyEntry = {
+                id: Date.now(),
+                userId: userId,
+                taskId: taskId,
+                taskTitle: taskTitle,
+                coins: coins,
+                type: type, // 'support' or 'reward'
+                createdAt: new Date().toISOString()
+            };
+            
+            coinHistory.push(historyEntry);
+            
+            // マイページデータを更新（自分の場合のみ）
+            if (currentUser && currentUser.id === userId) {
+                myPageData.totalCoins = (myPageData.totalCoins || 0) + coins;
+                
+                // 今月のコイン数を更新
+                const now = new Date();
+                const historyMonth = new Date(historyEntry.createdAt);
+                if (now.getFullYear() === historyMonth.getFullYear() && now.getMonth() === historyMonth.getMonth()) {
+                    myPageData.monthlyCoins = (myPageData.monthlyCoins || 0) + coins;
+                }
+            }
+            
+            // Firebaseに保存
+            saveCoinHistory();
+            saveMyPageData();
+        }
+        
+        // 応援履歴を保存
+        function saveSupportHistory() {
+            if (!firebaseInitialized || !db || !currentUser) {
+                localStorage.setItem(`supportHistory_${currentUser?.id || 'default'}`, JSON.stringify(supportHistory));
+                return;
+            }
+            
+            try {
+                db.collection('users').doc(currentUser.id).set({
+                    supportHistory: supportHistory,
+                    _updatedAt: Date.now()
+                }, { merge: true }).then(() => {
+                    console.log('✅ 応援履歴をFirebaseに保存しました');
+                }).catch(err => {
+                    console.warn('応援履歴の保存エラー:', err);
+                    localStorage.setItem(`supportHistory_${currentUser.id}`, JSON.stringify(supportHistory));
+                });
+            } catch (error) {
+                console.error('❌ Firebase保存エラー:', error);
+                localStorage.setItem(`supportHistory_${currentUser.id}`, JSON.stringify(supportHistory));
+            }
+        }
+        
+        // コイン履歴を保存
+        function saveCoinHistory() {
+            if (!firebaseInitialized || !db || !currentUser) {
+                localStorage.setItem(`coinHistory_${currentUser?.id || 'default'}`, JSON.stringify(coinHistory));
+                return;
+            }
+            
+            try {
+                db.collection('users').doc(currentUser.id).set({
+                    coinHistory: coinHistory,
+                    _updatedAt: Date.now()
+                }, { merge: true }).then(() => {
+                    console.log('✅ コイン履歴をFirebaseに保存しました');
+                }).catch(err => {
+                    console.warn('コイン履歴の保存エラー:', err);
+                    localStorage.setItem(`coinHistory_${currentUser.id}`, JSON.stringify(coinHistory));
+                });
+            } catch (error) {
+                console.error('❌ Firebase保存エラー:', error);
+                localStorage.setItem(`coinHistory_${currentUser.id}`, JSON.stringify(coinHistory));
+            }
+        }
+        
+        // コイン履歴を読み込み
+        function loadCoinHistory() {
+            if (!currentUser) {
+                const savedHistory = localStorage.getItem('coinHistory_default');
+                if (savedHistory) {
+                    coinHistory = JSON.parse(savedHistory);
+                }
+                return;
+            }
+            
+            if (firebaseInitialized && db) {
+                db.collection('users').doc(currentUser.id).get().then(doc => {
+                    if (doc.exists && doc.data().coinHistory) {
+                        coinHistory = doc.data().coinHistory;
+                        console.log('✅ コイン履歴をFirebaseから読み込みました');
+                    } else {
+                        const savedHistory = localStorage.getItem(`coinHistory_${currentUser.id}`);
+                        if (savedHistory) {
+                            coinHistory = JSON.parse(savedHistory);
+                        }
+                    }
+                }).catch(err => {
+                    console.warn('コイン履歴の読み込みエラー:', err);
+                    const savedHistory = localStorage.getItem(`coinHistory_${currentUser.id}`);
+                    if (savedHistory) {
+                        coinHistory = JSON.parse(savedHistory);
+                    }
+                });
+            } else {
+                const savedHistory = localStorage.getItem(`coinHistory_${currentUser.id}`);
+                if (savedHistory) {
+                    coinHistory = JSON.parse(savedHistory);
+                }
+            }
+        }
+        
+        // 応援履歴を読み込み
+        function loadSupportHistory() {
+            if (!currentUser) {
+                const savedHistory = localStorage.getItem('supportHistory_default');
+                if (savedHistory) {
+                    supportHistory = JSON.parse(savedHistory);
+                }
+                return;
+            }
+            
+            if (firebaseInitialized && db) {
+                db.collection('users').doc(currentUser.id).get().then(doc => {
+                    if (doc.exists && doc.data().supportHistory) {
+                        supportHistory = doc.data().supportHistory;
+                        console.log('✅ 応援履歴をFirebaseから読み込みました');
+                    } else {
+                        const savedHistory = localStorage.getItem(`supportHistory_${currentUser.id}`);
+                        if (savedHistory) {
+                            supportHistory = JSON.parse(savedHistory);
+                        }
+                    }
+                }).catch(err => {
+                    console.warn('応援履歴の読み込みエラー:', err);
+                    const savedHistory = localStorage.getItem(`supportHistory_${currentUser.id}`);
+                    if (savedHistory) {
+                        supportHistory = JSON.parse(savedHistory);
+                    }
+                });
+            } else {
+                const savedHistory = localStorage.getItem(`supportHistory_${currentUser.id}`);
+                if (savedHistory) {
+                    supportHistory = JSON.parse(savedHistory);
+                }
             }
         }
         
@@ -6843,6 +7615,7 @@
             // ゴミ箱にドロップ（一度だけ処理されるようにフラグを使用）
             let isProcessing = false;
             trashBin.addEventListener('drop', function(e) {
+                isDroppedOnTrashOrComplete = true;
                 e.preventDefault();
                 e.stopPropagation();
                 this.classList.remove('drag-over');
@@ -7122,7 +7895,7 @@
             return colors[priority] || '#7f8c8d';
         }
 
-        // 優先度を⭐️で表示
+        // 優先度を⭐️で表示（互換性のため残す）
         function getPriorityStars(priority) {
             const starCount = {
                 'low': 1,
@@ -7130,6 +7903,13 @@
                 'high': 3
             };
             const count = starCount[priority] || 1;
+            return '⭐️'.repeat(count);
+        }
+        
+        // 難易度を⭐️で表示（1-5）
+        function getDifficultyStars(difficulty) {
+            const difficultyNum = typeof difficulty === 'number' ? difficulty : parseInt(difficulty) || 2;
+            const count = Math.max(1, Math.min(5, difficultyNum)); // 1-5の範囲に制限
             return '⭐️'.repeat(count);
         }
         
@@ -7184,6 +7964,14 @@
         function renderTaskDetailView(task) {
             const detailContent = document.getElementById('detailContent');
             
+            // 難易度（priority）に応じた基本報酬を計算
+            // priorityが数値（1-5）の場合はそのまま、文字列の場合は互換性のため変換
+            const difficulty = typeof task.priority === 'number' ? task.priority : 
+                               (task.priority === 'low' ? 1 : task.priority === 'medium' ? 2 : task.priority === 'high' ? 3 : 2);
+            const baseReward = rankRewards[difficulty] || rankRewards[2] || 0;
+            const supportCoins = task.supportCoins || 0;
+            const difficultyStars = getDifficultyStars(difficulty);
+            
             detailContent.innerHTML = `
                 <div style="background: var(--color-background); border-radius: var(--border-radius-lg); padding: var(--spacing-md);">
                     <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">${task.title}</h3>
@@ -7192,8 +7980,18 @@
                         <span>${getCategoryName(task.category)}</span>
                     </div>
                     <div style="margin-bottom: var(--spacing-sm);">
-                        <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">優先度: </span>
-                        <span style="color: ${getPriorityColor(task.priority)};">${getPriorityStars(task.priority)}</span>
+                        <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">難易度: </span>
+                        <span>${difficultyStars}</span>
+                    </div>
+                    <div style="margin-bottom: var(--spacing-md); padding: var(--spacing-sm); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
+                        <div style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--spacing-xs);">💰 報酬</div>
+                        <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                            <div style="margin-bottom: var(--spacing-xs);">報酬: <span style="color: var(--color-text-primary); font-weight: var(--font-weight-semibold);">${baseReward}コイン</span></div>
+                            ${supportCoins > 0 ? `<div>追加報酬（応援）: <span style="color: var(--panel-5-color); font-weight: var(--font-weight-semibold);">+${supportCoins}コイン</span></div>` : '<div style="color: var(--color-text-secondary);">追加報酬（応援）: 0コイン</div>'}
+                            <div style="margin-top: var(--spacing-xs); padding-top: var(--spacing-xs); border-top: 1px solid var(--color-border);">
+                                <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">合計: ${baseReward + supportCoins}コイン</span>
+                            </div>
+                        </div>
                     </div>
                     <div style="margin-bottom: var(--spacing-md); display: flex; align-items: center; gap: var(--spacing-sm);">
                         <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">ステータス: </span>
@@ -7238,11 +8036,20 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="editTaskPriority">優先度 *</label>
+                            <label for="editTaskPriority">難易度 *</label>
                             <select id="editTaskPriority" name="priority" required>
-                                <option value="low" ${task.priority === 'low' ? 'selected' : ''}>低 (⭐️)</option>
-                                <option value="medium" ${task.priority === 'medium' ? 'selected' : ''}>中 (⭐️⭐️)</option>
-                                <option value="high" ${task.priority === 'high' ? 'selected' : ''}>高 (⭐️⭐️⭐️)</option>
+                                ${(() => {
+                                    // 既存データの互換性のため、priorityが文字列の場合は数値に変換
+                                    const currentPriority = typeof task.priority === 'number' ? task.priority : 
+                                                           (task.priority === 'low' ? 1 : task.priority === 'medium' ? 2 : task.priority === 'high' ? 3 : 2);
+                                    let options = '';
+                                    for (let i = 1; i <= 5; i++) {
+                                        const selected = currentPriority === i ? 'selected' : '';
+                                        const coins = rankRewards[i] || 0;
+                                        options += `<option value="${i}" ${selected}>⭐️${i} (${coins}コイン)</option>`;
+                                    }
+                                    return options;
+                                })()}
                             </select>
                         </div>
                         
@@ -7342,9 +8149,10 @@
             
             // タスクデータを更新
             const estimatedTime = formData.get('estimatedTime');
+            const priority = formData.get('priority');
             task.title = formData.get('title');
             task.category = formData.get('category');
-            task.priority = formData.get('priority');
+            task.priority = priority ? parseInt(priority) : 2; // 難易度（1-5）
             task.description = formData.get('description') || '';
             task.estimatedTime = estimatedTime ? parseInt(estimatedTime) : null; // 分単位
             task.updatedAt = new Date().toISOString();
@@ -8216,8 +9024,10 @@
                 // マイページパネルを開いた時にデータを読み込む
                 setTimeout(() => {
                     loadMyPageData();
+                    updateMyStatusDisplay();
                     updateMyTasksDisplay();
                     setupMyPagePanel();
+                    updateMyPageReports(); // 報告タブの日報も更新
                 }, 100);
             } else if (panelNumber === 5) {
                 // アーカイブパネルを開いた時に更新
@@ -8644,6 +9454,13 @@
             
             // Firebaseからデータを読み込み（最優先）
             await loadTaskMarketData();
+            
+            // ログイン中の場合はコイン履歴と応援履歴を読み込み
+            if (currentUser && currentUser.id) {
+                loadCoinHistory();
+                loadSupportHistory();
+                loadMyPageData();
+            }
             
             // 設定パネルのイベントリスナーを設定
             setupSettingsPanel();
