@@ -6528,6 +6528,63 @@
             // タイムレコードを終了（このタスクに紐づくすべてのアクティブなタイムレコード）
             endTimeRecordsForTask(taskId);
             
+            // 担当者に報酬を追加
+            const assigneeBadges = getAssignedBadgesForTask(taskId);
+            if (assigneeBadges.length > 0) {
+                // 基本報酬を計算
+                const baseReward = rankRewards[task.priority] || 0;
+                
+                if (baseReward > 0) {
+                    // 複数担当者の場合、作業時間で配分
+                    if (assigneeBadges.length > 1) {
+                        // 各担当者の作業時間を計算
+                        const assigneeWorkTimes = assigneeBadges.map(badge => {
+                            const badgeTimeRecords = timeRecords.filter(tr => tr.badgeId === badge.id && tr.taskId === taskId && tr.duration !== null);
+                            const totalTime = badgeTimeRecords.reduce((sum, tr) => sum + tr.duration, 0);
+                            return { badge, totalTime };
+                        });
+                        
+                        // 合計作業時間を計算
+                        const totalWorkTime = assigneeWorkTimes.reduce((sum, item) => sum + item.totalTime, 0);
+                        
+                        if (totalWorkTime > 0) {
+                            // 作業時間の比率に応じて配分
+                            let remainingCoins = baseReward;
+                            assigneeWorkTimes.forEach((item, index) => {
+                                if (index === assigneeWorkTimes.length - 1) {
+                                    // 最後の人は残りをすべて受け取る（端数処理）
+                                    grantCoinsToUser(item.badge.userId, remainingCoins, taskId, task.title, 'reward');
+                                } else {
+                                    const coins = Math.floor(baseReward * (item.totalTime / totalWorkTime));
+                                    grantCoinsToUser(item.badge.userId, coins, taskId, task.title, 'reward');
+                                    remainingCoins -= coins;
+                                }
+                            });
+                        } else {
+                            // 作業時間がない場合は均等配分
+                            const coinsPerPerson = Math.floor(baseReward / assigneeBadges.length);
+                            let remainingCoins = baseReward;
+                            assigneeBadges.forEach((badge, index) => {
+                                if (index === assigneeBadges.length - 1) {
+                                    grantCoinsToUser(badge.userId, remainingCoins, taskId, task.title, 'reward');
+                                } else {
+                                    grantCoinsToUser(badge.userId, coinsPerPerson, taskId, task.title, 'reward');
+                                    remainingCoins -= coinsPerPerson;
+                                }
+                            });
+                        }
+                    } else {
+                        // 単一担当者の場合、全額付与
+                        grantCoinsToUser(assigneeBadges[0].userId, baseReward, taskId, task.title, 'reward');
+                    }
+                    
+                    // マイページの表示を更新（パネルが開いている場合）
+                    if (document.getElementById('slidePanelOverlay4') && document.getElementById('slidePanelOverlay4').classList.contains('active')) {
+                        updateMyStatusDisplay();
+                    }
+                }
+            }
+            
             // グリッドを更新（完了タスクは表示から除外）
             updateTaskGrid();
             
