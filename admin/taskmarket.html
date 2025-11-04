@@ -4093,16 +4093,19 @@
             }
         }
         
-        // メニューアイコンの位置を保存
+        // メニューアイコンの位置を保存（全ユーザー共通）
         function saveMenuIconPosition() {
             if (menuIconPosition) {
+                // localStorageに保存（全ユーザー共通）
                 localStorage.setItem('menuIconPosition', JSON.stringify(menuIconPosition));
+                
+                // Firebaseの'main'ドキュメントに保存（全ユーザー共通）
                 if (firebaseInitialized && db) {
                     db.collection('taskMarket').doc('main').set({
                         menuIconPosition: menuIconPosition,
                         _updatedAt: Date.now()
                     }, { merge: true }).then(() => {
-                        console.log('✅ メニューアイコン位置をFirebaseに保存しました');
+                        console.log('✅ メニューアイコン位置をFirebaseに保存しました（全ユーザー共通）');
                     }).catch(err => {
                         console.warn('メニューアイコン位置の保存エラー:', err);
                     });
@@ -4132,13 +4135,26 @@
             const docId = userId || 'main';
 
             try {
+                // メニューアイコンの位置は全ユーザー共通で保存（メニューアイコンは常に表示するため）
+                // まず、メインのドキュメントにもメニューアイコンの位置を保存
+                if (menuIconPosition) {
+                    try {
+                        await db.collection('taskMarket').doc('main').set({
+                            menuIconPosition: menuIconPosition,
+                            _updatedAt: Date.now()
+                        }, { merge: true });
+                    } catch (err) {
+                        console.warn('メニューアイコン位置の保存エラー（main）:', err);
+                    }
+                }
+                
                 const payload = {
                     tasks: tasks,
                     badges: badges,
                     taskBadges: taskBadges,
                     timeRecords: timeRecords,
                     externalLinks: externalLinks,
-                    menuIconPosition: menuIconPosition,
+                    menuIconPosition: menuIconPosition, // ユーザー固有のドキュメントにも保存（バックアップ用）
                     settings: settings,
                     userId: userId,
                     _updatedAt: Date.now()
@@ -4163,6 +4179,22 @@
             const userId = currentUser ? currentUser.id : 'guest';
             const docId = userId || 'main';
             
+            // 0) メニューアイコンの位置を全ユーザー共通で読み込む（最優先）
+            if (firebaseInitialized && db) {
+                try {
+                    const mainDoc = await db.collection('taskMarket').doc('main').get();
+                    if (mainDoc.exists) {
+                        const mainData = mainDoc.data();
+                        if (mainData.menuIconPosition) {
+                            menuIconPosition = mainData.menuIconPosition;
+                            console.log('✅ メニューアイコン位置を読み込みました（全ユーザー共通）');
+                        }
+                    }
+                } catch (error) {
+                    console.warn('メニューアイコン位置の読み込みエラー:', error);
+                }
+            }
+            
             // 1) Firebaseから読み込み（最優先）
             if (firebaseInitialized && db) {
                 try {
@@ -4177,7 +4209,7 @@
                         taskBadges = {};
                         timeRecords = [];
                         externalLinks = [];
-                        menuIconPosition = null;
+                        // menuIconPositionはクリアしない（メニューアイコンは常に表示するため）
                         
                         // ユーザーIDが一致するデータのみ読み込む（セキュリティ対策）
                         if (data.userId === userId) {
@@ -4186,13 +4218,14 @@
                             if (data.taskBadges) taskBadges = data.taskBadges;
                             if (data.timeRecords) timeRecords = data.timeRecords;
                             if (data.externalLinks) externalLinks = data.externalLinks;
-                            if (data.menuIconPosition) menuIconPosition = data.menuIconPosition;
+                            // メニューアイコンの位置は全ユーザー共通で読み込む（メニューアイコンは常に表示するため）
+                            // 上で既に'main'から読み込んでいるので、ここでは上書きしない
                         }
                         
                         // リアルタイム更新を設定
                         setupRealtimeListener();
                         
-                        // UIを更新
+                        // UIを更新（メニューアイコンも含む）
                         updateTaskGrid();
                         updateBadges();
                         updateLinkIconGrid();
@@ -4277,6 +4310,7 @@
                         if (data.taskBadges) taskBadges = data.taskBadges;
                         if (data.timeRecords) timeRecords = data.timeRecords;
                         if (data.externalLinks) externalLinks = data.externalLinks;
+                        // メニューアイコンの位置は全ユーザー共通で更新（メニューアイコンは常に表示するため）
                         if (data.menuIconPosition) menuIconPosition = data.menuIconPosition;
                         if (data.settings) settings = { ...settings, ...data.settings };
                         
@@ -4284,7 +4318,7 @@
                         updateSettingsUI();
                         applySettings();
                         
-                        // UIを更新
+                        // UIを更新（メニューアイコンも含む）
                         updateTaskGrid();
                         updateBadges();
                         updateLinkIconGrid();
