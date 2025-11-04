@@ -273,13 +273,6 @@
             opacity: 1;
             visibility: visible;
         }
-        
-        /* ツールチップが無効化されている場合 */
-        body.tooltips-disabled .tooltip-text {
-            display: none !important;
-            opacity: 0 !important;
-            visibility: hidden !important;
-        }
 
         /* メインコンテナ */
         .main-container {
@@ -1653,119 +1646,6 @@
             transform: translateY(-50%) scale(1) rotate(360deg);
         }
 
-        /* 設定パネルのスタイル */
-        .settings-section {
-            margin-bottom: var(--spacing-lg);
-        }
-        
-        .settings-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: var(--spacing-md);
-            background: var(--color-background-secondary);
-            border-radius: var(--border-radius-md);
-            margin-bottom: var(--spacing-sm);
-            transition: var(--transition-normal);
-        }
-        
-        .settings-item:hover {
-            background: var(--color-background-hover);
-        }
-        
-        .settings-button {
-            transition: var(--transition-normal);
-        }
-        
-        .settings-button:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .settings-button:active {
-            transform: translateY(0);
-        }
-        
-        /* トグルスイッチのスタイル */
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 26px;
-            margin-left: var(--spacing-sm);
-        }
-        
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: var(--transition-normal);
-            border-radius: 26px;
-        }
-        
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 20px;
-            width: 20px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: var(--transition-normal);
-            border-radius: 50%;
-        }
-        
-        .toggle-switch input:checked + .toggle-slider {
-            background-color: var(--panel-3-color);
-        }
-        
-        .toggle-switch input:checked + .toggle-slider:before {
-            transform: translateX(24px);
-        }
-        
-        .toggle-switch input:focus + .toggle-slider {
-            box-shadow: 0 0 1px var(--panel-3-color);
-        }
-        
-        /* カードサイズ調整用のスタイル */
-        #settingCardSize {
-            -webkit-appearance: none;
-            appearance: none;
-            height: 6px;
-            background: var(--color-border);
-            border-radius: 3px;
-            outline: none;
-        }
-        
-        #settingCardSize::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            background: var(--panel-3-color);
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        
-        #settingCardSize::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
-            background: var(--panel-3-color);
-            border-radius: 50%;
-            cursor: pointer;
-            border: none;
-        }
-
         .form-group {
             margin-bottom: var(--spacing-md);
         }
@@ -2995,11 +2875,11 @@
                 <button class="slide-panel-close-button" onclick="closeSlidePanel(3)" title="閉じる">×</button>
             </div>
             <div class="slide-panel-content">
-                <!-- 設定セクション -->
+                <!-- 表示設定セクション -->
                 <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
                     <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-3-color); padding-bottom: var(--spacing-sm);">表示設定</h3>
                     
-                    <!-- ツールチップの表示/非表示 -->
+                    <!-- ツールチップの表示/非表示（必須） -->
                     <div class="settings-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm);">
                         <div>
                             <label style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-xs);">ツールチップの表示</label>
@@ -3022,17 +2902,6 @@
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
-                    
-                    <!-- カードサイズの調整 -->
-                    <div class="settings-item" style="padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm);">
-                        <label style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-sm);">カードサイズ</label>
-                        <input type="range" id="settingCardSize" min="80" max="120" value="100" style="width: 100%;">
-                        <div style="display: flex; justify-content: space-between; font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-top: var(--spacing-xs);">
-                            <span>小</span>
-                            <span id="cardSizeValue">100%</span>
-                            <span>大</span>
-                        </div>
-                    </div>
                 </div>
                 
                 <!-- データ管理セクション -->
@@ -3054,35 +2923,6 @@
                     <button class="settings-button" id="resetDataButton" style="width: 100%; padding: var(--spacing-sm); background: #ff4444; color: white; border: none; border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; margin-bottom: var(--spacing-sm);">
                         🔄 データをリセット
                     </button>
-                </div>
-                
-                <!-- その他の設定セクション -->
-                <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
-                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-3-color); padding-bottom: var(--spacing-sm);">その他</h3>
-                    
-                    <!-- 自動保存 -->
-                    <div class="settings-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm);">
-                        <div>
-                            <label style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-xs);">自動保存</label>
-                            <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0;">変更を自動的にFirebaseに保存</p>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="settingAutoSaveEnabled" checked>
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                    
-                    <!-- 通知設定 -->
-                    <div class="settings-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm);">
-                        <div>
-                            <label style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-xs);">通知</label>
-                            <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0;">タスク完了時の通知を表示</p>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="settingNotificationEnabled" checked>
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
                 </div>
             </div>
         </div>
@@ -3339,9 +3179,6 @@
             displayUserInfo(currentUser);
             
             console.log('ログイン成功:', currentUser.name, currentUser.email);
-            
-            // ユーザーが変わったので、データを再読み込み
-            loadTaskMarketData();
         }
         
         // JWTトークンをパース（簡易版）
@@ -3397,9 +3234,6 @@
             initializeGoogleSignIn();
             
             console.log('ログアウトしました');
-            
-            // ユーザーが変わったので、データを再読み込み（ゲストユーザーとして）
-            loadTaskMarketData();
         }
         
         // Google Identity Services が読み込まれた後に初期化
@@ -3438,10 +3272,7 @@
         // 設定データ
         let settings = {
             tooltipEnabled: true,
-            animationEnabled: true,
-            cardSize: 100,
-            autoSaveEnabled: true,
-            notificationEnabled: true
+            animationEnabled: true
         };
 
         // 設定を読み込み
@@ -3459,9 +3290,8 @@
         // 設定を保存
         function saveSettings() {
             localStorage.setItem('taskMarketSettings', JSON.stringify(settings));
-            if (firebaseInitialized && db && currentUser) {
-                const userId = currentUser.id;
-                db.collection('taskMarket').doc(userId).set({
+            if (firebaseInitialized && db) {
+                db.collection('taskMarket').doc('main').set({
                     settings: settings,
                     _updatedAt: Date.now()
                 }, { merge: true }).then(() => {
@@ -3476,34 +3306,14 @@
         function updateSettingsUI() {
             const tooltipCheckbox = document.getElementById('settingTooltipEnabled');
             const animationCheckbox = document.getElementById('settingAnimationEnabled');
-            const cardSizeSlider = document.getElementById('settingCardSize');
-            const cardSizeValue = document.getElementById('cardSizeValue');
-            const autoSaveCheckbox = document.getElementById('settingAutoSaveEnabled');
-            const notificationCheckbox = document.getElementById('settingNotificationEnabled');
             
             if (tooltipCheckbox) tooltipCheckbox.checked = settings.tooltipEnabled;
             if (animationCheckbox) animationCheckbox.checked = settings.animationEnabled;
-            if (cardSizeSlider) {
-                cardSizeSlider.value = settings.cardSize;
-                if (cardSizeValue) cardSizeValue.textContent = settings.cardSize + '%';
-            }
-            if (autoSaveCheckbox) autoSaveCheckbox.checked = settings.autoSaveEnabled;
-            if (notificationCheckbox) notificationCheckbox.checked = settings.notificationEnabled;
         }
 
         // 設定を適用
         function applySettings() {
             // ツールチップの表示/非表示
-            const tooltips = document.querySelectorAll('.tooltip-text');
-            tooltips.forEach(tooltip => {
-                if (settings.tooltipEnabled) {
-                    tooltip.style.display = '';
-                } else {
-                    tooltip.style.display = 'none';
-                }
-            });
-            
-            // ツールチップのホバー表示を制御するCSSクラスを追加/削除
             if (settings.tooltipEnabled) {
                 document.body.classList.remove('tooltips-disabled');
             } else {
@@ -3531,31 +3341,6 @@
             if (!settings.animationEnabled) {
                 document.head.appendChild(style);
             }
-            
-            // カードサイズの調整
-            const taskCards = document.querySelectorAll('.task-card');
-            taskCards.forEach(card => {
-                const baseWidth = 280;
-                const baseHeight = 180;
-                const scale = settings.cardSize / 100;
-                card.style.width = (baseWidth * scale) + 'px';
-                card.style.height = (baseHeight * scale) + 'px';
-            });
-            
-            // カードサイズ変更時にupdateTaskGridを呼び出す（新規カードにも適用）
-            if (settings.cardSize !== 100) {
-                // 少し遅延させてから再描画（DOM更新後に適用）
-                setTimeout(() => {
-                    const allCards = document.querySelectorAll('.task-card');
-                    allCards.forEach(card => {
-                        const baseWidth = 280;
-                        const baseHeight = 180;
-                        const scale = settings.cardSize / 100;
-                        card.style.width = (baseWidth * scale) + 'px';
-                        card.style.height = (baseHeight * scale) + 'px';
-                    });
-                }, 100);
-            }
         }
 
         // 設定パネルのイベントリスナーを設定
@@ -3577,36 +3362,6 @@
                     settings.animationEnabled = e.target.checked;
                     saveSettings();
                     applySettings();
-                });
-            }
-            
-            // カードサイズの調整
-            const cardSizeSlider = document.getElementById('settingCardSize');
-            const cardSizeValue = document.getElementById('cardSizeValue');
-            if (cardSizeSlider && cardSizeValue) {
-                cardSizeSlider.addEventListener('input', function(e) {
-                    settings.cardSize = parseInt(e.target.value);
-                    cardSizeValue.textContent = settings.cardSize + '%';
-                    saveSettings();
-                    applySettings();
-                });
-            }
-            
-            // 自動保存の設定
-            const autoSaveCheckbox = document.getElementById('settingAutoSaveEnabled');
-            if (autoSaveCheckbox) {
-                autoSaveCheckbox.addEventListener('change', function(e) {
-                    settings.autoSaveEnabled = e.target.checked;
-                    saveSettings();
-                });
-            }
-            
-            // 通知設定
-            const notificationCheckbox = document.getElementById('settingNotificationEnabled');
-            if (notificationCheckbox) {
-                notificationCheckbox.addEventListener('change', function(e) {
-                    settings.notificationEnabled = e.target.checked;
-                    saveSettings();
                 });
             }
             
@@ -3712,10 +3467,8 @@
             
             // Firebaseから削除
             if (firebaseInitialized && db) {
-                const userId = currentUser ? currentUser.id : 'guest';
-                const docId = userId || 'main';
                 try {
-                    await db.collection('taskMarket').doc(docId).delete();
+                    await db.collection('taskMarket').doc('main').delete();
                     console.log('✅ Firebaseのデータを削除しました');
                 } catch (error) {
                     console.error('Firebase削除エラー:', error);
@@ -4093,19 +3846,16 @@
             }
         }
         
-        // メニューアイコンの位置を保存（全ユーザー共通）
+        // メニューアイコンの位置を保存
         function saveMenuIconPosition() {
             if (menuIconPosition) {
-                // localStorageに保存（全ユーザー共通）
                 localStorage.setItem('menuIconPosition', JSON.stringify(menuIconPosition));
-                
-                // Firebaseの'main'ドキュメントに保存（全ユーザー共通）
                 if (firebaseInitialized && db) {
                     db.collection('taskMarket').doc('main').set({
                         menuIconPosition: menuIconPosition,
                         _updatedAt: Date.now()
                     }, { merge: true }).then(() => {
-                        console.log('✅ メニューアイコン位置をFirebaseに保存しました（全ユーザー共通）');
+                        console.log('✅ メニューアイコン位置をFirebaseに保存しました');
                     }).catch(err => {
                         console.warn('メニューアイコン位置の保存エラー:', err);
                     });
@@ -4130,38 +3880,20 @@
                 return;
             }
 
-            // ユーザーIDを取得（ログインしていない場合は'guest'を使用）
-            const userId = currentUser ? currentUser.id : 'guest';
-            const docId = userId || 'main';
-
             try {
-                // メニューアイコンの位置は全ユーザー共通で保存（メニューアイコンは常に表示するため）
-                // まず、メインのドキュメントにもメニューアイコンの位置を保存
-                if (menuIconPosition) {
-                    try {
-                        await db.collection('taskMarket').doc('main').set({
-                            menuIconPosition: menuIconPosition,
-                            _updatedAt: Date.now()
-                        }, { merge: true });
-                    } catch (err) {
-                        console.warn('メニューアイコン位置の保存エラー（main）:', err);
-                    }
-                }
-                
                 const payload = {
                     tasks: tasks,
                     badges: badges,
                     taskBadges: taskBadges,
                     timeRecords: timeRecords,
                     externalLinks: externalLinks,
-                    menuIconPosition: menuIconPosition, // ユーザー固有のドキュメントにも保存（バックアップ用）
+                    menuIconPosition: menuIconPosition,
                     settings: settings,
-                    userId: userId,
                     _updatedAt: Date.now()
                 };
 
-                await db.collection('taskMarket').doc(docId).set(payload, { merge: true });
-                console.log(`✅ タスクマーケットデータをFirebaseに保存しました（ユーザーID: ${userId}）`);
+                await db.collection('taskMarket').doc('main').set(payload, { merge: true });
+                console.log('✅ タスクマーケットデータをFirebaseに保存しました');
             } catch (error) {
                 console.error('❌ Firebase保存エラー:', error);
                 // エラー時はlocalStorageにフォールバック
@@ -4175,57 +3907,30 @@
 
         // データをFirebaseから読み込み
         async function loadTaskMarketData() {
-            // ユーザーIDを取得（ログインしていない場合は'guest'を使用）
-            const userId = currentUser ? currentUser.id : 'guest';
-            const docId = userId || 'main';
-            
-            // 0) メニューアイコンの位置を全ユーザー共通で読み込む（最優先）
-            if (firebaseInitialized && db) {
-                try {
-                    const mainDoc = await db.collection('taskMarket').doc('main').get();
-                    if (mainDoc.exists) {
-                        const mainData = mainDoc.data();
-                        if (mainData.menuIconPosition) {
-                            menuIconPosition = mainData.menuIconPosition;
-                            console.log('✅ メニューアイコン位置を読み込みました（全ユーザー共通）');
-                        }
-                    }
-                } catch (error) {
-                    console.warn('メニューアイコン位置の読み込みエラー:', error);
-                }
-            }
-            
             // 1) Firebaseから読み込み（最優先）
             if (firebaseInitialized && db) {
                 try {
-                    const doc = await db.collection('taskMarket').doc(docId).get();
+                    const doc = await db.collection('taskMarket').doc('main').get();
                     if (doc.exists) {
                         const data = doc.data();
-                        console.log(`🔥 Firebaseからタスクマーケットデータを読み込みました（ユーザーID: ${userId}）:`, data);
+                        console.log('🔥 Firebaseからタスクマーケットデータを読み込みました:', data);
                         
-                        // データを初期化（前のユーザーのデータをクリア）
-                        tasks = [];
-                        badges = [];
-                        taskBadges = {};
-                        timeRecords = [];
-                        externalLinks = [];
-                        // menuIconPositionはクリアしない（メニューアイコンは常に表示するため）
+                        if (data.tasks) tasks = data.tasks;
+                        if (data.badges) badges = data.badges;
+                        if (data.taskBadges) taskBadges = data.taskBadges;
+                        if (data.timeRecords) timeRecords = data.timeRecords;
+                        if (data.externalLinks) externalLinks = data.externalLinks;
+                        if (data.menuIconPosition) menuIconPosition = data.menuIconPosition;
+                        if (data.settings) settings = { ...settings, ...data.settings };
                         
-                        // ユーザーIDが一致するデータのみ読み込む（セキュリティ対策）
-                        if (data.userId === userId) {
-                            if (data.tasks) tasks = data.tasks;
-                            if (data.badges) badges = data.badges;
-                            if (data.taskBadges) taskBadges = data.taskBadges;
-                            if (data.timeRecords) timeRecords = data.timeRecords;
-                            if (data.externalLinks) externalLinks = data.externalLinks;
-                            // メニューアイコンの位置は全ユーザー共通で読み込む（メニューアイコンは常に表示するため）
-                            // 上で既に'main'から読み込んでいるので、ここでは上書きしない
-                        }
+                        // 設定を適用
+                        updateSettingsUI();
+                        applySettings();
                         
                         // リアルタイム更新を設定
                         setupRealtimeListener();
                         
-                        // UIを更新（メニューアイコンも含む）
+                        // UIを更新
                         updateTaskGrid();
                         updateBadges();
                         updateLinkIconGrid();
@@ -4254,12 +3959,12 @@
                 
                 const savedMenuIconPosition = localStorage.getItem('menuIconPosition');
                 if (savedMenuIconPosition) menuIconPosition = JSON.parse(savedMenuIconPosition);
-
-                console.log('localStorageからタスクマーケットデータを読み込みました');
-
+                
                 // 設定を読み込み・適用
                 loadSettings();
                 applySettings();
+
+                console.log('localStorageからタスクマーケットデータを読み込みました');
 
                 // UIを更新
                 updateTaskGrid();
@@ -4281,28 +3986,11 @@
         function setupRealtimeListener() {
             if (!firebaseInitialized || !db) return;
 
-            // 既存のリスナーを削除（ユーザーが変わった場合のため）
-            if (window.taskMarketRealtimeUnsubscribe) {
-                window.taskMarketRealtimeUnsubscribe();
-                window.taskMarketRealtimeUnsubscribe = null;
-            }
-
-            // ユーザーIDを取得（ログインしていない場合は'guest'を使用）
-            const userId = currentUser ? currentUser.id : 'guest';
-            const docId = userId || 'main';
-
             try {
-                const unsubscribe = db.collection('taskMarket').doc(docId).onSnapshot((doc) => {
+                db.collection('taskMarket').doc('main').onSnapshot((doc) => {
                     if (doc.exists) {
                         const data = doc.data();
-                        
-                        // ユーザーIDが一致するデータのみ更新（セキュリティ対策）
-                        if (data.userId !== userId) {
-                            console.log('🔄 リアルタイム更新を受信しましたが、ユーザーIDが一致しません。無視します。');
-                            return;
-                        }
-                        
-                        console.log(`🔄 リアルタイム更新を受信しました（ユーザーID: ${userId}）:`, data);
+                        console.log('🔄 リアルタイム更新を受信しました:', data);
                         
                         // データが更新された場合のみ反映（自分自身の更新は除外）
                         if (data.tasks) tasks = data.tasks;
@@ -4310,7 +3998,6 @@
                         if (data.taskBadges) taskBadges = data.taskBadges;
                         if (data.timeRecords) timeRecords = data.timeRecords;
                         if (data.externalLinks) externalLinks = data.externalLinks;
-                        // メニューアイコンの位置は全ユーザー共通で更新（メニューアイコンは常に表示するため）
                         if (data.menuIconPosition) menuIconPosition = data.menuIconPosition;
                         if (data.settings) settings = { ...settings, ...data.settings };
                         
@@ -4318,7 +4005,7 @@
                         updateSettingsUI();
                         applySettings();
                         
-                        // UIを更新（メニューアイコンも含む）
+                        // UIを更新
                         updateTaskGrid();
                         updateBadges();
                         updateLinkIconGrid();
@@ -4327,9 +4014,6 @@
                 }, (error) => {
                     console.error('リアルタイム更新エラー:', error);
                 });
-                
-                // リスナーを保存（削除時に使用）
-                window.taskMarketRealtimeUnsubscribe = unsubscribe;
             } catch (error) {
                 console.error('リアルタイムリスナー設定エラー:', error);
             }
@@ -4615,11 +4299,8 @@
             // グリッドのサイズを取得
             const gridWidth = taskGrid.offsetWidth - 48; // padding分を引く
             const gridHeight = Math.max(800, taskGrid.offsetHeight - 48);
-            const baseCardWidth = 280;
-            const baseCardHeight = 180;
-            const cardSizeScale = settings.cardSize / 100;
-            const cardWidth = baseCardWidth * cardSizeScale;
-            const cardHeight = baseCardHeight * cardSizeScale;
+            const cardWidth = 280;
+            const cardHeight = 180;
 
             // カードをクリア（ボタンは残す、ゴミ箱はtaskGrid外に固定されているので除外）
             const addButton = taskGrid.querySelector('.add-task-button');
@@ -4825,8 +4506,6 @@
                 card.style.left = left + 'px';
                 card.style.transform = `rotate(${rotation}deg)`;
                 card.style.zIndex = zIndex;
-                card.style.width = cardWidth + 'px';
-                card.style.height = cardHeight + 'px';
                 
                 // カテゴリアイコンのパスを取得
                 const categoryIconPath = getCategoryIconPath(task.category);
