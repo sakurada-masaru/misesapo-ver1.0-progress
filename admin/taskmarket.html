@@ -97,6 +97,23 @@
             --category-other-border: rgba(127, 140, 141, 0.3);
         }
 
+        /* ダークモード */
+        .dark-mode {
+            --color-background: #1a1a1a;
+            --color-background-secondary: #2d2d2d;
+            --color-text-primary: #e0e0e0;
+            --color-text-secondary: #a0a0a0;
+            --color-border: #3d3d3d;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+            --category-design-border: rgba(255, 103, 156, 0.5);
+            --category-frontend-border: rgba(74, 144, 226, 0.5);
+            --category-backend-border: rgba(80, 200, 120, 0.5);
+            --category-media-border: rgba(255, 140, 66, 0.5);
+            --category-other-border: rgba(127, 140, 141, 0.5);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -272,6 +289,28 @@
         .slide-panel-handle:hover .tooltip-text {
             opacity: 1;
             visibility: visible;
+        }
+
+        /* ツールチップ無効化（設定でオフにした場合） */
+        .tooltips-disabled .tooltip-text,
+        .tooltips-disabled .task-card-tooltip {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            display: none !important;
+        }
+
+        .tooltips-disabled .add-task-button:hover .tooltip-text,
+        .tooltips-disabled .add-badge-button:hover .tooltip-text,
+        .tooltips-disabled .trash-bin:hover .tooltip-text,
+        .tooltips-disabled .complete-button:hover .tooltip-text,
+        .tooltips-disabled .slide-panel-handle:hover .tooltip-text,
+        .tooltips-disabled .detail-edit-button:hover .tooltip-text,
+        .tooltips-disabled .detail-time-record-button:hover .tooltip-text,
+        .tooltips-disabled .menu-icon:hover .tooltip-text,
+        .tooltips-disabled .task-card:hover .task-card-tooltip {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            display: none !important;
         }
 
         /* メインコンテナ */
@@ -752,6 +791,65 @@
             width: 80px;
             height: 80px;
             box-shadow: 0 0 30px rgba(255, 71, 87, 0.8);
+        }
+
+        /* トグルスイッチ */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: var(--transition-normal);
+            border-radius: 26px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: var(--transition-normal);
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: var(--color-primary);
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        .toggle-switch input:focus + .toggle-slider {
+            box-shadow: 0 0 1px var(--color-primary);
+        }
+
+        /* ダークモード用のトグルスイッチ調整 */
+        .dark-mode .toggle-slider {
+            background-color: #555;
+        }
+
+        .dark-mode .toggle-switch input:checked + .toggle-slider {
+            background-color: var(--color-primary);
         }
 
         @media (max-width: 430px) {
@@ -1824,6 +1922,74 @@
             justify-content: space-between;
         }
 
+        /* カードサイズ：大 */
+        .card-size-large .task-card {
+            width: 320px;
+            min-height: 220px;
+            padding: var(--spacing-lg);
+        }
+
+        .card-size-large .task-card-title {
+            font-size: var(--font-size-lg);
+        }
+
+        .card-size-large .task-card-description {
+            font-size: var(--font-size-md);
+            -webkit-line-clamp: 5;
+        }
+
+        .card-size-large .task-card-footer {
+            font-size: var(--font-size-sm);
+        }
+
+        /* カードサイズ：中（デフォルト） */
+        .card-size-medium .task-card {
+            width: 280px;
+            min-height: 180px;
+            padding: var(--spacing-md);
+        }
+
+        /* カードサイズ：小 */
+        .card-size-small .task-card {
+            width: 240px;
+            min-height: 150px;
+            padding: var(--spacing-sm);
+        }
+
+        .card-size-small .task-card-title {
+            font-size: var(--font-size-sm);
+        }
+
+        .card-size-small .task-card-description {
+            font-size: var(--font-size-xs);
+            -webkit-line-clamp: 3;
+        }
+
+        .card-size-small .task-card-footer {
+            font-size: 10px;
+        }
+
+        .card-size-small .task-card-priority {
+            font-size: 8px;
+        }
+
+        /* カードサイズボタンのスタイル */
+        .card-size-button {
+            transition: var(--transition-normal);
+        }
+
+        .card-size-button:hover {
+            background: var(--color-primary-light) !important;
+            border-color: var(--color-primary) !important;
+            color: var(--color-primary);
+        }
+
+        .card-size-button.active {
+            background: var(--color-primary) !important;
+            border-color: var(--color-primary) !important;
+            color: white;
+        }
+
         .task-card:hover {
             box-shadow: var(--shadow-lg);
             transform: translateY(-2px) rotate(0deg) !important;
@@ -2136,6 +2302,13 @@
                 opacity: 1 !important;
                 visibility: visible !important;
             }
+
+            /* ツールチップ無効化（設定でオフにした場合） */
+            .tooltips-disabled .task-card.selected .task-card-tooltip {
+                opacity: 0 !important;
+                visibility: hidden !important;
+                display: none !important;
+            }
         }
 
         /* PC版：ツールチップの矢印（下から上） */
@@ -2233,6 +2406,45 @@
                 min-height: 100px;
                 padding: calc(var(--spacing-xs) * 0.8);
                 font-size: 0.75rem;
+            }
+
+            /* スマホ版：カードサイズ：大 */
+            .card-size-large .task-card {
+                max-width: 140px;
+                min-height: 120px;
+                padding: calc(var(--spacing-xs) * 1);
+            }
+
+            .card-size-large .task-card-title {
+                font-size: calc(var(--font-size-sm) * 0.9);
+            }
+
+            .card-size-large .task-card-description {
+                font-size: 10px;
+                -webkit-line-clamp: 4;
+            }
+
+            /* スマホ版：カードサイズ：中（デフォルト） */
+            .card-size-medium .task-card {
+                max-width: 120px;
+                min-height: 100px;
+                padding: calc(var(--spacing-xs) * 0.8);
+            }
+
+            /* スマホ版：カードサイズ：小 */
+            .card-size-small .task-card {
+                max-width: 100px;
+                min-height: 80px;
+                padding: calc(var(--spacing-xs) * 0.6);
+            }
+
+            .card-size-small .task-card-title {
+                font-size: calc(var(--font-size-sm) * 0.7);
+            }
+
+            .card-size-small .task-card-description {
+                font-size: 8px;
+                -webkit-line-clamp: 2;
             }
 
             .task-card-title {
@@ -2890,6 +3102,31 @@
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
+                    
+                    <!-- ダークモードの切り替え -->
+                    <div class="settings-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm);">
+                        <div>
+                            <label style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-xs);">ダークモード</label>
+                            <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0;">画面を暗いテーマに切り替えます</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="settingDarkMode">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <!-- カードサイズの選択 -->
+                    <div class="settings-item" style="padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm);">
+                        <div style="margin-bottom: var(--spacing-sm);">
+                            <label style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-xs);">カードの表示サイズ</label>
+                            <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0;">タスクカードの表示サイズを変更します</p>
+                        </div>
+                        <div style="display: flex; gap: var(--spacing-sm);">
+                            <button type="button" class="card-size-button" data-size="large" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">大</button>
+                            <button type="button" class="card-size-button" data-size="medium" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">中</button>
+                            <button type="button" class="card-size-button" data-size="small" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">小</button>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- データ管理セクション -->
@@ -3082,6 +3319,8 @@
                 try {
                     currentUser = JSON.parse(savedUser);
                     displayUserInfo(currentUser);
+                    // 既にログイン済みの場合は設定を読み込む
+                    loadSettings();
                 } catch (e) {
                     console.error('ユーザー情報の読み込みエラー:', e);
                     localStorage.removeItem('googleUser');
@@ -3167,6 +3406,9 @@
             displayUserInfo(currentUser);
             
             console.log('ログイン成功:', currentUser.name, currentUser.email);
+            
+            // ログイン後にユーザー設定を読み込む
+            loadSettings();
         }
         
         // JWTトークンをパース（簡易版）
@@ -3221,6 +3463,9 @@
             // Google Sign-In ボタンを再表示
             initializeGoogleSignIn();
             
+            // ログアウト時にデフォルト設定に戻す
+            loadSettings();
+            
             console.log('ログアウトしました');
         }
         
@@ -3259,41 +3504,93 @@
 
         // 設定データ
         let settings = {
-            tooltipEnabled: true
+            tooltipEnabled: true,
+            cardSize: 'medium', // 'large', 'medium', 'small'
+            darkMode: false
         };
 
         // 設定を読み込み
         function loadSettings() {
-            const savedSettings = localStorage.getItem('taskMarketSettings');
-            if (savedSettings) {
-                settings = { ...settings, ...JSON.parse(savedSettings) };
-            }
+            // デフォルト設定をリセット
+            settings = {
+                tooltipEnabled: true,
+                cardSize: 'medium',
+                darkMode: false
+            };
             
-            // UIを更新
-            updateSettingsUI();
-            applySettings();
+            // ログイン中の場合、ユーザー設定を読み込む
+            if (currentUser && currentUser.id && firebaseInitialized && db) {
+                db.collection('users').doc(currentUser.id).get().then(doc => {
+                    if (doc.exists && doc.data().settings) {
+                        settings = { ...settings, ...doc.data().settings };
+                        console.log('✅ ユーザー設定を読み込みました:', currentUser.name);
+                    } else {
+                        // ユーザー設定が存在しない場合はデフォルト設定を使用
+                        console.log('ℹ️ ユーザー設定が見つかりません。デフォルト設定を使用します。');
+                    }
+                    // UIを更新
+                    updateSettingsUI();
+                    applySettings();
+                }).catch(err => {
+                    console.warn('ユーザー設定の読み込みエラー:', err);
+                    // エラー時はデフォルト設定を使用
+                    updateSettingsUI();
+                    applySettings();
+                });
+            } else {
+                // 未ログイン時はデフォルト設定をlocalStorageから読み込む
+                const savedSettings = localStorage.getItem('taskMarketSettingsDefault');
+                if (savedSettings) {
+                    settings = { ...settings, ...JSON.parse(savedSettings) };
+                }
+                
+                // UIを更新
+                updateSettingsUI();
+                applySettings();
+            }
         }
 
         // 設定を保存
         function saveSettings() {
-            localStorage.setItem('taskMarketSettings', JSON.stringify(settings));
-            if (firebaseInitialized && db) {
-                db.collection('taskMarket').doc('main').set({
+            // ログイン中の場合、ユーザー設定をFirebaseに保存
+            if (currentUser && currentUser.id && firebaseInitialized && db) {
+                db.collection('users').doc(currentUser.id).set({
                     settings: settings,
-                    _updatedAt: Date.now()
+                    _updatedAt: Date.now(),
+                    userId: currentUser.id,
+                    userName: currentUser.name,
+                    userEmail: currentUser.email
                 }, { merge: true }).then(() => {
-                    console.log('✅ 設定をFirebaseに保存しました');
+                    console.log('✅ ユーザー設定をFirebaseに保存しました:', currentUser.name);
                 }).catch(err => {
-                    console.warn('設定の保存エラー:', err);
+                    console.warn('ユーザー設定の保存エラー:', err);
+                    // エラー時はlocalStorageにも保存（バックアップ）
+                    localStorage.setItem('taskMarketSettingsDefault', JSON.stringify(settings));
                 });
+            } else {
+                // 未ログイン時はデフォルト設定としてlocalStorageに保存
+                localStorage.setItem('taskMarketSettingsDefault', JSON.stringify(settings));
+                console.log('✅ デフォルト設定を保存しました');
             }
         }
 
         // 設定UIを更新
         function updateSettingsUI() {
             const tooltipCheckbox = document.getElementById('settingTooltipEnabled');
+            const darkModeCheckbox = document.getElementById('settingDarkMode');
             
             if (tooltipCheckbox) tooltipCheckbox.checked = settings.tooltipEnabled;
+            if (darkModeCheckbox) darkModeCheckbox.checked = settings.darkMode;
+            
+            // カードサイズボタンの状態を更新
+            const cardSizeButtons = document.querySelectorAll('.card-size-button');
+            cardSizeButtons.forEach(button => {
+                if (button.dataset.size === settings.cardSize) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
         }
 
         // 設定を適用
@@ -3303,6 +3600,22 @@
                 document.body.classList.remove('tooltips-disabled');
             } else {
                 document.body.classList.add('tooltips-disabled');
+            }
+            
+            // ダークモードの適用
+            if (settings.darkMode) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+            
+            // カードサイズの適用
+            document.body.classList.remove('card-size-large', 'card-size-medium', 'card-size-small');
+            document.body.classList.add(`card-size-${settings.cardSize}`);
+            
+            // カードを再描画（サイズ変更を反映）
+            if (typeof updateTaskGrid === 'function') {
+                updateTaskGrid();
             }
         }
 
@@ -3321,6 +3634,32 @@
                     applySettings();
                 });
             }
+            
+            // ダークモードの切り替え
+            const darkModeCheckbox = document.getElementById('settingDarkMode');
+            if (darkModeCheckbox) {
+                // 既存のイベントリスナーを削除（重複を防ぐ）
+                const newDarkModeCheckbox = darkModeCheckbox.cloneNode(true);
+                darkModeCheckbox.parentNode.replaceChild(newDarkModeCheckbox, darkModeCheckbox);
+                
+                newDarkModeCheckbox.addEventListener('change', function(e) {
+                    settings.darkMode = e.target.checked;
+                    saveSettings();
+                    applySettings();
+                });
+            }
+            
+            // カードサイズの選択
+            const cardSizeButtons = document.querySelectorAll('.card-size-button');
+            cardSizeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const size = this.dataset.size;
+                    settings.cardSize = size;
+                    saveSettings();
+                    updateSettingsUI();
+                    applySettings();
+                });
+            });
             
             // データエクスポート
             const exportButton = document.getElementById('exportDataButton');
@@ -3845,12 +4184,12 @@
                     timeRecords: timeRecords,
                     externalLinks: externalLinks,
                     menuIconPosition: menuIconPosition,
-                    settings: settings,
+                    // settingsは個別にusers/{userId}/settingsに保存するため、ここには含めない
                     _updatedAt: Date.now()
                 };
 
                 await db.collection('taskMarket').doc('main').set(payload, { merge: true });
-                console.log('✅ タスクマーケットデータをFirebaseに保存しました');
+                console.log('✅ タスクマーケットデータをFirebaseに保存しました（全ユーザー共有）');
             } catch (error) {
                 console.error('❌ Firebase保存エラー:', error);
                 // エラー時はlocalStorageにフォールバック
@@ -3878,11 +4217,7 @@
                         if (data.timeRecords) timeRecords = data.timeRecords;
                         if (data.externalLinks) externalLinks = data.externalLinks;
                         if (data.menuIconPosition) menuIconPosition = data.menuIconPosition;
-                        if (data.settings) settings = { ...settings, ...data.settings };
-                        
-                        // 設定を適用
-                        updateSettingsUI();
-                        applySettings();
+                        // settingsは個別にusers/{userId}/settingsから読み込むため、ここでは読み込まない
                         
                         // リアルタイム更新を設定
                         setupRealtimeListener();
@@ -3950,17 +4285,14 @@
                         console.log('🔄 リアルタイム更新を受信しました:', data);
                         
                         // データが更新された場合のみ反映（自分自身の更新は除外）
+                        // タスクデータ、バッジ、リソース、アーカイブは全ユーザーで共有
                         if (data.tasks) tasks = data.tasks;
                         if (data.badges) badges = data.badges;
                         if (data.taskBadges) taskBadges = data.taskBadges;
                         if (data.timeRecords) timeRecords = data.timeRecords;
                         if (data.externalLinks) externalLinks = data.externalLinks;
                         if (data.menuIconPosition) menuIconPosition = data.menuIconPosition;
-                        if (data.settings) settings = { ...settings, ...data.settings };
-                        
-                        // 設定を適用
-                        updateSettingsUI();
-                        applySettings();
+                        // settingsは個別にusers/{userId}/settingsから管理するため、リアルタイム更新では反映しない
                         
                         // UIを更新
                         updateTaskGrid();
@@ -4256,8 +4588,16 @@
             // グリッドのサイズを取得
             const gridWidth = taskGrid.offsetWidth - 48; // padding分を引く
             const gridHeight = Math.max(800, taskGrid.offsetHeight - 48);
-            const cardWidth = 280;
-            const cardHeight = 180;
+            
+            // カードサイズを設定に応じて決定
+            const cardSizes = {
+                large: { width: 320, height: 220 },
+                medium: { width: 280, height: 180 },
+                small: { width: 240, height: 150 }
+            };
+            const currentCardSize = cardSizes[settings.cardSize] || cardSizes.medium;
+            const cardWidth = currentCardSize.width;
+            const cardHeight = currentCardSize.height;
 
             // カードをクリア（ボタンは残す、ゴミ箱はtaskGrid外に固定されているので除外）
             const addButton = taskGrid.querySelector('.add-task-button');
