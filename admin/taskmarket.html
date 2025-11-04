@@ -1402,6 +1402,46 @@
             display: block;
         }
 
+        /* アーカイブタブ */
+        .archive-tabs {
+            display: flex;
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-md);
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .archive-tab {
+            flex: 1;
+            padding: var(--spacing-sm);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            cursor: pointer;
+            color: var(--color-text-secondary);
+            transition: var(--transition-normal);
+        }
+
+        .archive-tab:hover {
+            color: var(--color-text-primary);
+            background: var(--color-background-secondary);
+        }
+
+        .archive-tab.active {
+            color: var(--panel-5-color);
+            border-bottom-color: var(--panel-5-color);
+            font-weight: var(--font-weight-bold);
+        }
+
+        .archive-tab-content {
+            display: none;
+        }
+
+        .archive-tab-content.active {
+            display: block;
+        }
+
         /* メンバーカードスタイル */
         .member-card {
             background: var(--color-background);
@@ -3169,6 +3209,7 @@
                         <textarea id="dailyReportText" rows="10" style="width: 100%; padding: var(--spacing-sm); border: 1px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-family: var(--font-family-primary); resize: vertical; min-height: 200px; background: var(--color-background); color: var(--color-text-primary);" placeholder="今日の作業内容や成果を記入してください..."></textarea>
                         <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-sm);">
                             <button id="saveDailyReportButton" class="settings-button" style="flex: 1; padding: var(--spacing-sm); background: var(--panel-4-color); color: white; border: none; border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer;">保存</button>
+                            <button id="submitDailyReportButton" class="settings-button" style="flex: 1; padding: var(--spacing-sm); background: var(--panel-5-color); color: white; border: none; border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer;">アーカイブに送信</button>
                             <button id="clearDailyReportButton" class="settings-button" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background-secondary); color: var(--color-text-primary); border: 1px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer;">クリア</button>
                         </div>
                     </div>
@@ -3193,49 +3234,64 @@
                 <button class="slide-panel-close-button" onclick="closeSlidePanel(5)" title="閉じる">×</button>
             </div>
             <div class="slide-panel-content">
-                <!-- フィルター機能 -->
-                <div class="archive-filter" style="padding: var(--spacing-md); margin-bottom: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
-                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">フィルター</h3>
-                    <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
-                        <div style="flex: 1; min-width: 120px;">
-                            <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">日付</label>
-                            <select id="archiveFilterDate" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
-                                <option value="all">すべて</option>
-                                <option value="today">今日</option>
-                                <option value="week">今週</option>
-                                <option value="month">今月</option>
-                                <option value="year">今年</option>
-                            </select>
+                <!-- タブ切り替え -->
+                <div class="archive-tabs" style="display: flex; gap: var(--spacing-xs); margin-bottom: var(--spacing-md); border-bottom: 2px solid var(--color-border);">
+                    <button class="archive-tab active" data-tab="tasks" onclick="switchArchiveTab('tasks')" style="flex: 1; padding: var(--spacing-sm); background: transparent; border: none; border-bottom: 2px solid transparent; font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; color: var(--color-text-secondary); transition: var(--transition-normal);">完了タスク</button>
+                    <button class="archive-tab" data-tab="reports" onclick="switchArchiveTab('reports')" style="flex: 1; padding: var(--spacing-sm); background: transparent; border: none; border-bottom: 2px solid transparent; font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; color: var(--color-text-secondary); transition: var(--transition-normal);">日報</button>
                 </div>
-                        <div style="flex: 1; min-width: 120px;">
-                            <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">担当者</label>
-                            <select id="archiveFilterAssignee" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
-                                <option value="all">すべて</option>
-                            </select>
+                
+                <!-- 完了タスクタブ -->
+                <div id="archiveTasksTab" class="archive-tab-content active">
+                    <!-- フィルター機能 -->
+                    <div class="archive-filter" style="padding: var(--spacing-md); margin-bottom: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
+                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">フィルター</h3>
+                        <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 120px;">
+                                <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">日付</label>
+                                <select id="archiveFilterDate" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
+                                    <option value="all">すべて</option>
+                                    <option value="today">今日</option>
+                                    <option value="week">今週</option>
+                                    <option value="month">今月</option>
+                                    <option value="year">今年</option>
+                                </select>
+                </div>
+                            <div style="flex: 1; min-width: 120px;">
+                                <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">担当者</label>
+                                <select id="archiveFilterAssignee" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
+                                    <option value="all">すべて</option>
+                                </select>
             </div>
-                        <div style="flex: 1; min-width: 120px;">
-                            <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">カテゴリ</label>
-                            <select id="archiveFilterCategory" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
-                                <option value="all">すべて</option>
-                                <option value="design">デザイン</option>
-                                <option value="frontend">フロントエンド</option>
-                                <option value="backend">バックエンド</option>
-                                <option value="database">データベース</option>
-                                <option value="media">メディア</option>
-                                <option value="other">その他</option>
-                            </select>
+                            <div style="flex: 1; min-width: 120px;">
+                                <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">カテゴリ</label>
+                                <select id="archiveFilterCategory" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
+                                    <option value="all">すべて</option>
+                                    <option value="design">デザイン</option>
+                                    <option value="frontend">フロントエンド</option>
+                                    <option value="backend">バックエンド</option>
+                                    <option value="database">データベース</option>
+                                    <option value="media">メディア</option>
+                                    <option value="other">その他</option>
+                                </select>
+                            </div>
+                            <div style="flex: 1; min-width: 120px;">
+                                <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">検索</label>
+                                <input type="text" id="archiveFilterSearch" placeholder="タイトルで検索" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
+                            </div>
                         </div>
-                        <div style="flex: 1; min-width: 120px;">
-                            <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">検索</label>
-                            <input type="text" id="archiveFilterSearch" placeholder="タイトルで検索" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
-                        </div>
+                    </div>
+                    
+                    <!-- 完了済タスクアーカイブ -->
+                    <div id="archiveTaskList" class="archive-task-list">
+                        <!-- 完了済タスクがここに動的に生成されます -->
                     </div>
                 </div>
                 
-                <!-- 完了済タスクアーカイブ -->
-                <div id="archiveTaskList" class="archive-task-list">
-                    <!-- 完了済タスクがここに動的に生成されます -->
-                    <p class="archive-empty">完了済タスクがありません</p>
+                <!-- 日報タブ -->
+                <div id="archiveReportsTab" class="archive-tab-content" style="display: none;">
+                    <div id="archiveReportList" class="archive-task-list">
+                        <!-- 日報がここに動的に生成されます -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -3527,6 +3583,10 @@
             dailyReport: '' // 日報テキスト
         };
 
+        // 日報データ（全ユーザー共有）
+        let dailyReports = [];
+        // dailyReports構造: [{ id, date, userId, userName, userEmail, userPicture, content, comments: [{ id, userId, userName, userEmail, userPicture, content, createdAt }], createdAt }]
+
         // 設定を読み込み
         function loadSettings() {
             // デフォルト設定をリセット
@@ -3732,6 +3792,14 @@
                             saveMyPageData();
                         }
                     }
+                });
+            }
+            
+            // 日報アーカイブ送信ボタン
+            const submitDailyReportButton = document.getElementById('submitDailyReportButton');
+            if (submitDailyReportButton) {
+                submitDailyReportButton.addEventListener('click', function() {
+                    submitDailyReport();
                 });
             }
         }
@@ -4228,6 +4296,7 @@
                     timeRecords: timeRecords,
                     externalLinks: externalLinks,
                     menuIconPosition: menuIconPosition,
+                    dailyReports: dailyReports,
                     // settingsは個別にusers/{userId}/settingsに保存するため、ここには含めない
                     _updatedAt: Date.now()
                 };
@@ -4261,6 +4330,12 @@
                         if (data.timeRecords) timeRecords = data.timeRecords;
                         if (data.externalLinks) externalLinks = data.externalLinks;
                         if (data.menuIconPosition) menuIconPosition = data.menuIconPosition;
+                        if (data.dailyReports) {
+                            dailyReports = data.dailyReports;
+                        } else {
+                            // 日報データがない場合は空配列を初期化
+                            dailyReports = [];
+                        }
                         // settingsは個別にusers/{userId}/settingsから読み込むため、ここでは読み込まない
                         
                         // リアルタイム更新を設定
@@ -4271,6 +4346,7 @@
                         updateBadges();
                         updateLinkIconGrid();
                         updateArchivePanel();
+                        updateArchiveReports();
                         
                         return;
                     }
@@ -4296,6 +4372,9 @@
                 const savedMenuIconPosition = localStorage.getItem('menuIconPosition');
                 if (savedMenuIconPosition) menuIconPosition = JSON.parse(savedMenuIconPosition);
                 
+                const savedDailyReports = localStorage.getItem('dailyReports');
+                if (savedDailyReports) dailyReports = JSON.parse(savedDailyReports);
+                
                 // 設定を読み込み・適用
                 loadSettings();
                 applySettings();
@@ -4307,6 +4386,7 @@
                 updateBadges();
                 updateLinkIconGrid();
                 updateArchivePanel();
+                updateArchiveReports();
             } catch (error) {
                 console.warn('localStorage読み込みエラー:', error);
                 // デフォルトデータ（初回起動時）
@@ -4329,13 +4409,14 @@
                         console.log('🔄 リアルタイム更新を受信しました:', data);
                         
                         // データが更新された場合のみ反映（自分自身の更新は除外）
-                        // タスクデータ、バッジ、リソース、アーカイブは全ユーザーで共有
+                        // タスクデータ、バッジ、リソース、アーカイブ、日報は全ユーザーで共有
                         if (data.tasks) tasks = data.tasks;
                         if (data.badges) badges = data.badges;
                         if (data.taskBadges) taskBadges = data.taskBadges;
                         if (data.timeRecords) timeRecords = data.timeRecords;
                         if (data.externalLinks) externalLinks = data.externalLinks;
                         if (data.menuIconPosition) menuIconPosition = data.menuIconPosition;
+                        if (data.dailyReports) dailyReports = data.dailyReports;
                         // settingsは個別にusers/{userId}/settingsから管理するため、リアルタイム更新では反映しない
                         
                         // UIを更新
@@ -4343,6 +4424,7 @@
                         updateBadges();
                         updateLinkIconGrid();
                         updateArchivePanel();
+                        updateArchiveReports();
                     }
                 }, (error) => {
                     console.error('リアルタイム更新エラー:', error);
@@ -6309,6 +6391,264 @@
             content.innerHTML = html;
         }
 
+        // アーカイブタブを切り替え
+        function switchArchiveTab(tabName) {
+            const tabs = document.querySelectorAll('.archive-tab');
+            const contents = document.querySelectorAll('.archive-tab-content');
+            
+            tabs.forEach(tab => {
+                if (tab.dataset.tab === tabName) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            contents.forEach(content => {
+                if (content.id === 'archiveTasksTab' && tabName === 'tasks') {
+                    content.classList.add('active');
+                    content.style.display = 'block';
+                    updateArchivePanel();
+                } else if (content.id === 'archiveReportsTab' && tabName === 'reports') {
+                    content.classList.add('active');
+                    content.style.display = 'block';
+                    updateArchiveReports();
+                } else {
+                    content.classList.remove('active');
+                    content.style.display = 'none';
+                }
+            });
+        }
+
+        // 日報をアーカイブに送信
+        function submitDailyReport() {
+            const dailyReportText = document.getElementById('dailyReportText');
+            if (!dailyReportText) return;
+            
+            const content = dailyReportText.value.trim();
+            if (!content) {
+                alert('日報内容を入力してください');
+                return;
+            }
+            
+            if (!currentUser || !currentUser.id) {
+                alert('ログインが必要です');
+                return;
+            }
+            
+            // 日報を作成
+            const today = new Date();
+            const dateKey = today.toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            
+            const dailyReport = {
+                id: Date.now(),
+                date: dateKey,
+                userId: currentUser.id,
+                userName: currentUser.name || currentUser.email || 'ユーザー',
+                userEmail: currentUser.email || '',
+                userPicture: currentUser.picture || '',
+                content: content,
+                comments: [],
+                createdAt: today.toISOString()
+            };
+            
+            // 日報を追加
+            dailyReports.push(dailyReport);
+            
+            // Firebaseに保存
+            saveDailyReports();
+            
+            // 日報をクリア
+            dailyReportText.value = '';
+            myPageData.dailyReport = '';
+            saveMyPageData();
+            
+            alert('日報をアーカイブに送信しました');
+            console.log('日報をアーカイブに送信しました:', dailyReport);
+        }
+
+        // 日報をFirebaseに保存
+        function saveDailyReports() {
+            if (!firebaseInitialized || !db) {
+                console.warn('Firebaseが初期化されていません。localStorageに保存します。');
+                localStorage.setItem('dailyReports', JSON.stringify(dailyReports));
+                return;
+            }
+            
+            try {
+                db.collection('taskMarket').doc('main').set({
+                    dailyReports: dailyReports,
+                    _updatedAt: Date.now()
+                }, { merge: true }).then(() => {
+                    console.log('✅ 日報をFirebaseに保存しました（全ユーザー共有）');
+                }).catch(err => {
+                    console.warn('日報の保存エラー:', err);
+                    localStorage.setItem('dailyReports', JSON.stringify(dailyReports));
+                });
+            } catch (error) {
+                console.error('❌ Firebase保存エラー:', error);
+                localStorage.setItem('dailyReports', JSON.stringify(dailyReports));
+            }
+        }
+
+        // 日報をFirebaseから読み込み
+        function loadDailyReports() {
+            if (firebaseInitialized && db) {
+                db.collection('taskMarket').doc('main').get().then(doc => {
+                    if (doc.exists && doc.data().dailyReports) {
+                        dailyReports = doc.data().dailyReports;
+                        console.log('✅ 日報をFirebaseから読み込みました');
+                    } else {
+                        // localStorageから読み込み（フォールバック）
+                        const savedReports = localStorage.getItem('dailyReports');
+                        if (savedReports) {
+                            dailyReports = JSON.parse(savedReports);
+                        }
+                    }
+                }).catch(err => {
+                    console.warn('日報の読み込みエラー:', err);
+                    const savedReports = localStorage.getItem('dailyReports');
+                    if (savedReports) {
+                        dailyReports = JSON.parse(savedReports);
+                    }
+                });
+            } else {
+                const savedReports = localStorage.getItem('dailyReports');
+                if (savedReports) {
+                    dailyReports = JSON.parse(savedReports);
+                }
+            }
+        }
+
+        // アーカイブで日報を表示
+        function updateArchiveReports() {
+            const content = document.getElementById('archiveReportList');
+            if (!content) return;
+            
+            if (dailyReports.length === 0) {
+                content.innerHTML = '<p class="archive-empty">日報がありません</p>';
+                return;
+            }
+            
+            // 日付でグループ化
+            const reportsByDate = {};
+            dailyReports.forEach(report => {
+                if (!reportsByDate[report.date]) {
+                    reportsByDate[report.date] = [];
+                }
+                reportsByDate[report.date].push(report);
+            });
+            
+            // HTMLを生成
+            let html = '';
+            const sortedDates = Object.keys(reportsByDate).sort().reverse();
+            
+            sortedDates.forEach(dateKey => {
+                const dateReports = reportsByDate[dateKey];
+                html += `<div style="margin-bottom: var(--spacing-lg); padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); border-left: 4px solid var(--panel-5-color);">`;
+                html += `<h4 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">${dateKey}</h4>`;
+                
+                dateReports.forEach(report => {
+                    const userAvatar = report.userPicture ? `<img src="${report.userPicture}" alt="${report.userName}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: var(--spacing-sm);">` : '<div style="width: 32px; height: 32px; border-radius: 50%; background: var(--panel-5-color); display: flex; align-items: center; justify-content: center; color: white; font-weight: var(--font-weight-bold); margin-right: var(--spacing-sm);">' + (report.userName.charAt(0).toUpperCase() || 'U') + '</div>';
+                    
+                    html += `<div style="margin-bottom: var(--spacing-md); padding: var(--spacing-md); background: var(--color-background); border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">`;
+                    
+                    // 日報ヘッダー（ユーザー情報）
+                    html += `<div style="display: flex; align-items: center; margin-bottom: var(--spacing-md); padding-bottom: var(--spacing-sm); border-bottom: 1px solid var(--color-border);">`;
+                    html += userAvatar;
+                    html += `<div style="flex: 1;">`;
+                    html += `<div style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">${escapeHtml(report.userName)}</div>`;
+                    html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">${new Date(report.createdAt).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}</div>`;
+                    html += `</div>`;
+                    html += `</div>`;
+                    
+                    // 日報内容
+                    html += `<div style="margin-bottom: var(--spacing-md); color: var(--color-text-primary); white-space: pre-wrap; line-height: 1.6;">${escapeHtml(report.content)}</div>`;
+                    
+                    // コメントセクション
+                    html += `<div style="margin-top: var(--spacing-md); padding-top: var(--spacing-md); border-top: 1px solid var(--color-border);">`;
+                    html += `<div style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">コメント (${report.comments ? report.comments.length : 0})</div>`;
+                    
+                    // コメント入力フォーム
+                    html += `<div style="margin-bottom: var(--spacing-md);">`;
+                    html += `<textarea id="commentInput_${report.id}" rows="3" style="width: 100%; padding: var(--spacing-sm); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm); font-family: var(--font-family-primary); resize: vertical; background: var(--color-background); color: var(--color-text-primary);" placeholder="コメントを入力..."></textarea>`;
+                    html += `<button onclick="addComment(${report.id})" style="margin-top: var(--spacing-xs); padding: var(--spacing-xs) var(--spacing-md); background: var(--panel-5-color); color: white; border: none; border-radius: var(--border-radius-sm); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer;">コメントを投稿</button>`;
+                    html += `</div>`;
+                    
+                    // コメント一覧
+                    if (report.comments && report.comments.length > 0) {
+                        report.comments.forEach(comment => {
+                            const commentAvatar = comment.userPicture ? `<img src="${comment.userPicture}" alt="${comment.userName}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: var(--spacing-xs);">` : '<div style="width: 24px; height: 24px; border-radius: 50%; background: var(--panel-5-color); display: flex; align-items: center; justify-content: center; color: white; font-size: var(--font-size-xs); font-weight: var(--font-weight-bold); margin-right: var(--spacing-xs);">' + (comment.userName.charAt(0).toUpperCase() || 'U') + '</div>';
+                            
+                            html += `<div style="margin-bottom: var(--spacing-sm); padding: var(--spacing-sm); background: var(--color-background-secondary); border-radius: var(--border-radius-sm);">`;
+                            html += `<div style="display: flex; align-items: center; margin-bottom: var(--spacing-xs);">`;
+                            html += commentAvatar;
+                            html += `<div style="flex: 1;">`;
+                            html += `<div style="font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">${escapeHtml(comment.userName)}</div>`;
+                            html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">${new Date(comment.createdAt).toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}</div>`;
+                            html += `</div>`;
+                            html += `</div>`;
+                            html += `<div style="font-size: var(--font-size-sm); color: var(--color-text-primary); white-space: pre-wrap; line-height: 1.5; margin-left: calc(24px + var(--spacing-xs));">${escapeHtml(comment.content)}</div>`;
+                            html += `</div>`;
+                        });
+                    }
+                    
+                    html += `</div>`;
+                    html += `</div>`;
+                });
+                
+                html += `</div>`;
+            });
+            
+            content.innerHTML = html;
+        }
+
+        // コメントを追加
+        function addComment(reportId) {
+            if (!currentUser || !currentUser.id) {
+                alert('ログインが必要です');
+                return;
+            }
+            
+            const commentInput = document.getElementById(`commentInput_${reportId}`);
+            if (!commentInput) return;
+            
+            const content = commentInput.value.trim();
+            if (!content) {
+                alert('コメントを入力してください');
+                return;
+            }
+            
+            const report = dailyReports.find(r => r.id === reportId);
+            if (!report) return;
+            
+            const comment = {
+                id: Date.now(),
+                userId: currentUser.id,
+                userName: currentUser.name || currentUser.email || 'ユーザー',
+                userEmail: currentUser.email || '',
+                userPicture: currentUser.picture || '',
+                content: content,
+                createdAt: new Date().toISOString()
+            };
+            
+            if (!report.comments) {
+                report.comments = [];
+            }
+            report.comments.push(comment);
+            
+            // Firebaseに保存
+            saveDailyReports();
+            
+            // コメント入力欄をクリア
+            commentInput.value = '';
+            
+            // 日報を再表示
+            updateArchiveReports();
+            
+            console.log('コメントを追加しました:', comment);
+        }
+
         // 時間をフォーマット（グローバル関数として定義）
         function formatDuration(seconds) {
             if (!seconds && seconds !== 0) return '-';
@@ -7884,6 +8224,7 @@
                 setTimeout(() => {
                     updateArchivePanel();
                     updateAssigneeFilterOptions();
+                    updateArchiveReports();
                 }, 100);
             }
         }
