@@ -1482,6 +1482,46 @@
             display: block !important;
         }
 
+        /* 設定パネルタブスタイル */
+        .settings-tabs {
+            display: flex;
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-md);
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .settings-tab {
+            flex: 1;
+            padding: var(--spacing-sm);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            cursor: pointer;
+            color: var(--color-text-secondary);
+            transition: var(--transition-normal);
+        }
+
+        .settings-tab:hover {
+            color: var(--color-text-primary);
+            background: var(--color-background-secondary);
+        }
+
+        .settings-tab.active {
+            color: var(--panel-3-color);
+            border-bottom-color: var(--panel-3-color);
+            font-weight: var(--font-weight-bold);
+        }
+
+        .settings-tab-content {
+            display: none;
+        }
+
+        .settings-tab-content.active {
+            display: block !important;
+        }
+
         /* メンバーカードスタイル */
         .member-card {
             background: var(--color-background);
@@ -2358,12 +2398,12 @@
             }
         }
 
-        /* スマホ版（SP）：カードフッターの左、カードの左下に配置 */
+        /* スマホ版（SP）：カードの左下に配置 */
         @media (max-width: 430px) {
             .task-card .badge.attached {
                 position: absolute;
-                bottom: var(--spacing-sm);
-                left: var(--spacing-sm);
+                bottom: 0;
+                left: 0;
                 width: 20px;
                 height: 20px;
                 cursor: pointer;
@@ -2375,19 +2415,19 @@
 
             /* 複数のバッジがある場合、横方向に並べる（20pxバッジ + 4px間隔） */
             .task-card .badge.attached:nth-of-type(2) {
-                left: calc(var(--spacing-sm) + 24px);
+                left: 24px;
             }
 
             .task-card .badge.attached:nth-of-type(3) {
-                left: calc(var(--spacing-sm) + 48px);
+                left: 48px;
             }
 
             .task-card .badge.attached:nth-of-type(4) {
-                left: calc(var(--spacing-sm) + 72px);
+                left: 72px;
             }
 
             .task-card .badge.attached:nth-of-type(5) {
-                left: calc(var(--spacing-sm) + 96px);
+                left: 96px;
             }
         }
 
@@ -3194,67 +3234,151 @@
                 <button class="slide-panel-close-button" onclick="closeSlidePanel(3)" title="閉じる">×</button>
             </div>
             <div class="slide-panel-content">
-                <!-- 表示設定セクション -->
-                <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
-                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-3-color); padding-bottom: var(--spacing-sm);">表示設定</h3>
-                    
-                    <!-- ツールチップの表示/非表示（必須） -->
-                    <div class="settings-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm);">
-                        <div>
-                            <label style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-xs);">ツールチップの表示</label>
-                            <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0;">ボタンやアイコンにホバーした時のヒントを表示/非表示</p>
+                <!-- タブ切り替え -->
+                <div class="settings-tabs" style="display: flex; gap: var(--spacing-xs); margin-bottom: var(--spacing-md); border-bottom: 2px solid var(--color-border);">
+                    <button class="settings-tab active" data-tab="settings" onclick="switchSettingsTab('settings')" style="flex: 1; padding: var(--spacing-sm); background: transparent; border: none; border-bottom: 2px solid transparent; font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; color: var(--color-text-secondary); transition: var(--transition-normal);">設定</button>
+                    <button class="settings-tab" data-tab="manual" onclick="switchSettingsTab('manual')" style="flex: 1; padding: var(--spacing-sm); background: transparent; border: none; border-bottom: 2px solid transparent; font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; color: var(--color-text-secondary); transition: var(--transition-normal);">操作説明</button>
+                </div>
+                
+                <!-- 設定タブ -->
+                <div id="settingsTab" class="settings-tab-content active">
+                    <!-- 表示設定セクション -->
+                    <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
+                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-3-color); padding-bottom: var(--spacing-sm);">表示設定</h3>
+                        
+                        <!-- ツールチップの表示/非表示（必須） -->
+                        <div class="settings-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm);">
+                            <div>
+                                <label style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-xs);">ツールチップの表示</label>
+                                <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0;">ボタンやアイコンにホバーした時のヒントを表示/非表示</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="settingTooltipEnabled" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
                         </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="settingTooltipEnabled" checked>
-                            <span class="toggle-slider"></span>
-                        </label>
+                        
+                        <!-- ダークモードの切り替え -->
+                        <div class="settings-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm);">
+                            <div>
+                                <label style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-xs);">ダークモード</label>
+                                <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0;">画面を暗いテーマに切り替えます</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="settingDarkMode">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <!-- カードサイズの選択 -->
+                        <div class="settings-item" style="padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm);">
+                            <div style="margin-bottom: var(--spacing-sm);">
+                                <label style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-xs);">カードの表示サイズ</label>
+                                <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0;">タスクカードの表示サイズを変更します</p>
+                            </div>
+                            <div style="display: flex; gap: var(--spacing-sm);">
+                                <button type="button" class="card-size-button" data-size="large" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">大</button>
+                                <button type="button" class="card-size-button" data-size="medium" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">中</button>
+                                <button type="button" class="card-size-button" data-size="small" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">小</button>
+                            </div>
+                        </div>
                     </div>
                     
-                    <!-- ダークモードの切り替え -->
-                    <div class="settings-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm);">
-                        <div>
-                            <label style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-xs);">ダークモード</label>
-                            <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0;">画面を暗いテーマに切り替えます</p>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="settingDarkMode">
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                    
-                    <!-- カードサイズの選択 -->
-                    <div class="settings-item" style="padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm);">
-                        <div style="margin-bottom: var(--spacing-sm);">
-                            <label style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-xs);">カードの表示サイズ</label>
-                            <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0;">タスクカードの表示サイズを変更します</p>
-                        </div>
-                        <div style="display: flex; gap: var(--spacing-sm);">
-                            <button type="button" class="card-size-button" data-size="large" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">大</button>
-                            <button type="button" class="card-size-button" data-size="medium" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">中</button>
-                            <button type="button" class="card-size-button" data-size="small" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">小</button>
-                        </div>
+                    <!-- データ管理セクション -->
+                    <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
+                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-3-color); padding-bottom: var(--spacing-sm);">データ管理</h3>
+                        
+                        <!-- データエクスポート -->
+                        <button class="settings-button" id="exportDataButton" style="width: 100%; padding: var(--spacing-sm); background: var(--color-primary); color: white; border: none; border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; margin-bottom: var(--spacing-sm);">
+                            📥 データをエクスポート
+                        </button>
+                        
+                        <!-- データインポート -->
+                        <button class="settings-button" id="importDataButton" style="width: 100%; padding: var(--spacing-sm); background: var(--color-background-secondary); color: var(--color-text-primary); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; margin-bottom: var(--spacing-sm);">
+                            📤 データをインポート
+                        </button>
+                        <input type="file" id="importDataInput" accept=".json" style="display: none;">
+                        
+                        <!-- データリセット -->
+                        <button class="settings-button" id="resetDataButton" style="width: 100%; padding: var(--spacing-sm); background: #ff4444; color: white; border: none; border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; margin-bottom: var(--spacing-sm);">
+                            🔄 データをリセット
+                        </button>
                     </div>
                 </div>
                 
-                <!-- データ管理セクション -->
-                <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
-                    <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-3-color); padding-bottom: var(--spacing-sm);">データ管理</h3>
+                <!-- 操作説明タブ -->
+                <div id="settingsManualTab" class="settings-tab-content" style="display: none;">
+                    <!-- 機能説明セクション -->
+                    <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
+                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-3-color); padding-bottom: var(--spacing-sm);">機能説明</h3>
+                        <div style="padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); line-height: 1.8; color: var(--color-text-primary);">
+                            <h4 style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">📋 タスク管理機能</h4>
+                            <ul style="margin: 0; padding-left: var(--spacing-lg); font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                                <li>タスクの作成・編集・削除ができます</li>
+                                <li>タスクカードをドラッグ&ドロップで自由に移動できます</li>
+                                <li>タスクカードをダブルクリックで詳細を表示できます</li>
+                                <li>タスクを完了ボタンにドロップして完了できます</li>
+                                <li>タスクをゴミ箱にドロップして削除できます</li>
+                            </ul>
+                            
+                            <h4 style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-top: var(--spacing-md); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">🏷️ バッジシステム</h4>
+                            <ul style="margin: 0; padding-left: var(--spacing-lg); font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                                <li>バッジを作成してタスクに付与できます</li>
+                                <li>バッジをドラッグ&ドロップでタスクカードに付与できます</li>
+                                <li>バッジを外すとタイムレコードが停止します</li>
+                                <li>Googleアカウントから自動でバッジが作成されます</li>
+                            </ul>
+                            
+                            <h4 style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-top: var(--spacing-md); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">⏱️ タイムレコード機能</h4>
+                            <ul style="margin: 0; padding-left: var(--spacing-lg); font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                                <li>バッジをタスクに付与すると自動的にタイムレコードが開始されます</li>
+                                <li>タイムレコードパネルで作業時間を確認できます</li>
+                                <li>タイムレコードの履歴が保存されます</li>
+                            </ul>
+                            
+                            <h4 style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-top: var(--spacing-md); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">📊 パネル機能</h4>
+                            <ul style="margin: 0; padding-left: var(--spacing-lg); font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                                <li>リソース管理パネル：メンバー一覧、スケジュール、タイムラインを表示</li>
+                                <li>設定パネル：表示設定やデータ管理を行います</li>
+                                <li>マイページ：ステータス表示と日報管理を行います</li>
+                                <li>アーカイブ：完了済みタスクと日報を表示します</li>
+                            </ul>
+                        </div>
+                    </div>
                     
-                    <!-- データエクスポート -->
-                    <button class="settings-button" id="exportDataButton" style="width: 100%; padding: var(--spacing-sm); background: var(--color-primary); color: white; border: none; border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; margin-bottom: var(--spacing-sm);">
-                        📥 データをエクスポート
-                    </button>
-                    
-                    <!-- データインポート -->
-                    <button class="settings-button" id="importDataButton" style="width: 100%; padding: var(--spacing-sm); background: var(--color-background-secondary); color: var(--color-text-primary); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; margin-bottom: var(--spacing-sm);">
-                        📤 データをインポート
-                    </button>
-                    <input type="file" id="importDataInput" accept=".json" style="display: none;">
-                    
-                    <!-- データリセット -->
-                    <button class="settings-button" id="resetDataButton" style="width: 100%; padding: var(--spacing-sm); background: #ff4444; color: white; border: none; border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; margin-bottom: var(--spacing-sm);">
-                        🔄 データをリセット
-                    </button>
+                    <!-- 操作説明セクション -->
+                    <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
+                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-3-color); padding-bottom: var(--spacing-sm);">操作説明</h3>
+                        <div style="padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); line-height: 1.8; color: var(--color-text-primary);">
+                            <h4 style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">🖱️ PC版の操作方法</h4>
+                            <ul style="margin: 0; padding-left: var(--spacing-lg); font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                                <li><strong>タスクの作成</strong>：画面下部の「+」ボタンをクリック</li>
+                                <li><strong>タスクの移動</strong>：タスクカードをドラッグ&ドロップ</li>
+                                <li><strong>タスクの詳細表示</strong>：タスクカードをダブルクリック</li>
+                                <li><strong>タスクの完了</strong>：タスクカードを完了ボタンにドロップ</li>
+                                <li><strong>タスクの削除</strong>：タスクカードをゴミ箱にドロップ</li>
+                                <li><strong>バッジの付与</strong>：バッジをタスクカードにドラッグ&ドロップ</li>
+                                <li><strong>パネルの開閉</strong>：メニューアイコンから各パネルを開く</li>
+                            </ul>
+                            
+                            <h4 style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-top: var(--spacing-md); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">📱 スマホ版（SP版）の操作方法</h4>
+                            <ul style="margin: 0; padding-left: var(--spacing-lg); font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                                <li><strong>タスクの作成</strong>：画面下部中央の「+」ボタンをタップ</li>
+                                <li><strong>タスクの移動</strong>：タスクカードを長押ししてドラッグ</li>
+                                <li><strong>タスクの詳細表示</strong>：タスクカードをダブルタップ</li>
+                                <li><strong>タスクの完了</strong>：タスクカードを完了ボタンにドロップ</li>
+                                <li><strong>タスクの削除</strong>：タスクカードをゴミ箱にドロップ（カード全体が重なった時のみ）</li>
+                                <li><strong>バッジの付与</strong>：バッジをタスクカードにドラッグ</li>
+                                <li><strong>画面の更新</strong>：画面を下に引いてプルリフレッシュ</li>
+                                <li><strong>メニューの開閉</strong>：メニューアイコンをタップ</li>
+                            </ul>
+                            
+                            <h4 style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-top: var(--spacing-md); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">⌨️ キーボードショートカット</h4>
+                            <ul style="margin: 0; padding-left: var(--spacing-lg); font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                                <li><strong>ESC</strong>：開いているパネルやモーダルを閉じる</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -6837,6 +6961,33 @@
                     content.classList.add('active');
                     content.style.display = 'block';
                     updateMyPageReports(); // 日報一覧を更新
+                } else {
+                    content.classList.remove('active');
+                    content.style.display = 'none';
+                }
+            });
+        }
+
+        // 設定パネルタブを切り替え
+        function switchSettingsTab(tabName) {
+            const tabs = document.querySelectorAll('.settings-tab');
+            const contents = document.querySelectorAll('.settings-tab-content');
+            
+            tabs.forEach(tab => {
+                if (tab.dataset.tab === tabName) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            contents.forEach(content => {
+                if (content.id === 'settingsTab' && tabName === 'settings') {
+                    content.classList.add('active');
+                    content.style.display = 'block';
+                } else if (content.id === 'settingsManualTab' && tabName === 'manual') {
+                    content.classList.add('active');
+                    content.style.display = 'block';
                 } else {
                     content.classList.remove('active');
                     content.style.display = 'none';
