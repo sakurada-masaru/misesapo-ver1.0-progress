@@ -1753,6 +1753,66 @@
             z-index: 1000;
         }
 
+        /* メニューアイコン固定状態 */
+        .menu-icon.fixed {
+            background: var(--color-primary);
+            border-color: var(--color-primary-hover);
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 103, 156, 0.6);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .menu-icon.fixed::after {
+            content: '📌';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-size: 20px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-icon.fixed:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(255, 103, 156, 0.8);
+        }
+
+        /* 固定時のパルスアニメーション */
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(255, 103, 156, 0.6);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(255, 103, 156, 0.9);
+            }
+        }
+
+        /* 長押し中の視覚的フィードバック */
+        .menu-icon.long-pressing {
+            transform: scale(1.2);
+            background: var(--color-primary-light);
+            border-color: var(--color-primary);
+        }
+
+        /* 長押し進捗表示 */
+        .menu-icon .long-press-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background: rgba(255, 103, 156, 0.3);
+            border-radius: 50%;
+            transition: width 0.1s linear;
+            pointer-events: none;
+        }
+
         .menu-icon img {
             width: 60px;
             height: 60px;
@@ -3792,6 +3852,9 @@
 
         // メニューアイコンの位置データ（相対位置（%）で保存）
         let menuIconPosition = null;
+        
+        // メニューアイコンの固定状態
+        let menuIconFixed = false;
 
         // 設定データ
         let settings = {
@@ -4134,6 +4197,10 @@
             localStorage.removeItem('timeRecords');
             localStorage.removeItem('externalLinks');
             localStorage.removeItem('menuIconPosition');
+            localStorage.removeItem('menuIconFixed');
+            
+            // 固定状態もリセット
+            menuIconFixed = false;
             
             // UIを更新
             updateTaskGrid();
@@ -4152,13 +4219,116 @@
             const taskGrid = document.getElementById('taskGrid');
             if (!taskGrid) return;
             
+            // 固定状態を読み込む
+            loadMenuIconFixedState();
+            
             let draggedOffset = { x: 0, y: 0 };
             
             // ドラッグ中フラグ
             let hasDragged = false;
             
+            // 長押し検出用の変数
+            let longPressTimer = null;
+            let longPressStartTime = 0;
+            let longPressProgress = null;
+            const LONG_PRESS_DURATION = 5000; // 5秒
+            
+            // 長押し進捗バーを作成
+            function createLongPressProgress() {
+                if (menuIcon.querySelector('.long-press-progress')) return;
+                const progress = document.createElement('div');
+                progress.className = 'long-press-progress';
+                menuIcon.appendChild(progress);
+                longPressProgress = progress;
+            }
+            
+            // 長押し進捗バーを削除
+            function removeLongPressProgress() {
+                const progress = menuIcon.querySelector('.long-press-progress');
+                if (progress) {
+                    progress.remove();
+                    longPressProgress = null;
+                }
+            }
+            
+            // 長押しを開始
+            function startLongPress(e) {
+                if (menuIconFixed) return; // 既に固定されている場合は何もしない
+                
+                longPressStartTime = Date.now();
+                menuIcon.classList.add('long-pressing');
+                createLongPressProgress();
+                
+                // 進捗バーの更新
+                const updateProgress = () => {
+                    if (!longPressProgress || !menuIcon.classList.contains('long-pressing')) {
+                        return;
+                    }
+                    
+                    const elapsed = Date.now() - longPressStartTime;
+                    const progress = Math.min((elapsed / LONG_PRESS_DURATION) * 100, 100);
+                    longPressProgress.style.width = progress + '%';
+                    
+                    if (progress < 100) {
+                        requestAnimationFrame(updateProgress);
+                    }
+                };
+                
+                updateProgress();
+                
+                // 5秒後に固定を切り替え
+                longPressTimer = setTimeout(() => {
+                    toggleMenuIconFixed();
+                    menuIcon.classList.remove('long-pressing');
+                    removeLongPressProgress();
+                    longPressTimer = null;
+                }, LONG_PRESS_DURATION);
+            }
+            
+            // 長押しをキャンセル
+            function cancelLongPress() {
+                if (longPressTimer) {
+                    clearTimeout(longPressTimer);
+                    longPressTimer = null;
+                }
+                menuIcon.classList.remove('long-pressing');
+                removeLongPressProgress();
+            }
+            
+            // PC版：マウスダウンで長押しを開始
+            menuIcon.addEventListener('mousedown', function(e) {
+                if (menuIconFixed) return; // 固定されている場合は何もしない
+                startLongPress(e);
+            });
+            
+            // PC版：マウスアップ/マウスアウトで長押しをキャンセル
+            menuIcon.addEventListener('mouseup', cancelLongPress);
+            menuIcon.addEventListener('mouseleave', cancelLongPress);
+            
+            // SP版：タッチ開始で長押しを開始（長押し検出用、ドラッグとは別）
+            let longPressTouchStartHandler = function(e) {
+                if (menuIconFixed || e.touches.length !== 1) return; // 固定されている場合または複数タッチの場合は何もしない
+                // 長押し検出は少し遅延させて、ドラッグと区別する
+                setTimeout(() => {
+                    if (!isTouchDragging && !touchHasDragged) {
+                        startLongPress(e);
+                    }
+                }, 100);
+            };
+            menuIcon.addEventListener('touchstart', longPressTouchStartHandler, { passive: true });
+            
+            // SP版：タッチ終了/タッチキャンセルで長押しをキャンセル
+            menuIcon.addEventListener('touchend', function(e) {
+                cancelLongPress();
+            });
+            menuIcon.addEventListener('touchcancel', cancelLongPress);
+            
             // PC版：ドラッグ開始
             menuIcon.addEventListener('dragstart', function(e) {
+                if (menuIconFixed) {
+                    e.preventDefault();
+                    return; // 固定されている場合はドラッグを無効化
+                }
                 hasDragged = true;
                 this.classList.add('dragging');
                 const rect = this.getBoundingClientRect();
@@ -4241,7 +4411,7 @@
             let touchClickTimeout = null;
             
             menuIcon.addEventListener('touchstart', function(e) {
-                if (e.touches.length === 1) {
+                if (e.touches.length === 1 && !menuIconFixed) { // 固定されている場合はドラッグを無効化
                     const touch = e.touches[0];
                     const rect = this.getBoundingClientRect();
                     const gridRect = taskGrid.getBoundingClientRect();
@@ -4255,8 +4425,9 @@
             }, { passive: true });
             
             menuIcon.addEventListener('touchmove', function(e) {
-                if (e.touches.length === 1) {
+                if (e.touches.length === 1 && !menuIconFixed) { // 固定されている場合はドラッグを無効化
                     e.preventDefault();
+                    cancelLongPress(); // ドラッグ中は長押しをキャンセル
                     const touch = e.touches[0];
                     
                     // 移動距離をチェックしてドラッグかどうか判定
@@ -4514,6 +4685,73 @@
                 }
             }
         }
+        
+        // メニューアイコンの固定状態を保存
+        function saveMenuIconFixedState() {
+            localStorage.setItem('menuIconFixed', JSON.stringify(menuIconFixed));
+            if (firebaseInitialized && db) {
+                db.collection('taskMarket').doc('main').set({
+                    menuIconFixed: menuIconFixed,
+                    _updatedAt: Date.now()
+                }, { merge: true }).then(() => {
+                    console.log('✅ メニューアイコン固定状態をFirebaseに保存しました');
+                }).catch(err => {
+                    console.warn('メニューアイコン固定状態の保存エラー:', err);
+                });
+            }
+        }
+        
+        // メニューアイコンの固定状態を読み込む
+        function loadMenuIconFixedState() {
+            const savedFixed = localStorage.getItem('menuIconFixed');
+            if (savedFixed !== null) {
+                menuIconFixed = JSON.parse(savedFixed);
+            }
+            
+            // Firebaseからも読み込む
+            if (firebaseInitialized && db) {
+                db.collection('taskMarket').doc('main').get().then(doc => {
+                    if (doc.exists && doc.data().menuIconFixed !== undefined) {
+                        menuIconFixed = doc.data().menuIconFixed;
+                        applyMenuIconFixedState();
+                    }
+                }).catch(err => {
+                    console.warn('メニューアイコン固定状態の読み込みエラー:', err);
+                });
+            }
+            
+            applyMenuIconFixedState();
+        }
+        
+        // メニューアイコンの固定状態を適用
+        function applyMenuIconFixedState() {
+            const menuIcon = document.getElementById('menuIcon');
+            if (!menuIcon) return;
+            
+            if (menuIconFixed) {
+                menuIcon.classList.add('fixed');
+                menuIcon.draggable = false;
+                menuIcon.style.cursor = 'pointer';
+            } else {
+                menuIcon.classList.remove('fixed');
+                menuIcon.draggable = true;
+                menuIcon.style.cursor = 'move';
+            }
+        }
+        
+        // メニューアイコンの固定状態を切り替え
+        function toggleMenuIconFixed() {
+            menuIconFixed = !menuIconFixed;
+            applyMenuIconFixedState();
+            saveMenuIconFixedState();
+            
+            // トースト通知を表示（もし実装されている場合）
+            if (typeof showToast === 'function') {
+                showToast(menuIconFixed ? 'メニューボタンを固定しました' : 'メニューボタンの固定を解除しました', 'success');
+            } else {
+                console.log(menuIconFixed ? '✅ メニューボタンを固定しました' : '✅ メニューボタンの固定を解除しました');
+            }
+        }
 
         /* ========================================
            💾 Firebaseデータ保存・読み込み (Firebase Data Save & Load)
@@ -4574,6 +4812,7 @@
                         if (data.timeRecords) timeRecords = data.timeRecords;
                         if (data.externalLinks) externalLinks = data.externalLinks;
                         if (data.menuIconPosition) menuIconPosition = data.menuIconPosition;
+                        if (data.menuIconFixed !== undefined) menuIconFixed = data.menuIconFixed;
                         if (data.dailyReports) {
                             dailyReports = data.dailyReports;
                         } else {
@@ -4584,6 +4823,9 @@
                         
                         // リアルタイム更新を設定
                         setupRealtimeListener();
+                        
+                        // メニューアイコンの固定状態を適用
+                        applyMenuIconFixedState();
                         
                         // UIを更新
                         updateTaskGrid();
@@ -4616,12 +4858,18 @@
                 const savedMenuIconPosition = localStorage.getItem('menuIconPosition');
                 if (savedMenuIconPosition) menuIconPosition = JSON.parse(savedMenuIconPosition);
                 
+                const savedMenuIconFixed = localStorage.getItem('menuIconFixed');
+                if (savedMenuIconFixed !== null) menuIconFixed = JSON.parse(savedMenuIconFixed);
+                
                 const savedDailyReports = localStorage.getItem('dailyReports');
                 if (savedDailyReports) dailyReports = JSON.parse(savedDailyReports);
                 
                 // 設定を読み込み・適用
                 loadSettings();
                 applySettings();
+                
+                // メニューアイコンの固定状態を適用
+                applyMenuIconFixedState();
 
                 console.log('localStorageからタスクマーケットデータを読み込みました');
 
