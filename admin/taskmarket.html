@@ -4119,13 +4119,13 @@
             }
             
             const taskGrid = document.getElementById('taskGrid');
-            if (!taskGrid) {
-                // taskGridが存在しない場合は何もしない（後で再度呼び出される）
-                return;
-            }
             
             // 位置固定モードの場合はドラッグ関連のイベントリスナーをスキップ
             if (!isFixedPosition) {
+                if (!taskGrid) {
+                    // taskGridが存在しない場合は何もしない（後で再度呼び出される）
+                    return;
+                }
             
             let draggedOffset = { x: 0, y: 0 };
             
@@ -4339,40 +4339,41 @@
             // 位置固定モードでもクリック/ダブルクリックイベントは設定する
             if (isFixedPosition) {
                 // ダブルクリック/ダブルタップでメニュー項目を表示
-                let clickTimeout = null;
+                let fixedClickTimeout = null;
                 
                 menuIcon.addEventListener('click', function(e) {
-                    if (clickTimeout) {
-                        clearTimeout(clickTimeout);
-                        clickTimeout = null;
+                    if (fixedClickTimeout) {
+                        clearTimeout(fixedClickTimeout);
+                        fixedClickTimeout = null;
                         // ダブルクリック
                         toggleMenuItems();
                     } else {
-                        clickTimeout = setTimeout(() => {
-                            clickTimeout = null;
+                        fixedClickTimeout = setTimeout(() => {
+                            fixedClickTimeout = null;
                         }, 300);
                     }
                 });
                 
                 menuIcon.addEventListener('dblclick', function(e) {
                     e.preventDefault();
+                    e.stopPropagation();
                     toggleMenuItems();
                 });
                 
                 // SP版：タッチイベント
-                let touchClickTimeout = null;
+                let fixedTouchClickTimeout = null;
                 
                 menuIcon.addEventListener('touchend', function(e) {
                     e.stopPropagation();
                     e.preventDefault();
-                    if (touchClickTimeout) {
-                        clearTimeout(touchClickTimeout);
-                        touchClickTimeout = null;
+                    if (fixedTouchClickTimeout) {
+                        clearTimeout(fixedTouchClickTimeout);
+                        fixedTouchClickTimeout = null;
                         // ダブルタップ
                         toggleMenuItems();
                     } else {
-                        touchClickTimeout = setTimeout(() => {
-                            touchClickTimeout = null;
+                        fixedTouchClickTimeout = setTimeout(() => {
+                            fixedTouchClickTimeout = null;
                         }, 300);
                     }
                 }, { passive: false });
