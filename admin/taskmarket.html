@@ -1741,8 +1741,7 @@
             transition: var(--transition-normal);
             user-select: none;
             -webkit-user-select: none;
-            touch-action: manipulation; /* ダブルタップズームを防ぐ */
-            -webkit-tap-highlight-color: transparent; /* タップ時のハイライトを無効化 */
+            touch-action: none;
         }
 
         .menu-icon:hover {
@@ -1754,75 +1753,11 @@
             z-index: 1000;
         }
 
-        /* メニューアイコン固定状態 */
-        .menu-icon.fixed {
-            background: var(--color-primary);
-            border-color: var(--color-primary-hover);
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(255, 103, 156, 0.6);
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        .menu-icon.fixed::after {
-            content: '📌';
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            font-size: 20px;
-            background: var(--color-primary);
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .menu-icon.fixed:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 30px rgba(255, 103, 156, 0.8);
-        }
-
-        /* 固定時のパルスアニメーション */
-        @keyframes pulse {
-            0%, 100% {
-                box-shadow: 0 0 20px rgba(255, 103, 156, 0.6);
-            }
-            50% {
-                box-shadow: 0 0 30px rgba(255, 103, 156, 0.9);
-            }
-        }
-
-        /* 長押し中の視覚的フィードバック */
-        .menu-icon.long-pressing {
-            transform: scale(1.2);
-            background: var(--color-primary-light);
-            border-color: var(--color-primary);
-        }
-
-        /* 長押し進捗表示 */
-        .menu-icon .long-press-progress {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 100%;
-            background: rgba(255, 103, 156, 0.3);
-            border-radius: 50%;
-            transition: width 0.1s linear;
-            pointer-events: none;
-        }
-
         .menu-icon img {
             width: 60px;
             height: 60px;
             object-fit: contain;
             pointer-events: none;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-user-drag: none;
-            touch-action: none;
         }
 
         .menu-icon .tooltip-text {
@@ -1927,6 +1862,37 @@
 
         .menu-item.left.active {
             transform: translateY(-50%) scale(1) rotate(360deg);
+        }
+        
+        /* メニューボタンが左側の場合、メニュー項目を右側に展開 */
+        .menu-button-left .menu-item.left {
+            left: auto;
+            right: -80px;
+        }
+        
+        .menu-button-left .menu-item.left.active {
+            transform: translateY(-50%) scale(1) rotate(360deg);
+        }
+        
+        /* メニューボタンが左側の場合、上下のメニュー項目も右側に寄せる */
+        .menu-button-left .menu-item.top {
+            left: auto;
+            right: 0;
+            transform: translateX(0) scale(0) rotate(0deg);
+        }
+        
+        .menu-button-left .menu-item.top.active {
+            transform: translateX(0) scale(1) rotate(360deg);
+        }
+        
+        .menu-button-left .menu-item.bottom {
+            left: auto;
+            right: 0;
+            transform: translateX(0) scale(0) rotate(0deg);
+        }
+        
+        .menu-button-left .menu-item.bottom.active {
+            transform: translateX(0) scale(1) rotate(360deg);
         }
 
         .form-group {
@@ -3347,6 +3313,18 @@
                                 <button type="button" class="card-size-button" data-size="small" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">小</button>
                             </div>
                         </div>
+                        
+                        <!-- メニューボタン位置の選択 -->
+                        <div class="settings-item" style="padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm);">
+                            <div style="margin-bottom: var(--spacing-sm);">
+                                <label style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-xs);">メニューボタンの位置</label>
+                                <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0;">メニューボタンを左下または右下に固定します</p>
+                            </div>
+                            <div style="display: flex; gap: var(--spacing-sm);">
+                                <button type="button" class="menu-position-button" data-position="left" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">左下</button>
+                                <button type="button" class="menu-position-button" data-position="right" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">右下</button>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- データ管理セクション -->
@@ -3857,9 +3835,6 @@
 
         // メニューアイコンの位置データ（相対位置（%）で保存）
         let menuIconPosition = null;
-        
-        // メニューアイコンの固定状態
-        let menuIconFixed = false;
 
         // 設定データ
         let settings = {
@@ -3905,7 +3880,8 @@
             settings = {
                 tooltipEnabled: true,
                 cardSize: 'medium',
-                darkMode: false
+                darkMode: false,
+                menuButtonPosition: 'right' // デフォルトは右下
             };
             
             // ログイン中の場合、ユーザー設定を読み込む
@@ -3977,8 +3953,30 @@
             cardSizeButtons.forEach(button => {
                 if (button.dataset.size === settings.cardSize) {
                     button.classList.add('active');
+                    button.style.background = 'var(--color-primary)';
+                    button.style.color = 'white';
+                    button.style.borderColor = 'var(--color-primary)';
                 } else {
                     button.classList.remove('active');
+                    button.style.background = 'var(--color-background)';
+                    button.style.color = 'var(--color-text-primary)';
+                    button.style.borderColor = 'var(--color-border)';
+                }
+            });
+            
+            // メニューボタン位置ボタンの状態を更新
+            const menuPositionButtons = document.querySelectorAll('.menu-position-button');
+            menuPositionButtons.forEach(button => {
+                if (button.dataset.position === settings.menuButtonPosition) {
+                    button.classList.add('active');
+                    button.style.background = 'var(--color-primary)';
+                    button.style.color = 'white';
+                    button.style.borderColor = 'var(--color-primary)';
+                } else {
+                    button.classList.remove('active');
+                    button.style.background = 'var(--color-background)';
+                    button.style.color = 'var(--color-text-primary)';
+                    button.style.borderColor = 'var(--color-border)';
                 }
             });
         }
@@ -4003,9 +4001,57 @@
             document.body.classList.remove('card-size-large', 'card-size-medium', 'card-size-small');
             document.body.classList.add(`card-size-${settings.cardSize}`);
             
+            // メニューボタン位置の適用
+            applyMenuButtonPosition();
+            
             // カードを再描画（サイズ変更を反映）
             if (typeof updateTaskGrid === 'function') {
                 updateTaskGrid();
+            }
+        }
+        
+        // メニューボタン位置を適用
+        function applyMenuButtonPosition() {
+            const menuIcon = document.getElementById('menuIcon');
+            if (!menuIcon) return;
+            
+            const position = settings.menuButtonPosition || 'right';
+            const taskGrid = document.getElementById('taskGrid');
+            if (!taskGrid) return;
+            
+            // ドラッグ機能を無効化
+            menuIcon.style.cursor = 'pointer';
+            menuIcon.draggable = false;
+            
+            // 位置を固定（左下または右下）
+            if (position === 'left') {
+                menuIcon.style.position = 'fixed';
+                menuIcon.style.bottom = '24px';
+                menuIcon.style.left = '24px';
+                menuIcon.style.top = 'auto';
+                menuIcon.style.right = 'auto';
+                menuIcon.style.transform = 'none';
+                // グリッド内の相対位置をリセット
+                menuIcon.style.position = 'fixed';
+            } else {
+                // 右下（デフォルト）
+                menuIcon.style.position = 'fixed';
+                menuIcon.style.bottom = '24px';
+                menuIcon.style.right = '24px';
+                menuIcon.style.top = 'auto';
+                menuIcon.style.left = 'auto';
+                menuIcon.style.transform = 'none';
+            }
+            
+            // メニュー項目の展開方向を調整（左側の場合は右側に展開）
+            if (position === 'left') {
+                // 左側に配置した場合、メニュー項目を右側に展開
+                document.body.classList.add('menu-button-left');
+                document.body.classList.remove('menu-button-right');
+            } else {
+                // 右側に配置した場合（デフォルト）
+                document.body.classList.add('menu-button-right');
+                document.body.classList.remove('menu-button-left');
             }
         }
 
@@ -4048,6 +4094,18 @@
                     saveSettings();
                     updateSettingsUI();
                     applySettings();
+                });
+            });
+            
+            // メニューボタン位置の選択
+            const menuPositionButtons = document.querySelectorAll('.menu-position-button');
+            menuPositionButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const position = this.dataset.position;
+                    settings.menuButtonPosition = position;
+                    saveSettings();
+                    updateSettingsUI();
+                    applyMenuButtonPosition();
                 });
             });
             
@@ -4202,10 +4260,6 @@
             localStorage.removeItem('timeRecords');
             localStorage.removeItem('externalLinks');
             localStorage.removeItem('menuIconPosition');
-            localStorage.removeItem('menuIconFixed');
-            
-            // 固定状態もリセット
-            menuIconFixed = false;
             
             // UIを更新
             updateTaskGrid();
@@ -4224,101 +4278,22 @@
             const taskGrid = document.getElementById('taskGrid');
             if (!taskGrid) return;
             
-            // 固定状態を読み込む
-            loadMenuIconFixedState();
+            // メニューボタン位置が固定されている場合はドラッグを無効化
+            const position = settings?.menuButtonPosition || 'right';
+            if (position === 'left' || position === 'right') {
+                menuIcon.draggable = false;
+                menuIcon.style.cursor = 'pointer';
+                // ドラッグイベントリスナーを削除（既存のものを無効化）
+                return;
+            }
             
             let draggedOffset = { x: 0, y: 0 };
             
             // ドラッグ中フラグ
             let hasDragged = false;
             
-            // 長押し検出用の変数
-            let longPressTimer = null;
-            let longPressStartTime = 0;
-            let longPressProgress = null;
-            const LONG_PRESS_DURATION = 5000; // 5秒
-            
-            // 長押し進捗バーを作成
-            function createLongPressProgress() {
-                if (menuIcon.querySelector('.long-press-progress')) return;
-                const progress = document.createElement('div');
-                progress.className = 'long-press-progress';
-                menuIcon.appendChild(progress);
-                longPressProgress = progress;
-            }
-            
-            // 長押し進捗バーを削除
-            function removeLongPressProgress() {
-                const progress = menuIcon.querySelector('.long-press-progress');
-                if (progress) {
-                    progress.remove();
-                    longPressProgress = null;
-                }
-            }
-            
-            // 長押しを開始
-            function startLongPress(e) {
-                if (menuIconFixed) return; // 既に固定されている場合は何もしない
-                
-                longPressStartTime = Date.now();
-                menuIcon.classList.add('long-pressing');
-                createLongPressProgress();
-                
-                // 進捗バーの更新
-                const updateProgress = () => {
-                    if (!longPressProgress || !menuIcon.classList.contains('long-pressing')) {
-                        return;
-                    }
-                    
-                    const elapsed = Date.now() - longPressStartTime;
-                    const progress = Math.min((elapsed / LONG_PRESS_DURATION) * 100, 100);
-                    longPressProgress.style.width = progress + '%';
-                    
-                    if (progress < 100) {
-                        requestAnimationFrame(updateProgress);
-                    }
-                };
-                
-                updateProgress();
-                
-                // 5秒後に固定を切り替え
-                longPressTimer = setTimeout(() => {
-                    toggleMenuIconFixed();
-                    menuIcon.classList.remove('long-pressing');
-                    removeLongPressProgress();
-                    longPressTimer = null;
-                }, LONG_PRESS_DURATION);
-            }
-            
-            // 長押しをキャンセル
-            function cancelLongPress() {
-                if (longPressTimer) {
-                    clearTimeout(longPressTimer);
-                    longPressTimer = null;
-                }
-                menuIcon.classList.remove('long-pressing');
-                removeLongPressProgress();
-            }
-            
-            // PC版：マウスダウンで長押しを開始
-            menuIcon.addEventListener('mousedown', function(e) {
-                if (menuIconFixed) return; // 固定されている場合は何もしない
-                startLongPress(e);
-            });
-            
-            // PC版：マウスアップ/マウスアウトで長押しをキャンセル
-            menuIcon.addEventListener('mouseup', cancelLongPress);
-            menuIcon.addEventListener('mouseleave', cancelLongPress);
-            
-            // 長押し検出用のフラグ
-            let longPressActive = false;
-            
             // PC版：ドラッグ開始
             menuIcon.addEventListener('dragstart', function(e) {
-                if (menuIconFixed) {
-                    e.preventDefault();
-                    return; // 固定されている場合はドラッグを無効化
-                }
                 hasDragged = true;
                 this.classList.add('dragging');
                 const rect = this.getBoundingClientRect();
@@ -4411,26 +4386,12 @@
                     touchStartLeft = rect.left - gridRect.left;
                     touchStartTop = rect.top - gridRect.top;
                     isTouchDragging = false;
-                    touchHasDragged = false;
-                    longPressActive = false;
-                    
-                    // 固定されていない場合のみ長押し検出を開始
-                    if (!menuIconFixed) {
-                        // 長押し検出を少し遅延させて、短いタップと区別
-                        setTimeout(() => {
-                            if (!isTouchDragging && !touchHasDragged && !menuIconFixed) {
-                                longPressActive = true;
-                                startLongPress(e);
-                            }
-                        }, 200); // 200ms後に長押し検出を開始
-                    }
                 }
             }, { passive: true });
             
             menuIcon.addEventListener('touchmove', function(e) {
-                if (e.touches.length === 1 && !menuIconFixed) { // 固定されている場合はドラッグを無効化
+                if (e.touches.length === 1) {
                     e.preventDefault();
-                    cancelLongPress(); // ドラッグ中は長押しをキャンセル
                     const touch = e.touches[0];
                     
                     // 移動距離をチェックしてドラッグかどうか判定
@@ -4471,12 +4432,6 @@
             }, { passive: false });
             
             menuIcon.addEventListener('touchend', function(e) {
-                // 長押しがアクティブな場合はキャンセル（固定処理が完了していない場合）
-                if (longPressActive) {
-                    cancelLongPress();
-                    longPressActive = false;
-                }
-                
                 if (isTouchDragging || touchHasDragged) {
                     isTouchDragging = false;
                     touchHasDragged = false;
@@ -4497,10 +4452,10 @@
                     
                     // メニュー項目が展開されている場合は位置を更新
                     updateMenuItemsPosition();
-                } else if (!longPressActive) {
-                    // 短いタップの場合のみダブルタップ判定
+                } else {
+                    // タップでダブルタップ判定
                     e.stopPropagation(); // イベント伝播を止める
-                    e.preventDefault(); // デフォルト動作を防止（画像拡大を防ぐ）
+                    e.preventDefault(); // デフォルト動作を防止
                     if (touchClickTimeout) {
                         clearTimeout(touchClickTimeout);
                         touchClickTimeout = null;
@@ -4694,73 +4649,6 @@
                 }
             }
         }
-        
-        // メニューアイコンの固定状態を保存
-        function saveMenuIconFixedState() {
-            localStorage.setItem('menuIconFixed', JSON.stringify(menuIconFixed));
-            if (firebaseInitialized && db) {
-                db.collection('taskMarket').doc('main').set({
-                    menuIconFixed: menuIconFixed,
-                    _updatedAt: Date.now()
-                }, { merge: true }).then(() => {
-                    console.log('✅ メニューアイコン固定状態をFirebaseに保存しました');
-                }).catch(err => {
-                    console.warn('メニューアイコン固定状態の保存エラー:', err);
-                });
-            }
-        }
-        
-        // メニューアイコンの固定状態を読み込む
-        function loadMenuIconFixedState() {
-            const savedFixed = localStorage.getItem('menuIconFixed');
-            if (savedFixed !== null) {
-                menuIconFixed = JSON.parse(savedFixed);
-            }
-            
-            // Firebaseからも読み込む
-            if (firebaseInitialized && db) {
-                db.collection('taskMarket').doc('main').get().then(doc => {
-                    if (doc.exists && doc.data().menuIconFixed !== undefined) {
-                        menuIconFixed = doc.data().menuIconFixed;
-                        applyMenuIconFixedState();
-                    }
-                }).catch(err => {
-                    console.warn('メニューアイコン固定状態の読み込みエラー:', err);
-                });
-            }
-            
-            applyMenuIconFixedState();
-        }
-        
-        // メニューアイコンの固定状態を適用
-        function applyMenuIconFixedState() {
-            const menuIcon = document.getElementById('menuIcon');
-            if (!menuIcon) return;
-            
-            if (menuIconFixed) {
-                menuIcon.classList.add('fixed');
-                menuIcon.draggable = false;
-                menuIcon.style.cursor = 'pointer';
-            } else {
-                menuIcon.classList.remove('fixed');
-                menuIcon.draggable = true;
-                menuIcon.style.cursor = 'move';
-            }
-        }
-        
-        // メニューアイコンの固定状態を切り替え
-        function toggleMenuIconFixed() {
-            menuIconFixed = !menuIconFixed;
-            applyMenuIconFixedState();
-            saveMenuIconFixedState();
-            
-            // トースト通知を表示（もし実装されている場合）
-            if (typeof showToast === 'function') {
-                showToast(menuIconFixed ? 'メニューボタンを固定しました' : 'メニューボタンの固定を解除しました', 'success');
-            } else {
-                console.log(menuIconFixed ? '✅ メニューボタンを固定しました' : '✅ メニューボタンの固定を解除しました');
-            }
-        }
 
         /* ========================================
            💾 Firebaseデータ保存・読み込み (Firebase Data Save & Load)
@@ -4821,7 +4709,6 @@
                         if (data.timeRecords) timeRecords = data.timeRecords;
                         if (data.externalLinks) externalLinks = data.externalLinks;
                         if (data.menuIconPosition) menuIconPosition = data.menuIconPosition;
-                        if (data.menuIconFixed !== undefined) menuIconFixed = data.menuIconFixed;
                         if (data.dailyReports) {
                             dailyReports = data.dailyReports;
                         } else {
@@ -4832,9 +4719,6 @@
                         
                         // リアルタイム更新を設定
                         setupRealtimeListener();
-                        
-                        // メニューアイコンの固定状態を適用
-                        applyMenuIconFixedState();
                         
                         // UIを更新
                         updateTaskGrid();
@@ -4867,18 +4751,12 @@
                 const savedMenuIconPosition = localStorage.getItem('menuIconPosition');
                 if (savedMenuIconPosition) menuIconPosition = JSON.parse(savedMenuIconPosition);
                 
-                const savedMenuIconFixed = localStorage.getItem('menuIconFixed');
-                if (savedMenuIconFixed !== null) menuIconFixed = JSON.parse(savedMenuIconFixed);
-                
                 const savedDailyReports = localStorage.getItem('dailyReports');
                 if (savedDailyReports) dailyReports = JSON.parse(savedDailyReports);
                 
                 // 設定を読み込み・適用
                 loadSettings();
                 applySettings();
-                
-                // メニューアイコンの固定状態を適用
-                applyMenuIconFixedState();
 
                 console.log('localStorageからタスクマーケットデータを読み込みました');
 
@@ -5281,14 +5159,24 @@
                 menuIcon = document.createElement('div');
                 menuIcon.className = 'menu-icon';
                 menuIcon.id = 'menuIcon';
-                menuIcon.draggable = true;
+                // 固定位置が設定されている場合はドラッグを無効化
+                const position = settings?.menuButtonPosition || 'right';
+                menuIcon.draggable = !(position === 'left' || position === 'right');
                 menuIcon.innerHTML = '<img src="images/menuicon.svg" alt="メニュー"><span class="tooltip-text">メニュー</span>';
                 taskGrid.appendChild(menuIcon);
                 setupMenuIconDrag();
+                // 固定位置を適用
+                applyMenuButtonPosition();
             }
             
-            // メニューアイコンの位置を設定（相対位置（%）から計算）
-            if (menuIconPosition && menuIconPosition.leftPercent !== undefined && menuIconPosition.topPercent !== undefined) {
+            // メニューボタン位置が固定されている場合は、固定位置を適用
+            // 固定位置が設定されていない場合のみ、既存の位置設定を使用
+            const position = settings?.menuButtonPosition || 'right';
+            if (position === 'left' || position === 'right') {
+                // 固定位置を適用（applyMenuButtonPositionで処理）
+                applyMenuButtonPosition();
+            } else if (menuIconPosition && menuIconPosition.leftPercent !== undefined && menuIconPosition.topPercent !== undefined) {
+                // 固定位置が設定されていない場合のみ、既存の相対位置を使用
                 const gridRect = taskGrid.getBoundingClientRect();
                 const gridWidth = taskGrid.offsetWidth - 48; // padding分を考慮
                 const gridHeight = Math.max(800, taskGrid.offsetHeight - 48);
