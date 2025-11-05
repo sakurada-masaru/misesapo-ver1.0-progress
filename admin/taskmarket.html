@@ -573,11 +573,12 @@
             touch-action: manipulation;
         }
         
-        /* 完了ボタン（画面左下に固定・円形デザイン） */
+        /* 完了ボタン（メニューと反対の方向に固定・円形デザイン） */
+        /* デフォルトは左下（メニューが右下の場合に表示） */
         .complete-button {
             position: fixed !important;
-            bottom: 24px !important;
-            left: 24px !important;
+            bottom: 96px !important;
+            left: 96px !important;
             top: auto !important;
             right: auto !important;
             width: 64px;
@@ -1856,35 +1857,35 @@
             }
         }
         
-        /* メニューアイコンが右下の場合、180度から270度の間に4つ全てを表示 */
-        /* 追加の位置クラス（左下寄り、やや左下） */
-        /* 半径80px、角度210度（180度から270度の間を3等分：180, 210, 240, 270） */
-        .menu-item.bottom-left-1 {
-            bottom: -69.28px; /* 80 * cos(210°) = 80 * cos(180+30°) = 80 * (-cos(30°)) ≈ -69.28px → 下方向（bottomが負の値で上に移動） */
+        /* メニューアイコンが右下の場合、0時から9時の間に4つ全てを表示 */
+        /* 追加の位置クラス（左上寄り、やや左上） */
+        /* 半径80px、時計回り：0時(0度)、11時(330度)、10時(300度)、9時(270度) */
+        .menu-item.top-left-1 {
+            top: -40px; /* 80 * cos(300°) = 80 * cos(-60°) = 80 * 0.5 = 40px → 上方向 */
             left: 50%;
             right: auto;
-            top: auto;
-            transform: translateX(-50%) translateX(-40px) scale(0) rotate(0deg); /* 80 * sin(210°) = 80 * sin(180+30°) = 80 * (-sin(30°)) = -40px → 左方向 */
+            bottom: auto;
+            transform: translateX(-50%) translateX(-69.28px) scale(0) rotate(0deg); /* 80 * sin(300°) = 80 * sin(-60°) = 80 * (-0.866) ≈ -69.28px → 左方向 */
         }
         
-        .menu-item.bottom-left-1.active {
-            transform: translateX(-50%) translateX(-40px) scale(1) rotate(360deg);
-        }
-        
-        /* 半径80px、角度240度 */
-        .menu-item.bottom-left-2 {
-            bottom: -40px; /* 80 * cos(240°) = 80 * cos(180+60°) = 80 * (-cos(60°)) = -40px → 下方向（bottomが負の値で上に移動） */
-            left: 50%;
-            right: auto;
-            top: auto;
-            transform: translateX(-50%) translateX(-69.28px) scale(0) rotate(0deg); /* 80 * sin(240°) = 80 * sin(180+60°) = 80 * (-sin(60°)) ≈ -69.28px → 左方向 */
-        }
-        
-        .menu-item.bottom-left-2.active {
+        .menu-item.top-left-1.active {
             transform: translateX(-50%) translateX(-69.28px) scale(1) rotate(360deg);
         }
         
-        /* 右下の場合、右と下のメニュー項目は非表示（代わりに左下寄りを使用） */
+        /* 半径80px、角度330度（11時の方向） */
+        .menu-item.top-left-2 {
+            top: -69.28px; /* 80 * cos(330°) = 80 * cos(-30°) = 80 * 0.866 ≈ 69.28px → 上方向 */
+            left: 50%;
+            right: auto;
+            bottom: auto;
+            transform: translateX(-50%) translateX(-40px) scale(0) rotate(0deg); /* 80 * sin(330°) = 80 * sin(-30°) = 80 * (-0.5) = -40px → 左方向 */
+        }
+        
+        .menu-item.top-left-2.active {
+            transform: translateX(-50%) translateX(-40px) scale(1) rotate(360deg);
+        }
+        
+        /* 右下の場合、右と下のメニュー項目は非表示（代わりに左上寄りを使用） */
         .menu-icon.position-bottom-right .menu-item.right,
         .menu-icon.position-bottom-right .menu-item.bottom {
             display: none !important;
@@ -2787,15 +2788,16 @@
                 font-size: 20px;
             }
 
-            /* 完了ボタン：画面左下に固定（430px画面幅内に収める） */
+            /* 完了ボタン：メニューと反対の方向に固定（430px画面幅内に収める） */
             .complete-button {
                 position: fixed !important;
-                bottom: 16px !important;
-                left: 16px !important;
+                bottom: 96px !important;
+                left: 96px !important;
                 top: auto !important;
                 right: auto !important;
                 z-index: 1001;
             }
+            
             
             /* 詳細ボード */
             .detail-board {
@@ -4511,8 +4513,38 @@
             menuIcon.style.right = '';
             menuIcon.style.bottom = '';
             
+            // 完了ボタンの位置をメニューと反対の方向に配置
+            updateCompleteButtonPosition();
+            
             // メニュー項目が開いている場合は位置を更新
             updateMenuItemsPosition();
+        }
+        
+        // 完了ボタンの位置を更新（メニューと反対の方向に配置）
+        function updateCompleteButtonPosition() {
+            const completeButton = document.getElementById('completeButton');
+            if (!completeButton) return;
+            
+            const menuIcon = document.getElementById('menuIcon');
+            if (!menuIcon) return;
+            
+            const isBottomLeft = menuIcon.classList.contains('position-bottom-left');
+            const isBottomRight = menuIcon.classList.contains('position-bottom-right');
+            
+            // メニューが左下の場合、完了ボタンは右下に配置
+            if (isBottomLeft) {
+                completeButton.style.bottom = '96px';
+                completeButton.style.left = 'auto';
+                completeButton.style.right = '96px';
+                completeButton.style.top = 'auto';
+            }
+            // メニューが右下の場合、完了ボタンは左下に配置
+            else if (isBottomRight) {
+                completeButton.style.bottom = '96px';
+                completeButton.style.right = 'auto';
+                completeButton.style.left = '96px';
+                completeButton.style.top = 'auto';
+            }
         }
         
         // メニュー項目の位置を更新（メニューアイコンが移動した時に呼び出す）
@@ -4561,12 +4593,13 @@
             let menuItems = [];
             
             if (isBottomRight) {
-                // 右下の場合：180度から270度の間に4つ全てを表示（左下と対照的）
+                // 右下の場合：0時から9時の間に4つ全てを表示
+                // 0時：マイページ、11時：アーカイブ、10時：リソース、9時：設定
                 menuItems = [
-                    { position: 'bottom', icon: 'images/mypage.svg', action: 'mypage' },
-                    { position: 'bottom-left-1', icon: 'images/setup.svg', action: 'setup' },
-                    { position: 'bottom-left-2', icon: 'images/resource.svg', action: 'resource' },
-                    { position: 'left', icon: 'images/archive.svg', action: 'archive' }
+                    { position: 'top', icon: 'images/mypage.svg', action: 'mypage' }, // 0時
+                    { position: 'top-left-2', icon: 'images/archive.svg', action: 'archive' }, // 11時
+                    { position: 'top-left-1', icon: 'images/resource.svg', action: 'resource' }, // 10時
+                    { position: 'left', icon: 'images/setup.svg', action: 'setup' } // 9時
                 ];
             } else if (isBottomLeft) {
                 // 左下の場合：0度から90度の間に4つ全てを表示
