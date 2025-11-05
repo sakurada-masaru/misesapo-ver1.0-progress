@@ -1659,16 +1659,16 @@
         
         /* メニューアイコンの位置固定（左下） */
         .menu-icon.position-bottom-left {
-            bottom: 16px;
-            left: 16px;
+            bottom: 96px;
+            left: 96px;
             right: auto;
             top: auto;
         }
         
         /* メニューアイコンの位置固定（右下） */
         .menu-icon.position-bottom-right {
-            bottom: 16px;
-            right: 16px;
+            bottom: 96px;
+            right: 96px;
             left: auto;
             top: auto;
         }
@@ -3729,7 +3729,7 @@
             tooltipEnabled: true,
             cardSize: 'medium', // 'large', 'medium', 'small'
             darkMode: false,
-            menuPosition: 'bottom-right' // 'bottom-left' または 'bottom-right'
+            menuPosition: 'bottom-left' // 'bottom-left' または 'bottom-right'
         };
 
         // マイページデータ
@@ -3770,7 +3770,7 @@
                 tooltipEnabled: true,
                 cardSize: 'medium',
                 darkMode: false,
-                menuPosition: 'bottom-right'
+                menuPosition: 'bottom-left'
             };
             
             // ログイン中の場合、ユーザー設定を読み込む
@@ -4121,7 +4121,7 @@
             if (!menuIcon) return;
             
             // 位置固定モードの場合はドラッグ機能を無効化
-            const position = settings.menuPosition || 'bottom-right';
+            const position = settings.menuPosition || 'bottom-left';
             const isFixedPosition = (position === 'bottom-left' || position === 'bottom-right');
             
             if (isFixedPosition) {
@@ -4405,7 +4405,7 @@
             menuIcon.classList.remove('position-bottom-left', 'position-bottom-right');
             
             // 設定に基づいて位置を固定
-            const position = settings.menuPosition || 'bottom-right';
+            const position = settings.menuPosition || 'bottom-left';
             if (position === 'bottom-left') {
                 menuIcon.classList.add('position-bottom-left');
             } else {
