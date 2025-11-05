@@ -1825,26 +1825,28 @@
         
         /* メニューアイコンが左下の場合、0度から90度の間に4つ全てを表示 */
         /* 追加の位置クラス（右上寄り、やや右上） */
+        /* 半径80px、角度30度（0度から90度の間を3等分） */
         .menu-item.top-right-1 {
-            top: -69.28px; /* 80 * cos(30°) */
-            right: -40px; /* 80 * sin(30°) */
-            left: auto;
-            transform: translate(0, 0) scale(0) rotate(0deg);
+            top: -69.28px; /* 80 * cos(30°) ≈ 69.28px */
+            left: 50%;
+            right: auto;
+            transform: translateX(-50%) translateX(40px) scale(0) rotate(0deg); /* 80 * sin(30°) = 40px */
         }
         
         .menu-item.top-right-1.active {
-            transform: translate(0, 0) scale(1) rotate(360deg);
+            transform: translateX(-50%) translateX(40px) scale(1) rotate(360deg);
         }
         
+        /* 半径80px、角度60度 */
         .menu-item.top-right-2 {
-            top: -40px; /* 80 * cos(60°) */
-            right: -69.28px; /* 80 * sin(60°) */
-            left: auto;
-            transform: translate(0, 0) scale(0) rotate(0deg);
+            top: -40px; /* 80 * cos(60°) = 40px */
+            left: 50%;
+            right: auto;
+            transform: translateX(-50%) translateX(69.28px) scale(0) rotate(0deg); /* 80 * sin(60°) ≈ 69.28px */
         }
         
         .menu-item.top-right-2.active {
-            transform: translate(0, 0) scale(1) rotate(360deg);
+            transform: translateX(-50%) translateX(69.28px) scale(1) rotate(360deg);
         }
         
         /* 左下の場合、左と下のメニュー項目は非表示（代わりに右上寄りを使用） */
