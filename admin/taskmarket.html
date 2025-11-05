@@ -6230,20 +6230,19 @@
                         let droppedOnCard = null;
                         
                         taskCards.forEach(card => {
-                                const cardRect = card.getBoundingClientRect();
-                                const badgeCenterX = badgeRect.left + badgeRect.width / 2;
-                                const badgeCenterY = badgeRect.top + badgeRect.height / 2;
-                                
-                                // バッジの中心点がカードの範囲内にあるかチェック
-                                if (badgeCenterX >= cardRect.left && badgeCenterX <= cardRect.right &&
-                                    badgeCenterY >= cardRect.top && badgeCenterY <= cardRect.bottom) {
-                                    const taskId = parseInt(card.dataset.taskId);
-                                    if (taskId && badge.attachedToTaskId !== taskId) {
-                                        droppedOnCard = { card: card, taskId: taskId };
-                                    }
+                            const cardRect = card.getBoundingClientRect();
+                            const badgeCenterX = badgeRect.left + badgeRect.width / 2;
+                            const badgeCenterY = badgeRect.top + badgeRect.height / 2;
+                            
+                            // バッジの中心点がカードの範囲内にあるかチェック
+                            if (badgeCenterX >= cardRect.left && badgeCenterX <= cardRect.right &&
+                                badgeCenterY >= cardRect.top && badgeCenterY <= cardRect.bottom) {
+                                const taskId = parseInt(card.dataset.taskId);
+                                if (taskId && badge.attachedToTaskId !== taskId) {
+                                    droppedOnCard = { card: card, taskId: taskId };
                                 }
-                            });
-                        }
+                            }
+                        });
                         
                         if (droppedOnCard) {
                             // カードにバッジを吸着（スマホ版）
