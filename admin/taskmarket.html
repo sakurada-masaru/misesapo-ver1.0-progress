@@ -4647,6 +4647,10 @@
                         }
                         // settingsは個別にusers/{userId}/settingsから読み込むため、ここでは読み込まない
                         
+                        // 設定を読み込み・適用
+                        loadSettings();
+                        applySettings();
+                        
                         // リアルタイム更新を設定
                         setupRealtimeListener();
                         
