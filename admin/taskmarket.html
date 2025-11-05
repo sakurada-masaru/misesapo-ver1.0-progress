@@ -4110,15 +4110,22 @@
             
             // 位置固定モードの場合はドラッグ機能を無効化
             const position = settings.menuPosition || 'bottom-right';
-            if (position === 'bottom-left' || position === 'bottom-right') {
+            const isFixedPosition = (position === 'bottom-left' || position === 'bottom-right');
+            
+            if (isFixedPosition) {
                 menuIcon.draggable = false;
                 menuIcon.style.cursor = 'pointer';
                 updateMenuIconPosition();
-                return;
             }
             
             const taskGrid = document.getElementById('taskGrid');
-            if (!taskGrid) return;
+            if (!taskGrid) {
+                // taskGridが存在しない場合は何もしない（後で再度呼び出される）
+                return;
+            }
+            
+            // 位置固定モードの場合はドラッグ関連のイベントリスナーをスキップ
+            if (!isFixedPosition) {
             
             let draggedOffset = { x: 0, y: 0 };
             
@@ -4327,6 +4334,49 @@
                 e.preventDefault();
                 toggleMenuItems();
             });
+            } // 位置固定モードでない場合のドラッグイベントブロックの終了
+            
+            // 位置固定モードでもクリック/ダブルクリックイベントは設定する
+            if (isFixedPosition) {
+                // ダブルクリック/ダブルタップでメニュー項目を表示
+                let clickTimeout = null;
+                
+                menuIcon.addEventListener('click', function(e) {
+                    if (clickTimeout) {
+                        clearTimeout(clickTimeout);
+                        clickTimeout = null;
+                        // ダブルクリック
+                        toggleMenuItems();
+                    } else {
+                        clickTimeout = setTimeout(() => {
+                            clickTimeout = null;
+                        }, 300);
+                    }
+                });
+                
+                menuIcon.addEventListener('dblclick', function(e) {
+                    e.preventDefault();
+                    toggleMenuItems();
+                });
+                
+                // SP版：タッチイベント
+                let touchClickTimeout = null;
+                
+                menuIcon.addEventListener('touchend', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    if (touchClickTimeout) {
+                        clearTimeout(touchClickTimeout);
+                        touchClickTimeout = null;
+                        // ダブルタップ
+                        toggleMenuItems();
+                    } else {
+                        touchClickTimeout = setTimeout(() => {
+                            touchClickTimeout = null;
+                        }, 300);
+                    }
+                }, { passive: false });
+            }
         }
         
         // メニューアイコンの位置を更新（設定に基づいて固定位置に配置）
