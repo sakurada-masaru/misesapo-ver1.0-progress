@@ -6443,7 +6443,7 @@
             // 完了ボタンにドロップ（一度だけ処理されるようにフラグを使用）
             let isProcessing = false;
             completeButton.addEventListener('drop', function(e) {
-                isDroppedOnTrashOrComplete = true;
+                isDroppedOnComplete = true;
                 e.preventDefault();
                 e.stopPropagation();
                 this.classList.remove('drag-over');
@@ -8862,8 +8862,6 @@
                 linkIconGrid.appendChild(linkIcon);
             });
             
-            // パネル内ゴミ箱は削除されたため、この関数は呼ばない
-            // setupPanelTrashBin();
         }
         
         // リンクの選択状態を切り替え
@@ -9026,8 +9024,6 @@
                         this.style.left = clampedX + 'px';
                         this.style.top = clampedY + 'px';
                         
-                        // パネル内ゴミ箱は削除されたため、このチェックは不要
-                        // const panelTrashBin = document.getElementById('panelTrashBin1');
                         // ...
                     }
                 }
@@ -9067,8 +9063,6 @@
             });
         }
         
-        // パネル内ゴミ箱は削除されたため、この関数は不要
-        // function setupPanelTrashBin() { ... }
         
         // パネル開閉時にリンクグリッドを更新（ラッパー関数）
         function openSlidePanel(panelNumber) {
@@ -9545,7 +9539,6 @@
             });
             
             // データ読み込み時に既にupdateTaskGrid()が呼ばれているため、重複を避ける
-            // ただし、ゴミ箱作成後にUIを更新
             if (!document.getElementById('taskGrid').hasChildNodes() || document.getElementById('taskGrid').childElementCount === 0) {
             updateTaskGrid();
             }
