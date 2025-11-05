@@ -1741,7 +1741,8 @@
             transition: var(--transition-normal);
             user-select: none;
             -webkit-user-select: none;
-            touch-action: none;
+            touch-action: manipulation; /* ダブルタップズームを防ぐ */
+            -webkit-tap-highlight-color: transparent; /* タップ時のハイライトを無効化 */
         }
 
         .menu-icon:hover {
@@ -1818,6 +1819,10 @@
             height: 60px;
             object-fit: contain;
             pointer-events: none;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-user-drag: none;
+            touch-action: none;
         }
 
         .menu-icon .tooltip-text {
@@ -4305,23 +4310,8 @@
             menuIcon.addEventListener('mouseup', cancelLongPress);
             menuIcon.addEventListener('mouseleave', cancelLongPress);
             
-            // SP版：タッチ開始で長押しを開始（長押し検出用、ドラッグとは別）
-            let longPressTouchStartHandler = function(e) {
-                if (menuIconFixed || e.touches.length !== 1) return; // 固定されている場合または複数タッチの場合は何もしない
-                // 長押し検出は少し遅延させて、ドラッグと区別する
-                setTimeout(() => {
-                    if (!isTouchDragging && !touchHasDragged) {
-                        startLongPress(e);
-                    }
-                }, 100);
-            };
-            menuIcon.addEventListener('touchstart', longPressTouchStartHandler, { passive: true });
-            
-            // SP版：タッチ終了/タッチキャンセルで長押しをキャンセル
-            menuIcon.addEventListener('touchend', function(e) {
-                cancelLongPress();
-            });
-            menuIcon.addEventListener('touchcancel', cancelLongPress);
+            // 長押し検出用のフラグ
+            let longPressActive = false;
             
             // PC版：ドラッグ開始
             menuIcon.addEventListener('dragstart', function(e) {
@@ -4411,7 +4401,7 @@
             let touchClickTimeout = null;
             
             menuIcon.addEventListener('touchstart', function(e) {
-                if (e.touches.length === 1 && !menuIconFixed) { // 固定されている場合はドラッグを無効化
+                if (e.touches.length === 1) {
                     const touch = e.touches[0];
                     const rect = this.getBoundingClientRect();
                     const gridRect = taskGrid.getBoundingClientRect();
@@ -4421,6 +4411,19 @@
                     touchStartLeft = rect.left - gridRect.left;
                     touchStartTop = rect.top - gridRect.top;
                     isTouchDragging = false;
+                    touchHasDragged = false;
+                    longPressActive = false;
+                    
+                    // 固定されていない場合のみ長押し検出を開始
+                    if (!menuIconFixed) {
+                        // 長押し検出を少し遅延させて、短いタップと区別
+                        setTimeout(() => {
+                            if (!isTouchDragging && !touchHasDragged && !menuIconFixed) {
+                                longPressActive = true;
+                                startLongPress(e);
+                            }
+                        }, 200); // 200ms後に長押し検出を開始
+                    }
                 }
             }, { passive: true });
             
@@ -4468,6 +4471,12 @@
             }, { passive: false });
             
             menuIcon.addEventListener('touchend', function(e) {
+                // 長押しがアクティブな場合はキャンセル（固定処理が完了していない場合）
+                if (longPressActive) {
+                    cancelLongPress();
+                    longPressActive = false;
+                }
+                
                 if (isTouchDragging || touchHasDragged) {
                     isTouchDragging = false;
                     touchHasDragged = false;
@@ -4488,10 +4497,10 @@
                     
                     // メニュー項目が展開されている場合は位置を更新
                     updateMenuItemsPosition();
-                } else {
-                    // タップでダブルタップ判定
+                } else if (!longPressActive) {
+                    // 短いタップの場合のみダブルタップ判定
                     e.stopPropagation(); // イベント伝播を止める
-                    e.preventDefault(); // デフォルト動作を防止
+                    e.preventDefault(); // デフォルト動作を防止（画像拡大を防ぐ）
                     if (touchClickTimeout) {
                         clearTimeout(touchClickTimeout);
                         touchClickTimeout = null;
