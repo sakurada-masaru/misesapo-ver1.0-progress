@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <title>Task Market - ミセサポ</title>
-    <link rel="icon" type="image/png" href="images/logo_144x144.png">
     <style>
         /*
          ========================================
@@ -285,6 +284,7 @@
         /* ツールチップ表示（ホバー時） */
         .add-task-button:hover .tooltip-text,
         .add-badge-button:hover .tooltip-text,
+        .trash-bin:hover .tooltip-text,
         .complete-button:hover .tooltip-text,
         .slide-panel-handle:hover .tooltip-text {
             opacity: 1;
@@ -301,6 +301,7 @@
 
         .tooltips-disabled .add-task-button:hover .tooltip-text,
         .tooltips-disabled .add-badge-button:hover .tooltip-text,
+        .tooltips-disabled .trash-bin:hover .tooltip-text,
         .tooltips-disabled .complete-button:hover .tooltip-text,
         .tooltips-disabled .slide-panel-handle:hover .tooltip-text,
         .tooltips-disabled .detail-edit-button:hover .tooltip-text,
@@ -722,47 +723,74 @@
             line-height: 1;
         }
 
-        /* タスク詳細パネルの削除ボタン */
-        .detail-delete-button {
+        /* ゴミ箱（画面右下に固定） */
+        .trash-bin {
+            position: fixed !important;
+            bottom: 24px !important;
+            right: 24px !important;
+            top: auto !important;
+            left: auto !important;
+            width: 64px;
+            height: 64px;
+            background: var(--color-danger, #ff4757);
+            color: white;
+            border: none;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: var(--spacing-xs);
-            transition: var(--transition-normal);
-            position: relative;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+            opacity: 0.8;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
         }
         
-        .detail-delete-button:hover {
-            background: var(--color-danger-hover, #dc2626) !important;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        .trash-bin .tooltip-text {
+            left: auto;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-left: 0;
+            margin-right: 8px;
         }
         
-        .detail-delete-button:active {
-            transform: translateY(0);
+        .trash-bin .tooltip-text::before {
+            left: 100%;
+            right: auto;
+            border-left-color: rgba(0, 0, 0, 0.85);
+            border-right-color: transparent;
         }
-        
-        .detail-delete-button .tooltip-text {
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: var(--border-radius-sm);
-            font-size: var(--font-size-xs);
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-            pointer-events: none;
-            margin-bottom: var(--spacing-xs);
-        }
-        
-        .detail-delete-button:hover .tooltip-text {
+
+        .trash-bin:hover {
+            background: var(--color-danger-hover, #ff3838);
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-2px) scale(1.1);
             opacity: 1;
-            visibility: visible;
+        }
+        
+        .trash-bin:focus {
+            outline: none;
+            box-shadow: var(--shadow-xl), 0 0 0 3px rgba(255, 71, 87, 0.3);
+        }
+
+        .trash-bin.drag-over {
+            background: var(--color-danger-hover, #ff3838);
+            transform: scale(1.2);
+            opacity: 1;
+            box-shadow: 0 0 20px rgba(255, 71, 87, 0.6);
+        }
+
+        /* スマホ版：タッチドラッグ時のゴミ箱拡大 */
+        .trash-bin.touch-drag-over {
+            background: var(--color-danger-hover, #ff3838);
+            transform: scale(1.3);
+            width: 80px;
+            height: 80px;
+            box-shadow: 0 0 30px rgba(255, 71, 87, 0.8);
         }
 
         /* トグルスイッチ */
@@ -824,6 +852,21 @@
             background-color: var(--color-primary);
         }
 
+        @media (max-width: 430px) {
+            .trash-bin.touch-drag-over {
+                width: 80px;
+                height: 80px;
+            }
+        }
+
+        .trash-bin:active {
+            transform: translateY(0) scale(1.05);
+        }
+
+        .trash-icon {
+            font-size: 28px;
+            user-select: none;
+        }
 
         /* モーダルオーバーレイ */
         .modal-overlay {
@@ -1683,7 +1726,7 @@
 
         /* メニューアイコンのスタイル */
         .menu-icon {
-            position: absolute;
+            position: fixed;
             width: 56px;
             height: 56px;
             background: var(--color-background);
@@ -1692,18 +1735,28 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: move;
+            cursor: pointer;
             z-index: 100;
             box-shadow: var(--shadow-md);
             transition: var(--transition-normal);
             user-select: none;
             -webkit-user-select: none;
-            touch-action: none;
         }
         
-        /* 固定位置が設定されている場合、メニューボタンを固定 */
-        .menu-icon[style*="position: fixed"] {
-            position: fixed !important;
+        /* メニューアイコンの位置固定（左下） */
+        .menu-icon.position-bottom-left {
+            bottom: 16px;
+            left: 16px;
+            right: auto;
+            top: auto;
+        }
+        
+        /* メニューアイコンの位置固定（右下） */
+        .menu-icon.position-bottom-right {
+            bottom: 16px;
+            right: 16px;
+            left: auto;
+            top: auto;
         }
 
         .menu-icon:hover {
@@ -1826,35 +1879,28 @@
             transform: translateY(-50%) scale(1) rotate(360deg);
         }
         
-        /* メニューボタンが左側の場合、メニュー項目を右側に展開 */
-        .menu-button-left .menu-item.left {
+        /* メニューアイコンが左下の場合、左側のメニュー項目を右側に表示 */
+        .menu-icon.position-bottom-left .menu-item.left {
             left: auto;
             right: -80px;
+            transform: translateY(-50%) scale(0) rotate(0deg);
         }
         
-        .menu-button-left .menu-item.left.active {
+        .menu-icon.position-bottom-left .menu-item.left.active {
             transform: translateY(-50%) scale(1) rotate(360deg);
         }
         
-        /* メニューボタンが左側の場合、上下のメニュー項目も右側に寄せる */
-        .menu-button-left .menu-item.top {
-            left: auto;
-            right: 0;
-            transform: translateX(0) scale(0) rotate(0deg);
-        }
-        
-        .menu-button-left .menu-item.top.active {
-            transform: translateX(0) scale(1) rotate(360deg);
-        }
-        
-        .menu-button-left .menu-item.bottom {
-            left: auto;
-            right: 0;
-            transform: translateX(0) scale(0) rotate(0deg);
-        }
-        
-        .menu-button-left .menu-item.bottom.active {
-            transform: translateX(0) scale(1) rotate(360deg);
+        /* メニューアイコンが左下の場合、上側のメニュー項目を下側に表示（SP版対応） */
+        @media (max-width: 768px) {
+            .menu-icon.position-bottom-left .menu-item.top {
+                top: auto;
+                bottom: -80px;
+                transform: translateX(-50%) scale(0) rotate(0deg);
+            }
+            
+            .menu-icon.position-bottom-left .menu-item.top.active {
+                transform: translateX(-50%) scale(1) rotate(360deg);
+            }
         }
 
         .form-group {
@@ -2198,7 +2244,7 @@
             opacity: 1;
             cursor: grabbing;
             transform: rotate(0deg) !important;
-            z-index: 999 !important;
+            z-index: 999 !important; /* ゴミ箱のz-index: 1000より下にする */
         }
 
         .task-grid.drag-over {
@@ -2684,6 +2730,12 @@
                 font-size: 24px;
             }
             
+            /* ゴミ箱のサイズ調整（SP版） */
+            .trash-bin {
+                width: 48px !important;
+                height: 48px !important;
+                font-size: 24px !important;
+            }
             
             .complete-icon {
                 font-size: 24px;
@@ -2733,9 +2785,34 @@
                 z-index: 1001;
             }
             
-            /* SP版：メニューボタンが固定位置の場合、位置を固定 */
-            .menu-icon[style*="position: fixed"] {
+            /* ゴミ箱ボタン：画面右下に固定（430px画面幅内に収める） */
+            .trash-bin {
                 position: fixed !important;
+                bottom: 16px !important;
+                right: 16px !important;
+                top: auto !important;
+                left: auto !important;
+                width: 48px !important;
+                height: 48px !important;
+                z-index: 1001 !important; /* カードのz-indexより上にして、常に上に表示 */
+                /* 完了ボタンと同じ位置（左下）に表示されないようにする */
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                border-radius: 50% !important;
+                /* 背景とアイコンの中心点を合わせる */
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .trash-bin .trash-icon {
+                font-size: 20px !important;
+                line-height: 1 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
 
             /* 詳細ボード */
@@ -2980,6 +3057,12 @@
         </div>
     </div>
     
+    <!-- ゴミ箱（右下に固定、body直下に配置） -->
+    <div class="trash-bin" id="trashBin">
+        <span class="trash-icon">🗑️</span>
+        <span class="tooltip-text">ドラッグ&ドロップで削除</span>
+    </div>
+
     <!-- タスク詳細パネル（右からスライドイン） -->
     <div class="detail-board-overlay" id="detailBoardOverlay" onclick="closeDetailBoardOnOverlay(event)">
         <div class="detail-board" id="detailBoard" onclick="event.stopPropagation()">
@@ -2996,10 +3079,6 @@
                     <button class="detail-edit-button" id="detailEditButton" onclick="toggleTaskEditMode()" style="display: none;">
                         <img src="images/リロードアイコン.svg" alt="編集" class="detail-edit-icon">
                         <span class="tooltip-text">タスク情報の編集はこちらから</span>
-                    </button>
-                    <button class="detail-delete-button" id="detailDeleteButton" onclick="deleteTaskFromDetail()" style="display: none; background: var(--color-danger); color: white; border: none; border-radius: var(--border-radius-md); padding: var(--spacing-xs) var(--spacing-sm); cursor: pointer; font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold);">
-                        <span style="font-size: 18px;">🗑️</span>
-                        <span class="tooltip-text">タスクを削除</span>
                     </button>
                 <button class="detail-board-close-button" onclick="closeDetailBoard()" title="閉じる">×</button>
                 </div>
@@ -3243,15 +3322,15 @@
                             </div>
                         </div>
                         
-                        <!-- メニューボタン位置の選択 -->
+                        <!-- メニューボタンの位置設定 -->
                         <div class="settings-item" style="padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm);">
                             <div style="margin-bottom: var(--spacing-sm);">
                                 <label style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-xs);">メニューボタンの位置</label>
                                 <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0;">メニューボタンを左下または右下に固定します</p>
                             </div>
                             <div style="display: flex; gap: var(--spacing-sm);">
-                                <button type="button" class="menu-position-button" data-position="left" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">左下</button>
-                                <button type="button" class="menu-position-button" data-position="right" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">右下</button>
+                                <button type="button" class="menu-position-button" data-position="bottom-left" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">左下</button>
+                                <button type="button" class="menu-position-button" data-position="bottom-right" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">右下</button>
                             </div>
                         </div>
                     </div>
@@ -3290,7 +3369,7 @@
                                 <li>タスクカードをドラッグ&ドロップで自由に移動できます</li>
                                 <li>タスクカードをダブルクリックで詳細を表示できます</li>
                                 <li>タスクを完了ボタンにドロップして完了できます</li>
-                                <li>タスク詳細パネルからタスクを削除できます</li>
+                                <li>タスクをゴミ箱にドロップして削除できます</li>
                             </ul>
                             
                             <h4 style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-top: var(--spacing-md); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">🏷️ バッジシステム</h4>
@@ -3328,7 +3407,7 @@
                                 <li><strong>タスクの移動</strong>：タスクカードをドラッグ&ドロップ</li>
                                 <li><strong>タスクの詳細表示</strong>：タスクカードをダブルクリック</li>
                                 <li><strong>タスクの完了</strong>：タスクカードを完了ボタンにドロップ</li>
-                                <li><strong>タスクの削除</strong>：タスク詳細パネルの削除ボタンから削除</li>
+                                <li><strong>タスクの削除</strong>：タスクカードをゴミ箱にドロップ</li>
                                 <li><strong>バッジの付与</strong>：バッジをタスクカードにドラッグ&ドロップ</li>
                                 <li><strong>パネルの開閉</strong>：メニューアイコンから各パネルを開く</li>
                             </ul>
@@ -3339,7 +3418,7 @@
                                 <li><strong>タスクの移動</strong>：タスクカードを長押ししてドラッグ</li>
                                 <li><strong>タスクの詳細表示</strong>：タスクカードをダブルタップ</li>
                                 <li><strong>タスクの完了</strong>：タスクカードを完了ボタンにドロップ</li>
-                                <li><strong>タスクの削除</strong>：タスク詳細パネルの削除ボタンから削除</li>
+                                <li><strong>タスクの削除</strong>：タスクカードをゴミ箱にドロップ（カード全体が重なった時のみ）</li>
                                 <li><strong>バッジの付与</strong>：バッジをタスクカードにドラッグ</li>
                                 <li><strong>画面の更新</strong>：画面を下に引いてプルリフレッシュ</li>
                                 <li><strong>メニューの開閉</strong>：メニューアイコンをタップ</li>
@@ -3769,7 +3848,8 @@
         let settings = {
             tooltipEnabled: true,
             cardSize: 'medium', // 'large', 'medium', 'small'
-            darkMode: false
+            darkMode: false,
+            menuPosition: 'bottom-right' // 'bottom-left' または 'bottom-right'
         };
 
         // マイページデータ
@@ -3810,7 +3890,7 @@
                 tooltipEnabled: true,
                 cardSize: 'medium',
                 darkMode: false,
-                menuButtonPosition: 'right' // デフォルトは右下
+                menuPosition: 'bottom-right'
             };
             
             // ログイン中の場合、ユーザー設定を読み込む
@@ -3893,10 +3973,10 @@
                 }
             });
             
-            // メニューボタン位置ボタンの状態を更新
+            // メニュー位置ボタンの状態を更新
             const menuPositionButtons = document.querySelectorAll('.menu-position-button');
             menuPositionButtons.forEach(button => {
-                if (button.dataset.position === settings.menuButtonPosition) {
+                if (button.dataset.position === settings.menuPosition) {
                     button.classList.add('active');
                     button.style.background = 'var(--color-primary)';
                     button.style.color = 'white';
@@ -3930,58 +4010,12 @@
             document.body.classList.remove('card-size-large', 'card-size-medium', 'card-size-small');
             document.body.classList.add(`card-size-${settings.cardSize}`);
             
-            // メニューボタン位置の適用
-            applyMenuButtonPosition();
+            // メニュー位置の適用
+            updateMenuIconPosition();
             
             // カードを再描画（サイズ変更を反映）
             if (typeof updateTaskGrid === 'function') {
                 updateTaskGrid();
-            }
-        }
-        
-        // メニューボタン位置を適用
-        function applyMenuButtonPosition() {
-            const menuIcon = document.getElementById('menuIcon');
-            if (!menuIcon) return;
-            
-            const position = settings.menuButtonPosition || 'right';
-            const taskGrid = document.getElementById('taskGrid');
-            if (!taskGrid) return;
-            
-            // ドラッグ機能を無効化
-            menuIcon.style.cursor = 'pointer';
-            menuIcon.draggable = false;
-            
-            // 位置を固定（左下または右下）
-            // SP版でも固定位置を適用するため、!importantを使用
-            if (position === 'left') {
-                menuIcon.style.position = 'fixed';
-                menuIcon.style.bottom = window.innerWidth <= 430 ? '16px' : '24px';
-                menuIcon.style.left = window.innerWidth <= 430 ? '16px' : '24px';
-                menuIcon.style.top = 'auto';
-                menuIcon.style.right = 'auto';
-                menuIcon.style.transform = 'none';
-                menuIcon.style.zIndex = '1000';
-            } else {
-                // 右下（デフォルト）
-                menuIcon.style.position = 'fixed';
-                menuIcon.style.bottom = window.innerWidth <= 430 ? '16px' : '24px';
-                menuIcon.style.right = window.innerWidth <= 430 ? '16px' : '24px';
-                menuIcon.style.top = 'auto';
-                menuIcon.style.left = 'auto';
-                menuIcon.style.transform = 'none';
-                menuIcon.style.zIndex = '1000';
-            }
-            
-            // メニュー項目の展開方向を調整（左側の場合は右側に展開）
-            if (position === 'left') {
-                // 左側に配置した場合、メニュー項目を右側に展開
-                document.body.classList.add('menu-button-left');
-                document.body.classList.remove('menu-button-right');
-            } else {
-                // 右側に配置した場合（デフォルト）
-                document.body.classList.add('menu-button-right');
-                document.body.classList.remove('menu-button-left');
             }
         }
 
@@ -4027,15 +4061,16 @@
                 });
             });
             
-            // メニューボタン位置の選択
+            // メニュー位置の選択
             const menuPositionButtons = document.querySelectorAll('.menu-position-button');
             menuPositionButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const position = this.dataset.position;
-                    settings.menuButtonPosition = position;
+                    settings.menuPosition = position;
                     saveSettings();
                     updateSettingsUI();
-                    applyMenuButtonPosition();
+                    applySettings();
+                    updateMenuIconPosition();
                 });
             });
             
@@ -4200,22 +4235,22 @@
             alert('✅ データをリセットしました');
         }
 
-        // メニューアイコンのドラッグ&ドロップ機能を設定
+        // メニューアイコンのドラッグ&ドロップ機能を設定（位置固定モードでは無効化）
         function setupMenuIconDrag() {
             const menuIcon = document.getElementById('menuIcon');
             if (!menuIcon) return;
             
-            const taskGrid = document.getElementById('taskGrid');
-            if (!taskGrid) return;
-            
-            // メニューボタン位置が固定されている場合はドラッグを無効化
-            const position = settings?.menuButtonPosition || 'right';
-            if (position === 'left' || position === 'right') {
+            // 位置固定モードの場合はドラッグ機能を無効化
+            const position = settings.menuPosition || 'bottom-right';
+            if (position === 'bottom-left' || position === 'bottom-right') {
                 menuIcon.draggable = false;
                 menuIcon.style.cursor = 'pointer';
-                // ドラッグイベントリスナーを削除（既存のものを無効化）
+                updateMenuIconPosition();
                 return;
             }
+            
+            const taskGrid = document.getElementById('taskGrid');
+            if (!taskGrid) return;
             
             let draggedOffset = { x: 0, y: 0 };
             
@@ -4424,6 +4459,36 @@
                 e.preventDefault();
                 toggleMenuItems();
             });
+        }
+        
+        // メニューアイコンの位置を更新（設定に基づいて固定位置に配置）
+        function updateMenuIconPosition() {
+            const menuIcon = document.getElementById('menuIcon');
+            if (!menuIcon) return;
+            
+            // ドラッグ機能を無効化
+            menuIcon.draggable = false;
+            menuIcon.style.cursor = 'pointer';
+            
+            // 位置クラスをリセット
+            menuIcon.classList.remove('position-bottom-left', 'position-bottom-right');
+            
+            // 設定に基づいて位置を固定
+            const position = settings.menuPosition || 'bottom-right';
+            if (position === 'bottom-left') {
+                menuIcon.classList.add('position-bottom-left');
+            } else {
+                menuIcon.classList.add('position-bottom-right');
+            }
+            
+            // 既存の位置スタイルを削除
+            menuIcon.style.left = '';
+            menuIcon.style.top = '';
+            menuIcon.style.right = '';
+            menuIcon.style.bottom = '';
+            
+            // メニュー項目が開いている場合は位置を更新
+            updateMenuItemsPosition();
         }
         
         // メニュー項目の位置を更新（メニューアイコンが移動した時に呼び出す）
@@ -4646,10 +4711,6 @@
                             dailyReports = [];
                         }
                         // settingsは個別にusers/{userId}/settingsから読み込むため、ここでは読み込まない
-                        
-                        // 設定を読み込み・適用
-                        loadSettings();
-                        applySettings();
                         
                         // リアルタイム更新を設定
                         setupRealtimeListener();
@@ -4962,10 +5023,11 @@
             const pendingTasksCount = tasks.filter(task => task.status !== 'completed').length;
             
             if (pendingTasksCount === 0) {
-                // カードをクリア
+                // カードをクリア（ボタンは残す、ゴミ箱はtaskGrid外に固定されているので除外）
                 const addButton = taskGrid.querySelector('.add-task-button');
                 const completeButton = taskGrid.querySelector('.complete-button');
                 const addBadgeButton = taskGrid.querySelector('.add-badge-button');
+                // ゴミ箱はtaskGrid外に配置されているため、querySelectorしない
                 taskGrid.innerHTML = '';
                 
                 // ボタンを再追加
@@ -5009,6 +5071,7 @@
                     taskGrid.appendChild(badgeButton);
                 }
                 
+                // ゴミ箱はtaskGrid外に配置（position: fixedで画面右下に固定）
                 // taskGrid内には追加しない
                 
                 const emptyMessage = document.createElement('div');
@@ -5039,10 +5102,11 @@
             const cardWidth = currentCardSize.width;
             const cardHeight = currentCardSize.height;
 
-            // カードをクリア
+            // カードをクリア（ボタンは残す、ゴミ箱はtaskGrid外に固定されているので除外）
             const addButton = taskGrid.querySelector('.add-task-button');
             const completeButton = taskGrid.querySelector('.complete-button');
             const addBadgeButton = taskGrid.querySelector('.add-badge-button');
+            // ゴミ箱はtaskGrid外に配置されているため、querySelectorしない
             taskGrid.innerHTML = '';
             
             // ボタンを再追加
@@ -5081,6 +5145,7 @@
                 taskGrid.appendChild(badgeButton);
             }
             
+            // ゴミ箱はtaskGrid外に配置（position: fixedで画面右下に固定）
             // taskGrid内には追加しない
             
             // メニューアイコンを生成・表示
@@ -5089,48 +5154,14 @@
                 menuIcon = document.createElement('div');
                 menuIcon.className = 'menu-icon';
                 menuIcon.id = 'menuIcon';
-                // 固定位置が設定されている場合はドラッグを無効化
-                const position = settings?.menuButtonPosition || 'right';
-                menuIcon.draggable = !(position === 'left' || position === 'right');
+                menuIcon.draggable = true;
                 menuIcon.innerHTML = '<img src="images/menuicon.svg" alt="メニュー"><span class="tooltip-text">メニュー</span>';
                 taskGrid.appendChild(menuIcon);
                 setupMenuIconDrag();
             }
             
-            // メニューボタン位置が固定されている場合は、固定位置を適用
-            // 固定位置が設定されていない場合のみ、既存の位置設定を使用
-            const position = settings?.menuButtonPosition || 'right';
-            if (position === 'left' || position === 'right') {
-                // 固定位置を適用（applyMenuButtonPositionで処理）
-                applyMenuButtonPosition();
-            } else if (menuIconPosition && menuIconPosition.leftPercent !== undefined && menuIconPosition.topPercent !== undefined) {
-                // 固定位置が設定されていない場合のみ、既存の相対位置を使用
-                const gridRect = taskGrid.getBoundingClientRect();
-                const gridWidth = taskGrid.offsetWidth - 48; // padding分を考慮
-                const gridHeight = Math.max(800, taskGrid.offsetHeight - 48);
-                
-                const leftInGrid = (menuIconPosition.leftPercent / 100) * gridWidth;
-                const topInGrid = (menuIconPosition.topPercent / 100) * gridHeight;
-                
-                menuIcon.style.left = leftInGrid + 'px';
-                menuIcon.style.top = topInGrid + 'px';
-            } else {
-                // デフォルト位置：グリッド中央
-                const gridWidth = taskGrid.offsetWidth - 48;
-                const gridHeight = Math.max(800, taskGrid.offsetHeight - 48);
-                const centerX = (gridWidth / 2) - 28; // メニューアイコンの幅（56px）の半分
-                const centerY = (gridHeight / 2) - 28;
-                
-                menuIcon.style.left = centerX + 'px';
-                menuIcon.style.top = centerY + 'px';
-                
-                // 初期位置を相対位置（%）で保存
-                menuIconPosition = {
-                    leftPercent: (centerX / gridWidth) * 100,
-                    topPercent: (centerY / gridHeight) * 100
-                };
-                saveMenuIconPosition();
-            }
+            // メニューアイコンの位置を設定（設定に基づいて固定位置に配置）
+            updateMenuIconPosition();
             
             // 配置済みカードの位置を記録
             const placedCards = [];
@@ -5336,7 +5367,7 @@
             let lastAngle = null; // 最後の角度
             let totalAngleChange = 0; // 累積角度変化（ラジアン）
             let minRotationRadius = 30; // 最小回転半径（30px以上）
-            let isDroppedOnComplete = false; // 完了ボタンにドロップされたかどうか
+            let isDroppedOnTrashOrComplete = false; // ゴミ箱や完了ボタンにドロップされたかどうか
             
             // カード選択を解除する関数
             function deselectAllCards() {
@@ -5382,7 +5413,7 @@
                 rotationCenter = { x: 0, y: 0 };
                 lastAngle = null;
                 totalAngleChange = 0;
-                isDroppedOnComplete = false;
+                isDroppedOnTrashOrComplete = false;
             }
             
             // 回転を検知（移動履歴から円を描く動作を検出）
@@ -5447,8 +5478,8 @@
             
             // 回転検知を評価してコインを付与
             function evaluateRotationDetection() {
-                // 完了ボタンにドロップされた場合は評価しない
-                if (isDroppedOnComplete) {
+                // ゴミ箱や完了ボタンにドロップされた場合は評価しない
+                if (isDroppedOnTrashOrComplete) {
                     resetRotationDetection();
                     return;
                 }
@@ -5534,7 +5565,7 @@
                             this.dataset.hasDragged = 'true';
                             this.classList.add('dragging');
                             this.style.transition = 'none';
-                            this.style.zIndex = '999';
+                            this.style.zIndex = '999'; /* ゴミ箱より下にする */
                             this.style.opacity = '0.8';
                             this.style.transform += ' scale(1.05)';
                         } else {
@@ -5569,7 +5600,7 @@
                                     this.dataset.hasDragged = 'true';
                                     this.classList.add('dragging');
                                     this.style.transition = 'none';
-                                    this.style.zIndex = '999';
+                                    this.style.zIndex = '999'; /* ゴミ箱より下にする */
                                     this.style.opacity = '0.8';
                                     this.style.transform += ' scale(1.05)';
                                 }
@@ -5606,6 +5637,29 @@
                         
                         // 回転検知を実行
                         detectRotation(clampedX, clampedY, Date.now());
+                        
+                        // ゴミ箱との重なりをチェック（カードの領域全体で判定）
+                        const trashBin = document.getElementById('trashBin');
+                        if (trashBin) {
+                            const trashRect = trashBin.getBoundingClientRect();
+                            // カードの領域全体を計算（グリッド座標系）
+                            const cardLeft = clampedX + gridRect.left;
+                            const cardRight = cardLeft + cardWidth;
+                            const cardTop = clampedY + gridRect.top;
+                            const cardBottom = cardTop + cardHeight;
+                            
+                            // カードの領域がゴミ箱の領域と重なっているかチェック
+                            const isOverlapping = !(cardRight < trashRect.left || 
+                                                   cardLeft > trashRect.right || 
+                                                   cardBottom < trashRect.top || 
+                                                   cardTop > trashRect.bottom);
+                            
+                            if (isOverlapping) {
+                                trashBin.classList.add('touch-drag-over');
+                            } else {
+                                trashBin.classList.remove('touch-drag-over');
+                            }
+                        }
                         
                         // 完了ボタンとの重なりをチェック（カードの領域全体で判定）
                         const completeButton = document.getElementById('completeButton');
@@ -5646,7 +5700,7 @@
                                 this.dataset.hasDragged = 'true';
                                 this.classList.add('dragging');
                                 this.style.transition = 'none';
-                                this.style.zIndex = '999';
+                                this.style.zIndex = '999'; /* ゴミ箱より下にする */
                                 this.style.opacity = '0.8';
                                 this.style.transform += ' scale(1.05)';
                                 e.preventDefault();
@@ -5669,7 +5723,7 @@
                                 this.dataset.hasDragged = 'true';
                                 this.classList.add('dragging');
                                 this.style.transition = 'none';
-                                this.style.zIndex = '999';
+                                this.style.zIndex = '999'; /* ゴミ箱より下にする */
                                 this.style.opacity = '0.8';
                                 this.style.transform += ' scale(1.05)';
                                 e.preventDefault();
@@ -5683,6 +5737,11 @@
                     clearTimeout(touchTimeout);
                     touchTimeout = null;
                     
+                    // ゴミ箱の拡大表示を解除
+                    const trashBin = document.getElementById('trashBin');
+                    if (trashBin) {
+                        trashBin.classList.remove('touch-drag-over');
+                    }
                     
                     // 完了ボタンの拡大表示を解除
                     const completeButton = document.getElementById('completeButton');
@@ -5691,13 +5750,26 @@
                     }
                     
                     if (isDragging && currentTouchedCard === this) {
-                        // 完了ボタンの上にドロップされたかチェック（カードの領域全体で判定）
+                        // ゴミ箱または完了ボタンの上にドロップされたかチェック（カードの領域全体で判定）
                         const gridRect = taskGrid.getBoundingClientRect();
                         const cardRect = this.getBoundingClientRect();
+                        let droppedOnTrash = false;
                         let droppedOnComplete = false;
                         
-                        const completeButton = document.getElementById('completeButton');
-                        if (completeButton) {
+                        if (trashBin) {
+                            const trashRect = trashBin.getBoundingClientRect();
+                            // カードの領域全体がゴミ箱の領域と重なっているかチェック
+                            const isOverlapping = !(cardRect.right < trashRect.left || 
+                                                   cardRect.left > trashRect.right || 
+                                                   cardRect.bottom < trashRect.top || 
+                                                   cardRect.top > trashRect.bottom);
+                            
+                            if (isOverlapping) {
+                                droppedOnTrash = true;
+                            }
+                        }
+                        
+                        if (completeButton && !droppedOnTrash) {
                             const completeRect = completeButton.getBoundingClientRect();
                             // カードの領域全体が完了ボタンの領域と重なっているかチェック
                             const isOverlapping = !(cardRect.right < completeRect.left || 
@@ -5710,9 +5782,30 @@
                             }
                         }
                         
-                        if (droppedOnComplete) {
+                        if (droppedOnTrash) {
+                            // 回転検知をリセット（ゴミ箱にドロップされた場合）
+                            isDroppedOnTrashOrComplete = true;
+                            evaluateRotationDetection(); // リセットのみ（評価しない）
+                            
+                            // 削除確認ダイアログを表示
+                            const taskTitle = task.title || '無題のタスク';
+                            if (confirm(`「${taskTitle}」を削除してもよろしいですか？\nこの操作は取り消せません。`)) {
+                                deleteTask(task.id);
+                            } else {
+                                // キャンセル時は元の位置に戻す
+                                if (task.position) {
+                                    this.style.left = task.position.left + 'px';
+                                    this.style.top = task.position.top + 'px';
+                                }
+                                this.style.transition = '';
+                                this.style.zIndex = task.position ? task.position.zIndex || 0 : 0;
+                                this.style.opacity = '1';
+                                this.style.transform = this.style.transform.replace(' scale(1.05)', '');
+                                this.classList.remove('dragging');
+                            }
+                        } else if (droppedOnComplete) {
                             // 回転検知をリセット（完了ボタンにドロップされた場合）
-                            isDroppedOnComplete = true;
+                            isDroppedOnTrashOrComplete = true;
                             evaluateRotationDetection(); // リセットのみ（評価しない）
                             
                             // タスクを完了にする
@@ -5724,7 +5817,7 @@
                             this.style.transform = this.style.transform.replace(' scale(1.05)', '');
                             this.classList.remove('dragging');
                         } else {
-                            // 回転検知を評価（完了ボタンにドロップされなかった場合）
+                            // 回転検知を評価（ゴミ箱や完了ボタンにドロップされなかった場合）
                             evaluateRotationDetection();
                             
                             // タスクの位置情報を更新
@@ -5823,6 +5916,11 @@
                     this.dataset.hasDragged = 'false';
                     currentTouchedCard = null;
                     
+                    // ゴミ箱の拡大表示を解除
+                    const trashBin = document.getElementById('trashBin');
+                    if (trashBin) {
+                        trashBin.classList.remove('touch-drag-over');
+                    }
                     
                     // 完了ボタンの拡大表示を解除
                     const completeButton = document.getElementById('completeButton');
@@ -5859,7 +5957,7 @@
                 
                 // ドラッグ終了（PC対応）
                 card.addEventListener('dragend', function(e) {
-                    // 回転検知を評価（完了ボタンにドロップされなかった場合）
+                    // 回転検知を評価（ゴミ箱や完了ボタンにドロップされなかった場合）
                     evaluateRotationDetection();
                     
                     // 元のカードを再度表示
@@ -5949,6 +6047,8 @@
                 }
             });
             
+            // ゴミ箱のドロップ処理を設定
+            setupTrashBinDrop();
         }
 
         // バッジ表示と更新
@@ -6193,6 +6293,22 @@
                         }
                     });
                     
+                    // ゴミ箱との重なりをチェック
+                    const trashBin = document.getElementById('trashBin');
+                    if (trashBin) {
+                        const trashRect = trashBin.getBoundingClientRect();
+                        const badgeCenterX = clampedX + badgeWidth / 2 + gridRect.left;
+                        const badgeCenterY = clampedY + badgeHeight / 2 + gridRect.top;
+                        
+                        // バッジの中心点がゴミ箱の範囲内にあるかチェック
+                        if (badgeCenterX >= trashRect.left && badgeCenterX <= trashRect.right &&
+                            badgeCenterY >= trashRect.top && badgeCenterY <= trashRect.bottom) {
+                            trashBin.classList.add('touch-drag-over');
+                        } else {
+                            trashBin.classList.remove('touch-drag-over');
+                        }
+                    }
+                    
                     e.preventDefault();
                 } else if (badgeTouchTimeout && currentTouchedBadge === this) {
                     // 移動が小さい場合はドラッグをキャンセル
@@ -6216,6 +6332,11 @@
                     clearTimeout(badgeTouchTimeout);
                     badgeTouchTimeout = null;
                     
+                    // ゴミ箱の拡大表示を解除
+                    const trashBin = document.getElementById('trashBin');
+                    if (trashBin) {
+                        trashBin.classList.remove('touch-drag-over');
+                    }
                     
                     // すべてのカードからドラッグオーバー状態を解除
                     const taskCards = taskGrid.querySelectorAll('.task-card');
@@ -6224,27 +6345,46 @@
                     });
                     
                     if (isBadgeDragging && currentTouchedBadge === this) {
-                        // カードの上にドロップされたかチェック（スマホ版：バッジ吸着機能）
+                        // ゴミ箱の上にドロップされたかチェック
                         const gridRect = taskGrid.getBoundingClientRect();
                         const badgeRect = this.getBoundingClientRect();
+                        let droppedOnTrash = false;
                         let droppedOnCard = null;
                         
-                        taskCards.forEach(card => {
-                            const cardRect = card.getBoundingClientRect();
+                        if (trashBin) {
+                            const trashRect = trashBin.getBoundingClientRect();
+                            // バッジの中心点がゴミ箱の範囲内にあるかチェック
                             const badgeCenterX = badgeRect.left + badgeRect.width / 2;
                             const badgeCenterY = badgeRect.top + badgeRect.height / 2;
                             
-                            // バッジの中心点がカードの範囲内にあるかチェック
-                            if (badgeCenterX >= cardRect.left && badgeCenterX <= cardRect.right &&
-                                badgeCenterY >= cardRect.top && badgeCenterY <= cardRect.bottom) {
-                                const taskId = parseInt(card.dataset.taskId);
-                                if (taskId && badge.attachedToTaskId !== taskId) {
-                                    droppedOnCard = { card: card, taskId: taskId };
-                                }
+                            if (badgeCenterX >= trashRect.left && badgeCenterX <= trashRect.right &&
+                                badgeCenterY >= trashRect.top && badgeCenterY <= trashRect.bottom) {
+                                droppedOnTrash = true;
                             }
-                        });
+                        }
                         
-                        if (droppedOnCard) {
+                        // カードの上にドロップされたかチェック（スマホ版：バッジ吸着機能）
+                        if (!droppedOnTrash) {
+                            taskCards.forEach(card => {
+                                const cardRect = card.getBoundingClientRect();
+                                const badgeCenterX = badgeRect.left + badgeRect.width / 2;
+                                const badgeCenterY = badgeRect.top + badgeRect.height / 2;
+                                
+                                // バッジの中心点がカードの範囲内にあるかチェック
+                                if (badgeCenterX >= cardRect.left && badgeCenterX <= cardRect.right &&
+                                    badgeCenterY >= cardRect.top && badgeCenterY <= cardRect.bottom) {
+                                    const taskId = parseInt(card.dataset.taskId);
+                                    if (taskId && badge.attachedToTaskId !== taskId) {
+                                        droppedOnCard = { card: card, taskId: taskId };
+                                    }
+                                }
+                            });
+                        }
+                        
+                        if (droppedOnTrash) {
+                            // バッジを削除（確認なし）
+                            deleteBadge(badge.id);
+                        } else if (droppedOnCard) {
                             // カードにバッジを吸着（スマホ版）
                             const taskId = droppedOnCard.taskId;
                             const card = droppedOnCard.card;
@@ -6371,6 +6511,12 @@
                 this.style.transform = this.style.transform.replace(' scale(1.1)', '');
                 currentTouchedBadge = null;
                 
+                // ゴミ箱の拡大表示を解除
+                const trashBin = document.getElementById('trashBin');
+                if (trashBin) {
+                    trashBin.classList.remove('touch-drag-over');
+                }
+                
                 // すべてのカードからドラッグオーバー状態を解除
                 const taskCards = taskGrid.querySelectorAll('.task-card');
                 taskCards.forEach(card => {
@@ -6443,7 +6589,7 @@
             // 完了ボタンにドロップ（一度だけ処理されるようにフラグを使用）
             let isProcessing = false;
             completeButton.addEventListener('drop', function(e) {
-                isDroppedOnComplete = true;
+                isDroppedOnTrashOrComplete = true;
                 e.preventDefault();
                 e.stopPropagation();
                 this.classList.remove('drag-over');
@@ -7746,24 +7892,63 @@
             }
         }
         
-        // タスク詳細パネルからタスクを削除
-        function deleteTaskFromDetail() {
-            if (!currentDetailTaskId) return;
+        // ゴミ箱のドロップ処理を設定（重複登録を防ぐ）
+        let trashBinHandlerSet = false;
+        function setupTrashBinDrop() {
+            const trashBin = document.getElementById('trashBin');
+            if (!trashBin) return;
             
-            const task = tasks.find(t => t.id === currentDetailTaskId);
-            if (!task) return;
+            // 既に設定済みの場合は何もしない
+            if (trashBinHandlerSet) return;
+            trashBinHandlerSet = true;
             
-            // 削除確認ダイアログ
-            const taskTitle = task.title || '無題のタスク';
-            if (!confirm(`「${taskTitle}」を削除してもよろしいですか？\nこの操作は取り消せません。`)) {
-                return;
-            }
+            // ゴミ箱の上でのドラッグオーバー
+            trashBin.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.dataTransfer.dropEffect = 'move';
+                this.classList.add('drag-over');
+            });
             
-            // タスクを削除
-            deleteTask(currentDetailTaskId);
+            // ゴミ箱から離れた時
+            trashBin.addEventListener('dragleave', function(e) {
+                this.classList.remove('drag-over');
+            });
             
-            // 詳細パネルを閉じる
-            closeDetailBoard();
+            // ゴミ箱にドロップ（一度だけ処理されるようにフラグを使用）
+            let isProcessing = false;
+            trashBin.addEventListener('drop', function(e) {
+                isDroppedOnTrashOrComplete = true;
+                e.preventDefault();
+                e.stopPropagation();
+                this.classList.remove('drag-over');
+                
+                // 既に処理中の場合は何もしない
+                if (isProcessing) return;
+                isProcessing = true;
+                
+                // タスクカードがドロップされた場合
+                const taskGrid = document.getElementById('taskGrid');
+                const draggedCard = taskGrid.querySelector('.task-card.dragging');
+                if (draggedCard) {
+                    const taskIdNum = parseInt(draggedCard.dataset.taskId);
+                    if (taskIdNum && !isNaN(taskIdNum)) {
+                        deleteTask(taskIdNum);
+                        // 処理完了後にフラグをリセット
+                        setTimeout(() => { isProcessing = false; }, 100);
+                        return;
+                    }
+                }
+                
+                // バッジがドロップされた場合
+                const badgeId = e.dataTransfer.getData('badgeId');
+                if (badgeId) {
+                    deleteBadge(parseInt(badgeId));
+                }
+                
+                // 処理完了後にフラグをリセット
+                setTimeout(() => { isProcessing = false; }, 100);
+            });
         }
         
         // タスクを削除（重複実行を防ぐ）
@@ -8067,11 +8252,6 @@
             editButton.style.display = 'flex';
             // タイムレコードボタンを表示
             timeRecordButton.style.display = 'flex';
-            // 削除ボタンを表示
-            const deleteButton = document.getElementById('detailDeleteButton');
-            if (deleteButton) {
-                deleteButton.style.display = 'flex';
-            }
             
             // 表示モードで詳細を表示
             renderTaskDetailView(task);
@@ -8314,11 +8494,6 @@
             const timeRecordButton = document.getElementById('detailTimeRecordButton');
             if (timeRecordButton) {
                 timeRecordButton.style.display = 'none';
-            }
-            // 削除ボタンを非表示
-            const deleteButton = document.getElementById('detailDeleteButton');
-            if (deleteButton) {
-                deleteButton.style.display = 'none';
             }
             
             detailBoard.classList.remove('active');
@@ -8862,6 +9037,9 @@
                 linkIconGrid.appendChild(linkIcon);
             });
             
+            // ゴミ箱のドロップ処理を設定
+            // パネル内ゴミ箱は削除されたため、この関数は呼ばない
+            // setupPanelTrashBin();
         }
         
         // リンクの選択状態を切り替え
@@ -9024,6 +9202,8 @@
                         this.style.left = clampedX + 'px';
                         this.style.top = clampedY + 'px';
                         
+                        // パネル内ゴミ箱は削除されたため、このチェックは不要
+                        // const panelTrashBin = document.getElementById('panelTrashBin1');
                         // ...
                     }
                 }
@@ -9038,17 +9218,50 @@
                     this.style.transition = '';
                     this.style.zIndex = '';
                     
-                    // 位置を更新（グリッドから独立した位置に移動）
-                    const rect = this.getBoundingClientRect();
-                    const gridRect = document.getElementById('linkIconGrid').getBoundingClientRect();
-                    link.position.x = rect.left - gridRect.left;
-                    link.position.y = rect.top - gridRect.top;
-                    saveExternalLinks();
-                    
-                    // 絶対位置で保持
-                    this.style.position = 'absolute';
-                    this.style.left = link.position.x + 'px';
-                    this.style.top = link.position.y + 'px';
+                    // パネル内ゴミ箱は削除されたため、メインのゴミ箱でチェック
+                    const trashBin = document.getElementById('trashBin');
+                    if (trashBin) {
+                        const trashRect = trashBin.getBoundingClientRect();
+                        const linkRect = this.getBoundingClientRect();
+                        
+                        // リンクの領域がゴミ箱の領域と重なっているかチェック
+                        if (linkRect.left < trashRect.right && linkRect.right > trashRect.left &&
+                            linkRect.top < trashRect.bottom && linkRect.bottom > trashRect.top) {
+                            // リンクを削除
+                            if (confirm('このリンクを削除しますか？')) {
+                                deleteExternalLink(link.id);
+                            } else {
+                                // 位置をリセット
+                                this.style.position = '';
+                                this.style.left = '';
+                                this.style.top = '';
+                            }
+                        } else {
+                            // 位置を更新（グリッドから独立した位置に移動）
+                            const rect = this.getBoundingClientRect();
+                            const gridRect = document.getElementById('linkIconGrid').getBoundingClientRect();
+                            link.position.x = rect.left - gridRect.left;
+                            link.position.y = rect.top - gridRect.top;
+                            saveExternalLinks();
+                            
+                            // 絶対位置で保持
+                            this.style.position = 'absolute';
+                            this.style.left = link.position.x + 'px';
+                            this.style.top = link.position.y + 'px';
+                        }
+                    } else {
+                        // 位置を更新（グリッドから独立した位置に移動）
+                        const rect = this.getBoundingClientRect();
+                        const gridRect = document.getElementById('linkIconGrid').getBoundingClientRect();
+                        link.position.x = rect.left - gridRect.left;
+                        link.position.y = rect.top - gridRect.top;
+                        saveExternalLinks();
+                        
+                        // 絶対位置で保持
+                        this.style.position = 'absolute';
+                        this.style.left = link.position.x + 'px';
+                        this.style.top = link.position.y + 'px';
+                    }
                 } else {
                     // タップ：リンクを開く（Ctrl/Cmdキーで選択）
                     // 選択処理は別のイベントハンドラーで処理
@@ -9063,6 +9276,8 @@
             });
         }
         
+        // パネル内ゴミ箱は削除されたため、この関数は不要
+        // function setupPanelTrashBin() { ... }
         
         // パネル開閉時にリンクグリッドを更新（ラッパー関数）
         function openSlidePanel(panelNumber) {
@@ -9523,22 +9738,27 @@
             // 設定パネルのイベントリスナーを設定
             setupSettingsPanel();
             
-            setupBadgeDragHandler(); // バッジドラッグハンドラーを設定
-            setupCompleteButtonDrop(); // 完了ボタンのドロップ処理を初期化
-            
-            // ウィンドウサイズ変更時にメニューボタン位置を再適用（SP版対応）
-            let resizeTimeout;
-            window.addEventListener('resize', function() {
-                clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(function() {
-                    const position = settings?.menuButtonPosition || 'right';
-                    if (position === 'left' || position === 'right') {
-                        applyMenuButtonPosition();
-                    }
-                }, 100);
+            // ゴミ箱を全て削除してから再作成（重複を完全に防ぐ）
+            const allTrashBins = document.querySelectorAll('.trash-bin[id="trashBin"]');
+            allTrashBins.forEach(function(trashBin) {
+                trashBin.remove();
             });
             
+            // 右下に1つだけゴミ箱を作成
+            const trashBin = document.createElement('div');
+            trashBin.className = 'trash-bin';
+            trashBin.id = 'trashBin';
+            trashBin.innerHTML = '<span class="trash-icon">🗑️</span><span class="tooltip-text">ドラッグ&ドロップで削除</span>';
+            document.body.appendChild(trashBin);
+            
+            // setupTrashBinDropのフラグをリセット（新しいゴミ箱にイベントリスナーを設定するため）
+            trashBinHandlerSet = false;
+            
+            setupBadgeDragHandler(); // バッジドラッグハンドラーを設定
+            setupTrashBinDrop(); // ゴミ箱のドロップ処理を初期化
+            setupCompleteButtonDrop(); // 完了ボタンのドロップ処理を初期化
             // データ読み込み時に既にupdateTaskGrid()が呼ばれているため、重複を避ける
+            // ただし、ゴミ箱作成後にUIを更新
             if (!document.getElementById('taskGrid').hasChildNodes() || document.getElementById('taskGrid').childElementCount === 0) {
             updateTaskGrid();
             }
