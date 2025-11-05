@@ -1819,11 +1819,12 @@
         
         /* メニューアイコンが右下の場合、180度から270度の間に4つ全てを表示 */
         /* 追加の位置クラス（左下寄り、やや左下） */
-        /* 半径80px、角度210度（180度から270度の間を3等分） */
+        /* 半径80px、角度210度（180度から270度の間を3等分：180, 210, 240, 270） */
         .menu-item.bottom-left-1 {
-            top: 69.28px; /* 80 * cos(210°) = 80 * cos(180+30°) = 80 * (-cos(30°)) ≈ -69.28px → 下方向なので正の値 */
+            bottom: -69.28px; /* 80 * cos(210°) = 80 * cos(180+30°) = 80 * (-cos(30°)) ≈ -69.28px → 下方向（bottomが負の値で上に移動） */
             left: 50%;
             right: auto;
+            top: auto;
             transform: translateX(-50%) translateX(-40px) scale(0) rotate(0deg); /* 80 * sin(210°) = 80 * sin(180+30°) = 80 * (-sin(30°)) = -40px → 左方向 */
         }
         
@@ -1833,9 +1834,10 @@
         
         /* 半径80px、角度240度 */
         .menu-item.bottom-left-2 {
-            top: 40px; /* 80 * cos(240°) = 80 * cos(180+60°) = 80 * (-cos(60°)) = -40px → 下方向なので正の値 */
+            bottom: -40px; /* 80 * cos(240°) = 80 * cos(180+60°) = 80 * (-cos(60°)) = -40px → 下方向（bottomが負の値で上に移動） */
             left: 50%;
             right: auto;
+            top: auto;
             transform: translateX(-50%) translateX(-69.28px) scale(0) rotate(0deg); /* 80 * sin(240°) = 80 * sin(180+60°) = 80 * (-sin(60°)) ≈ -69.28px → 左方向 */
         }
         
