@@ -1816,6 +1816,18 @@
                 transform: translateX(-50%) scale(1) rotate(360deg);
             }
         }
+        
+        /* メニューアイコンが右下の場合、右と下のメニュー項目を非表示 */
+        .menu-icon.position-bottom-right .menu-item.right,
+        .menu-icon.position-bottom-right .menu-item.bottom {
+            display: none !important;
+        }
+        
+        /* メニューアイコンが左下の場合、左と下のメニュー項目を非表示 */
+        .menu-icon.position-bottom-left .menu-item.left,
+        .menu-icon.position-bottom-left .menu-item.bottom {
+            display: none !important;
+        }
 
         .form-group {
             margin-bottom: var(--spacing-md);
@@ -4448,13 +4460,34 @@
             const existingItems = menuIcon.querySelectorAll('.menu-item');
             existingItems.forEach(item => item.remove());
             
-            // メニュー項目の定義（時計回り：上→右→下→左）
-            const menuItems = [
-                { position: 'top', icon: 'images/mypage.svg', action: 'mypage' },
-                { position: 'right', icon: 'images/setup.svg', action: 'setup' },
-                { position: 'bottom', icon: 'images/resource.svg', action: 'resource' },
-                { position: 'left', icon: 'images/archive.svg', action: 'archive' }
-            ];
+            // メニューボタンの位置を取得
+            const isBottomRight = menuIcon.classList.contains('position-bottom-right');
+            const isBottomLeft = menuIcon.classList.contains('position-bottom-left');
+            
+            // メニュー項目の定義（位置に応じて表示する項目を変更）
+            let menuItems = [];
+            
+            if (isBottomRight) {
+                // 右下の場合：上と左のみ表示（0度から270度の間）
+                menuItems = [
+                    { position: 'top', icon: 'images/mypage.svg', action: 'mypage' },
+                    { position: 'left', icon: 'images/archive.svg', action: 'archive' }
+                ];
+            } else if (isBottomLeft) {
+                // 左下の場合：上と右のみ表示
+                menuItems = [
+                    { position: 'top', icon: 'images/mypage.svg', action: 'mypage' },
+                    { position: 'right', icon: 'images/setup.svg', action: 'setup' }
+                ];
+            } else {
+                // デフォルト（全方向）
+                menuItems = [
+                    { position: 'top', icon: 'images/mypage.svg', action: 'mypage' },
+                    { position: 'right', icon: 'images/setup.svg', action: 'setup' },
+                    { position: 'bottom', icon: 'images/resource.svg', action: 'resource' },
+                    { position: 'left', icon: 'images/archive.svg', action: 'archive' }
+                ];
+            }
             
             // メニュー項目を生成
             menuItems.forEach((item, index) => {
@@ -4465,7 +4498,7 @@
                 
                 menuIcon.appendChild(menuItem);
                 
-                // アニメーション遅延を設定（時計回りに順番に表示）
+                // アニメーション遅延を設定（順番に表示）
                 setTimeout(() => {
                     menuItem.classList.add('active');
                 }, index * 100); // 各項目に100msずつ遅延
