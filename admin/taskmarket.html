@@ -1817,7 +1817,33 @@
             }
         }
         
-        /* メニューアイコンが右下の場合、右と下のメニュー項目を非表示 */
+        /* メニューアイコンが右下の場合、180度から270度の間に4つ全てを表示 */
+        /* 追加の位置クラス（左下寄り、やや左下） */
+        /* 半径80px、角度210度（180度から270度の間を3等分） */
+        .menu-item.bottom-left-1 {
+            top: 69.28px; /* 80 * cos(210°) = 80 * cos(180+30°) = 80 * (-cos(30°)) ≈ -69.28px → 下方向なので正の値 */
+            left: 50%;
+            right: auto;
+            transform: translateX(-50%) translateX(-40px) scale(0) rotate(0deg); /* 80 * sin(210°) = 80 * sin(180+30°) = 80 * (-sin(30°)) = -40px → 左方向 */
+        }
+        
+        .menu-item.bottom-left-1.active {
+            transform: translateX(-50%) translateX(-40px) scale(1) rotate(360deg);
+        }
+        
+        /* 半径80px、角度240度 */
+        .menu-item.bottom-left-2 {
+            top: 40px; /* 80 * cos(240°) = 80 * cos(180+60°) = 80 * (-cos(60°)) = -40px → 下方向なので正の値 */
+            left: 50%;
+            right: auto;
+            transform: translateX(-50%) translateX(-69.28px) scale(0) rotate(0deg); /* 80 * sin(240°) = 80 * sin(180+60°) = 80 * (-sin(60°)) ≈ -69.28px → 左方向 */
+        }
+        
+        .menu-item.bottom-left-2.active {
+            transform: translateX(-50%) translateX(-69.28px) scale(1) rotate(360deg);
+        }
+        
+        /* 右下の場合、右と下のメニュー項目は非表示（代わりに左下寄りを使用） */
         .menu-icon.position-bottom-right .menu-item.right,
         .menu-icon.position-bottom-right .menu-item.bottom {
             display: none !important;
@@ -4494,9 +4520,11 @@
             let menuItems = [];
             
             if (isBottomRight) {
-                // 右下の場合：上と左のみ表示（0度から270度の間）
+                // 右下の場合：180度から270度の間に4つ全てを表示（左下と対照的）
                 menuItems = [
-                    { position: 'top', icon: 'images/mypage.svg', action: 'mypage' },
+                    { position: 'bottom', icon: 'images/mypage.svg', action: 'mypage' },
+                    { position: 'bottom-left-1', icon: 'images/setup.svg', action: 'setup' },
+                    { position: 'bottom-left-2', icon: 'images/resource.svg', action: 'resource' },
                     { position: 'left', icon: 'images/archive.svg', action: 'archive' }
                 ];
             } else if (isBottomLeft) {
