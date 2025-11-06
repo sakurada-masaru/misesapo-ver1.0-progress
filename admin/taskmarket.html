@@ -4614,48 +4614,66 @@
             const isBottomRight = menuIcon.classList.contains('position-bottom-right');
             const isBottomLeft = menuIcon.classList.contains('position-bottom-left');
             
-            // メニュー項目の定義（位置に応じて表示する項目を変更）
+            // メニュー項目の定義（角度と半径で計算して配置）
+            const radius = 96; // メニュー項目の距離（64pxのメニュー項目 + 32pxのマージン）
             let menuItems = [];
             
             if (isBottomRight) {
                 // 右下の場合：0時から9時の間に4つ全てを表示
                 // 0時：マイページ、11時：アーカイブ、10時：リソース、9時：設定
+                // 角度：0度（上）、330度（11時）、300度（10時）、270度（9時）
                 menuItems = [
-                    { position: 'top', icon: 'images/mypage.svg', action: 'mypage' }, // 0時
-                    { position: 'top-left-2', icon: 'images/archive.svg', action: 'archive' }, // 11時
-                    { position: 'top-left-1', icon: 'images/resource.svg', action: 'resource' }, // 10時
-                    { position: 'left', icon: 'images/setup.svg', action: 'setup' } // 9時
+                    { angle: 0, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' }, // 0時
+                    { angle: 330, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' }, // 11時
+                    { angle: 300, icon: 'images/resource.svg', action: 'resource', label: 'リソース' }, // 10時
+                    { angle: 270, icon: 'images/setup.svg', action: 'setup', label: '設定' } // 9時
                 ];
             } else if (isBottomLeft) {
                 // 左下の場合：0度から90度の間に4つ全てを表示
+                // 角度：0度（上）、30度（1時）、60度（2時）、90度（3時）
                 menuItems = [
-                    { position: 'top', icon: 'images/mypage.svg', action: 'mypage' },
-                    { position: 'top-right-1', icon: 'images/setup.svg', action: 'setup' },
-                    { position: 'top-right-2', icon: 'images/resource.svg', action: 'resource' },
-                    { position: 'right', icon: 'images/archive.svg', action: 'archive' }
+                    { angle: 0, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' },
+                    { angle: 30, icon: 'images/setup.svg', action: 'setup', label: '設定' },
+                    { angle: 60, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
+                    { angle: 90, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' }
                 ];
             } else {
                 // デフォルト（全方向）
                 menuItems = [
-                    { position: 'top', icon: 'images/mypage.svg', action: 'mypage' },
-                    { position: 'right', icon: 'images/setup.svg', action: 'setup' },
-                    { position: 'bottom', icon: 'images/resource.svg', action: 'resource' },
-                    { position: 'left', icon: 'images/archive.svg', action: 'archive' }
+                    { angle: 0, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' },
+                    { angle: 90, icon: 'images/setup.svg', action: 'setup', label: '設定' },
+                    { angle: 180, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
+                    { angle: 270, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' }
                 ];
             }
             
             // メニュー項目を生成
             menuItems.forEach((item, index) => {
                 const menuItem = document.createElement('div');
-                menuItem.className = `menu-item ${item.position}`;
+                menuItem.className = 'menu-item';
                 menuItem.dataset.action = item.action;
-                menuItem.innerHTML = `<img src="${item.icon}" alt="${item.action}">`;
+                
+                // 角度から座標を計算（時計回り、0度を上として）
+                const angleRad = (item.angle - 90) * Math.PI / 180; // 0度を上として計算（-90度で時計の12時を上に）
+                const x = Math.cos(angleRad) * radius;
+                const y = Math.sin(angleRad) * radius;
+                
+                // 位置を設定
+                menuItem.style.left = `50%`;
+                menuItem.style.top = `50%`;
+                menuItem.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(0) rotate(0deg)`;
+                menuItem.style.transformOrigin = 'center';
+                
+                // アイコンを設定
+                menuItem.innerHTML = `<img src="${item.icon}" alt="${item.label}">`;
+                menuItem.title = item.label;
                 
                 menuIcon.appendChild(menuItem);
                 
                 // アニメーション遅延を設定（順番に表示）
                 setTimeout(() => {
                     menuItem.classList.add('active');
+                    menuItem.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(1) rotate(360deg)`;
                 }, index * 100); // 各項目に100msずつ遅延
                 
                 // クリックイベント（PC版）
@@ -4686,6 +4704,11 @@
             menuItems.forEach((item, index) => {
                 setTimeout(() => {
                     item.classList.remove('active');
+                    // transformを元に戻す
+                    const currentTransform = item.style.transform;
+                    if (currentTransform.includes('scale(1)')) {
+                        item.style.transform = currentTransform.replace('scale(1)', 'scale(0)');
+                    }
                     setTimeout(() => {
                         item.remove();
                     }, 400); // アニメーション完了後に削除
