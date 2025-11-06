@@ -6143,42 +6143,6 @@
                     }
                 });
                 
-                // [SP] シングルタップイベント（SP版ではタップでタスク詳細を開く）
-                if (window.innerWidth <= 768) {
-                    let tapStartTime = 0;
-                    let tapStartX = 0;
-                    let tapStartY = 0;
-                    
-                    card.addEventListener('touchstart', function(e) {
-                        if (e.touches.length === 1) {
-                            const touch = e.touches[0];
-                            tapStartTime = Date.now();
-                            tapStartX = touch.clientX;
-                            tapStartY = touch.clientY;
-                        }
-                    }, { passive: true });
-                    
-                    card.addEventListener('touchend', function(e) {
-                        if (this.dataset.hasDragged === 'false' && this.dataset.isDragging === 'false') {
-                            const tapEndTime = Date.now();
-                            const tapDuration = tapEndTime - tapStartTime;
-                            
-                            // タップ時間が短く（300ms以内）、移動距離が小さい（10px以内）場合はタップとして扱う
-                            if (tapDuration < 300 && e.changedTouches.length === 1) {
-                                const touch = e.changedTouches[0];
-                                const deltaX = Math.abs(touch.clientX - tapStartX);
-                                const deltaY = Math.abs(touch.clientY - tapStartY);
-                                
-                                if (deltaX < 10 && deltaY < 10) {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                    showTaskDetail(task.id);
-                                }
-                            }
-                        }
-                    }, { passive: false });
-                }
-                
                 // 緊急タスクは左上に固定配置（縦に並べる）
                 const left = 24; // 左から24px
                 const top = urgentCardY;
@@ -6262,42 +6226,6 @@
                         showTaskDetail(task.id);
                     }
                 });
-                
-                // [SP] シングルタップイベント（SP版ではタップでタスク詳細を開く）
-                if (window.innerWidth <= 768) {
-                    let tapStartTime = 0;
-                    let tapStartX = 0;
-                    let tapStartY = 0;
-                    
-                    card.addEventListener('touchstart', function(e) {
-                        if (e.touches.length === 1) {
-                            const touch = e.touches[0];
-                            tapStartTime = Date.now();
-                            tapStartX = touch.clientX;
-                            tapStartY = touch.clientY;
-                        }
-                    }, { passive: true });
-                    
-                    card.addEventListener('touchend', function(e) {
-                        if (this.dataset.hasDragged === 'false' && this.dataset.isDragging === 'false') {
-                            const tapEndTime = Date.now();
-                            const tapDuration = tapEndTime - tapStartTime;
-                            
-                            // タップ時間が短く（300ms以内）、移動距離が小さい（10px以内）場合はタップとして扱う
-                            if (tapDuration < 300 && e.changedTouches.length === 1) {
-                                const touch = e.changedTouches[0];
-                                const deltaX = Math.abs(touch.clientX - tapStartX);
-                                const deltaY = Math.abs(touch.clientY - tapStartY);
-                                
-                                if (deltaX < 10 && deltaY < 10) {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                    showTaskDetail(task.id);
-                                }
-                            }
-                        }
-                    }, { passive: false });
-                }
                 
                 let top, left, rotation, zIndex;
                 
