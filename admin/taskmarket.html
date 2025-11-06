@@ -283,7 +283,6 @@
 
         /* ツールチップ表示（ホバー時） */
         .add-task-button:hover .tooltip-text,
-        .add-badge-button:hover .tooltip-text,
         .complete-button:hover .tooltip-text,
         .slide-panel-handle:hover .tooltip-text {
             opacity: 1;
@@ -299,7 +298,6 @@
         }
 
         .tooltips-disabled .add-task-button:hover .tooltip-text,
-        .tooltips-disabled .add-badge-button:hover .tooltip-text,
         .tooltips-disabled .complete-button:hover .tooltip-text,
         .tooltips-disabled .slide-panel-handle:hover .tooltip-text,
         .tooltips-disabled .detail-edit-button:hover .tooltip-text,
@@ -545,12 +543,13 @@
             visibility: visible;
         }
 
-        /* 新規追加ボタン（画面下部中央に固定・円形デザイン） */
+        /* 新規追加ボタン（画面右上に固定・円形デザイン） */
         .add-task-button {
             position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 50px;
+            right: 50px;
+            bottom: auto;
+            left: auto;
             width: 64px;
             height: 64px;
             background: var(--color-primary);
@@ -571,6 +570,14 @@
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
+        }
+        
+        /* SP版：新規追加ボタンの位置調整 */
+        @media (max-width: 768px) {
+            .add-task-button {
+                top: 16px;
+                right: 16px;
+            }
         }
         
         /* 完了ボタン（メニューと反対の方向に固定・円形デザイン） */
@@ -710,54 +717,6 @@
         }
 
         /* バッジを作るボタン（右上に固定・◯デザイン） */
-        .add-badge-button {
-            position: absolute;
-            top: 24px;
-            right: 24px;
-            width: 64px;
-            height: 64px;
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 28px;
-            font-weight: var(--font-weight-bold);
-            cursor: pointer;
-            transition: var(--transition-normal);
-            box-shadow: var(--shadow-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            line-height: 1;
-            padding: 0;
-        }
-
-        .add-badge-button .tooltip-text {
-            left: auto;
-            right: 100%;
-            top: 50%;
-            transform: translateY(-50%);
-            margin-left: 0;
-            margin-right: 8px;
-        }
-        
-        .add-badge-button .tooltip-text::before {
-            left: 100%;
-            right: auto;
-            border-left-color: rgba(0, 0, 0, 0.85);
-            border-right-color: transparent;
-        }
-
-        .add-badge-button:hover {
-            background: var(--color-primary-hover);
-            box-shadow: var(--shadow-xl);
-            transform: translateY(-2px) scale(1.1);
-        }
-
-        .add-badge-button:active {
-            transform: translateY(0) scale(1.05);
-        }
 
         .badge-icon-text {
             font-size: 28px;
@@ -1721,8 +1680,8 @@
         /* SP版：メニューボタンのサイズ調整 */
         @media (max-width: 768px) {
             .menu-icon {
-                width: 100px;
-                height: 100px;
+                width: 80px;
+                height: 80px;
             }
             
             /* SP版：メニューボタンを角に寄せる */
@@ -1787,8 +1746,8 @@
         /* メニュー項目（円形メニュー） */
         .menu-item {
             position: absolute;
-            width: 48px;
-            height: 48px;
+            width: 64px;
+            height: 64px;
             background: rgba(255, 255, 255, 0.95);
             border: 2px solid var(--color-primary);
             border-radius: 50%;
@@ -1818,15 +1777,15 @@
         }
 
         .menu-item img {
-            width: 32px;
-            height: 32px;
+            width: 48px;
+            height: 48px;
             object-fit: contain;
             pointer-events: none;
         }
 
         /* メニュー項目の位置（上下左右） */
         .menu-item.top {
-            top: -80px;
+            top: -96px;
             left: 50%;
             transform: translateX(-50%) scale(0) rotate(0deg);
         }
@@ -1836,7 +1795,7 @@
         }
 
         .menu-item.right {
-            right: -80px;
+            right: -96px;
             top: 50%;
             transform: translateY(-50%) scale(0) rotate(0deg);
         }
@@ -1846,7 +1805,7 @@
         }
 
         .menu-item.bottom {
-            bottom: -80px;
+            bottom: -96px;
             left: 50%;
             transform: translateX(-50%) scale(0) rotate(0deg);
         }
@@ -1856,7 +1815,7 @@
         }
 
         .menu-item.left {
-            left: -80px;
+            left: -96px;
             top: 50%;
             transform: translateY(-50%) scale(0) rotate(0deg);
         }
@@ -1868,7 +1827,7 @@
         /* メニューアイコンが左下の場合、左側のメニュー項目を右側に表示 */
         .menu-icon.position-bottom-left .menu-item.left {
             left: auto;
-            right: -80px;
+            right: -96px;
             transform: translateY(-50%) scale(0) rotate(0deg);
         }
         
@@ -2814,8 +2773,7 @@
 
             /* 固定ボタンのサイズ調整 */
             .add-task-button,
-            .complete-button,
-            .add-badge-button {
+            .complete-button {
                 width: 48px;
                 height: 48px;
                 font-size: 24px;
@@ -2828,18 +2786,20 @@
             /* 新規追加ボタン：画面下部中央に固定（430px画面幅内に収める） */
             .add-task-button {
                 position: fixed;
-                bottom: 16px;
-                left: 50%;
-                transform: translateX(-50%);
+                top: 16px;
+                right: 16px;
+                bottom: auto;
+                left: auto;
+                transform: none;
                 z-index: 1000;
             }
             
             .add-task-button:hover {
-                transform: translateX(-50%) translateY(-2px) scale(1.1);
+                transform: translateY(-2px) scale(1.1);
             }
             
             .add-task-button:active {
-                transform: translateX(-50%) translateY(0) scale(1.05);
+                transform: translateY(0) scale(1.05);
             }
             
             .add-task-button:focus {
@@ -2847,17 +2807,6 @@
                 box-shadow: var(--shadow-xl), 0 0 0 3px rgba(255, 103, 156, 0.3);
             }
 
-            /* バッジボタン：画面右上に固定（下方向に80px移動） */
-            .add-badge-button {
-                position: fixed;
-                top: 92px; /* 12px + 80px = 92px */
-                right: 12px;
-                z-index: 1000;
-            }
-
-            .badge-icon-text {
-                font-size: 20px;
-            }
 
             /* 完了ボタン：メニューと反対の方向に固定（430px画面幅内に収める） */
             .complete-button {
@@ -3101,10 +3050,10 @@
                     「更新」は画面を下にひいてください
                 </div>
                 
-                <!-- 新規追加ボタン（下部中央に固定） -->
-                <button class="add-task-button" type="button" onclick="toggleTaskForm(event)">
+                <!-- 新規追加ボタン（右上に固定・メニュー展開機能付き） -->
+                <button class="add-task-button" type="button" id="addTaskButton">
                     +
-                    <span class="tooltip-text">新規タスクを追加</span>
+                    <span class="tooltip-text">新規追加</span>
                 </button>
                 
                 <!-- 完了ボタン（左下に固定） -->
@@ -3113,11 +3062,6 @@
                     <span class="tooltip-text">ドラッグ&ドロップで完了</span>
                 </div>
                 
-                <!-- バッジを作るボタン（右上に固定・◯デザイン） -->
-                <button class="add-badge-button" onclick="openBadgeForm()">
-                    <span class="badge-icon-text">🏷️</span>
-                    <span class="tooltip-text">バッジを作る</span>
-                </button>
                 
                 <!-- タスクカードがここに動的に生成されます -->
                 <div style="text-align: center; padding: var(--spacing-xl); color: var(--color-text-secondary);">
@@ -4802,6 +4746,150 @@
             }
         }
         
+        // 新規追加ボタンのメニュー展開機能を設定
+        function setupAddTaskButtonMenu() {
+            const addTaskButton = document.getElementById('addTaskButton');
+            if (!addTaskButton) return;
+            
+            // 既に設定されている場合はスキップ
+            if (addTaskButton.hasAttribute('data-menu-initialized')) return;
+            addTaskButton.setAttribute('data-menu-initialized', 'true');
+            
+            // ダブルクリック/ダブルタップでメニュー項目を表示
+            let clickTimeout = null;
+            
+            addTaskButton.addEventListener('click', function(e) {
+                if (clickTimeout) {
+                    clearTimeout(clickTimeout);
+                    clickTimeout = null;
+                    // ダブルクリック
+                    toggleAddTaskMenu();
+                } else {
+                    clickTimeout = setTimeout(() => {
+                        clickTimeout = null;
+                    }, 300);
+                }
+            });
+            
+            addTaskButton.addEventListener('dblclick', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleAddTaskMenu();
+            });
+            
+            // SP版：タッチイベント
+            let touchClickTimeout = null;
+            
+            addTaskButton.addEventListener('touchend', function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                if (touchClickTimeout) {
+                    clearTimeout(touchClickTimeout);
+                    touchClickTimeout = null;
+                    // ダブルタップ
+                    toggleAddTaskMenu();
+                } else {
+                    touchClickTimeout = setTimeout(() => {
+                        touchClickTimeout = null;
+                    }, 300);
+                }
+            }, { passive: false });
+        }
+        
+        // 新規追加ボタンのメニュー項目を表示/非表示を切り替え
+        function toggleAddTaskMenu() {
+            const addTaskButton = document.getElementById('addTaskButton');
+            if (!addTaskButton) return;
+            
+            const menuItems = addTaskButton.querySelectorAll('.menu-item');
+            const isActive = menuItems.length > 0 && menuItems[0].classList.contains('active');
+            
+            if (isActive) {
+                // メニューを閉じる
+                closeAddTaskMenu();
+            } else {
+                // メニューを開く
+                openAddTaskMenu();
+            }
+        }
+        
+        // 新規追加ボタンのメニュー項目を開く
+        function openAddTaskMenu() {
+            const addTaskButton = document.getElementById('addTaskButton');
+            if (!addTaskButton) return;
+            
+            // 既存のメニュー項目を削除
+            const existingItems = addTaskButton.querySelectorAll('.menu-item');
+            existingItems.forEach(item => item.remove());
+            
+            // メニュー項目の定義（右上から展開：右、下）
+            const menuItems = [
+                { position: 'right', icon: '🏷️', action: 'badge', label: 'バッジ作成' },
+                { position: 'bottom', icon: '+', action: 'task', label: 'タスク作成' }
+            ];
+            
+            // メニュー項目を生成
+            menuItems.forEach((item, index) => {
+                const menuItem = document.createElement('div');
+                menuItem.className = `menu-item ${item.position}`;
+                menuItem.dataset.action = item.action;
+                menuItem.innerHTML = `<span style="font-size: 24px;">${item.icon}</span>`;
+                menuItem.title = item.label;
+                
+                addTaskButton.appendChild(menuItem);
+                
+                // アニメーション遅延を設定（順番に表示）
+                setTimeout(() => {
+                    menuItem.classList.add('active');
+                }, index * 100);
+                
+                // クリックイベント（PC版）
+                menuItem.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    handleAddTaskMenuItemClick(item.action);
+                    closeAddTaskMenu();
+                });
+                
+                // タッチイベント（SP版）
+                menuItem.addEventListener('touchend', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    handleAddTaskMenuItemClick(item.action);
+                    closeAddTaskMenu();
+                }, { passive: false });
+            });
+        }
+        
+        // 新規追加ボタンのメニュー項目を閉じる
+        function closeAddTaskMenu() {
+            const addTaskButton = document.getElementById('addTaskButton');
+            if (!addTaskButton) return;
+            
+            const menuItems = addTaskButton.querySelectorAll('.menu-item');
+            menuItems.forEach((item, index) => {
+                setTimeout(() => {
+                    item.classList.remove('active');
+                    setTimeout(() => {
+                        item.remove();
+                    }, 400);
+                }, index * 50);
+            });
+        }
+        
+        // 新規追加ボタンのメニュー項目のクリック処理
+        function handleAddTaskMenuItemClick(action) {
+            switch(action) {
+                case 'badge':
+                    // バッジ作成フォームを開く
+                    openBadgeForm();
+                    break;
+                case 'task':
+                    // タスク作成フォームを開く
+                    toggleTaskForm();
+                    break;
+            }
+        }
+        
         // メニューアイコンの位置を保存
         function saveMenuIconPosition() {
             if (menuIconPosition) {
@@ -5200,7 +5288,6 @@
                 // カードをクリア（ボタンは残す）
                 const addButton = taskGrid.querySelector('.add-task-button');
                 const completeButton = taskGrid.querySelector('.complete-button');
-                const addBadgeButton = taskGrid.querySelector('.add-badge-button');
                 taskGrid.innerHTML = '';
                 
                 // ボタンを再追加
@@ -5209,14 +5296,10 @@
                 } else {
                     const button = document.createElement('button');
                     button.className = 'add-task-button';
-                    button.type = 'button';
-                    button.setAttribute('onclick', 'toggleTaskForm(event)');
-                    button.innerHTML = '+<span class="tooltip-text">新規タスクを追加</span>';
-                    // イベントリスナーを直接追加（onclick属性と併用）
-                    button.addEventListener('click', function(e) {
-                        toggleTaskForm(e);
-                    });
+                    button.id = 'addTaskButton';
+                    button.innerHTML = '+<span class="tooltip-text">新規追加</span>';
                     taskGrid.appendChild(button);
+                    setupAddTaskButtonMenu(); // メニュー展開機能を設定
                 }
                 
                 // 完了ボタンを再追加
@@ -5233,16 +5316,6 @@
                     setupCompleteButtonDrop(); // ドロップ処理を再設定
                 }
                 
-                // バッジボタンを再追加
-                if (addBadgeButton) {
-                    taskGrid.appendChild(addBadgeButton);
-                } else {
-                    const badgeButton = document.createElement('button');
-                    badgeButton.className = 'add-badge-button';
-                    badgeButton.onclick = openBadgeForm;
-                    badgeButton.innerHTML = '<span class="badge-icon-text">🏷️</span><span class="tooltip-text">バッジを作る</span>';
-                    taskGrid.appendChild(badgeButton);
-                }
                 
                 // taskGrid内には追加しない
                 
@@ -5277,18 +5350,23 @@
             // カードをクリア（ボタンは残す）
             const addButton = taskGrid.querySelector('.add-task-button');
             const completeButton = taskGrid.querySelector('.complete-button');
-            const addBadgeButton = taskGrid.querySelector('.add-badge-button');
             taskGrid.innerHTML = '';
             
             // ボタンを再追加
             if (addButton) {
                 taskGrid.appendChild(addButton);
+                // 既存のボタンにもメニュー機能を設定（まだ設定されていない場合）
+                if (!addButton.hasAttribute('data-menu-setup')) {
+                    addButton.setAttribute('data-menu-setup', 'true');
+                    setupAddTaskButtonMenu();
+                }
             } else {
                 const button = document.createElement('button');
                 button.className = 'add-task-button';
-                button.onclick = toggleTaskForm;
-                button.innerHTML = '+<span class="tooltip-text">新規タスクを追加</span>';
+                button.id = 'addTaskButton';
+                button.innerHTML = '+<span class="tooltip-text">新規追加</span>';
                 taskGrid.appendChild(button);
+                setupAddTaskButtonMenu(); // メニュー展開機能を設定
             }
             
             // 完了ボタンを再追加
@@ -5303,17 +5381,6 @@
                 // 完了ボタンのハンドラーをリセットして再設定
                 completeButtonHandlerSet = false;
                 setupCompleteButtonDrop(); // ドロップ処理を再設定
-            }
-            
-            // バッジボタンを再追加
-            if (addBadgeButton) {
-                taskGrid.appendChild(addBadgeButton);
-            } else {
-                const badgeButton = document.createElement('button');
-                badgeButton.className = 'add-badge-button';
-                badgeButton.onclick = openBadgeForm;
-                badgeButton.innerHTML = '<span class="badge-icon-text">🏷️</span><span class="tooltip-text">バッジを作る</span>';
-                taskGrid.appendChild(badgeButton);
             }
             
             // taskGrid内には追加しない
@@ -9695,6 +9762,14 @@
             if (!document.getElementById('taskGrid').hasChildNodes() || document.getElementById('taskGrid').childElementCount === 0) {
             updateTaskGrid();
             }
+            // 新規追加ボタンのメニュー機能を設定
+            setTimeout(() => {
+                const addTaskButton = document.getElementById('addTaskButton');
+                if (addTaskButton && !addTaskButton.hasAttribute('data-menu-setup')) {
+                    addTaskButton.setAttribute('data-menu-setup', 'true');
+                    setupAddTaskButtonMenu();
+                }
+            }, 200);
             if (badges.length > 0) {
             updateBadges(); // バッジを表示
             }
