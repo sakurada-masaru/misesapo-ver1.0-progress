@@ -855,6 +855,131 @@
             color: var(--color-text-primary);
         }
 
+        /* 緊急タスクボタン */
+        .urgent-task-button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--border-radius-md);
+            transition: var(--transition-normal);
+            opacity: 0.8;
+        }
+
+        .urgent-task-button:hover {
+            opacity: 1;
+            background: var(--color-background-secondary);
+            transform: scale(1.1);
+        }
+
+        .urgent-task-button img {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        /* 緊急タスク確認ダイアログ（吹き出し） */
+        .urgent-confirm-dialog {
+            position: absolute;
+            top: -120px;
+            right: 0;
+            background: #ffffff;
+            border: 2px solid #ef4444;
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-md);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 10000;
+            min-width: 200px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .urgent-confirm-dialog.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .urgent-confirm-dialog::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            right: 20px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #ef4444;
+        }
+
+        .urgent-confirm-dialog::before {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            right: 20px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #ffffff;
+            z-index: 1;
+        }
+
+        .urgent-confirm-dialog p {
+            margin: 0 0 var(--spacing-md) 0;
+            color: var(--color-text-primary);
+            font-weight: var(--font-weight-semibold);
+            text-align: center;
+        }
+
+        .urgent-confirm-buttons {
+            display: flex;
+            gap: var(--spacing-sm);
+            justify-content: center;
+        }
+
+        .urgent-confirm-yes,
+        .urgent-confirm-no {
+            padding: var(--spacing-xs) var(--spacing-md);
+            border: none;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            transition: var(--transition-normal);
+        }
+
+        .urgent-confirm-yes {
+            background: #ef4444;
+            color: white;
+        }
+
+        .urgent-confirm-yes:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+
+        .urgent-confirm-no {
+            background: var(--color-background-secondary);
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-border);
+        }
+
+        .urgent-confirm-no:hover {
+            background: var(--color-border);
+            transform: scale(1.05);
+        }
+
         /* 緊急タスクフォーム（赤系の配色） */
         .urgent-task-form {
             border: 2px solid #ef4444;
@@ -3224,7 +3349,20 @@
         <div class="task-form" onclick="event.stopPropagation()">
             <div class="task-form-header">
                 <h3 class="task-form-title">新しいタスクを作成</h3>
+                <div style="display: flex; align-items: center; gap: var(--spacing-sm); position: relative;">
+                    <button class="urgent-task-button" id="urgentTaskButton" title="緊急タスクを作成">
+                        <img src="images/Key.svg" alt="緊急タスク" style="width: 32px; height: 32px;">
+                    </button>
+                    <!-- 緊急タスク確認ダイアログ -->
+                    <div class="urgent-confirm-dialog" id="urgentConfirmDialog">
+                        <p>緊急タスクを作成しますか？</p>
+                        <div class="urgent-confirm-buttons">
+                            <button class="urgent-confirm-yes" onclick="confirmUrgentTask()">はい</button>
+                            <button class="urgent-confirm-no" onclick="cancelUrgentTaskConfirm()">いいえ</button>
+                        </div>
+                    </div>
                 <button class="modal-close-button" onclick="cancelTaskForm()" title="閉じる">×</button>
+                </div>
             </div>
             <form id="taskInputForm">
                 <div class="form-group">
@@ -5043,15 +5181,13 @@
             const existingItems = addTaskButton.querySelectorAll('.menu-item');
             existingItems.forEach(item => item.remove());
             
-            // メニュー項目の定義（8時30分方向、6時30分方向、4時30分方向）
+            // メニュー項目の定義（8時30分方向、6時30分方向）
             // 8時30分 = 255度（時計回り、0度を上として）
             // 6時30分 = 195度（時計回り、0度を上として）
-            // 4時30分 = 135度（時計回り、0度を上として）
             const radius = 88; // メニュー項目の距離（56pxのメニュー項目 + 32pxのマージン）
             const menuItems = [
                 { angle: 255, icon: 'images/BADGE.svg', action: 'badge', label: 'バッジ作成' }, // 8時30分方向
-                { angle: 195, icon: 'images/task.svg', action: 'task', label: 'タスク作成' }, // 6時30分方向
-                { angle: 135, icon: 'images/Key.svg', action: 'urgent', label: '緊急タスク作成' } // 4時30分方向
+                { angle: 195, icon: 'images/task.svg', action: 'task', label: 'タスク作成' } // 6時30分方向
             ];
             
             // メニュー項目を生成
@@ -5131,10 +5267,6 @@
                 case 'task':
                     // タスク作成フォームを開く
                     toggleTaskForm();
-                    break;
-                case 'urgent':
-                    // 緊急タスク作成フォームを開く
-                    openUrgentTaskForm();
                     break;
             }
         }
@@ -5365,6 +5497,61 @@
             if (event.target.id === 'taskFormModal') {
                 cancelTaskForm();
             }
+        }
+
+        // 緊急タスクボタンのクリックカウンター
+        let urgentButtonClickCount = 0;
+        let urgentButtonClickTimeout = null;
+        const URGENT_CLICK_THRESHOLD = 6; // 6回クリックで確認ダイアログ表示
+        const URGENT_CLICK_TIMEOUT = 2000; // 2秒以内に6回クリック
+
+        // 緊急タスクボタンのクリック処理（6回連続クリック検出）
+        function handleUrgentTaskButtonClick() {
+            urgentButtonClickCount++;
+            
+            // タイムアウトをリセット
+            if (urgentButtonClickTimeout) {
+                clearTimeout(urgentButtonClickTimeout);
+            }
+            
+            // 6回クリックされたら確認ダイアログを表示
+            if (urgentButtonClickCount >= URGENT_CLICK_THRESHOLD) {
+                urgentButtonClickCount = 0;
+                showUrgentTaskConfirmDialog();
+            } else {
+                // 2秒以内に次のクリックがない場合はカウンターをリセット
+                urgentButtonClickTimeout = setTimeout(() => {
+                    urgentButtonClickCount = 0;
+                }, URGENT_CLICK_TIMEOUT);
+            }
+        }
+
+        // 緊急タスク確認ダイアログを表示
+        function showUrgentTaskConfirmDialog() {
+            const dialog = document.getElementById('urgentConfirmDialog');
+            if (dialog) {
+                dialog.classList.add('active');
+            }
+        }
+
+        // 緊急タスク確認ダイアログを非表示
+        function hideUrgentTaskConfirmDialog() {
+            const dialog = document.getElementById('urgentConfirmDialog');
+            if (dialog) {
+                dialog.classList.remove('active');
+            }
+        }
+
+        // 緊急タスク確認ダイアログの「はい」ボタン
+        function confirmUrgentTask() {
+            hideUrgentTaskConfirmDialog();
+            openUrgentTaskForm();
+        }
+
+        // 緊急タスク確認ダイアログの「いいえ」ボタン
+        function cancelUrgentTaskConfirm() {
+            hideUrgentTaskConfirmDialog();
+            urgentButtonClickCount = 0;
         }
 
         // 緊急タスクフォームを開く
@@ -10194,7 +10381,6 @@
                     setupAddTaskButtonMenu();
                 }
             }, 200);
-            
             if (badges.length > 0) {
             updateBadges(); // バッジを表示
             }
