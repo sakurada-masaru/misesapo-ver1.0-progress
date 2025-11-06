@@ -575,8 +575,8 @@
         /* SP版：新規追加ボタンの位置調整 */
         @media (max-width: 768px) {
             .add-task-button {
-                top: 16px;
-                right: 16px;
+                top: 50px;
+                right: 50px;
             }
         }
         
@@ -4822,18 +4822,34 @@
             const existingItems = addTaskButton.querySelectorAll('.menu-item');
             existingItems.forEach(item => item.remove());
             
-            // メニュー項目の定義（右上から展開：右、下）
+            // メニュー項目の定義（8時30分方向、6時30分方向）
+            // 8時30分 = 255度（時計回り、0度を上として）
+            // 6時30分 = 195度（時計回り、0度を上として）
+            const radius = 96; // メニュー項目の距離（64pxのメニュー項目 + 32pxのマージン）
             const menuItems = [
-                { position: 'right', icon: '🏷️', action: 'badge', label: 'バッジ作成' },
-                { position: 'bottom', icon: '+', action: 'task', label: 'タスク作成' }
+                { angle: 255, icon: 'images/BADGE.svg', action: 'badge', label: 'バッジ作成' }, // 8時30分方向
+                { angle: 195, icon: 'images/task.svg', action: 'task', label: 'タスク作成' } // 6時30分方向
             ];
             
             // メニュー項目を生成
             menuItems.forEach((item, index) => {
                 const menuItem = document.createElement('div');
-                menuItem.className = `menu-item ${item.position}`;
+                menuItem.className = 'menu-item';
                 menuItem.dataset.action = item.action;
-                menuItem.innerHTML = `<span style="font-size: 24px;">${item.icon}</span>`;
+                
+                // 角度から座標を計算（時計回り、0度を上として）
+                const angleRad = (item.angle - 90) * Math.PI / 180; // 0度を上として計算（-90度で時計の12時を上に）
+                const x = Math.cos(angleRad) * radius;
+                const y = Math.sin(angleRad) * radius;
+                
+                // 位置を設定
+                menuItem.style.left = `50%`;
+                menuItem.style.top = `50%`;
+                menuItem.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(0) rotate(0deg)`;
+                menuItem.style.transformOrigin = 'center';
+                
+                // アイコンを設定
+                menuItem.innerHTML = `<img src="${item.icon}" alt="${item.label}" style="width: 48px; height: 48px; object-fit: contain;">`;
                 menuItem.title = item.label;
                 
                 addTaskButton.appendChild(menuItem);
@@ -4841,6 +4857,7 @@
                 // アニメーション遅延を設定（順番に表示）
                 setTimeout(() => {
                     menuItem.classList.add('active');
+                    menuItem.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(1) rotate(360deg)`;
                 }, index * 100);
                 
                 // クリックイベント（PC版）
@@ -4869,6 +4886,11 @@
             menuItems.forEach((item, index) => {
                 setTimeout(() => {
                     item.classList.remove('active');
+                    // transformを元に戻す
+                    const currentTransform = item.style.transform;
+                    if (currentTransform.includes('scale(1)')) {
+                        item.style.transform = currentTransform.replace('scale(1)', 'scale(0)');
+                    }
                     setTimeout(() => {
                         item.remove();
                     }, 400);
