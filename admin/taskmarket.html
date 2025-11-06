@@ -543,6 +543,11 @@
             visibility: visible;
         }
 
+        /* ========================================
+           メニューボタン・新規追加ボタン関連スタイル
+           (Menu Button & Add Task Button Styles)
+           ======================================== */
+        
         /* 新規追加ボタン（PC版：画面端から50px下・20px右・円形デザイン） */
         .add-task-button {
             position: fixed;
@@ -1600,7 +1605,7 @@
             color: var(--color-text-secondary);
         }
 
-        /* メニューアイコンのスタイル */
+        /* メニューアイコン（メニューボタン）のスタイル */
         .menu-icon {
             position: fixed;
             width: 120px;
@@ -1707,7 +1712,7 @@
             visibility: visible;
         }
 
-        /* メニュー項目（円形メニュー） */
+        /* メニュー項目（円形メニュー：メニューボタン・新規追加ボタン共通） */
         .menu-item {
             position: absolute;
             width: 64px;
@@ -2750,7 +2755,7 @@
             /* 新規追加ボタン：画面端から50px下（スマホ版：430px以下） */
             .add-task-button {
                 position: fixed !important;
-                top: 100px !important;
+                top: 80px !important;
                 right: 30px !important;
                 bottom: auto !important;
                 left: auto !important;
@@ -4211,6 +4216,10 @@
             alert('✅ データをリセットしました');
         }
 
+        // ========================================
+        // メニューボタン関連関数
+        // ========================================
+        
         // メニューアイコンのドラッグ&ドロップ機能を設定（位置固定モードでは無効化）
         function setupMenuIconDrag() {
             const menuIcon = document.getElementById('menuIcon');
@@ -4558,6 +4567,11 @@
             }
         }
         
+        /* ========================================
+           メニューボタン・新規追加ボタン関連JavaScript
+           (Menu Button & Add Task Button JavaScript)
+           ======================================== */
+        
         // メニュー項目の位置を更新（メニューアイコンが移動した時に呼び出す）
         function updateMenuItemsPosition() {
             const menuIcon = document.getElementById('menuIcon');
@@ -4570,7 +4584,7 @@
             // この関数は必要に応じて追加の処理を行う場合に使用
         }
         
-        // メニュー項目の表示/非表示を切り替え
+        // メニュー項目の表示/非表示を切り替え（メニューボタン）
         function toggleMenuItems() {
             const menuIcon = document.getElementById('menuIcon');
             if (!menuIcon) return;
@@ -4587,7 +4601,7 @@
             }
         }
         
-        // メニュー項目を開く
+        // メニュー項目を開く（メニューボタン：マイページ・設定・リソース・アーカイブ）
         function openMenuItems() {
             const menuIcon = document.getElementById('menuIcon');
             if (!menuIcon) return;
@@ -4663,7 +4677,7 @@
             // メニュー外をクリックしても閉じない（ダブルクリックでのみ閉じる）
         }
         
-        // メニュー項目を閉じる
+        // メニュー項目を閉じる（メニューボタン）
         function closeMenuItems() {
             const menuIcon = document.getElementById('menuIcon');
             if (!menuIcon) return;
@@ -4720,6 +4734,10 @@
                     break;
             }
         }
+        
+        // ========================================
+        // 新規追加ボタン関連関数
+        // ========================================
         
         // 新規追加ボタンのメニュー展開機能を設定
         function setupAddTaskButtonMenu() {
@@ -4788,7 +4806,7 @@
             }
         }
         
-        // 新規追加ボタンのメニュー項目を開く
+        // 新規追加ボタンのメニュー項目を開く（バッジ作成・タスク作成）
         function openAddTaskMenu() {
             const addTaskButton = document.getElementById('addTaskButton');
             if (!addTaskButton) return;
