@@ -4883,27 +4883,47 @@
             // コンテンツボタン（子要素）の生成
             // ========================================
             // [PC/SP] メニュー項目の半径を分離
-            const radius = isSP ? 80 : 112; // SP版: メニューボタンから110px離す、PC版: 56pxのメニュー項目 + 32pxのマージン = 112px
+            const radius = isSP ? 80 : 112; // SP版: メニューボタンから80px離す、PC版: 56pxのメニュー項目 + 32pxのマージン = 112px
             let menuItems = [];
             
             if (isBottomRight) {
                 // 右下の場合：270度〜360度内に均等角度に配置
-                // 角度：360度（0度）= マイページ、330度 = リソース、300度 = アーカイブ、270度 = 設定
-                menuItems = [
-                    { angle: 360, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' }, // 360度は0度と同じ
-                    { angle: 330, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
-                    { angle: 300, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' },
-                    { angle: 270, icon: 'images/setup.svg', action: 'setup', label: '設定' }
-                ];
+                // [SP] 角度を3度離す：360度（0度）= マイページ、333度 = リソース、306度 = アーカイブ、279度 = 設定
+                // [PC] 角度：360度（0度）= マイページ、330度 = リソース、300度 = アーカイブ、270度 = 設定
+                if (isSP) {
+                    menuItems = [
+                        { angle: 360, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' }, // 360度は0度と同じ
+                        { angle: 333, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
+                        { angle: 306, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' },
+                        { angle: 279, icon: 'images/setup.svg', action: 'setup', label: '設定' }
+                    ];
+                } else {
+                    menuItems = [
+                        { angle: 360, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' }, // 360度は0度と同じ
+                        { angle: 330, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
+                        { angle: 300, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' },
+                        { angle: 270, icon: 'images/setup.svg', action: 'setup', label: '設定' }
+                    ];
+                }
             } else if (isBottomLeft) {
                 // 左下の場合：0度〜90度内に均等角度に配置
-                // 角度：0度 = マイページ、30度 = アーカイブ、60度 = リソース、90度 = 設定
-                menuItems = [
-                    { angle: 0, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' },
-                    { angle: 30, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' },
-                    { angle: 60, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
-                    { angle: 90, icon: 'images/setup.svg', action: 'setup', label: '設定' }
-                ];
+                // [SP] 角度を3度離す：0度 = マイページ、33度 = アーカイブ、66度 = リソース、99度 = 設定
+                // [PC] 角度：0度 = マイページ、30度 = アーカイブ、60度 = リソース、90度 = 設定
+                if (isSP) {
+                    menuItems = [
+                        { angle: 0, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' },
+                        { angle: 33, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' },
+                        { angle: 66, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
+                        { angle: 99, icon: 'images/setup.svg', action: 'setup', label: '設定' }
+                    ];
+                } else {
+                    menuItems = [
+                        { angle: 0, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' },
+                        { angle: 30, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' },
+                        { angle: 60, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
+                        { angle: 90, icon: 'images/setup.svg', action: 'setup', label: '設定' }
+                    ];
+                }
             }
             
             // メニュー項目を生成
