@@ -1678,17 +1678,21 @@
             
             /* SP版：メニューボタンを角に寄せる */
             .menu-icon.position-bottom-left {
-                bottom: 16px;
-                left: 16px;
+                bottom: 8px;
+                left: 8px;
             }
             
             .menu-icon.position-bottom-right {
-                bottom: 16px;
-                right: 16px;
+                bottom: 8px;
+                right: 8px;
             }
         }
 
         .menu-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .add-task-button:hover {
             transform: scale(1.1);
         }
 
@@ -3334,6 +3338,18 @@
                                 <button type="button" class="menu-position-button" data-position="bottom-right" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">右下</button>
                             </div>
                         </div>
+                        
+                        <!-- 完了ボタンの位置設定 -->
+                        <div class="settings-item" style="padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm);">
+                            <div style="margin-bottom: var(--spacing-sm);">
+                                <label style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-xs);">完了ボタンの位置</label>
+                                <p style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin: 0;">完了ボタンを左下または右下に固定します</p>
+                            </div>
+                            <div style="display: flex; gap: var(--spacing-sm);">
+                                <button type="button" class="complete-position-button" data-position="bottom-left" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">左下</button>
+                                <button type="button" class="complete-position-button" data-position="bottom-right" style="flex: 1; padding: var(--spacing-sm); background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">右下</button>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- データ管理セクション -->
@@ -3847,7 +3863,8 @@
             tooltipEnabled: true,
             cardSize: 'medium', // 'large', 'medium', 'small'
             darkMode: false,
-            menuPosition: 'bottom-left' // 'bottom-left' または 'bottom-right'
+            menuPosition: 'bottom-left', // 'bottom-left' または 'bottom-right'
+            completeButtonPosition: 'bottom-right' // 'bottom-left' または 'bottom-right'
         };
 
         // マイページデータ
@@ -3888,7 +3905,8 @@
                 tooltipEnabled: true,
                 cardSize: 'medium',
                 darkMode: false,
-                menuPosition: 'bottom-left'
+                menuPosition: 'bottom-left',
+                completeButtonPosition: 'bottom-right'
             };
             
             // ログイン中の場合、ユーザー設定を読み込む
@@ -3986,6 +4004,22 @@
                     button.style.borderColor = 'var(--color-border)';
                 }
             });
+            
+            // 完了ボタン位置ボタンの状態を更新
+            const completePositionButtons = document.querySelectorAll('.complete-position-button');
+            completePositionButtons.forEach(button => {
+                if (button.dataset.position === settings.completeButtonPosition) {
+                    button.classList.add('active');
+                    button.style.background = 'var(--color-primary)';
+                    button.style.color = 'white';
+                    button.style.borderColor = 'var(--color-primary)';
+                } else {
+                    button.classList.remove('active');
+                    button.style.background = 'var(--color-background)';
+                    button.style.color = 'var(--color-text-primary)';
+                    button.style.borderColor = 'var(--color-border)';
+                }
+            });
         }
 
         // 設定を適用
@@ -4069,6 +4103,19 @@
                     updateSettingsUI();
                     applySettings();
                     updateMenuIconPosition();
+                });
+            });
+            
+            // 完了ボタン位置の選択
+            const completePositionButtons = document.querySelectorAll('.complete-position-button');
+            completePositionButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const position = this.dataset.position;
+                    settings.completeButtonPosition = position;
+                    saveSettings();
+                    updateSettingsUI();
+                    applySettings();
+                    updateCompleteButtonPosition();
                 });
             });
             
