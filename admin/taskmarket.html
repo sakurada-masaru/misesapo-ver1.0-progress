@@ -5143,6 +5143,59 @@
             }
         }
         
+        // 完了ボタンのドロップ処理を設定
+        let completeButtonHandlerSet = false;
+        function setupCompleteButtonDrop() {
+            const completeButton = document.getElementById('completeButton');
+            if (!completeButton) return;
+            
+            // 既に設定済みの場合は何もしない
+            if (completeButtonHandlerSet) return;
+            completeButtonHandlerSet = true;
+            
+            // 完了ボタンの上でのドラッグオーバー
+            completeButton.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.dataTransfer.dropEffect = 'move';
+                this.classList.add('drag-over');
+            });
+            
+            // 完了ボタンから離れた時
+            completeButton.addEventListener('dragleave', function(e) {
+                this.classList.remove('drag-over');
+            });
+            
+            // 完了ボタンにドロップ（一度だけ処理されるようにフラグを使用）
+            let isProcessing = false;
+            completeButton.addEventListener('drop', function(e) {
+                isDroppedOnTrashOrComplete = true;
+                e.preventDefault();
+                e.stopPropagation();
+                this.classList.remove('drag-over');
+                
+                // 既に処理中の場合は何もしない
+                if (isProcessing) return;
+                isProcessing = true;
+                
+                // タスクカードがドロップされた場合
+                const taskGrid = document.getElementById('taskGrid');
+                const draggedCard = taskGrid.querySelector('.task-card.dragging');
+                if (draggedCard) {
+                    const taskIdNum = parseInt(draggedCard.dataset.taskId);
+                    if (taskIdNum && !isNaN(taskIdNum)) {
+                        completeTask(taskIdNum);
+                        // 処理完了後にフラグをリセット
+                        setTimeout(() => { isProcessing = false; }, 100);
+                        return;
+                    }
+                }
+                
+                // 処理完了後にフラグをリセット
+                setTimeout(() => { isProcessing = false; }, 100);
+            });
+        }
+        
         // ========================================
         // 新規追加ボタン関連
         // 定義: ボタン（親）＞コンテンツ（子）
