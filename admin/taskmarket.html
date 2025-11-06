@@ -5073,15 +5073,15 @@
             existingItems.forEach(item => item.remove());
             
             // メニュー項目の定義（順番：1.バッジ、2.タスク、3.緊急タスク）
-            // 角度を5度広げて配置（間隔を35度に）
-            // 8時40分 = 260度（時計回り、0度を上として）
-            // 7時30分 = 225度（時計回り、0度を上として）
-            // 6時20分 = 190度（時計回り、0度を上として）
+            // 角度を5度広げて配置
+            // バッジ: 255度 → 260度（+5度）
+            // タスク: 225度（変更なし）
+            // 緊急タスク: 195度 → 190度（-5度）
             const radius = 88; // メニュー項目の距離（56pxのメニュー項目 + 32pxのマージン）
             const menuItems = [
-                { angle: 260, icon: 'images/BADGE.svg', action: 'badge', label: 'バッジ作成', urgent: false }, // 8時40分方向
-                { angle: 190, icon: 'images/task.svg', action: 'task', label: 'タスク作成', urgent: false }, // 6時20分方向
-                { angle: 225, icon: 'images/Key.svg', action: 'urgent', label: '緊急タスク作成', urgent: true } // 7時30分方向
+                { angle: 260, icon: 'images/BADGE.svg', action: 'badge', label: 'バッジ作成', urgent: false }, // 260度
+                { angle: 225, icon: 'images/task.svg', action: 'task', label: 'タスク作成', urgent: false }, // 225度
+                { angle: 190, icon: 'images/Key.svg', action: 'urgent', label: '緊急タスク作成', urgent: true } // 190度
             ];
             
             // メニュー項目を生成
@@ -5101,9 +5101,9 @@
                 menuItem.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(0) rotate(0deg)`;
                 menuItem.style.transformOrigin = 'center';
                 
-                // アイコンを設定（緊急タスクの場合は薄い赤の背景を追加）
+                // アイコンを設定（緊急タスクの場合は淡い赤の背景を追加、透明度100%）
                 if (item.urgent) {
-                    menuItem.style.background = 'rgba(239, 68, 68, 0.15)'; // 薄い赤の背景
+                    menuItem.style.background = '#fecaca'; // 淡い赤の背景（透明度100% = 不透明）
                     menuItem.style.borderRadius = '50%';
                     menuItem.style.padding = '8px';
                 }
