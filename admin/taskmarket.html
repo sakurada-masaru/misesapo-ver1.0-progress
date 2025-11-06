@@ -1788,8 +1788,8 @@
         /* [SP] メニューボタンのサイズ調整（max-width: 768px） */
         @media (max-width: 768px) {
             .menu-icon {
-                width: 80px;
-                height: 80px;
+                width: 64px;
+                height: 64px;
             }
             
             /* [SP] メニューボタンを20px内側に配置 */
@@ -4691,6 +4691,9 @@
             const menuIcon = document.getElementById('menuIcon');
             if (!menuIcon) return;
             
+            // [PC/SP] デバイス判定
+            const isSP = window.innerWidth <= 768;
+            
             // ドラッグ機能を無効化
             menuIcon.draggable = false;
             menuIcon.style.cursor = 'pointer';
@@ -4706,11 +4709,13 @@
                 menuIcon.classList.add('position-bottom-right');
             }
             
-            // 既存の位置スタイルを削除
-            menuIcon.style.left = '';
-            menuIcon.style.top = '';
-            menuIcon.style.right = '';
-            menuIcon.style.bottom = '';
+            // [PC] PC版の場合のみ既存の位置スタイルを削除（SP版は手動調整を保持）
+            if (!isSP) {
+                menuIcon.style.left = '';
+                menuIcon.style.top = '';
+                menuIcon.style.right = '';
+                menuIcon.style.bottom = '';
+            }
             
             // 完了ボタンの位置をメニューと反対の方向に配置
             updateCompleteButtonPosition();
