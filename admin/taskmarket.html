@@ -4768,6 +4768,10 @@
             const existingItems = menuIcon.querySelectorAll('.menu-item');
             existingItems.forEach(item => item.remove());
             
+            // 既存の装飾ラインを削除
+            const existingLines = menuIcon.querySelectorAll('.menu-decoration-line');
+            existingLines.forEach(line => line.remove());
+            
             // メニューボタンの位置を取得
             const isBottomRight = menuIcon.classList.contains('position-bottom-right');
             const isBottomLeft = menuIcon.classList.contains('position-bottom-left');
@@ -4873,6 +4877,49 @@
                     menuItem.classList.add('active');
                     menuItem.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(1) rotate(360deg)`;
                 }, index * 100); // 各項目に100msずつ遅延
+                
+                // 装飾ラインを追加（マイページの左側、設定の下側）
+                if (item.action === 'mypage' || item.action === 'setup') {
+                    const decorationLine = document.createElement('div');
+                    decorationLine.className = 'menu-decoration-line';
+                    
+                    if (item.action === 'mypage') {
+                        // マイページの左側にライン（左方向：-90度）
+                        const lineLength = 40; // ラインの長さ
+                        const lineWidth = 2; // ラインの太さ
+                        const leftAngleRad = angleRad - Math.PI / 2; // 左方向（-90度）
+                        const lineX = Math.cos(leftAngleRad) * (lineLength / 2);
+                        const lineY = Math.sin(leftAngleRad) * (lineLength / 2);
+                        
+                        decorationLine.style.width = `${lineLength}px`;
+                        decorationLine.style.height = `${lineWidth}px`;
+                        decorationLine.style.left = `50%`;
+                        decorationLine.style.top = `50%`;
+                        decorationLine.style.transform = `translate(calc(-50% + ${x - lineX}px), calc(-50% + ${y - lineY}px)) rotate(${normalizedAngle - 90}deg)`;
+                        decorationLine.style.transformOrigin = 'center';
+                    } else if (item.action === 'setup') {
+                        // 設定の下側にライン（下方向：+90度）
+                        const lineLength = 40; // ラインの長さ
+                        const lineWidth = 2; // ラインの太さ
+                        const downAngleRad = angleRad + Math.PI / 2; // 下方向（+90度）
+                        const lineX = Math.cos(downAngleRad) * (lineLength / 2);
+                        const lineY = Math.sin(downAngleRad) * (lineLength / 2);
+                        
+                        decorationLine.style.width = `${lineLength}px`;
+                        decorationLine.style.height = `${lineWidth}px`;
+                        decorationLine.style.left = `50%`;
+                        decorationLine.style.top = `50%`;
+                        decorationLine.style.transform = `translate(calc(-50% + ${x - lineX}px), calc(-50% + ${y - lineY}px)) rotate(${normalizedAngle + 90}deg)`;
+                        decorationLine.style.transformOrigin = 'center';
+                    }
+                    
+                    menuIcon.appendChild(decorationLine);
+                    
+                    // 装飾ラインもアニメーションで表示
+                    setTimeout(() => {
+                        decorationLine.classList.add('active');
+                    }, index * 100 + 200); // メニュー項目より少し遅れて表示
+                }
                 
                 // [PC] クリックイベント
                 menuItem.addEventListener('click', function(e) {
