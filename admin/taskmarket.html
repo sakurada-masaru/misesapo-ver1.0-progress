@@ -5833,6 +5833,106 @@
         });
         }
 
+        // 5列グリッドレイアウトでタスクカードを整列する関数
+        function alignTasksInGrid() {
+            const taskGrid = document.getElementById('taskGrid');
+            if (!taskGrid) return;
+            
+            // 完了していないタスクのみ表示（pendingタスクのみ）
+            const pendingTasks = tasks.filter(task => task.status !== 'completed');
+            
+            // 緊急タスクと通常タスクを分離
+            const urgentTasks = pendingTasks.filter(task => task.isUrgent === true);
+            const normalTasks = pendingTasks.filter(task => !task.isUrgent || task.isUrgent === false);
+            
+            // グリッドサイズを取得
+            const gridWidth = taskGrid.clientWidth;
+            const gridHeight = taskGrid.clientHeight;
+            
+            // 緊急タスクの高さを計算
+            let urgentCardY = 24;
+            urgentTasks.forEach(() => {
+                urgentCardY += 180 + 16; // カード高さ + 間隔
+            });
+            
+            // 5列グリッドレイアウトで配置
+            const columns = 5;
+            const cardWidth = 280;
+            const cardHeight = 180;
+            const margin = 20;
+            const startX = 24; // 左端から24px
+            const startY = urgentTasks.length > 0 ? urgentCardY : 24; // 緊急タスクがある場合はその下、なければ上端から24px
+            const columnWidth = (gridWidth - startX * 2) / columns;
+            
+            normalTasks.forEach((task, index) => {
+                const col = index % columns;
+                const row = Math.floor(index / columns);
+                
+                const left = startX + col * columnWidth + (columnWidth - cardWidth) / 2;
+                const top = startY + row * (cardHeight + margin);
+                const rotation = 0; // 整列時は回転なし
+                const zIndex = 1; // 整列時はz-indexを統一
+                
+                // タスクデータに位置情報を保存
+                if (!task.position) {
+                    task.position = {};
+                }
+                task.position.leftPercent = (left / gridWidth) * 100;
+                task.position.topPercent = (top / gridHeight) * 100;
+                task.position.rotation = rotation;
+                task.position.zIndex = zIndex;
+            });
+            
+            // タスクグリッドを更新
+            updateTaskGrid();
+            if (typeof saveTaskMarketData === 'function') {
+                saveTaskMarketData(); // 位置情報を保存
+            }
+        }
+        
+        // タスクグリッドの背景クリック/タップで整列する機能
+        let backgroundClickCount = 0;
+        let lastClickTime = 0;
+        const clickTimeout = 2000; // 2秒以内に5回クリックする必要がある
+        const requiredClicks = 5;
+        
+        function handleTaskGridBackgroundClick(event) {
+            // クリックされた要素がタスクカード、ボタン、メニューなどの場合は無視
+            const target = event.target;
+            if (target.closest('.task-card') || 
+                target.closest('.add-task-button') || 
+                target.closest('.complete-button') || 
+                target.closest('.menu-icon') ||
+                target.closest('.menu-item') ||
+                target.closest('.badge')) {
+                // カウントをリセット
+                backgroundClickCount = 0;
+                return;
+            }
+            
+            // タスクグリッドの背景をクリックした場合のみカウント
+            const taskGrid = document.getElementById('taskGrid');
+            if (!taskGrid || !taskGrid.contains(target)) return;
+            
+            const currentTime = Date.now();
+            
+            // タイムアウトをチェック（2秒以内にクリックする必要がある）
+            if (currentTime - lastClickTime > clickTimeout) {
+                backgroundClickCount = 1; // リセットして1から開始
+            } else {
+                backgroundClickCount++;
+            }
+            
+            lastClickTime = currentTime;
+            
+            // 5回クリックしたら整列
+            if (backgroundClickCount >= requiredClicks) {
+                console.log('背景を5回クリック/タップしました。タスクカードを整列します。');
+                backgroundClickCount = 0; // カウントをリセット
+                alignTasksInGrid();
+            }
+        }
+        
         // タスクグリッド更新（掲示板風のランダム配置）
         function updateTaskGrid() {
             const taskGrid = document.getElementById('taskGrid');
@@ -6073,38 +6173,7 @@
             
             // 振動検出時は5列グリッドレイアウトで整列
             if (window.shakeDetected) {
-                // グリッドサイズを取得
-                const gridWidth = taskGrid.clientWidth;
-                const gridHeight = taskGrid.clientHeight;
-                
-                // 5列グリッドレイアウトで配置
-                const columns = 5;
-                const cardWidth = 280;
-                const cardHeight = 180;
-                const margin = 20;
-                const startX = 24; // 左端から24px
-                const startY = urgentTasks.length > 0 ? urgentCardY : 24; // 緊急タスクがある場合はその下、なければ上端から24px
-                const columnWidth = (gridWidth - startX * 2) / columns;
-                
-                normalTasks.forEach((task, index) => {
-                    const col = index % columns;
-                    const row = Math.floor(index / columns);
-                    
-                    const left = startX + col * columnWidth + (columnWidth - cardWidth) / 2;
-                    const top = startY + row * (cardHeight + margin);
-                    const rotation = 0; // 整列時は回転なし
-                    const zIndex = 1; // 整列時はz-indexを統一
-                    
-                    // タスクデータに位置情報を保存
-                    if (!task.position) {
-                        task.position = {};
-                    }
-                    task.position.leftPercent = (left / gridWidth) * 100;
-                    task.position.topPercent = (top / gridHeight) * 100;
-                    task.position.rotation = rotation;
-                    task.position.zIndex = zIndex;
-                });
-                
+                alignTasksInGrid();
                 // 振動検出フラグをリセット
                 window.shakeDetected = false;
             }
@@ -10551,6 +10620,13 @@
                     taskGrid.classList.add('scroll-top');
                     updatePullRefreshHint();
                 }
+            }
+            
+            // タスクグリッドの背景クリック/タップイベントを設定（5回クリック/タップで整列）
+            const taskGrid = document.getElementById('taskGrid');
+            if (taskGrid) {
+                taskGrid.addEventListener('click', handleTaskGridBackgroundClick);
+                taskGrid.addEventListener('touchend', handleTaskGridBackgroundClick);
             }
         }, 100);
 
