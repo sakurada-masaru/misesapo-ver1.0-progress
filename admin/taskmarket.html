@@ -5925,16 +5925,11 @@
         const requiredClicks = 5;
         
         function handleTaskGridBackgroundClick(event) {
-            // イベントの伝播を防ぐ（タッチイベントの場合）
-            if (event.type === 'touchend') {
-                event.preventDefault();
-            }
-            
             // クリックされた要素がタスクカード、ボタン、メニューなどの場合は無視
             const target = event.target;
             const taskGrid = document.getElementById('taskGrid');
             
-            // タスクグリッド内の要素をチェック
+            // タスクグリッド内の要素をチェック（早期リターンでイベントの伝播を妨げない）
             if (target.closest('.task-card') || 
                 target.closest('.add-task-button') || 
                 target.closest('.complete-button') || 
@@ -5943,7 +5938,7 @@
                 target.closest('.badge') ||
                 target.closest('.pull-refresh-hint') ||
                 target.closest('.menu-circular-text')) {
-                // カウントをリセット
+                // カウントをリセット（イベントの伝播は妨げない）
                 backgroundClickCount = 0;
                 return;
             }
@@ -5953,7 +5948,10 @@
             
             // タスクグリッド自体をクリックした場合もカウント
             if (target === taskGrid || target.classList.contains('task-grid')) {
-                // 背景クリックとして処理
+                // 背景クリックとして処理（イベントの伝播を防ぐ）
+                if (event.type === 'touchend') {
+                    event.preventDefault();
+                }
             } else {
                 // その他の要素（プルリフレッシュヒントなど）をクリックした場合は無視
                 return;
@@ -6145,6 +6143,42 @@
                     }
                 });
                 
+                // [SP] シングルタップイベント（SP版ではタップでタスク詳細を開く）
+                if (window.innerWidth <= 768) {
+                    let tapStartTime = 0;
+                    let tapStartX = 0;
+                    let tapStartY = 0;
+                    
+                    card.addEventListener('touchstart', function(e) {
+                        if (e.touches.length === 1) {
+                            const touch = e.touches[0];
+                            tapStartTime = Date.now();
+                            tapStartX = touch.clientX;
+                            tapStartY = touch.clientY;
+                        }
+                    }, { passive: true });
+                    
+                    card.addEventListener('touchend', function(e) {
+                        if (this.dataset.hasDragged === 'false' && this.dataset.isDragging === 'false') {
+                            const tapEndTime = Date.now();
+                            const tapDuration = tapEndTime - tapStartTime;
+                            
+                            // タップ時間が短く（300ms以内）、移動距離が小さい（10px以内）場合はタップとして扱う
+                            if (tapDuration < 300 && e.changedTouches.length === 1) {
+                                const touch = e.changedTouches[0];
+                                const deltaX = Math.abs(touch.clientX - tapStartX);
+                                const deltaY = Math.abs(touch.clientY - tapStartY);
+                                
+                                if (deltaX < 10 && deltaY < 10) {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    showTaskDetail(task.id);
+                                }
+                            }
+                        }
+                    }, { passive: false });
+                }
+                
                 // 緊急タスクは左上に固定配置（縦に並べる）
                 const left = 24; // 左から24px
                 const top = urgentCardY;
@@ -6241,6 +6275,42 @@
                         showTaskDetail(task.id);
                     }
                 });
+                
+                // [SP] シングルタップイベント（SP版ではタップでタスク詳細を開く）
+                if (window.innerWidth <= 768) {
+                    let tapStartTime = 0;
+                    let tapStartX = 0;
+                    let tapStartY = 0;
+                    
+                    card.addEventListener('touchstart', function(e) {
+                        if (e.touches.length === 1) {
+                            const touch = e.touches[0];
+                            tapStartTime = Date.now();
+                            tapStartX = touch.clientX;
+                            tapStartY = touch.clientY;
+                        }
+                    }, { passive: true });
+                    
+                    card.addEventListener('touchend', function(e) {
+                        if (this.dataset.hasDragged === 'false' && this.dataset.isDragging === 'false') {
+                            const tapEndTime = Date.now();
+                            const tapDuration = tapEndTime - tapStartTime;
+                            
+                            // タップ時間が短く（300ms以内）、移動距離が小さい（10px以内）場合はタップとして扱う
+                            if (tapDuration < 300 && e.changedTouches.length === 1) {
+                                const touch = e.changedTouches[0];
+                                const deltaX = Math.abs(touch.clientX - tapStartX);
+                                const deltaY = Math.abs(touch.clientY - tapStartY);
+                                
+                                if (deltaX < 10 && deltaY < 10) {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    showTaskDetail(task.id);
+                                }
+                            }
+                        }
+                    }, { passive: false });
+                }
                 
                 let top, left, rotation, zIndex;
                 
@@ -10621,11 +10691,23 @@
                     })
                     .catch(err => {
                         console.error('デバイスモーションエラー:', err);
-                        showShakeStatusMessage('❌ 振動検出機能の設定に失敗しました。');
+                        console.error('エラー詳細:', err.message, err.stack);
+                        let errorMessage = '❌ 振動検出機能の設定に失敗しました。';
+                        if (err.message) {
+                            errorMessage += '\n' + err.message;
+                        }
+                        showShakeStatusMessage(errorMessage);
                     });
             } else {
                 // 通常のデバイスモーションイベント（Android等）
                 try {
+                    // デバイスモーションイベントがサポートされているか確認
+                    if (typeof DeviceMotionEvent === 'undefined') {
+                        console.warn('⚠️ デバイスモーションイベントがサポートされていません');
+                        showShakeStatusMessage('⚠️ このデバイスでは振動検出機能がサポートされていません');
+                        return;
+                    }
+                    
                     window.addEventListener('devicemotion', handleDeviceMotion);
                     motionPermissionGranted = true;
                     console.log('✅ デバイスモーションイベントを設定しました。携帯を振るとタスクカードが整列します。');
@@ -10633,7 +10715,12 @@
                     showShakeStatusMessage('✅ 振動検出機能が有効になりました！携帯を振るとタスクカードが整列します。');
                 } catch (err) {
                     console.error('デバイスモーションイベントの設定に失敗:', err);
-                    showShakeStatusMessage('❌ 振動検出機能の設定に失敗しました。');
+                    console.error('エラー詳細:', err.message, err.stack);
+                    let errorMessage = '❌ 振動検出機能の設定に失敗しました。';
+                    if (err.message) {
+                        errorMessage += '\n' + err.message;
+                    }
+                    showShakeStatusMessage(errorMessage);
                 }
             }
         }
@@ -10654,34 +10741,58 @@
                 top: 20px;
                 left: 50%;
                 transform: translateX(-50%);
-                background: rgba(0, 0, 0, 0.8);
+                background: rgba(0, 0, 0, 0.9);
                 color: white;
-                padding: 12px 24px;
+                padding: 16px 24px;
                 border-radius: 8px;
                 z-index: 10000;
                 font-size: 14px;
                 text-align: center;
                 max-width: 90%;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                white-space: pre-line;
+                line-height: 1.5;
             `;
             messageDiv.textContent = message;
             document.body.appendChild(messageDiv);
             
-            // 3秒後に自動で削除
+            // エラーメッセージの場合は長めに表示（5秒）、成功メッセージは短め（3秒）
+            const displayTime = message.includes('❌') || message.includes('⚠️') ? 5000 : 3000;
             setTimeout(() => {
                 if (messageDiv.parentNode) {
-                    messageDiv.remove();
+                    messageDiv.style.opacity = '0';
+                    messageDiv.style.transition = 'opacity 0.3s ease';
+                    setTimeout(() => {
+                        if (messageDiv.parentNode) {
+                            messageDiv.remove();
+                        }
+                    }, 300);
                 }
-            }, 3000);
+            }, displayTime);
         }
         
         // ユーザーインタラクション後にデバイスモーションを設定（iOS対応）
         function setupDeviceMotionOnInteraction() {
             // SP版のみ有効
-            if (window.innerWidth > 768) return;
+            if (window.innerWidth > 768) {
+                console.log('PC版のため、振動検出機能は無効です');
+                return;
+            }
+            
+            // デバイスモーションイベントがサポートされているか確認
+            if (typeof DeviceMotionEvent === 'undefined') {
+                console.warn('⚠️ デバイスモーションイベントがサポートされていません');
+                showShakeStatusMessage('⚠️ このデバイスでは振動検出機能がサポートされていません');
+                return;
+            }
             
             const setupOnce = () => {
-                setupDeviceMotion();
+                try {
+                    setupDeviceMotion();
+                } catch (err) {
+                    console.error('デバイスモーション設定エラー:', err);
+                    showShakeStatusMessage('❌ 振動検出機能の設定に失敗しました: ' + (err.message || '不明なエラー'));
+                }
                 document.removeEventListener('touchstart', setupOnce);
                 document.removeEventListener('click', setupOnce);
             };
@@ -10694,6 +10805,14 @@
             setTimeout(() => {
                 if (!motionPermissionGranted) {
                     console.log('💡 画面をタップすると、振動検出機能が有効になります');
+                    // 自動的に設定を試みる（Android等の場合）
+                    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission !== 'function') {
+                        try {
+                            setupDeviceMotion();
+                        } catch (err) {
+                            console.error('自動デバイスモーション設定エラー:', err);
+                        }
+                    }
                 }
             }, 2000);
         }
