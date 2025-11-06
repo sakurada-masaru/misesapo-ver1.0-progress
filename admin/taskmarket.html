@@ -4839,11 +4839,13 @@
                 menuIconRadius = 30; // SP版メニューボタンの半径（60px / 2）
                 
                 if (isBottomRight) {
-                    // [SP] 右下の場合
+                    // [SP] 右下の場合（左下の角度を左右反転）
                     menuRadius = 47; // SP版メニュー項目の距離（50px - 3px = 47px）
                     textRadius = (menuIconRadius + menuRadius) / 2; // メニューボタンとメニュー項目の中間（約38.5px）
-                    startAngle = -90; // -90度（右）
-                    endAngle = 252; // 252度（左）（250度 + 2度 = 252度）
+                    // 左下の角度（-90度、252度）を左右反転：-90度→90度、252度→108度
+                    // 時計回りの順序を保つため、108度から90度+360度=450度の範囲として表現
+                    startAngle = 108; // 108度（252度の反転：360度 - 252度 = 108度）
+                    endAngle = 450; // 450度（-90度の反転：90度 + 360度 = 450度）
                 } else if (isBottomLeft) {
                     // [SP] 左下の場合
                     menuRadius = 47; // SP版メニュー項目の距離（50px - 3px = 47px）
