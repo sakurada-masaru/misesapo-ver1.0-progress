@@ -1715,8 +1715,8 @@
         /* メニュー項目（円形メニュー：メニューボタン・新規追加ボタン共通） */
         .menu-item {
             position: absolute;
-            width: 64px;
-            height: 64px;
+            width: 56px;
+            height: 56px;
             background: rgba(255, 255, 255, 0.95);
             border: 2px solid var(--color-primary);
             border-radius: 50%;
@@ -1746,8 +1746,8 @@
         }
 
         .menu-item img {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             object-fit: contain;
             pointer-events: none;
         }
@@ -4865,7 +4865,7 @@
                 menuItem.style.transformOrigin = 'center';
                 
                 // アイコンを設定
-                menuItem.innerHTML = `<img src="${item.icon}" alt="${item.label}" style="width: 48px; height: 48px; object-fit: contain;">`;
+                menuItem.innerHTML = `<img src="${item.icon}" alt="${item.label}" style="width: 40px; height: 40px; object-fit: contain;">`;
                 menuItem.title = item.label;
                 
                 addTaskButton.appendChild(menuItem);
