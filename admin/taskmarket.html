@@ -1627,7 +1627,7 @@
         /* メニュー背景円（メニュー項目が展開されたときに表示） */
         .menu-icon-background {
             position: absolute;
-            width: calc(112px * 2 + 56px); /* 半径112px * 2 + メニュー項目56px */
+            width: calc(112px * 2 + 56px); /* 半径112px * 2 + メニュー項目56px = 280px */
             height: calc(112px * 2 + 56px);
             left: 50%;
             top: 50%;
@@ -1641,7 +1641,8 @@
             z-index: -1;
         }
         
-        .menu-icon.menu-open .menu-icon-background {
+        .menu-icon.menu-open .menu-icon-background,
+        .menu-open .menu-icon-background {
             opacity: 1;
         }
         
