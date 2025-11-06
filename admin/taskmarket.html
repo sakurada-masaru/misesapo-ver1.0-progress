@@ -302,6 +302,7 @@
         .tooltips-disabled .slide-panel-handle:hover .tooltip-text,
         .tooltips-disabled .detail-edit-button:hover .tooltip-text,
         .tooltips-disabled .detail-time-record-button:hover .tooltip-text,
+        .tooltips-disabled .detail-delete-button:hover .tooltip-text,
         .tooltips-disabled .menu-icon:hover .tooltip-text,
         .tooltips-disabled .task-card:hover .task-card-tooltip {
             opacity: 0 !important;
@@ -518,9 +519,10 @@
             transform: rotate(180deg); /* ホバー時に回転 */
         }
 
-        /* 詳細パネルの修正ボタンとタイムレコードボタンのツールチップ */
+        /* 詳細パネルの修正ボタンとタイムレコードボタン、削除ボタンのツールチップ */
         .detail-edit-button .tooltip-text,
-        .detail-time-record-button .tooltip-text {
+        .detail-time-record-button .tooltip-text,
+        .detail-delete-button .tooltip-text {
             left: auto;
             right: 100%;
             top: 50%;
@@ -530,7 +532,8 @@
         }
         
         .detail-edit-button .tooltip-text::before,
-        .detail-time-record-button .tooltip-text::before {
+        .detail-time-record-button .tooltip-text::before,
+        .detail-delete-button .tooltip-text::before {
             left: 100%;
             right: auto;
             border-left-color: rgba(0, 0, 0, 0.85);
@@ -538,7 +541,8 @@
         }
 
         .detail-edit-button:hover .tooltip-text,
-        .detail-time-record-button:hover .tooltip-text {
+        .detail-time-record-button:hover .tooltip-text,
+        .detail-delete-button:hover .tooltip-text {
             opacity: 1;
             visibility: visible;
         }
@@ -1624,28 +1628,6 @@
             -webkit-user-select: none;
         }
         
-        /* メニュー背景円（メニュー項目が展開されたときに表示） */
-        .menu-icon-background {
-            position: absolute;
-            width: calc(112px * 2 + 56px); /* 半径112px * 2 + メニュー項目56px = 280px */
-            height: calc(112px * 2 + 56px);
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 50%;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            z-index: -1;
-        }
-        
-        .menu-icon.menu-open .menu-icon-background,
-        .menu-open .menu-icon-background {
-            opacity: 1;
-        }
-        
         /* メニューアイコンの位置固定（左下） */
         /* PC版：画面端から50px */
         .menu-icon.position-bottom-left {
@@ -1732,6 +1714,37 @@
         .menu-icon:hover .tooltip-text {
             opacity: 1;
             visibility: visible;
+        }
+
+        /* メニュー背景円（メニュー項目が展開されたときに表示） */
+        .menu-icon-background {
+            position: absolute;
+            width: calc(112px * 2 + 56px); /* 半径112px * 2 + メニュー項目56px = 280px */
+            height: calc(112px * 2 + 56px);
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(255, 103, 156, 0.3);
+            border-radius: 50%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .menu-icon.menu-open .menu-icon-background,
+        .menu-open .menu-icon-background {
+            opacity: 1;
+        }
+
+        /* SP版：メニュー背景円のサイズ調整 */
+        @media (max-width: 768px) {
+            .menu-icon-background {
+                width: calc(112px * 2 + 56px); /* 半径112px * 2 + メニュー項目56px = 280px */
+                height: calc(112px * 2 + 56px);
+            }
         }
 
         /* メニュー項目（円形メニュー：メニューボタン・新規追加ボタン共通） */
@@ -3079,6 +3092,10 @@
                     <button class="detail-edit-button" id="detailEditButton" onclick="toggleTaskEditMode()" style="display: none;">
                         <img src="images/リロードアイコン.svg" alt="編集" class="detail-edit-icon">
                         <span class="tooltip-text">タスク情報の編集はこちらから</span>
+                    </button>
+                    <button class="detail-delete-button" id="detailDeleteButton" onclick="deleteTaskFromDetail()" style="display: none;">
+                        <span style="font-size: 20px;">🗑️</span>
+                        <span class="tooltip-text">タスクを削除</span>
                     </button>
                 <button class="detail-board-close-button" onclick="closeDetailBoard()" title="閉じる">×</button>
                 </div>
@@ -4632,17 +4649,6 @@
             const existingItems = menuIcon.querySelectorAll('.menu-item');
             existingItems.forEach(item => item.remove());
             
-            // 背景円を追加（既に存在する場合はスキップ）
-            let backgroundCircle = menuIcon.querySelector('.menu-icon-background');
-            if (!backgroundCircle) {
-                backgroundCircle = document.createElement('div');
-                backgroundCircle.className = 'menu-icon-background';
-                menuIcon.appendChild(backgroundCircle);
-            }
-            
-            // メニューが開いている状態をマーク
-            menuIcon.classList.add('menu-open');
-            
             // メニューボタンの位置を取得
             const isBottomRight = menuIcon.classList.contains('position-bottom-right');
             const isBottomLeft = menuIcon.classList.contains('position-bottom-left');
@@ -4747,15 +4753,6 @@
                     }, 400); // アニメーション完了後に削除
                 }, index * 50); // 逆順に閉じる
             });
-            
-            // メニューが閉じている状態をマーク（背景円も非表示）
-            setTimeout(() => {
-                menuIcon.classList.remove('menu-open');
-                const backgroundCircle = menuIcon.querySelector('.menu-icon-background');
-                if (backgroundCircle) {
-                    backgroundCircle.remove();
-                }
-            }, 400); // メニュー項目のアニメーション完了後に背景円も削除
             
             // 外側クリック/タッチイベントリスナーは登録していない（ダブルクリックでのみ閉じる）
         }
@@ -8629,6 +8626,11 @@
             const timeRecordButton = document.getElementById('detailTimeRecordButton');
             if (timeRecordButton) {
                 timeRecordButton.style.display = 'none';
+            }
+            // 削除ボタンを非表示
+            const deleteButton = document.getElementById('detailDeleteButton');
+            if (deleteButton) {
+                deleteButton.style.display = 'none';
             }
             
             detailBoard.classList.remove('active');
