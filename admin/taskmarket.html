@@ -1894,6 +1894,20 @@
             pointer-events: none;
         }
 
+        /* メニュー装飾ライン（マイページの左側、設定の下側） */
+        .menu-decoration-line {
+            position: absolute;
+            background: rgba(255, 103, 156, 0.3);
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .menu-decoration-line.active {
+            opacity: 1;
+        }
+
         /* メニューボタンのテキスト（子要素：コンテンツボタンと同列） */
         .menu-circular-text {
             position: absolute;
@@ -4768,12 +4782,12 @@
                 menuIcon.appendChild(circularText);
             }
             
-            const text = 'メインメニュー';
+            const text = 'MISESAPO TASK MARKET MAIN MENU';
             const menuIconRadius = 60; // メニューボタンの半径（120px / 2）
             const menuRadius = 78; // メニュー項目の距離
             const textRadius = (menuIconRadius + menuRadius) / 2; // メニューボタンとメニュー項目の中間（約86px）
-            const startAngle = 0; // 0度（上）
-            const endAngle = 90; // 90度（右）
+            const startAngle = -90; // -90度（右）
+            const endAngle = 250; // 250度（左）
             const angleRange = endAngle - startAngle; // 90度
             const charCount = text.length; // 5文字
             
@@ -4899,6 +4913,17 @@
                         item.remove();
                     }, 400); // アニメーション完了後に削除
                 }, index * 50); // 逆順に閉じる
+            });
+            
+            // 装飾ラインを非表示
+            const decorationLines = menuIcon.querySelectorAll('.menu-decoration-line');
+            decorationLines.forEach((line, index) => {
+                setTimeout(() => {
+                    line.classList.remove('active');
+                    setTimeout(() => {
+                        line.remove();
+                    }, 400);
+                }, index * 50);
             });
             
             // メニューテキスト（子要素）を非表示（メニューボタンの子要素から削除しない）
