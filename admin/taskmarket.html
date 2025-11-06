@@ -558,11 +558,12 @@
         }
 
         /* ========================================
-           メニューボタン・新規追加ボタン関連スタイル
-           (Menu Button & Add Task Button Styles)
+           新規追加ボタン関連スタイル
+           (Add Task Button Styles)
+           定義: ボタン（親）＞コンテンツ（子）
            ======================================== */
         
-        /* 新規追加ボタン（PC版：画面端から50px下・20px右・円形デザイン） */
+        /* 新規追加ボタン（親要素：PC版：画面端から50px下・20px右・円形デザイン） */
         .add-task-button {
             position: fixed;
             top: 100px;
@@ -5146,9 +5147,11 @@
             }
         }
         
-        // ========================================
-        // 新規追加ボタン関連関数
-        // ========================================
+        /* ========================================
+           新規追加ボタン関連JavaScript
+           (Add Task Button JavaScript)
+           定義: ボタン（親）＞コンテンツ（子）
+           ======================================== */
         
         // 新規追加ボタンのメニュー展開機能を設定
         function setupAddTaskButtonMenu() {
@@ -5201,7 +5204,8 @@
             }, { passive: false });
         }
         
-        // 新規追加ボタンのメニュー項目を表示/非表示を切り替え
+        // 新規追加ボタンのメニュー項目を表示/非表示を切り替え（親要素）
+        // コンテンツボタン（子要素）の表示/非表示を切り替え
         function toggleAddTaskMenu() {
             const addTaskButton = document.getElementById('addTaskButton');
             if (!addTaskButton) return;
@@ -5218,15 +5222,19 @@
             }
         }
         
-        // 新規追加ボタンのメニュー項目を開く（バッジ作成・タスク作成）
+        // 新規追加ボタンのメニュー項目を開く（親要素）
+        // コンテンツボタン（子要素）を表示
         function openAddTaskMenu() {
             const addTaskButton = document.getElementById('addTaskButton');
             if (!addTaskButton) return;
             
-            // 既存のメニュー項目を削除（円形テキストは常時表示のため削除しない）
+            // 既存のメニュー項目（コンテンツボタン）を削除
             const existingItems = addTaskButton.querySelectorAll('.menu-item');
             existingItems.forEach(item => item.remove());
             
+            // ========================================
+            // コンテンツボタン（子要素）の生成
+            // ========================================
             // メニュー項目の定義（順番：1.バッジ、2.タスク、3.緊急タスク）
             // 3つのメニュー項目を均等に配置（40度間隔）
             // バッジ: 260度（8時40分方向）
@@ -5290,11 +5298,13 @@
             });
         }
         
-        // 新規追加ボタンのメニュー項目を閉じる
+        // 新規追加ボタンのメニュー項目を閉じる（親要素）
+        // コンテンツボタン（子要素）を非表示
         function closeAddTaskMenu() {
             const addTaskButton = document.getElementById('addTaskButton');
             if (!addTaskButton) return;
             
+            // コンテンツボタン（子要素）を非表示
             const menuItems = addTaskButton.querySelectorAll('.menu-item');
             menuItems.forEach((item, index) => {
                 setTimeout(() => {
@@ -5309,8 +5319,6 @@
                     }, 400);
                 }, index * 50);
             });
-            
-            // 円形テキストは常時表示のため削除しない
         }
         
         // 新規追加ボタンのメニュー項目のクリック処理
