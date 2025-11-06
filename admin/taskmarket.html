@@ -1684,8 +1684,8 @@
         /* メニューアイコンのスタイル */
         .menu-icon {
             position: fixed;
-            width: 200px;
-            height: 200px;
+            width: 64px;
+            height: 64px;
             background: var(--color-background);
             border: 2px solid var(--color-primary);
             border-radius: 50%;
@@ -1701,17 +1701,19 @@
         }
         
         /* メニューアイコンの位置固定（左下） */
+        /* PC版：タスクグリッドの左と下の末端に密着 */
         .menu-icon.position-bottom-left {
-            bottom: 96px;
-            left: 96px;
+            bottom: 0;
+            left: 0;
             right: auto;
             top: auto;
         }
         
         /* メニューアイコンの位置固定（右下） */
+        /* PC版：タスクグリッドの右と下の末端に密着 */
         .menu-icon.position-bottom-right {
-            bottom: 96px;
-            right: 96px;
+            bottom: 0;
+            right: 0;
             left: auto;
             top: auto;
         }
@@ -1745,8 +1747,8 @@
         }
 
         .menu-icon img {
-            width: 180px;
-            height: 180px;
+            width: 48px;
+            height: 48px;
             object-fit: contain;
             pointer-events: none;
         }
