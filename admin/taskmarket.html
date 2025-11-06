@@ -2056,7 +2056,11 @@
             width: 100%;
             background: var(--color-background-secondary);
             border-radius: var(--border-radius-lg);
-            padding: var(--spacing-lg);
+            /* [PC] 上部と下部の隙間を統一 */
+            padding-top: var(--spacing-lg);
+            padding-bottom: var(--spacing-lg);
+            padding-left: var(--spacing-lg);
+            padding-right: var(--spacing-lg);
             overflow-y: auto;
             /* プルリフレッシュ用のトランジション */
             transition: transform 0.3s ease-out;
