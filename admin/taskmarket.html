@@ -544,12 +544,38 @@
         }
 
         /* 新規追加ボタン（PC版：画面端から50px下・20px右・円形デザイン） */
+        @media (min-width: 769px) {
+            .add-task-button {
+                position: fixed;
+                top: 50px;
+                right: 20px;
+                bottom: auto;
+                left: auto;
+                width: 64px;
+                height: 64px;
+                background: var(--color-primary);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                font-size: 32px;
+                font-weight: var(--font-weight-bold);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: var(--shadow-lg);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+                line-height: 1;
+                padding: 0;
+                user-select: none;
+                -webkit-user-select: none;
+                touch-action: manipulation;
+            }
+        }
+        
+        /* 基本スタイル（すべての画面サイズに適用） */
         .add-task-button {
-            position: fixed;
-            top: 100px;
-            right: 40px;
-            bottom: auto;
-            left: auto;
             width: 64px;
             height: 64px;
             background: var(--color-primary);
@@ -661,14 +687,30 @@
             border-right-color: transparent;
         }
 
-        .add-task-button:hover {
-            background: var(--color-primary-hover);
-            box-shadow: var(--shadow-xl);
-            transform: translateX(-50%) translateY(-2px) scale(1.1);
-        }
+        /* PC版：hover時のtransform */
+        @media (min-width: 769px) {
+            .add-task-button:hover {
+                background: var(--color-primary-hover);
+                box-shadow: var(--shadow-xl);
+                transform: translateY(-2px) scale(1.1);
+            }
 
-        .add-task-button:active {
-            transform: translateX(-50%) translateY(0) scale(1.05);
+            .add-task-button:active {
+                transform: translateY(0) scale(1.05);
+            }
+        }
+        
+        /* タブレット・スマホ版：hover時のtransform */
+        @media (max-width: 768px) {
+            .add-task-button:hover {
+                background: var(--color-primary-hover);
+                box-shadow: var(--shadow-xl);
+                transform: translateY(-2px) scale(1.1);
+            }
+
+            .add-task-button:active {
+                transform: translateY(0) scale(1.05);
+            }
         }
         
         .add-task-button:focus {
@@ -1660,9 +1702,6 @@
             transform: scale(1.1);
         }
 
-        .add-task-button:hover {
-            transform: scale(1.1);
-        }
 
         .menu-icon.dragging {
             opacity: 0.7;
@@ -2750,7 +2789,7 @@
             /* 新規追加ボタン：画面端から50px下（スマホ版：430px以下） */
             .add-task-button {
                 position: fixed !important;
-                top: 50px !important;
+                top: 100px !important;
                 right: 30px !important;
                 bottom: auto !important;
                 left: auto !important;
