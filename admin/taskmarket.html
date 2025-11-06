@@ -695,40 +695,6 @@
             box-shadow: var(--shadow-xl), 0 0 0 3px rgba(255, 103, 156, 0.3);
         }
 
-        /* メニューボタン外周の円形テキスト（0度から90度、メニューボタンとメニュー項目の間） */
-        .menu-circular-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 99;
-            width: 300px;
-            height: 300px;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
-        }
-
-        .menu-circular-text.active {
-            opacity: 0.8;
-            visibility: visible;
-        }
-
-        /* メニューボタンのホバーアクションに連動 */
-        .menu-icon:hover .menu-circular-text {
-            transform: translate(-50%, -50%) scale(1.1);
-        }
-
-        .menu-circular-text span {
-            position: absolute;
-            font-size: 12px;
-            font-weight: var(--font-weight-semibold);
-            color: var(--color-text-primary);
-            white-space: nowrap;
-            transform-origin: center;
-        }
-
         /* バッジを作るボタン（右上に固定・◯デザイン） */
 
         .badge-icon-text {
@@ -1776,7 +1742,13 @@
             color: var(--color-text-secondary);
         }
 
-        /* メニューアイコン（メニューボタン）のスタイル */
+        /* ========================================
+           メニューボタン関連スタイル
+           (Menu Button Styles)
+           定義: ボタン（親）＞コンテンツ（子）＝テキスト（子）
+           ======================================== */
+        
+        /* メニューアイコン（メニューボタン：親要素）のスタイル */
         .menu-icon {
             position: fixed;
             width: 120px;
@@ -1914,7 +1886,7 @@
             }
         }
 
-        /* メニュー項目（円形メニュー：メニューボタン・新規追加ボタン共通） */
+        /* メニュー項目（コンテンツボタン：子要素） */
         .menu-item {
             position: absolute;
             width: 56px;
@@ -2056,6 +2028,40 @@
                 bottom: -40px;
                 top: auto;
             }
+        }
+        
+        /* メニューテキスト（子要素：コンテンツボタンと同列） */
+        .menu-circular-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 99;
+            width: 300px;
+            height: 300px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+        }
+
+        .menu-circular-text.active {
+            opacity: 0.8;
+            visibility: visible;
+        }
+
+        /* メニューボタンのホバーアクションに連動 */
+        .menu-icon:hover .menu-circular-text {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .menu-circular-text span {
+            position: absolute;
+            font-size: 12px;
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text-primary);
+            white-space: nowrap;
+            transform-origin: center;
         }
         
         /* メニューアイコンが右下の場合、0時から9時の間に4つ全てを表示 */
@@ -4894,8 +4900,9 @@
         }
         
         /* ========================================
-           メニューボタン・新規追加ボタン関連JavaScript
-           (Menu Button & Add Task Button JavaScript)
+           メニューボタン関連JavaScript
+           (Menu Button JavaScript)
+           定義: ボタン（親）＞コンテンツ（子）＝テキスト（子）
            ======================================== */
         
         // メニュー項目の位置を更新（メニューアイコンが移動した時に呼び出す）
@@ -4927,12 +4934,13 @@
             }
         }
         
-        // メニュー項目を開く（メニューボタン：マイページ・設定・リソース・アーカイブ）
+        // メニュー項目を開く（メニューボタン：親要素）
+        // コンテンツボタン（子要素）とメニューテキスト（子要素）を表示
         function openMenuItems() {
             const menuIcon = document.getElementById('menuIcon');
             if (!menuIcon) return;
             
-            // 既存のメニュー項目を削除
+            // 既存のメニュー項目（コンテンツボタン）を削除
             const existingItems = menuIcon.querySelectorAll('.menu-item');
             existingItems.forEach(item => item.remove());
             
@@ -4940,8 +4948,9 @@
             const isBottomRight = menuIcon.classList.contains('position-bottom-right');
             const isBottomLeft = menuIcon.classList.contains('position-bottom-left');
             
-            // 円形テキスト「メインメニュー」を表示（メニューボタンとメニュー項目の間、0度から90度の範囲）
-            // メニューボタンの子要素として配置
+            // ========================================
+            // メニューテキスト（子要素：コンテンツボタンと同列）の生成
+            // ========================================
             let circularText = menuIcon.querySelector('.menu-circular-text');
             if (!circularText) {
                 circularText = document.createElement('div');
@@ -4982,6 +4991,9 @@
                 circularText.classList.add('active');
             }, 50);
             
+            // ========================================
+            // コンテンツボタン（子要素）の生成
+            // ========================================
             // メニュー項目の定義（角度と半径で計算して配置）
             const radius = 112; // メニュー項目の距離（56pxのメニュー項目 + 32pxのマージン）
             let menuItems = [];
@@ -5063,11 +5075,13 @@
             // メニュー外をクリックしても閉じない（ダブルクリックでのみ閉じる）
         }
         
-        // メニュー項目を閉じる（メニューボタン）
+        // メニュー項目を閉じる（メニューボタン：親要素）
+        // コンテンツボタン（子要素）とメニューテキスト（子要素）を非表示
         function closeMenuItems() {
             const menuIcon = document.getElementById('menuIcon');
             if (!menuIcon) return;
             
+            // コンテンツボタン（子要素）を非表示
             const menuItems = menuIcon.querySelectorAll('.menu-item');
             menuItems.forEach((item, index) => {
                 setTimeout(() => {
@@ -5083,7 +5097,7 @@
                 }, index * 50); // 逆順に閉じる
             });
             
-            // 円形テキストを非表示（メニューボタンの子要素から削除しない）
+            // メニューテキスト（子要素）を非表示（メニューボタンの子要素から削除しない）
             const circularText = menuIcon.querySelector('.menu-circular-text');
             if (circularText) {
                 circularText.classList.remove('active');
