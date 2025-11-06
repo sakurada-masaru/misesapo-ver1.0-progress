@@ -1894,35 +1894,6 @@
             pointer-events: none;
         }
 
-        /* メニュー項目の装飾ライン */
-        /* マイページの左側にライン */
-        .menu-item[data-action="mypage"]::before {
-            content: '';
-            position: absolute;
-            width: 2px;
-            height: 40px;
-            background: rgba(255, 103, 156, 0.4);
-            left: -20px;
-            top: 50%;
-            transform: translateY(-50%);
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        /* 設定の下側にライン */
-        .menu-item[data-action="setup"]::after {
-            content: '';
-            position: absolute;
-            width: 40px;
-            height: 2px;
-            background: rgba(255, 103, 156, 0.4);
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            pointer-events: none;
-            z-index: -1;
-        }
-
         /* メニューボタンのテキスト（子要素：コンテンツボタンと同列） */
         .menu-circular-text {
             position: absolute;
@@ -1955,6 +1926,54 @@
             color: var(--color-primary);
             white-space: nowrap;
             transform-origin: center;
+        }
+
+        /* ======================================== */
+        /* [SP] メニューボタン/コンテンツ/テキストのSP版スタイル（max-width: 768px） */
+        /* ======================================== */
+        @media (max-width: 768px) {
+            /* [SP] メニューボタンの追加スタイル調整 */
+            .menu-icon {
+                /* サイズは既に上で定義済み（80px x 80px） */
+            }
+
+            /* [SP] メニューボタンのホバー効果調整 */
+            .menu-icon:hover {
+                transform: scale(1.05); /* PC版より控えめに */
+            }
+
+            /* [SP] コンテンツボタン（menu-item）のサイズ調整 */
+            .menu-item {
+                width: 48px; /* PC版: 56px → SP版: 48px */
+                height: 48px;
+            }
+
+            /* [SP] コンテンツボタンのホバー効果調整 */
+            .menu-item:hover {
+                transform: scale(1.1) rotate(360deg); /* PC版より控えめに */
+            }
+
+            /* [SP] コンテンツボタンのアイコンサイズ調整 */
+            .menu-item img {
+                width: 32px; /* PC版: 40px → SP版: 32px */
+                height: 32px;
+            }
+
+            /* [SP] 円形テキストのコンテナサイズ調整 */
+            .menu-circular-text {
+                width: 250px; /* PC版: 300px → SP版: 250px */
+                height: 250px;
+            }
+
+            /* [SP] 円形テキストのホバー効果調整 */
+            .menu-icon:hover .menu-circular-text {
+                transform: translate(-50%, -50%) scale(1.02); /* PC版より控えめに */
+            }
+
+            /* [SP] 円形テキストの文字サイズ調整 */
+            .menu-circular-text span {
+                font-size: 10px; /* PC版: 12px → SP版: 10px */
+            }
         }
 
         .form-group {
@@ -4797,14 +4816,32 @@
                 menuIcon.appendChild(circularText);
             }
             
-            const text = 'MISESAPO TASK MARKET MAIN MENU';
-            const menuIconRadius = 60; // メニューボタンの半径（120px / 2）
-            const menuRadius = 78; // メニュー項目の距離
-            const textRadius = (menuIconRadius + menuRadius) / 2; // メニューボタンとメニュー項目の中間（約86px）
-            const startAngle = -90; // -90度（右）
-            const endAngle = 250; // 250度（左）
-            const angleRange = endAngle - startAngle; // 90度
-            const charCount = text.length; // 5文字
+            // [PC/SP] デバイス判定
+            const isSP = window.innerWidth <= 768;
+            
+            // [PC/SP] テキスト設定を分離
+            let text, menuIconRadius, menuRadius, textRadius, startAngle, endAngle;
+            
+            if (isSP) {
+                // [SP] SP版の設定
+                text = 'メインメニュー';
+                menuIconRadius = 40; // SP版メニューボタンの半径（80px / 2）
+                menuRadius = 64; // SP版メニュー項目の距離（48px + 16pxマージン）
+                textRadius = (menuIconRadius + menuRadius) / 2; // メニューボタンとメニュー項目の中間（約52px）
+                startAngle = 0; // 0度（上）
+                endAngle = 90; // 90度（右）
+            } else {
+                // [PC] PC版の設定
+                text = 'MISESAPO TASK MARKET MAIN MENU';
+                menuIconRadius = 60; // PC版メニューボタンの半径（120px / 2）
+                menuRadius = 78; // PC版メニュー項目の距離
+                textRadius = (menuIconRadius + menuRadius) / 2; // メニューボタンとメニュー項目の中間（約69px）
+                startAngle = -90; // -90度（右）
+                endAngle = 250; // 250度（左）
+            }
+            
+            const angleRange = endAngle - startAngle;
+            const charCount = text.length;
             
             
             // 既存の文字を削除
@@ -4834,8 +4871,8 @@
             // ========================================
             // コンテンツボタン（子要素）の生成
             // ========================================
-            // メニュー項目の定義（角度と半径で計算して配置）
-            const radius = 112; // メニュー項目の距離（56pxのメニュー項目 + 32pxのマージン）
+            // [PC/SP] メニュー項目の半径を分離
+            const radius = isSP ? 64 : 112; // SP版: 48pxのメニュー項目 + 16pxのマージン = 64px、PC版: 56pxのメニュー項目 + 32pxのマージン = 112px
             let menuItems = [];
             
             if (isBottomRight) {
