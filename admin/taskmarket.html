@@ -5130,15 +5130,15 @@
             existingItems.forEach(item => item.remove());
             
             // メニュー項目の定義（順番：1.バッジ、2.タスク、3.緊急タスク）
-            // 角度をさらに3度広げて配置（合計8度広げる）
-            // バッジ: 255度 → 260度 → 263度（+8度）
-            // タスク: 225度 → 222度（-3度）
-            // 緊急タスク: 195度 → 190度 → 187度（-8度）
+            // 3つのメニュー項目を均等に配置（40度間隔）
+            // バッジ: 260度（8時40分方向）
+            // タスク: 220度（7時20分方向）
+            // 緊急タスク: 180度（6時方向）
             const radius = 88; // メニュー項目の距離（56pxのメニュー項目 + 32pxのマージン）
             const menuItems = [
-                { angle: 263, icon: 'images/BADGE.svg', action: 'badge', label: 'バッジ作成', urgent: false }, // 263度
-                { angle: 222, icon: 'images/task.svg', action: 'task', label: 'タスク作成', urgent: false }, // 222度
-                { angle: 187, icon: 'images/Key.svg', action: 'urgent', label: '緊急タスク作成', urgent: true } // 187度
+                { angle: 260, icon: 'images/BADGE.svg', action: 'badge', label: 'バッジ作成', urgent: false }, // 260度
+                { angle: 220, icon: 'images/task.svg', action: 'task', label: 'タスク作成', urgent: false }, // 220度
+                { angle: 180, icon: 'images/Key.svg', action: 'urgent', label: '緊急タスク作成', urgent: true } // 180度
             ];
             
             // メニュー項目を生成
