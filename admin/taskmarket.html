@@ -4883,11 +4883,7 @@
             // コンテンツボタン（子要素）の生成
             // ========================================
             // [PC/SP] メニュー項目の半径を分離
-            const radius = isSP ? 100 : 112; // SP版: メニューボタンから110px離す、PC版: 56pxのメニュー項目 + 32pxのマージン = 112px
-            // デバッグ用（確認後削除可能）
-            if (isSP) {
-                console.log('[SP] メニューコンテンツの半径:', radius, 'px');
-            }
+            const radius = isSP ? 80 : 112; // SP版: メニューボタンから110px離す、PC版: 56pxのメニュー項目 + 32pxのマージン = 112px
             let menuItems = [];
             
             if (isBottomRight) {
