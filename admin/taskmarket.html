@@ -697,19 +697,27 @@
 
         /* メニューボタン外周の円形テキスト（0度から90度、メニューボタンとメニュー項目の間） */
         .menu-circular-text {
-            position: fixed;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             pointer-events: none;
             z-index: 99;
             width: 300px;
             height: 300px;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
         }
 
         .menu-circular-text.active {
             opacity: 0.8;
             visibility: visible;
+        }
+
+        /* メニューボタンのホバーアクションに連動 */
+        .menu-icon:hover .menu-circular-text {
+            transform: translate(-50%, -50%) scale(1.1);
         }
 
         .menu-circular-text span {
@@ -4933,17 +4941,13 @@
             const isBottomLeft = menuIcon.classList.contains('position-bottom-left');
             
             // 円形テキスト「メインメニュー」を表示（メニューボタンとメニュー項目の間、0度から90度の範囲）
-            let circularText = document.querySelector('.menu-circular-text');
+            // メニューボタンの子要素として配置
+            let circularText = menuIcon.querySelector('.menu-circular-text');
             if (!circularText) {
                 circularText = document.createElement('div');
                 circularText.className = 'menu-circular-text';
-                document.body.appendChild(circularText);
+                menuIcon.appendChild(circularText);
             }
-            
-            // メニューボタンの位置を取得して円形テキストを配置
-            const menuIconRect = menuIcon.getBoundingClientRect();
-            const menuIconCenterX = menuIconRect.left + menuIconRect.width / 2;
-            const menuIconCenterY = menuIconRect.top + menuIconRect.height / 2;
             
             const text = 'メインメニュー';
             const menuIconRadius = 60; // メニューボタンの半径（120px / 2）
@@ -4953,11 +4957,6 @@
             const endAngle = 90; // 90度（右）
             const angleRange = endAngle - startAngle; // 90度
             const charCount = text.length; // 5文字
-            
-            // 円形テキストの位置をメニューボタンの中心に設定
-            circularText.style.left = `${menuIconCenterX}px`;
-            circularText.style.top = `${menuIconCenterY}px`;
-            circularText.style.transform = 'translate(-50%, -50%)';
             
             // 既存の文字を削除
             circularText.innerHTML = '';
@@ -5084,8 +5083,8 @@
                 }, index * 50); // 逆順に閉じる
             });
             
-            // 円形テキストを非表示
-            const circularText = document.querySelector('.menu-circular-text');
+            // 円形テキストを非表示（メニューボタンの子要素から削除しない）
+            const circularText = menuIcon.querySelector('.menu-circular-text');
             if (circularText) {
                 circularText.classList.remove('active');
             }
