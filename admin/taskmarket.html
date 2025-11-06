@@ -324,11 +324,8 @@
             height: 100%;
             background: var(--color-background);
             overflow-y: auto;
-            /* [PC] 上部と下部の隙間を統一 */
-            padding-top: var(--spacing-lg);
-            padding-bottom: var(--spacing-lg);
-            padding-left: var(--spacing-lg);
-            padding-right: var(--spacing-lg);
+            /* [PC] paddingはtask-gridで管理するため、main-boardには設定しない */
+            padding: 0;
             transition: var(--transition-normal);
         }
 
