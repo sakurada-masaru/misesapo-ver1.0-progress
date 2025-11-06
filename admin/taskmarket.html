@@ -1624,6 +1624,27 @@
             -webkit-user-select: none;
         }
         
+        /* メニュー背景円（メニュー項目が展開されたときに表示） */
+        .menu-icon-background {
+            position: absolute;
+            width: calc(112px * 2 + 56px); /* 半径112px * 2 + メニュー項目56px */
+            height: calc(112px * 2 + 56px);
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 50%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+        
+        .menu-icon.menu-open .menu-icon-background {
+            opacity: 1;
+        }
+        
         /* メニューアイコンの位置固定（左下） */
         /* PC版：画面端から50px */
         .menu-icon.position-bottom-left {
@@ -4610,6 +4631,17 @@
             const existingItems = menuIcon.querySelectorAll('.menu-item');
             existingItems.forEach(item => item.remove());
             
+            // 背景円を追加（既に存在する場合はスキップ）
+            let backgroundCircle = menuIcon.querySelector('.menu-icon-background');
+            if (!backgroundCircle) {
+                backgroundCircle = document.createElement('div');
+                backgroundCircle.className = 'menu-icon-background';
+                menuIcon.appendChild(backgroundCircle);
+            }
+            
+            // メニューが開いている状態をマーク
+            menuIcon.classList.add('menu-open');
+            
             // メニューボタンの位置を取得
             const isBottomRight = menuIcon.classList.contains('position-bottom-right');
             const isBottomLeft = menuIcon.classList.contains('position-bottom-left');
@@ -4714,6 +4746,15 @@
                     }, 400); // アニメーション完了後に削除
                 }, index * 50); // 逆順に閉じる
             });
+            
+            // メニューが閉じている状態をマーク（背景円も非表示）
+            setTimeout(() => {
+                menuIcon.classList.remove('menu-open');
+                const backgroundCircle = menuIcon.querySelector('.menu-icon-background');
+                if (backgroundCircle) {
+                    backgroundCircle.remove();
+                }
+            }, 400); // メニュー項目のアニメーション完了後に背景円も削除
             
             // 外側クリック/タッチイベントリスナーは登録していない（ダブルクリックでのみ閉じる）
         }
