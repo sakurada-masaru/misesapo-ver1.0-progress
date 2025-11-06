@@ -10561,10 +10561,17 @@
                 console.log('🔔 振動検出:', totalDelta.toFixed(2), '(閾値:', shakeThreshold, ')'); // デバッグ用
                 lastShakeTime = currentTime;
                 
+                // 視覚的なフィードバック
+                showShakeStatusMessage('🔔 振動を検出しました！タスクカードを整列します...');
+                
                 // タスクカードを5列で整列
                 if (typeof alignTasksInGrid === 'function') {
                     console.log('📐 タスクカードを整列します...');
                     alignTasksInGrid();
+                    // 整列完了のメッセージ
+                    setTimeout(() => {
+                        showShakeStatusMessage('✅ タスクカードを整列しました！');
+                    }, 500);
                 } else {
                     // alignTasksInGridがまだ定義されていない場合は、updateTaskGridを呼び出す
                     console.log('⚠️ alignTasksInGridが定義されていません。updateTaskGridを呼び出します。');
@@ -10605,12 +10612,16 @@
                             motionPermissionGranted = true;
                             window.addEventListener('devicemotion', handleDeviceMotion);
                             console.log('✅ デバイスモーション許可されました。携帯を振るとタスクカードが整列します。');
+                            // 視覚的なフィードバック（オプション）
+                            showShakeStatusMessage('✅ 振動検出機能が有効になりました！携帯を振るとタスクカードが整列します。');
                         } else {
                             console.log('❌ デバイスモーションが拒否されました。設定から許可してください。');
+                            showShakeStatusMessage('❌ 振動検出機能が無効です。設定から許可してください。');
                         }
                     })
                     .catch(err => {
                         console.error('デバイスモーションエラー:', err);
+                        showShakeStatusMessage('❌ 振動検出機能の設定に失敗しました。');
                     });
             } else {
                 // 通常のデバイスモーションイベント（Android等）
@@ -10618,10 +10629,50 @@
                     window.addEventListener('devicemotion', handleDeviceMotion);
                     motionPermissionGranted = true;
                     console.log('✅ デバイスモーションイベントを設定しました。携帯を振るとタスクカードが整列します。');
+                    // 視覚的なフィードバック（オプション）
+                    showShakeStatusMessage('✅ 振動検出機能が有効になりました！携帯を振るとタスクカードが整列します。');
                 } catch (err) {
                     console.error('デバイスモーションイベントの設定に失敗:', err);
+                    showShakeStatusMessage('❌ 振動検出機能の設定に失敗しました。');
                 }
             }
+        }
+        
+        // 振動検出機能のステータスメッセージを表示する関数
+        function showShakeStatusMessage(message) {
+            // 既存のメッセージを削除
+            const existingMessage = document.getElementById('shakeStatusMessage');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            // 新しいメッセージを作成
+            const messageDiv = document.createElement('div');
+            messageDiv.id = 'shakeStatusMessage';
+            messageDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 12px 24px;
+                border-radius: 8px;
+                z-index: 10000;
+                font-size: 14px;
+                text-align: center;
+                max-width: 90%;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            `;
+            messageDiv.textContent = message;
+            document.body.appendChild(messageDiv);
+            
+            // 3秒後に自動で削除
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, 3000);
         }
         
         // ユーザーインタラクション後にデバイスモーションを設定（iOS対応）
