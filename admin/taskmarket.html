@@ -5125,9 +5125,20 @@
             const addTaskButton = document.getElementById('addTaskButton');
             if (!addTaskButton) return;
             
-            // 既存のメニュー項目を削除
-            const existingItems = addTaskButton.querySelectorAll('.menu-item');
+            // 既存のメニュー項目とメニューテキストを削除
+            const existingItems = addTaskButton.querySelectorAll('.menu-item, .menu-text-label');
             existingItems.forEach(item => item.remove());
+            
+            // メインメニューテキストを表示（メニューボタンとメニュー項目の間）
+            const menuTextLabel = document.createElement('div');
+            menuTextLabel.className = 'menu-text-label';
+            menuTextLabel.innerHTML = `<img src="images/Mainmenutext.png" alt="メインメニュー" style="max-width: 120px; height: auto; object-fit: contain;">`;
+            addTaskButton.appendChild(menuTextLabel);
+            
+            // アニメーションで表示
+            setTimeout(() => {
+                menuTextLabel.classList.add('active');
+            }, 50);
             
             // メニュー項目の定義（順番：1.バッジ、2.タスク、3.緊急タスク）
             // 3つのメニュー項目を均等に配置（40度間隔）
@@ -5197,6 +5208,7 @@
             const addTaskButton = document.getElementById('addTaskButton');
             if (!addTaskButton) return;
             
+            // メニュー項目を閉じる
             const menuItems = addTaskButton.querySelectorAll('.menu-item');
             menuItems.forEach((item, index) => {
                 setTimeout(() => {
@@ -5211,6 +5223,17 @@
                     }, 400);
                 }, index * 50);
             });
+            
+            // メインメニューテキストを閉じる
+            const menuTextLabel = addTaskButton.querySelector('.menu-text-label');
+            if (menuTextLabel) {
+                setTimeout(() => {
+                    menuTextLabel.classList.remove('active');
+                    setTimeout(() => {
+                        menuTextLabel.remove();
+                    }, 400);
+                }, 50);
+            }
         }
         
         // 新規追加ボタンのメニュー項目のクリック処理
