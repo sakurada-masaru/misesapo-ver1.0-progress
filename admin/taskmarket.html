@@ -1639,19 +1639,19 @@
         }
         
         /* メニューアイコンの位置固定（左下） */
-        /* PC版：画面端から50px */
+        /* PC版：ボードの枠内に収める（メインボードのpadding: 24px + タスクグリッドのpadding: 24px = 48px + マージン: 24px = 72px） */
         .menu-icon.position-bottom-left {
-            bottom: 50px;
-            left: 50px;
+            bottom: 72px;
+            left: 72px;
             right: auto;
             top: auto;
         }
         
         /* メニューアイコンの位置固定（右下） */
-        /* PC版：画面端から50px */
+        /* PC版：ボードの枠内に収める */
         .menu-icon.position-bottom-right {
-            bottom: 50px;
-            right: 50px;
+            bottom: 72px;
+            right: 72px;
             left: auto;
             top: auto;
         }
@@ -4600,7 +4600,9 @@
             const isSP = window.innerWidth <= 768;
             
             // 完了ボタンの位置オフセット
-            const completeOffset = isSP ? 20 : 50; // SP: 20px（メニューボタンと同じ内側）, PC: 50px
+            // SP: 20px（メニューボタンと同じ内側）
+            // PC: 72px（ボードの枠内に収める：メインボードpadding 24px + タスクグリッドpadding 24px + マージン 24px）
+            const completeOffset = isSP ? 20 : 72;
             
             // 完了ボタンの位置を設定（!importantを使用してCSSを上書き）
             if (completePosition === 'bottom-left') {
