@@ -1947,14 +1947,14 @@
 
         /* メニューボタンのホバーアクションに連動 */
         .menu-icon:hover .menu-circular-text {
-            transform: translate(-50%, -50%) scale(1.1);
+            transform: translate(-50%, -50%) scale(1.05);
         }
 
         .menu-circular-text span {
             position: absolute;
             font-size: 12px;
             font-weight: var(--font-weight-semibold);
-            color: var(--color-text-primary);
+            color: var(--color-primary);
             white-space: nowrap;
             transform-origin: center;
         }
@@ -4801,7 +4801,7 @@
             
             const text = 'メインメニュー';
             const menuIconRadius = 60; // メニューボタンの半径（120px / 2）
-            const menuRadius = 112; // メニュー項目の距離
+            const menuRadius = 78; // メニュー項目の距離
             const textRadius = (menuIconRadius + menuRadius) / 2; // メニューボタンとメニュー項目の中間（約86px）
             const startAngle = 0; // 0度（上）
             const endAngle = 90; // 90度（右）
