@@ -1854,37 +1854,6 @@
             visibility: visible;
         }
 
-        /* メニュー背景円（メニュー項目が展開されたときに表示） */
-        .menu-icon-background {
-            position: absolute;
-            width: calc(112px * 2 + 56px); /* 半径112px * 2 + メニュー項目56px = 280px */
-            height: calc(112px * 2 + 56px);
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid rgba(255, 103, 156, 0.3);
-            border-radius: 50%;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            z-index: -1;
-        }
-
-        .menu-icon.menu-open .menu-icon-background,
-        .menu-open .menu-icon-background {
-            opacity: 1;
-        }
-
-        /* [SP] メニュー背景円のサイズ調整（max-width: 768px） */
-        @media (max-width: 768px) {
-            .menu-icon-background {
-                width: calc(112px * 2 + 56px); /* 半径112px * 2 + メニュー項目56px = 280px */
-                height: calc(112px * 2 + 56px);
-            }
-        }
-
         /* メニューボタンのコンテンツボタン（子要素） */
         .menu-item {
             position: absolute;
