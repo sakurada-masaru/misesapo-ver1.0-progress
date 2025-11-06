@@ -1226,7 +1226,7 @@
             background: var(--panel-5-color);
         }
 
-        /* スマホ版での左パネルハンドルの配置（100px下に配置） */
+        /* [SP] 左パネルハンドルの配置（100px下に配置、max-width: 430px） */
         @media (max-width: 430px) {
             .slide-panel-handle.panel-1 {
                 top: 100px;
@@ -2248,7 +2248,7 @@
             to { transform: rotate(360deg); }
         }
         
-        /* プルリフレッシュヒント（スマホ版のみ） */
+        /* [SP] プルリフレッシュヒント（スマホ版のみ） */
         .pull-refresh-hint {
             position: absolute;
             top: 20px;
@@ -2265,13 +2265,13 @@
             white-space: nowrap;
         }
         
-        /* スマホ版（SP）：プルリフレッシュ対応とヒント表示 */
+        /* [SP] プルリフレッシュ対応とヒント表示（max-width: 430px） */
         @media (max-width: 430px) {
             .task-grid {
                 -webkit-overflow-scrolling: touch;
             }
             
-            /* ヒントを表示（スマホ版ではデフォルトで表示） */
+            /* [SP] ヒントを表示（スマホ版ではデフォルトで表示） */
             .pull-refresh-hint {
                 opacity: 1 !important;
                 visibility: visible !important;
@@ -2500,7 +2500,7 @@
             z-index: 500;
         }
 
-        /* スマホ版（SP）：選択状態のスタイル */
+        /* [SP] 選択状態のスタイル（max-width: 430px） */
         @media (max-width: 430px) {
             .task-card.selected {
                 border: 2px solid var(--color-primary);
@@ -3002,7 +3002,7 @@
                 font-size: 24px;
             }
 
-            /* 新規追加ボタン：画面端から50px下（スマホ版：430px以下） */
+            /* [SP] 新規追加ボタン：画面端から50px下（max-width: 430px） */
             .add-task-button {
                 position: fixed !important;
                 top: 80px !important;
@@ -3027,7 +3027,7 @@
             }
 
 
-            /* 完了ボタン：メニューと反対の方向に固定（430px画面幅内に収める） */
+            /* [SP] 完了ボタン：メニューと反対の方向に固定（max-width: 430px） */
             .complete-button {
                 position: fixed !important;
                 bottom: 16px !important;
@@ -3037,7 +3037,7 @@
                 z-index: 1001;
             }
             
-            /* メニューが左下の場合、完了ボタンは右下に配置 */
+            /* [SP] メニューが左下の場合、完了ボタンは右下に配置（max-width: 430px） */
             .menu-icon.position-bottom-left ~ .complete-button,
             body .menu-icon.position-bottom-left ~ .complete-button {
                 bottom: 16px !important;
@@ -3045,7 +3045,7 @@
                 right: 16px !important;
             }
             
-            /* メニューが右下の場合、完了ボタンは左下に配置 */
+            /* [SP] メニューが右下の場合、完了ボタンは左下に配置（max-width: 430px） */
             .menu-icon.position-bottom-right ~ .complete-button,
             body .menu-icon.position-bottom-right ~ .complete-button {
                 bottom: 16px !important;
@@ -4977,6 +4977,7 @@
             const endAngle = 90; // 90度（右）
             const angleRange = endAngle - startAngle; // 90度
             const charCount = text.length; // 5文字
+            
             
             // 既存の文字を削除
             circularText.innerHTML = '';
