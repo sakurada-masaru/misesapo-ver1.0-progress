@@ -543,9 +543,9 @@
             visibility: visible;
         }
 
-        /* 新規追加ボタン（画面右上に固定・円形デザイン） */
+        /* 新規追加ボタン（ボード内の可動域の上から50px・円形デザイン） */
         .add-task-button {
-            position: fixed;
+            position: absolute;
             top: 50px;
             right: 50px;
             bottom: auto;
@@ -570,14 +570,6 @@
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
-        }
-        
-        /* SP版：新規追加ボタンの位置調整 */
-        @media (max-width: 768px) {
-            .add-task-button {
-                top: 50px;
-                right: 50px;
-            }
         }
         
         /* 完了ボタン（メニューと反対の方向に固定・円形デザイン） */
@@ -2783,11 +2775,11 @@
                 font-size: 24px;
             }
 
-            /* 新規追加ボタン：画面下部中央に固定（430px画面幅内に収める） */
+            /* 新規追加ボタン：ボード内の可動域の上から50px */
             .add-task-button {
-                position: fixed;
-                top: 16px;
-                right: 16px;
+                position: absolute;
+                top: 50px;
+                right: 50px;
                 bottom: auto;
                 left: auto;
                 transform: none;
@@ -4551,7 +4543,7 @@
             updateMenuItemsPosition();
         }
         
-        // 完了ボタンの位置を更新（メニューと反対の方向に配置）
+        // 完了ボタンの位置を更新（メニューと反対の方向に配置、重なりを回避）
         function updateCompleteButtonPosition() {
             const completeButton = document.getElementById('completeButton');
             if (!completeButton) return;
@@ -4564,21 +4556,34 @@
             
             // SP版かどうかを判定
             const isSP = window.innerWidth <= 768;
-            const bottomValue = isSP ? '16px' : '96px';
-            const rightLeftValue = isSP ? '16px' : '96px';
+            
+            // メニューボタンのサイズと位置を取得
+            const menuIconSize = isSP ? 80 : 120; // SP: 80px, PC: 120px
+            const menuIconOffset = isSP ? 16 : 50; // SP: 16px, PC: 50px
+            
+            // 完了ボタンのサイズ
+            const completeButtonSize = isSP ? 48 : 64; // SP: 48px, PC: 64px
+            
+            // メニューボタンと完了ボタンの間隔（重なりを避けるため）
+            // メニューボタンの中心から完了ボタンの中心までの距離を計算
+            const spacing = Math.max(20, (menuIconSize / 2) + (completeButtonSize / 2) + 20);
             
             // メニューが左下の場合、完了ボタンは右下に配置
             if (isBottomLeft) {
-                completeButton.style.bottom = bottomValue;
+                const bottomValue = menuIconOffset + spacing;
+                const rightValue = menuIconOffset;
+                completeButton.style.bottom = `${bottomValue}px`;
                 completeButton.style.left = 'auto';
-                completeButton.style.right = rightLeftValue;
+                completeButton.style.right = `${rightValue}px`;
                 completeButton.style.top = 'auto';
             }
             // メニューが右下の場合、完了ボタンは左下に配置
             else if (isBottomRight) {
-                completeButton.style.bottom = bottomValue;
+                const bottomValue = menuIconOffset + spacing;
+                const leftValue = menuIconOffset;
+                completeButton.style.bottom = `${bottomValue}px`;
                 completeButton.style.right = 'auto';
-                completeButton.style.left = rightLeftValue;
+                completeButton.style.left = `${leftValue}px`;
                 completeButton.style.top = 'auto';
             }
         }
