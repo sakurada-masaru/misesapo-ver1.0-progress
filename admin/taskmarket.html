@@ -2053,7 +2053,8 @@
         /* タスクカードグリッド（掲示板風のランダム配置） */
         .task-grid {
             position: relative;
-            min-height: 800px;
+            height: 100%; /* 親要素（main-board）の高さを継承して画面下まで表示 */
+            min-height: 800px; /* 最小高さを確保 */
             width: 100%;
             background: var(--color-background-secondary);
             border-radius: var(--border-radius-lg);
