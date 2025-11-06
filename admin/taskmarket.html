@@ -1894,18 +1894,33 @@
             pointer-events: none;
         }
 
-        /* メニュー装飾ライン（マイページの左側、設定の下側） */
-        .menu-decoration-line {
+        /* メニュー項目の装飾ライン */
+        /* マイページの左側にライン */
+        .menu-item[data-action="mypage"]::before {
+            content: '';
             position: absolute;
-            background: rgba(255, 103, 156, 0.3);
+            width: 2px;
+            height: 40px;
+            background: rgba(255, 103, 156, 0.4);
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
             pointer-events: none;
-            z-index: 999;
-            opacity: 0;
-            transition: opacity 0.4s ease;
+            z-index: -1;
         }
 
-        .menu-decoration-line.active {
-            opacity: 1;
+        /* 設定の下側にライン */
+        .menu-item[data-action="setup"]::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background: rgba(255, 103, 156, 0.4);
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: -1;
         }
 
         /* メニューボタンのテキスト（子要素：コンテンツボタンと同列） */
@@ -4768,10 +4783,6 @@
             const existingItems = menuIcon.querySelectorAll('.menu-item');
             existingItems.forEach(item => item.remove());
             
-            // 既存の装飾ラインを削除
-            const existingLines = menuIcon.querySelectorAll('.menu-decoration-line');
-            existingLines.forEach(line => line.remove());
-            
             // メニューボタンの位置を取得
             const isBottomRight = menuIcon.classList.contains('position-bottom-right');
             const isBottomLeft = menuIcon.classList.contains('position-bottom-left');
@@ -4878,49 +4889,6 @@
                     menuItem.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(1) rotate(360deg)`;
                 }, index * 100); // 各項目に100msずつ遅延
                 
-                // 装飾ラインを追加（マイページの左側、設定の下側）
-                if (item.action === 'mypage' || item.action === 'setup') {
-                    const decorationLine = document.createElement('div');
-                    decorationLine.className = 'menu-decoration-line';
-                    
-                    if (item.action === 'mypage') {
-                        // マイページの左側にライン（左方向：-90度）
-                        const lineLength = 40; // ラインの長さ
-                        const lineWidth = 2; // ラインの太さ
-                        const leftAngleRad = angleRad - Math.PI / 2; // 左方向（-90度）
-                        const lineX = Math.cos(leftAngleRad) * (lineLength / 2);
-                        const lineY = Math.sin(leftAngleRad) * (lineLength / 2);
-                        
-                        decorationLine.style.width = `${lineLength}px`;
-                        decorationLine.style.height = `${lineWidth}px`;
-                        decorationLine.style.left = `50%`;
-                        decorationLine.style.top = `50%`;
-                        decorationLine.style.transform = `translate(calc(-50% + ${x - lineX}px), calc(-50% + ${y - lineY}px)) rotate(${normalizedAngle - 90}deg)`;
-                        decorationLine.style.transformOrigin = 'center';
-                    } else if (item.action === 'setup') {
-                        // 設定の下側にライン（下方向：+90度）
-                        const lineLength = 40; // ラインの長さ
-                        const lineWidth = 2; // ラインの太さ
-                        const downAngleRad = angleRad + Math.PI / 2; // 下方向（+90度）
-                        const lineX = Math.cos(downAngleRad) * (lineLength / 2);
-                        const lineY = Math.sin(downAngleRad) * (lineLength / 2);
-                        
-                        decorationLine.style.width = `${lineLength}px`;
-                        decorationLine.style.height = `${lineWidth}px`;
-                        decorationLine.style.left = `50%`;
-                        decorationLine.style.top = `50%`;
-                        decorationLine.style.transform = `translate(calc(-50% + ${x - lineX}px), calc(-50% + ${y - lineY}px)) rotate(${normalizedAngle + 90}deg)`;
-                        decorationLine.style.transformOrigin = 'center';
-                    }
-                    
-                    menuIcon.appendChild(decorationLine);
-                    
-                    // 装飾ラインもアニメーションで表示
-                    setTimeout(() => {
-                        decorationLine.classList.add('active');
-                    }, index * 100 + 200); // メニュー項目より少し遅れて表示
-                }
-                
                 // [PC] クリックイベント
                 menuItem.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -4960,17 +4928,6 @@
                         item.remove();
                     }, 400); // アニメーション完了後に削除
                 }, index * 50); // 逆順に閉じる
-            });
-            
-            // 装飾ラインを非表示
-            const decorationLines = menuIcon.querySelectorAll('.menu-decoration-line');
-            decorationLines.forEach((line, index) => {
-                setTimeout(() => {
-                    line.classList.remove('active');
-                    setTimeout(() => {
-                        line.remove();
-                    }, 400);
-                }, index * 50);
             });
             
             // メニューテキスト（子要素）を非表示（メニューボタンの子要素から削除しない）
