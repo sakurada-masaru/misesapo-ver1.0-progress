@@ -10533,7 +10533,10 @@
             if (window.innerWidth > 768) return;
             
             const acceleration = event.accelerationIncludingGravity || event.acceleration;
-            if (!acceleration) return;
+            if (!acceleration) {
+                console.log('加速度データが取得できません');
+                return;
+            }
             
             const currentTime = Date.now();
             
@@ -10555,14 +10558,16 @@
             
             // 振動を検出（閾値を超えた場合）
             if (totalDelta > shakeThreshold) {
-                console.log('振動検出:', totalDelta); // デバッグ用
+                console.log('🔔 振動検出:', totalDelta.toFixed(2), '(閾値:', shakeThreshold, ')'); // デバッグ用
                 lastShakeTime = currentTime;
                 
                 // タスクカードを5列で整列
                 if (typeof alignTasksInGrid === 'function') {
+                    console.log('📐 タスクカードを整列します...');
                     alignTasksInGrid();
                 } else {
                     // alignTasksInGridがまだ定義されていない場合は、updateTaskGridを呼び出す
+                    console.log('⚠️ alignTasksInGridが定義されていません。updateTaskGridを呼び出します。');
                     window.shakeDetected = true;
                     if (typeof updateTaskGrid === 'function') {
                         updateTaskGrid();
