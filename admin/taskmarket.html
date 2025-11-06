@@ -10407,9 +10407,10 @@
 
         // 振動検出機能（携帯を振るとタスクカードを5列で整列）
         let lastAcceleration = { x: 0, y: 0, z: 0 };
-        let shakeThreshold = 15; // 振動の閾値
+        let shakeThreshold = 8; // 振動の閾値（下げて検出しやすく）
         let lastShakeTime = 0;
         let shakeCooldown = 1000; // 1秒間のクールダウン
+        let motionPermissionGranted = false;
         
         function handleDeviceMotion(event) {
             // SP版のみ有効
@@ -10423,44 +10424,83 @@
             // クールダウン中は無視
             if (currentTime - lastShakeTime < shakeCooldown) return;
             
-            // 加速度の変化を計算
-            const deltaX = Math.abs(acceleration.x - lastAcceleration.x);
-            const deltaY = Math.abs(acceleration.y - lastAcceleration.y);
-            const deltaZ = Math.abs(acceleration.z - lastAcceleration.z);
+            // 加速度の絶対値を計算（重力を除いた加速度の変化）
+            const accelX = acceleration.x || 0;
+            const accelY = acceleration.y || 0;
+            const accelZ = acceleration.z || 0;
             
-            // 振動を検出
-            if (deltaX > shakeThreshold || deltaY > shakeThreshold || deltaZ > shakeThreshold) {
+            // 加速度の変化を計算（前回との差分）
+            const deltaX = Math.abs(accelX - lastAcceleration.x);
+            const deltaY = Math.abs(accelY - lastAcceleration.y);
+            const deltaZ = Math.abs(accelZ - lastAcceleration.z);
+            
+            // 総合的な加速度の変化を計算
+            const totalDelta = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+            
+            // 振動を検出（閾値を超えた場合）
+            if (totalDelta > shakeThreshold) {
+                console.log('振動検出:', totalDelta); // デバッグ用
                 window.shakeDetected = true;
                 lastShakeTime = currentTime;
                 
                 // タスクグリッドを更新（5列グリッドレイアウトで整列）
                 if (typeof updateTaskGrid === 'function') {
                     updateTaskGrid();
-                    saveTaskMarketData(); // 位置情報を保存
+                    if (typeof saveTaskMarketData === 'function') {
+                        saveTaskMarketData(); // 位置情報を保存
+                    }
                 }
             }
             
             // 現在の加速度を保存
             lastAcceleration = {
-                x: acceleration.x || 0,
-                y: acceleration.y || 0,
-                z: acceleration.z || 0
+                x: accelX,
+                y: accelY,
+                z: accelZ
             };
         }
         
-        // デバイスモーションイベントのリクエスト（iOS 13+対応）
-        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-            DeviceMotionEvent.requestPermission()
-                .then(response => {
-                    if (response === 'granted') {
-                        window.addEventListener('devicemotion', handleDeviceMotion);
-                    }
-                })
-                .catch(console.error);
-        } else {
-            // 通常のデバイスモーションイベント（Android等）
-            window.addEventListener('devicemotion', handleDeviceMotion);
+        // デバイスモーションイベントの設定
+        function setupDeviceMotion() {
+            // SP版のみ有効
+            if (window.innerWidth > 768) return;
+            
+            // デバイスモーションイベントのリクエスト（iOS 13+対応）
+            if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                DeviceMotionEvent.requestPermission()
+                    .then(response => {
+                        if (response === 'granted') {
+                            motionPermissionGranted = true;
+                            window.addEventListener('devicemotion', handleDeviceMotion);
+                            console.log('デバイスモーション許可されました');
+                        } else {
+                            console.log('デバイスモーションが拒否されました');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('デバイスモーションエラー:', err);
+                    });
+            } else {
+                // 通常のデバイスモーションイベント（Android等）
+                window.addEventListener('devicemotion', handleDeviceMotion);
+                motionPermissionGranted = true;
+                console.log('デバイスモーションイベントを設定しました');
+            }
         }
+        
+        // ユーザーインタラクション後にデバイスモーションを設定（iOS対応）
+        function setupDeviceMotionOnInteraction() {
+            const setupOnce = () => {
+                setupDeviceMotion();
+                document.removeEventListener('touchstart', setupOnce);
+                document.removeEventListener('click', setupOnce);
+            };
+            document.addEventListener('touchstart', setupOnce, { once: true });
+            document.addEventListener('click', setupOnce, { once: true });
+        }
+        
+        // ページロード時に設定を試みる
+        setupDeviceMotionOnInteraction();
 
         // 初期化（ページロード時にも実行、スプラッシュ後に再実行される）
         setTimeout(async function() {
