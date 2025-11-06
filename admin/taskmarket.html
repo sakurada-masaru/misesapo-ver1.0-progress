@@ -572,11 +572,11 @@
             touch-action: manipulation;
         }
         
-        /* SP版：新規追加ボタンの位置調整（角から50px） */
+        /* SP版：新規追加ボタンの位置調整（角から30px） */
         @media (max-width: 768px) {
             .add-task-button {
-                top: 50px;
-                right: 50px;
+                top: 30px;
+                right: 30px;
             }
         }
         
@@ -1641,15 +1641,15 @@
                 height: 80px;
             }
             
-            /* SP版：メニューボタンを角に寄せる */
+            /* SP版：メニューボタンを20px内側に配置 */
             .menu-icon.position-bottom-left {
-                bottom: 8px;
-                left: 8px;
+                bottom: 20px;
+                left: 20px;
             }
             
             .menu-icon.position-bottom-right {
-                bottom: 8px;
-                right: 8px;
+                bottom: 20px;
+                right: 20px;
             }
         }
 
@@ -4539,7 +4539,7 @@
             const isSP = window.innerWidth <= 768;
             
             // 完了ボタンの位置オフセット
-            const completeOffset = isSP ? 8 : 50; // SP: 8px（角に詰める）, PC: 50px
+            const completeOffset = isSP ? 20 : 50; // SP: 20px（メニューボタンと同じ内側）, PC: 50px
             
             // 完了ボタンの位置を設定（!importantを使用してCSSを上書き）
             if (completePosition === 'bottom-left') {
