@@ -921,6 +921,73 @@
             border-color: #dc2626 !important;
         }
 
+        /* 確認吹き出し（緊急タスク作成用） */
+        .confirm-bubble {
+            position: fixed;
+            background: var(--color-background);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-md);
+            box-shadow: var(--shadow-lg);
+            z-index: 10000;
+            min-width: 200px;
+            max-width: 300px;
+            animation: slideUp 0.3s ease;
+        }
+
+        .confirm-bubble::before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 10px solid transparent;
+            border-top-color: var(--color-primary);
+        }
+
+        .confirm-bubble-title {
+            font-size: var(--font-size-md);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-md);
+            text-align: center;
+        }
+
+        .confirm-bubble-buttons {
+            display: flex;
+            gap: var(--spacing-sm);
+            justify-content: center;
+        }
+
+        .confirm-bubble-button {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            cursor: pointer;
+            transition: var(--transition-normal);
+        }
+
+        .confirm-bubble-button.yes {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .confirm-bubble-button.yes:hover {
+            background: var(--color-primary-hover);
+        }
+
+        .confirm-bubble-button.no {
+            background: var(--color-background-secondary);
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-border);
+        }
+
+        .confirm-bubble-button.no:hover {
+            background: var(--color-border);
+        }
+
         /* スライドインパネル（左から右にスライドイン、最前面に表示） */
         .slide-panel-overlay {
             position: fixed;
@@ -5168,14 +5235,82 @@
                     toggleTaskForm();
                     break;
                 case 'urgent':
-                    // 緊急タスク作成の確認ダイアログを表示
-                    if (confirm('緊急タスクを作成しますか？')) {
-                        // 「はい」で緊急タスク作成フォームを開く
-                        openUrgentTaskForm();
-                    }
-                    // 「いいえ」の場合は何もしない（ダイアログが閉じる）
+                    // 緊急タスク作成の確認吹き出しを表示
+                    showUrgentTaskConfirmBubble();
                     break;
             }
+        }
+
+        // 緊急タスク作成の確認吹き出しを表示
+        function showUrgentTaskConfirmBubble() {
+            // 既存の吹き出しを削除
+            const existingBubble = document.getElementById('urgentTaskConfirmBubble');
+            if (existingBubble) {
+                existingBubble.remove();
+            }
+
+            // 緊急タスクメニュー項目の位置を取得
+            const addTaskButton = document.getElementById('addTaskButton');
+            if (!addTaskButton) return;
+            
+            const urgentMenuItem = addTaskButton.querySelector('.menu-item[data-action="urgent"]');
+            if (!urgentMenuItem) return;
+
+            const menuItemRect = urgentMenuItem.getBoundingClientRect();
+            const bubble = document.createElement('div');
+            bubble.id = 'urgentTaskConfirmBubble';
+            bubble.className = 'confirm-bubble';
+            
+            bubble.innerHTML = `
+                <div class="confirm-bubble-title">緊急タスクを作成しますか？</div>
+                <div class="confirm-bubble-buttons">
+                    <button class="confirm-bubble-button yes" onclick="handleUrgentTaskConfirm(true)">はい</button>
+                    <button class="confirm-bubble-button no" onclick="handleUrgentTaskConfirm(false)">いいえ</button>
+                </div>
+            `;
+
+            document.body.appendChild(bubble);
+
+            // 吹き出しの位置を設定（メニュー項目の上に表示）
+            const bubbleRect = bubble.getBoundingClientRect();
+            const left = menuItemRect.left + (menuItemRect.width / 2) - (bubbleRect.width / 2);
+            const top = menuItemRect.top - bubbleRect.height - 20; // メニュー項目の上20px
+
+            bubble.style.left = left + 'px';
+            bubble.style.top = top + 'px';
+
+            // 画面外に出ないように調整
+            const maxLeft = window.innerWidth - bubbleRect.width - 10;
+            const minLeft = 10;
+            if (left < minLeft) {
+                bubble.style.left = minLeft + 'px';
+            } else if (left > maxLeft) {
+                bubble.style.left = maxLeft + 'px';
+            }
+
+            // クリックイベント（吹き出し外をクリックしたら閉じる）
+            setTimeout(() => {
+                document.addEventListener('click', function closeBubbleOnClick(e) {
+                    if (!bubble.contains(e.target) && !urgentMenuItem.contains(e.target)) {
+                        bubble.remove();
+                        document.removeEventListener('click', closeBubbleOnClick);
+                    }
+                });
+            }, 100);
+        }
+
+        // 緊急タスク作成の確認結果を処理
+        function handleUrgentTaskConfirm(confirmed) {
+            const bubble = document.getElementById('urgentTaskConfirmBubble');
+            if (bubble) {
+                bubble.remove();
+            }
+
+            if (confirmed) {
+                // 「はい」で緊急タスク作成フォームを開く
+                openUrgentTaskForm();
+            }
+            // 「いいえ」の場合は何もしない（吹き出しが閉じる）
         }
         
         // メニューアイコンの位置を保存
