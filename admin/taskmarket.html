@@ -10550,14 +10550,16 @@
             // 振動を検出（閾値を超えた場合）
             if (totalDelta > shakeThreshold) {
                 console.log('振動検出:', totalDelta); // デバッグ用
-                window.shakeDetected = true;
                 lastShakeTime = currentTime;
                 
-                // タスクグリッドを更新（5列グリッドレイアウトで整列）
-                if (typeof updateTaskGrid === 'function') {
-                    updateTaskGrid();
-                    if (typeof saveTaskMarketData === 'function') {
-                        saveTaskMarketData(); // 位置情報を保存
+                // タスクカードを5列で整列
+                if (typeof alignTasksInGrid === 'function') {
+                    alignTasksInGrid();
+                } else {
+                    // alignTasksInGridがまだ定義されていない場合は、updateTaskGridを呼び出す
+                    window.shakeDetected = true;
+                    if (typeof updateTaskGrid === 'function') {
+                        updateTaskGrid();
                     }
                 }
             }
@@ -10573,7 +10575,16 @@
         // デバイスモーションイベントの設定
         function setupDeviceMotion() {
             // SP版のみ有効
-            if (window.innerWidth > 768) return;
+            if (window.innerWidth > 768) {
+                console.log('PC版のため、振動検出機能は無効です');
+                return;
+            }
+            
+            // 既にイベントリスナーが設定されている場合はスキップ
+            if (motionPermissionGranted) {
+                console.log('デバイスモーションは既に設定されています');
+                return;
+            }
             
             // デバイスモーションイベントのリクエスト（iOS 13+対応）
             if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
@@ -10582,9 +10593,9 @@
                         if (response === 'granted') {
                             motionPermissionGranted = true;
                             window.addEventListener('devicemotion', handleDeviceMotion);
-                            console.log('デバイスモーション許可されました');
+                            console.log('✅ デバイスモーション許可されました。携帯を振るとタスクカードが整列します。');
                         } else {
-                            console.log('デバイスモーションが拒否されました');
+                            console.log('❌ デバイスモーションが拒否されました。設定から許可してください。');
                         }
                     })
                     .catch(err => {
@@ -10592,21 +10603,37 @@
                     });
             } else {
                 // 通常のデバイスモーションイベント（Android等）
-                window.addEventListener('devicemotion', handleDeviceMotion);
-                motionPermissionGranted = true;
-                console.log('デバイスモーションイベントを設定しました');
+                try {
+                    window.addEventListener('devicemotion', handleDeviceMotion);
+                    motionPermissionGranted = true;
+                    console.log('✅ デバイスモーションイベントを設定しました。携帯を振るとタスクカードが整列します。');
+                } catch (err) {
+                    console.error('デバイスモーションイベントの設定に失敗:', err);
+                }
             }
         }
         
         // ユーザーインタラクション後にデバイスモーションを設定（iOS対応）
         function setupDeviceMotionOnInteraction() {
+            // SP版のみ有効
+            if (window.innerWidth > 768) return;
+            
             const setupOnce = () => {
                 setupDeviceMotion();
                 document.removeEventListener('touchstart', setupOnce);
                 document.removeEventListener('click', setupOnce);
             };
-            document.addEventListener('touchstart', setupOnce, { once: true });
+            
+            // タッチイベントとクリックイベントの両方で設定を試みる
+            document.addEventListener('touchstart', setupOnce, { once: true, passive: true });
             document.addEventListener('click', setupOnce, { once: true });
+            
+            // ページロード後も設定を試みる（ユーザーが何もクリックしなかった場合）
+            setTimeout(() => {
+                if (!motionPermissionGranted) {
+                    console.log('💡 画面をタップすると、振動検出機能が有効になります');
+                }
+            }, 2000);
         }
         
         // ページロード時に設定を試みる
