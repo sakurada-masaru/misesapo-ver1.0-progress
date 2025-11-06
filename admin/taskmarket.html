@@ -5865,7 +5865,7 @@
             
             // SP版かどうかを判定して左端の位置を調整
             const isSP = window.innerWidth <= 768;
-            const startX = isSP ? 40 : 24; // SP版: 左端から40px（左すぎるのを修正）、PC版: 左端から24px
+            const startX = isSP ? 30 : 24; // SP版: 左端から30px、PC版: 左端から24px
             const startY = urgentTasks.length > 0 ? urgentCardY : 24; // 緊急タスクがある場合はその下、なければ上端から24px
             
             // SP版の場合はカード幅を調整（画面幅に合わせて）
