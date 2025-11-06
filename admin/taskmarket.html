@@ -1956,14 +1956,14 @@
 
             /* [SP] コンテンツボタンのアイコンサイズ調整 */
             .menu-item img {
-                width: 32px; /* PC版: 40px → SP版: 32px */
-                height: 32px;
+                width: 30px; /* PC版: 40px → SP版: 30px */
+                height: 30px;
             }
 
             /* [SP] 円形テキストのコンテナサイズ調整 */
             .menu-circular-text {
-                width: 250px; /* PC版: 300px → SP版: 250px */
-                height: 250px;
+                width: 200px; /* PC版: 300px → SP版: 250px */
+                height: 200px;
             }
 
             /* [SP] 円形テキストのホバー効果調整 */
@@ -4835,12 +4835,12 @@
             
             if (isSP) {
                 // [SP] SP版の設定
-                text = 'メインメニュー';
+                text = 'MISESAPO TASK MARKET MAIN MENU';
                 menuIconRadius = 30; // SP版メニューボタンの半径（60px / 2）
-                menuRadius = 64; // SP版メニュー項目の距離（48px + 16pxマージン）
+                menuRadius = 50; // SP版メニュー項目の距離（50px）
                 textRadius = (menuIconRadius + menuRadius) / 2; // メニューボタンとメニュー項目の中間（約47px）
-                startAngle = 0; // 0度（上）
-                endAngle = 90; // 90度（右）
+                startAngle = -270; // -270度（上）
+                endAngle = -150; // -150度（右）
             } else {
                 // [PC] PC版の設定
                 text = 'MISESAPO TASK MARKET MAIN MENU';
