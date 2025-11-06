@@ -581,6 +581,48 @@
             left: 96px !important;
             top: auto !important;
             right: auto !important;
+        }
+        
+        /* メニューが左下の場合、完了ボタンは右下に配置 */
+        .menu-icon.position-bottom-left ~ .complete-button,
+        body .menu-icon.position-bottom-left ~ .complete-button {
+            bottom: 96px !important;
+            left: auto !important;
+            right: 96px !important;
+        }
+        
+        /* メニューが右下の場合、完了ボタンは左下に配置（デフォルト） */
+        .menu-icon.position-bottom-right ~ .complete-button,
+        body .menu-icon.position-bottom-right ~ .complete-button {
+            bottom: 96px !important;
+            right: auto !important;
+            left: 96px !important;
+        }
+        
+        /* SP版：完了ボタンを角に寄せる */
+        @media (max-width: 768px) {
+            .complete-button {
+                bottom: 16px !important;
+            }
+            
+            /* メニューが左下の場合、完了ボタンは右下に配置 */
+            .menu-icon.position-bottom-left ~ .complete-button,
+            body .menu-icon.position-bottom-left ~ .complete-button {
+                bottom: 16px !important;
+                right: 16px !important;
+                left: auto !important;
+            }
+            
+            /* メニューが右下の場合、完了ボタンは左下に配置 */
+            .menu-icon.position-bottom-right ~ .complete-button,
+            body .menu-icon.position-bottom-right ~ .complete-button {
+                bottom: 16px !important;
+                left: 16px !important;
+                right: auto !important;
+            }
+        }
+        
+        .complete-button {
             width: 64px;
             height: 64px;
             background: #4CAF50;
@@ -1642,8 +1684,8 @@
         /* メニューアイコンのスタイル */
         .menu-icon {
             position: fixed;
-            width: 56px;
-            height: 56px;
+            width: 200px;
+            height: 200px;
             background: var(--color-background);
             border: 2px solid var(--color-primary);
             border-radius: 50%;
@@ -1673,6 +1715,25 @@
             left: auto;
             top: auto;
         }
+        
+        /* SP版：メニューボタンのサイズ調整 */
+        @media (max-width: 768px) {
+            .menu-icon {
+                width: 100px;
+                height: 100px;
+            }
+            
+            /* SP版：メニューボタンを角に寄せる */
+            .menu-icon.position-bottom-left {
+                bottom: 16px;
+                left: 16px;
+            }
+            
+            .menu-icon.position-bottom-right {
+                bottom: 16px;
+                right: 16px;
+            }
+        }
 
         .menu-icon:hover {
             transform: scale(1.1);
@@ -1684,10 +1745,18 @@
         }
 
         .menu-icon img {
-            width: 60px;
-            height: 60px;
+            width: 180px;
+            height: 180px;
             object-fit: contain;
             pointer-events: none;
+        }
+        
+        /* SP版：メニューアイコンの画像サイズ調整 */
+        @media (max-width: 768px) {
+            .menu-icon img {
+                width: 80px;
+                height: 80px;
+            }
         }
 
         .menu-icon .tooltip-text {
@@ -2791,11 +2860,27 @@
             /* 完了ボタン：メニューと反対の方向に固定（430px画面幅内に収める） */
             .complete-button {
                 position: fixed !important;
-                bottom: 96px !important;
-                left: 96px !important;
+                bottom: 16px !important;
+                left: 16px !important;
                 top: auto !important;
                 right: auto !important;
                 z-index: 1001;
+            }
+            
+            /* メニューが左下の場合、完了ボタンは右下に配置 */
+            .menu-icon.position-bottom-left ~ .complete-button,
+            body .menu-icon.position-bottom-left ~ .complete-button {
+                bottom: 16px !important;
+                left: auto !important;
+                right: 16px !important;
+            }
+            
+            /* メニューが右下の場合、完了ボタンは左下に配置 */
+            .menu-icon.position-bottom-right ~ .complete-button,
+            body .menu-icon.position-bottom-right ~ .complete-button {
+                bottom: 16px !important;
+                right: auto !important;
+                left: 16px !important;
             }
             
             
@@ -4531,18 +4616,23 @@
             const isBottomLeft = menuIcon.classList.contains('position-bottom-left');
             const isBottomRight = menuIcon.classList.contains('position-bottom-right');
             
+            // SP版かどうかを判定
+            const isSP = window.innerWidth <= 768;
+            const bottomValue = isSP ? '16px' : '96px';
+            const rightLeftValue = isSP ? '16px' : '96px';
+            
             // メニューが左下の場合、完了ボタンは右下に配置
             if (isBottomLeft) {
-                completeButton.style.bottom = '96px';
+                completeButton.style.bottom = bottomValue;
                 completeButton.style.left = 'auto';
-                completeButton.style.right = '96px';
+                completeButton.style.right = rightLeftValue;
                 completeButton.style.top = 'auto';
             }
             // メニューが右下の場合、完了ボタンは左下に配置
             else if (isBottomRight) {
-                completeButton.style.bottom = '96px';
+                completeButton.style.bottom = bottomValue;
                 completeButton.style.right = 'auto';
-                completeButton.style.left = '96px';
+                completeButton.style.left = rightLeftValue;
                 completeButton.style.top = 'auto';
             }
         }
