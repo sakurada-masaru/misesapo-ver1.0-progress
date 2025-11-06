@@ -546,8 +546,8 @@
         /* 新規追加ボタン（PC版：画面端から50px下・20px右・円形デザイン） */
         .add-task-button {
             position: fixed;
-            top: 50px;
-            right: 20px;
+            top: 100px;
+            right: 40px;
             bottom: auto;
             left: auto;
             width: 64px;
@@ -572,8 +572,8 @@
             touch-action: manipulation;
         }
         
-        /* SP版：新規追加ボタンの位置調整（画面端から50px下） */
-        @media (max-width: 768px) {
+        /* タブレット版：新規追加ボタンの位置調整（431px-768px） */
+        @media (min-width: 431px) and (max-width: 768px) {
             .add-task-button {
                 position: fixed;
                 top: 50px;
@@ -2747,13 +2747,13 @@
                 font-size: 24px;
             }
 
-            /* 新規追加ボタン：画面端から50px下（SP版） */
+            /* 新規追加ボタン：画面端から50px下（スマホ版：430px以下） */
             .add-task-button {
-                position: fixed;
-                top: 50px;
-                right: 30px;
-                bottom: auto;
-                left: auto;
+                position: fixed !important;
+                top: 50px !important;
+                right: 30px !important;
+                bottom: auto !important;
+                left: auto !important;
                 transform: none;
                 z-index: 1000;
             }
