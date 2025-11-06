@@ -4888,14 +4888,14 @@
             
             if (isBottomRight) {
                 // 右下の場合：270度〜360度内に均等角度に配置
-                // [SP] 角度：355度 = マイページ、327度 = リソース、299度 = アーカイブ、271度 = 設定（各28度間隔：反時計回りに3度ずらし、時計回りに2度ずつ広げ）
+                // [SP] 角度：左下の値を反転して適用（-5度→355度、23度、51度、79度）
                 // [PC] 角度：360度（0度）= マイページ、330度 = リソース、300度 = アーカイブ、270度 = 設定
                 if (isSP) {
                     menuItems = [
-                        { angle: 355, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' },
-                        { angle: 327, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
-                        { angle: 299, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' },
-                        { angle: 271, icon: 'images/setup.svg', action: 'setup', label: '設定' }
+                        { angle: 355, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' }, // -5度 → 355度
+                        { angle: 23, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' },
+                        { angle: 51, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
+                        { angle: 79, icon: 'images/setup.svg', action: 'setup', label: '設定' }
                     ];
                 } else {
                     menuItems = [
