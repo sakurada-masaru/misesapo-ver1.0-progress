@@ -484,7 +484,8 @@
         }
 
         .detail-edit-button,
-        .detail-time-record-button {
+        .detail-time-record-button,
+        .detail-delete-button {
             background: var(--color-primary);
             color: white;
             border: none;
@@ -500,6 +501,15 @@
             transition: var(--transition-normal);
             line-height: 1;
             position: relative; /* ツールチップの基準点 */
+        }
+
+        .detail-delete-button {
+            background: #dc3545;
+        }
+        
+        .detail-delete-button:hover {
+            background: #c82333;
+            transform: scale(1.05);
         }
 
         .detail-edit-button:hover,
@@ -8379,11 +8389,14 @@
             const detailContent = document.getElementById('detailContent');
             const editButton = document.getElementById('detailEditButton');
             const timeRecordButton = document.getElementById('detailTimeRecordButton');
+            const deleteButton = document.getElementById('detailDeleteButton');
             
             // 修正ボタンを表示
             editButton.style.display = 'flex';
             // タイムレコードボタンを表示
             timeRecordButton.style.display = 'flex';
+            // 削除ボタンを表示
+            deleteButton.style.display = 'flex';
             
             // 表示モードで詳細を表示
             renderTaskDetailView(task);
@@ -8637,6 +8650,17 @@
             setTimeout(function() {
                 overlay.classList.remove('active');
             }, 300);
+        }
+        
+        // タスク詳細パネルからタスクを削除
+        function deleteTaskFromDetail() {
+            if (!currentDetailTaskId) return;
+            
+            // タスクを削除
+            deleteTask(currentDetailTaskId);
+            
+            // 詳細パネルを閉じる
+            closeDetailBoard();
         }
 
         // オーバーレイクリックで詳細パネルを閉じる
