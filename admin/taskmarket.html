@@ -935,16 +935,6 @@
             animation: slideUp 0.3s ease;
         }
 
-        .confirm-bubble::before {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 10px solid transparent;
-            border-top-color: var(--color-primary);
-        }
-
         .confirm-bubble-title {
             font-size: var(--font-size-md);
             font-weight: var(--font-weight-bold);
@@ -5168,9 +5158,9 @@
                 menuItem.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(0) rotate(0deg)`;
                 menuItem.style.transformOrigin = 'center';
                 
-                // アイコンを設定（緊急タスクの場合は淡い赤の背景を追加、透明度100%）
+                // アイコンを設定（緊急タスクの場合は赤の背景を追加）
                 if (item.urgent) {
-                    menuItem.style.background = '#fecaca'; // 淡い赤の背景（透明度100% = 不透明）
+                    menuItem.style.background = '#ef4444'; // 赤の背景
                     menuItem.style.borderRadius = '50%';
                     menuItem.style.padding = '8px';
                 }
