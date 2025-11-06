@@ -4834,13 +4834,23 @@
             let text, menuIconRadius, menuRadius, textRadius, startAngle, endAngle;
             
             if (isSP) {
-                // [SP] SP版の設定
+                // [SP] SP版の設定（左下と右下で個別に調整可能）
                 text = 'MISESAPO TASK MARKET MAIN MENU';
                 menuIconRadius = 30; // SP版メニューボタンの半径（60px / 2）
-                menuRadius = 47; // SP版メニュー項目の距離（50px - 3px = 47px）
-                textRadius = (menuIconRadius + menuRadius) / 2; // メニューボタンとメニュー項目の中間（約38.5px）
-                startAngle = -90; // -90度（右）
-                endAngle = 252; // 252度（左）（250度 + 2度 = 252度）
+                
+                if (isBottomRight) {
+                    // [SP] 右下の場合
+                    menuRadius = 47; // SP版メニュー項目の距離（50px - 3px = 47px）
+                    textRadius = (menuIconRadius + menuRadius) / 2; // メニューボタンとメニュー項目の中間（約38.5px）
+                    startAngle = -90; // -90度（右）
+                    endAngle = 252; // 252度（左）（250度 + 2度 = 252度）
+                } else if (isBottomLeft) {
+                    // [SP] 左下の場合
+                    menuRadius = 47; // SP版メニュー項目の距離（50px - 3px = 47px）
+                    textRadius = (menuIconRadius + menuRadius) / 2; // メニューボタンとメニュー項目の中間（約38.5px）
+                    startAngle = -90; // -90度（右）
+                    endAngle = 252; // 252度（左）（250度 + 2度 = 252度）
+                }
             } else {
                 // [PC] PC版の設定
                 text = 'MISESAPO TASK MARKET MAIN MENU';
@@ -4882,20 +4892,32 @@
             // ========================================
             // コンテンツボタン（子要素）の生成
             // ========================================
-            // [PC/SP] メニュー項目の半径を分離
-            const radius = isSP ? 77 : 112; // SP版: メニューボタンから77px離す（80px - 3px = 77px）、PC版: 56pxのメニュー項目 + 32pxのマージン = 112px
+            // [PC/SP] メニュー項目の半径を分離（SP版は左下と右下で個別に調整可能）
+            let radius;
+            if (isSP) {
+                if (isBottomRight) {
+                    // [SP] 右下の場合
+                    radius = 77; // メニューボタンから77px離す（80px - 3px = 77px）
+                } else if (isBottomLeft) {
+                    // [SP] 左下の場合
+                    radius = 77; // メニューボタンから77px離す（80px - 3px = 77px）
+                }
+            } else {
+                // [PC] PC版
+                radius = 112; // 56pxのメニュー項目 + 32pxのマージン = 112px
+            }
             let menuItems = [];
             
             if (isBottomRight) {
                 // 右下の場合：270度〜360度内に均等角度に配置
-                // [SP] 角度：左下の値を反転して適用（-5度→355度、23度、51度、79度）
+                // [SP] 角度：355度 = マイページ、327度 = リソース、299度 = アーカイブ、271度 = 設定（各28度間隔：反時計回りに3度ずらし、時計回りに2度ずつ広げ）
                 // [PC] 角度：360度（0度）= マイページ、330度 = リソース、300度 = アーカイブ、270度 = 設定
                 if (isSP) {
                     menuItems = [
-                        { angle: 355, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' }, // -5度 → 355度
-                        { angle: 23, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' },
-                        { angle: 51, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
-                        { angle: 79, icon: 'images/setup.svg', action: 'setup', label: '設定' }
+                        { angle: 355, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' },
+                        { angle: 327, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
+                        { angle: 299, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' },
+                        { angle: 271, icon: 'images/setup.svg', action: 'setup', label: '設定' }
                     ];
                 } else {
                     menuItems = [
@@ -4907,14 +4929,14 @@
                 }
             } else if (isBottomLeft) {
                 // 左下の場合：0度〜90度内に均等角度に配置
-                // [SP] 角度：-5度 = マイページ、23度 = アーカイブ、51度 = リソース、79度 = 設定（各28度間隔：右下と統一）
+                // [SP] 角度：-5度 = マイページ、31度 = アーカイブ、67度 = リソース、103度 = 設定（各36度間隔：反時計回りに3度ずらし、時計回りに2度ずつ広げ）
                 // [PC] 角度：0度 = マイページ、30度 = アーカイブ、60度 = リソース、90度 = 設定
                 if (isSP) {
                     menuItems = [
                         { angle: -5, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' },
-                        { angle: 23, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' },
-                        { angle: 51, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
-                        { angle: 79, icon: 'images/setup.svg', action: 'setup', label: '設定' }
+                        { angle: 31, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' },
+                        { angle: 67, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
+                        { angle: 103, icon: 'images/setup.svg', action: 'setup', label: '設定' }
                     ];
                 } else {
                     menuItems = [
