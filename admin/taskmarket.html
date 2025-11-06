@@ -1962,8 +1962,8 @@
 
             /* [SP] 円形テキストのコンテナサイズ調整 */
             .menu-circular-text {
-                width: 200px; /* PC版: 300px → SP版: 250px */
-                height: 200px;
+                width: 198px; /* PC版: 300px → SP版: 198px（200px - 2px = 198px） */
+                height: 198px;
             }
 
             /* [SP] 円形テキストのホバー効果調整 */
@@ -4837,10 +4837,10 @@
                 // [SP] SP版の設定
                 text = 'MISESAPO TASK MARKET MAIN MENU';
                 menuIconRadius = 30; // SP版メニューボタンの半径（60px / 2）
-                menuRadius = 50; // SP版メニュー項目の距離（50px）
-                textRadius = (menuIconRadius + menuRadius) / 2; // メニューボタンとメニュー項目の中間（約47px）
-                startAngle = -270; // -270度（上）
-                endAngle = 150; // 150度（左）
+                menuRadius = 47; // SP版メニュー項目の距離（50px - 3px = 47px）
+                textRadius = (menuIconRadius + menuRadius) / 2; // メニューボタンとメニュー項目の中間（約38.5px）
+                startAngle = -90; // -90度（右）
+                endAngle = 252; // 252度（左）（250度 + 2度 = 252度）
             } else {
                 // [PC] PC版の設定
                 text = 'MISESAPO TASK MARKET MAIN MENU';
@@ -4883,7 +4883,7 @@
             // コンテンツボタン（子要素）の生成
             // ========================================
             // [PC/SP] メニュー項目の半径を分離
-            const radius = isSP ? 80 : 112; // SP版: メニューボタンから80px離す、PC版: 56pxのメニュー項目 + 32pxのマージン = 112px
+            const radius = isSP ? 77 : 112; // SP版: メニューボタンから77px離す（80px - 3px = 77px）、PC版: 56pxのメニュー項目 + 32pxのマージン = 112px
             let menuItems = [];
             
             if (isBottomRight) {
