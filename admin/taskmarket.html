@@ -5919,22 +5919,39 @@
         const requiredClicks = 5;
         
         function handleTaskGridBackgroundClick(event) {
+            // イベントの伝播を防ぐ（タッチイベントの場合）
+            if (event.type === 'touchend') {
+                event.preventDefault();
+            }
+            
             // クリックされた要素がタスクカード、ボタン、メニューなどの場合は無視
             const target = event.target;
+            const taskGrid = document.getElementById('taskGrid');
+            
+            // タスクグリッド内の要素をチェック
             if (target.closest('.task-card') || 
                 target.closest('.add-task-button') || 
                 target.closest('.complete-button') || 
                 target.closest('.menu-icon') ||
                 target.closest('.menu-item') ||
-                target.closest('.badge')) {
+                target.closest('.badge') ||
+                target.closest('.pull-refresh-hint') ||
+                target.closest('.menu-circular-text')) {
                 // カウントをリセット
                 backgroundClickCount = 0;
                 return;
             }
             
             // タスクグリッドの背景をクリックした場合のみカウント
-            const taskGrid = document.getElementById('taskGrid');
             if (!taskGrid || !taskGrid.contains(target)) return;
+            
+            // タスクグリッド自体をクリックした場合もカウント
+            if (target === taskGrid || target.classList.contains('task-grid')) {
+                // 背景クリックとして処理
+            } else {
+                // その他の要素（プルリフレッシュヒントなど）をクリックした場合は無視
+                return;
+            }
             
             const currentTime = Date.now();
             
@@ -5946,6 +5963,8 @@
             }
             
             lastClickTime = currentTime;
+            
+            console.log(`背景クリック/タップ: ${backgroundClickCount}/${requiredClicks}`);
             
             // 5回クリックしたら整列
             if (backgroundClickCount >= requiredClicks) {
@@ -10647,8 +10666,17 @@
             // タスクグリッドの背景クリック/タップイベントを設定（5回クリック/タップで整列）
             const taskGrid = document.getElementById('taskGrid');
             if (taskGrid) {
-                taskGrid.addEventListener('click', handleTaskGridBackgroundClick);
-                taskGrid.addEventListener('touchend', handleTaskGridBackgroundClick);
+                // 既存のイベントリスナーを削除（重複を防ぐ）
+                const newTaskGrid = taskGrid.cloneNode(true);
+                taskGrid.parentNode.replaceChild(newTaskGrid, taskGrid);
+                
+                // 新しいイベントリスナーを設定
+                const updatedTaskGrid = document.getElementById('taskGrid');
+                if (updatedTaskGrid) {
+                    updatedTaskGrid.addEventListener('click', handleTaskGridBackgroundClick, { passive: false });
+                    updatedTaskGrid.addEventListener('touchend', handleTaskGridBackgroundClick, { passive: false });
+                    console.log('タスクグリッドの背景クリック/タップイベントを設定しました');
+                }
             }
         }, 100);
 
