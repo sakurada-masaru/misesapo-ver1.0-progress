@@ -6905,6 +6905,17 @@
                         const deltaY = Math.abs(touch.clientY - touchStartY);
                         
                         if (deltaX < 10 && deltaY < 10) {
+                            // ドラッグしていない場合はタスク詳細を開く
+                            if (this.dataset.hasDragged === 'false' && this.dataset.isDragging === 'false') {
+                                const taskId = parseInt(this.dataset.taskId);
+                                if (taskId) {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    showTaskDetail(taskId);
+                                    return;
+                                }
+                            }
+                            
                             // 単純なタップ：選択状態の切り替え
                             if (this.classList.contains('selected') && selectedCard === this) {
                                 // 既に選択されている場合は選択解除
