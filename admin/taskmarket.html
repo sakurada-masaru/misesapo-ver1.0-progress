@@ -4888,14 +4888,14 @@
             
             if (isBottomRight) {
                 // 右下の場合：270度〜360度内に均等角度に配置
-                // [SP] 角度を3度離す：360度（0度）= マイページ、333度 = リソース、306度 = アーカイブ、279度 = 設定
+                // [SP] 角度：358度 = マイページ、332度 = リソース、306度 = アーカイブ、280度 = 設定（各27度間隔）
                 // [PC] 角度：360度（0度）= マイページ、330度 = リソース、300度 = アーカイブ、270度 = 設定
                 if (isSP) {
                     menuItems = [
-                        { angle: 360, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' }, // 360度は0度と同じ
-                        { angle: 333, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
+                        { angle: 358, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' },
+                        { angle: 332, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
                         { angle: 306, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' },
-                        { angle: 279, icon: 'images/setup.svg', action: 'setup', label: '設定' }
+                        { angle: 280, icon: 'images/setup.svg', action: 'setup', label: '設定' }
                     ];
                 } else {
                     menuItems = [
@@ -4907,14 +4907,14 @@
                 }
             } else if (isBottomLeft) {
                 // 左下の場合：0度〜90度内に均等角度に配置
-                // [SP] 角度を3度離す：0度 = マイページ、33度 = アーカイブ、66度 = リソース、99度 = 設定
+                // [SP] 角度：-2度 = マイページ、32度 = アーカイブ、66度 = リソース、100度 = 設定（各33度間隔）
                 // [PC] 角度：0度 = マイページ、30度 = アーカイブ、60度 = リソース、90度 = 設定
                 if (isSP) {
                     menuItems = [
-                        { angle: 0, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' },
-                        { angle: 33, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' },
+                        { angle: -2, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' },
+                        { angle: 32, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' },
                         { angle: 66, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
-                        { angle: 99, icon: 'images/setup.svg', action: 'setup', label: '設定' }
+                        { angle: 100, icon: 'images/setup.svg', action: 'setup', label: '設定' }
                     ];
                 } else {
                     menuItems = [
