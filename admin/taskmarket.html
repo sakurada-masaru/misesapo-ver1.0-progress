@@ -6062,8 +6062,53 @@
                 setupTaskCardBadgeDrop(card, task);
             });
 
+            // 振動検出フラグ（グローバル変数として管理）
+            if (typeof window.shakeDetected === 'undefined') {
+                window.shakeDetected = false;
+            }
+            
             // 通常タスクをランダムな位置に配置（または保存された位置を使用）
+            // 振動検出時は5列グリッドレイアウトで整列
             let hasPositionUpdates = false;
+            
+            // 振動検出時は5列グリッドレイアウトで整列
+            if (window.shakeDetected) {
+                // グリッドサイズを取得
+                const gridWidth = taskGrid.clientWidth;
+                const gridHeight = taskGrid.clientHeight;
+                
+                // 5列グリッドレイアウトで配置
+                const columns = 5;
+                const cardWidth = 280;
+                const cardHeight = 180;
+                const margin = 20;
+                const startX = 24; // 左端から24px
+                const startY = urgentTasks.length > 0 ? urgentCardY : 24; // 緊急タスクがある場合はその下、なければ上端から24px
+                const columnWidth = (gridWidth - startX * 2) / columns;
+                
+                normalTasks.forEach((task, index) => {
+                    const col = index % columns;
+                    const row = Math.floor(index / columns);
+                    
+                    const left = startX + col * columnWidth + (columnWidth - cardWidth) / 2;
+                    const top = startY + row * (cardHeight + margin);
+                    const rotation = 0; // 整列時は回転なし
+                    const zIndex = 1; // 整列時はz-indexを統一
+                    
+                    // タスクデータに位置情報を保存
+                    if (!task.position) {
+                        task.position = {};
+                    }
+                    task.position.leftPercent = (left / gridWidth) * 100;
+                    task.position.topPercent = (top / gridHeight) * 100;
+                    task.position.rotation = rotation;
+                    task.position.zIndex = zIndex;
+                });
+                
+                // 振動検出フラグをリセット
+                window.shakeDetected = false;
+            }
+            
             normalTasks.forEach((task, index) => {
                 const card = document.createElement('div');
                 card.className = `task-card category-${task.category}`;
@@ -10358,6 +10403,63 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        // 振動検出機能（携帯を振るとタスクカードを5列で整列）
+        let lastAcceleration = { x: 0, y: 0, z: 0 };
+        let shakeThreshold = 15; // 振動の閾値
+        let lastShakeTime = 0;
+        let shakeCooldown = 1000; // 1秒間のクールダウン
+        
+        function handleDeviceMotion(event) {
+            // SP版のみ有効
+            if (window.innerWidth > 768) return;
+            
+            const acceleration = event.accelerationIncludingGravity || event.acceleration;
+            if (!acceleration) return;
+            
+            const currentTime = Date.now();
+            
+            // クールダウン中は無視
+            if (currentTime - lastShakeTime < shakeCooldown) return;
+            
+            // 加速度の変化を計算
+            const deltaX = Math.abs(acceleration.x - lastAcceleration.x);
+            const deltaY = Math.abs(acceleration.y - lastAcceleration.y);
+            const deltaZ = Math.abs(acceleration.z - lastAcceleration.z);
+            
+            // 振動を検出
+            if (deltaX > shakeThreshold || deltaY > shakeThreshold || deltaZ > shakeThreshold) {
+                window.shakeDetected = true;
+                lastShakeTime = currentTime;
+                
+                // タスクグリッドを更新（5列グリッドレイアウトで整列）
+                if (typeof updateTaskGrid === 'function') {
+                    updateTaskGrid();
+                    saveTaskMarketData(); // 位置情報を保存
+                }
+            }
+            
+            // 現在の加速度を保存
+            lastAcceleration = {
+                x: acceleration.x || 0,
+                y: acceleration.y || 0,
+                z: acceleration.z || 0
+            };
+        }
+        
+        // デバイスモーションイベントのリクエスト（iOS 13+対応）
+        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+            DeviceMotionEvent.requestPermission()
+                .then(response => {
+                    if (response === 'granted') {
+                        window.addEventListener('devicemotion', handleDeviceMotion);
+                    }
+                })
+                .catch(console.error);
+        } else {
+            // 通常のデバイスモーションイベント（Android等）
+            window.addEventListener('devicemotion', handleDeviceMotion);
         }
 
         // 初期化（ページロード時にも実行、スプラッシュ後に再実行される）
