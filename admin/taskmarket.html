@@ -5838,6 +5838,8 @@
             const taskGrid = document.getElementById('taskGrid');
             if (!taskGrid) return;
             
+            console.log('タスクカードを整列します...');
+            
             // 完了していないタスクのみ表示（pendingタスクのみ）
             const pendingTasks = tasks.filter(task => task.status !== 'completed');
             
@@ -5864,6 +5866,7 @@
             const startY = urgentTasks.length > 0 ? urgentCardY : 24; // 緊急タスクがある場合はその下、なければ上端から24px
             const columnWidth = (gridWidth - startX * 2) / columns;
             
+            // 通常タスクの位置情報を更新
             normalTasks.forEach((task, index) => {
                 const col = index % columns;
                 const row = Math.floor(index / columns);
@@ -5883,11 +5886,30 @@
                 task.position.zIndex = zIndex;
             });
             
-            // タスクグリッドを更新
-            updateTaskGrid();
+            // 既存のカードの位置を直接更新
+            const taskCards = taskGrid.querySelectorAll('.task-card:not(.urgent)');
+            normalTasks.forEach((task, index) => {
+                const card = Array.from(taskCards).find(card => card.dataset.taskId == task.id);
+                if (card) {
+                    const col = index % columns;
+                    const row = Math.floor(index / columns);
+                    
+                    const left = startX + col * columnWidth + (columnWidth - cardWidth) / 2;
+                    const top = startY + row * (cardHeight + margin);
+                    
+                    card.style.top = top + 'px';
+                    card.style.left = left + 'px';
+                    card.style.transform = 'rotate(0deg)';
+                    card.style.zIndex = '1';
+                }
+            });
+            
+            // 位置情報を保存
             if (typeof saveTaskMarketData === 'function') {
-                saveTaskMarketData(); // 位置情報を保存
+                saveTaskMarketData();
             }
+            
+            console.log('タスクカードの整列が完了しました。');
         }
         
         // タスクグリッドの背景クリック/タップで整列する機能
