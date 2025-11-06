@@ -1788,8 +1788,8 @@
         /* [SP] メニューボタンのサイズ調整（max-width: 768px） */
         @media (max-width: 768px) {
             .menu-icon {
-                width: 64px;
-                height: 64px;
+                width: 60px; /* 64px → 60pxに縮小 */
+                height: 60px;
             }
             
             /* [SP] メニューボタンを20px内側に配置 */
@@ -1827,8 +1827,8 @@
         /* [SP] メニューアイコンの画像サイズ調整（max-width: 768px） */
         @media (max-width: 768px) {
             .menu-icon img {
-                width: 70px; /* 80px → 70pxに縮小 */
-                height: 70px;
+                width: 60px; /* 64px → 60pxに縮小 */
+                height: 60px;
             }
         }
 
@@ -4836,9 +4836,9 @@
             if (isSP) {
                 // [SP] SP版の設定
                 text = 'メインメニュー';
-                menuIconRadius = 35; // SP版メニューボタンの半径（70px / 2）
+                menuIconRadius = 30; // SP版メニューボタンの半径（60px / 2）
                 menuRadius = 64; // SP版メニュー項目の距離（48px + 16pxマージン）
-                textRadius = (menuIconRadius + menuRadius) / 2; // メニューボタンとメニュー項目の中間（約49.5px）
+                textRadius = (menuIconRadius + menuRadius) / 2; // メニューボタンとメニュー項目の中間（約47px）
                 startAngle = 0; // 0度（上）
                 endAngle = 90; // 90度（右）
             } else {
