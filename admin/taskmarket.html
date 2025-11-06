@@ -543,9 +543,9 @@
             visibility: visible;
         }
 
-        /* 新規追加ボタン（ボード内の可動域の上から80px・円形デザイン） */
+        /* 新規追加ボタン（PC版：画面端から80px・円形デザイン） */
         .add-task-button {
-            position: absolute;
+            position: fixed;
             top: 80px;
             right: 80px;
             bottom: auto;
@@ -572,11 +572,14 @@
             touch-action: manipulation;
         }
         
-        /* SP版：新規追加ボタンの位置調整（角から30px） */
+        /* SP版：新規追加ボタンの位置調整（画面端から30px） */
         @media (max-width: 768px) {
             .add-task-button {
+                position: fixed;
                 top: 30px;
                 right: 30px;
+                bottom: auto;
+                left: auto;
             }
         }
         
@@ -2744,11 +2747,11 @@
                 font-size: 24px;
             }
 
-            /* 新規追加ボタン：ボード内の可動域の上から50px（SP版） */
+            /* 新規追加ボタン：画面端から30px（SP版） */
             .add-task-button {
-                position: absolute;
-                top: 50px;
-                right: 50px;
+                position: fixed;
+                top: 30px;
+                right: 30px;
                 bottom: auto;
                 left: auto;
                 transform: none;
