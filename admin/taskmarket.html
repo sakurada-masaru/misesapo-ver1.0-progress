@@ -1769,8 +1769,8 @@
         /* メニューアイコンの位置固定（左下） */
         /* [PC] ボードの枠内に収める（メインボードのpadding: 24px + タスクグリッドのpadding: 24px = 48px + マージン: 24px = 72px） */
         .menu-icon.position-bottom-left {
-            bottom: 72px;
-            left: 72px;
+            bottom: 50px;
+            left: 50px;
             right: auto;
             top: auto;
         }
@@ -1925,110 +1925,6 @@
             pointer-events: none;
         }
 
-        /* メニュー項目の位置（上下左右） */
-        .menu-item.top {
-            top: -96px;
-            left: 50%;
-            transform: translateX(-50%) scale(0) rotate(0deg);
-        }
-
-        .menu-item.top.active {
-            transform: translateX(-50%) scale(1) rotate(360deg);
-        }
-
-        .menu-item.right {
-            right: -96px;
-            top: 50%;
-            transform: translateY(-50%) scale(0) rotate(0deg);
-        }
-
-        .menu-item.right.active {
-            transform: translateY(-50%) scale(1) rotate(360deg);
-        }
-
-        .menu-item.bottom {
-            bottom: -96px;
-            left: 50%;
-            transform: translateX(-50%) scale(0) rotate(0deg);
-        }
-
-        .menu-item.bottom.active {
-            transform: translateX(-50%) scale(1) rotate(360deg);
-        }
-
-        .menu-item.left {
-            left: -96px;
-            top: 50%;
-            transform: translateY(-50%) scale(0) rotate(0deg);
-        }
-
-        .menu-item.left.active {
-            transform: translateY(-50%) scale(1) rotate(360deg);
-        }
-        
-        /* メニューアイコンが左下の場合、左側のメニュー項目を右側に表示 */
-        .menu-icon.position-bottom-left .menu-item.left {
-            left: auto;
-            right: -96px;
-            transform: translateY(-50%) scale(0) rotate(0deg);
-        }
-        
-        .menu-icon.position-bottom-left .menu-item.left.active {
-            transform: translateY(-50%) scale(1) rotate(360deg);
-        }
-        
-        /* [SP] 左下メニューの調整（0度から90度の間を正しく表示、max-width: 768px） */
-        @media (max-width: 768px) {
-            /* 左下の場合、上方向のメニューは上方向のまま表示 */
-            .menu-icon.position-bottom-left .menu-item.top {
-                top: -80px;
-                bottom: auto;
-                left: 50%;
-                transform: translateX(-50%) scale(0) rotate(0deg);
-            }
-            
-            .menu-icon.position-bottom-left .menu-item.top.active {
-                transform: translateX(-50%) scale(1) rotate(360deg);
-            }
-            
-            /* 右上寄りのメニューも上方向に調整 */
-            .menu-icon.position-bottom-left .menu-item.top-right-1 {
-                top: -69.28px;
-                bottom: auto;
-            }
-            
-            .menu-icon.position-bottom-left .menu-item.top-right-2 {
-                top: -40px;
-                bottom: auto;
-            }
-        }
-        
-        /* [SP] 右下メニューの調整（180度から270度の間を正しく表示、max-width: 768px） */
-        @media (max-width: 768px) {
-            /* 右下の場合、下方向のメニューを画面内に表示 */
-            .menu-icon.position-bottom-right .menu-item.bottom {
-                bottom: -80px;
-                top: auto;
-                left: 50%;
-                transform: translateX(-50%) scale(0) rotate(0deg);
-            }
-            
-            .menu-icon.position-bottom-right .menu-item.bottom.active {
-                transform: translateX(-50%) scale(1) rotate(360deg);
-            }
-            
-            /* 左下寄りのメニューも画面内に調整 */
-            .menu-icon.position-bottom-right .menu-item.bottom-left-1 {
-                bottom: -69.28px;
-                top: auto;
-            }
-            
-            .menu-icon.position-bottom-right .menu-item.bottom-left-2 {
-                bottom: -40px;
-                top: auto;
-            }
-        }
-        
         /* メニューボタンのテキスト（子要素：コンテンツボタンと同列） */
         .menu-circular-text {
             position: absolute;
@@ -2063,72 +1959,6 @@
             transform-origin: center;
         }
         
-        /* メニューアイコンが右下の場合、0時から9時の間に4つ全てを表示 */
-        /* 追加の位置クラス（左上寄り、やや左上） */
-        /* 半径80px、時計回り：0時(0度)、11時(330度)、10時(300度)、9時(270度) */
-        .menu-item.top-left-1 {
-            top: -40px; /* 80 * cos(300°) = 80 * cos(-60°) = 80 * 0.5 = 40px → 上方向 */
-            left: 50%;
-            right: auto;
-            bottom: auto;
-            transform: translateX(-50%) translateX(-69.28px) scale(0) rotate(0deg); /* 80 * sin(300°) = 80 * sin(-60°) = 80 * (-0.866) ≈ -69.28px → 左方向 */
-        }
-        
-        .menu-item.top-left-1.active {
-            transform: translateX(-50%) translateX(-69.28px) scale(1) rotate(360deg);
-        }
-        
-        /* 半径80px、角度330度（11時の方向） */
-        .menu-item.top-left-2 {
-            top: -69.28px; /* 80 * cos(330°) = 80 * cos(-30°) = 80 * 0.866 ≈ 69.28px → 上方向 */
-            left: 50%;
-            right: auto;
-            bottom: auto;
-            transform: translateX(-50%) translateX(-40px) scale(0) rotate(0deg); /* 80 * sin(330°) = 80 * sin(-30°) = 80 * (-0.5) = -40px → 左方向 */
-        }
-        
-        .menu-item.top-left-2.active {
-            transform: translateX(-50%) translateX(-40px) scale(1) rotate(360deg);
-        }
-        
-        /* 右下の場合、右と下のメニュー項目は非表示（代わりに左上寄りを使用） */
-        .menu-icon.position-bottom-right .menu-item.right,
-        .menu-icon.position-bottom-right .menu-item.bottom {
-            display: none !important;
-        }
-        
-        /* メニューアイコンが左下の場合、0度から90度の間に4つ全てを表示 */
-        /* 追加の位置クラス（右上寄り、やや右上） */
-        /* 半径80px、角度30度（0度から90度の間を3等分） */
-        .menu-item.top-right-1 {
-            top: -69.28px; /* 80 * cos(30°) ≈ 69.28px */
-            left: 50%;
-            right: auto;
-            transform: translateX(-50%) translateX(40px) scale(0) rotate(0deg); /* 80 * sin(30°) = 40px */
-        }
-        
-        .menu-item.top-right-1.active {
-            transform: translateX(-50%) translateX(40px) scale(1) rotate(360deg);
-        }
-        
-        /* 半径80px、角度60度 */
-        .menu-item.top-right-2 {
-            top: -40px; /* 80 * cos(60°) = 40px */
-            left: 50%;
-            right: auto;
-            transform: translateX(-50%) translateX(69.28px) scale(0) rotate(0deg); /* 80 * sin(60°) ≈ 69.28px */
-        }
-        
-        .menu-item.top-right-2.active {
-            transform: translateX(-50%) translateX(69.28px) scale(1) rotate(360deg);
-        }
-        
-        /* 左下の場合、左と下のメニュー項目は非表示（代わりに右上寄りを使用） */
-        .menu-icon.position-bottom-left .menu-item.left,
-        .menu-icon.position-bottom-left .menu-item.bottom {
-            display: none !important;
-        }
-
         .form-group {
             margin-bottom: var(--spacing-md);
         }
@@ -5011,31 +4841,22 @@
             let menuItems = [];
             
             if (isBottomRight) {
-                // 右下の場合：0時から9時の間に4つ全てを表示
-                // 0時：マイページ、11時：アーカイブ、10時：リソース、9時：設定
-                // 角度：0度（上）、330度（11時）、300度（10時）、270度（9時）
+                // 右下の場合：270度〜360度内に均等角度に配置
+                // 角度：270度、300度、330度、360度（0度）
                 menuItems = [
-                    { angle: 0, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' }, // 0時
-                    { angle: 330, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' }, // 11時
-                    { angle: 300, icon: 'images/resource.svg', action: 'resource', label: 'リソース' }, // 10時
-                    { angle: 270, icon: 'images/setup.svg', action: 'setup', label: '設定' } // 9時
+                    { angle: 270, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' },
+                    { angle: 300, icon: 'images/setup.svg', action: 'setup', label: '設定' },
+                    { angle: 330, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
+                    { angle: 360, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' } // 360度は0度と同じ
                 ];
             } else if (isBottomLeft) {
-                // 左下の場合：0度から90度の間に4つ全てを表示
-                // 角度：0度（上）、30度（1時）、60度（2時）、90度（3時）
+                // 左下の場合：0度〜90度内に均等角度に配置
+                // 角度：0度、30度、60度、90度
                 menuItems = [
                     { angle: 0, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' },
                     { angle: 30, icon: 'images/setup.svg', action: 'setup', label: '設定' },
                     { angle: 60, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
                     { angle: 90, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' }
-                ];
-            } else {
-                // デフォルト（全方向）
-                menuItems = [
-                    { angle: 0, icon: 'images/mypage.svg', action: 'mypage', label: 'マイページ' },
-                    { angle: 90, icon: 'images/setup.svg', action: 'setup', label: '設定' },
-                    { angle: 180, icon: 'images/resource.svg', action: 'resource', label: 'リソース' },
-                    { angle: 270, icon: 'images/archive.svg', action: 'archive', label: 'アーカイブ' }
                 ];
             }
             
@@ -5046,7 +4867,9 @@
                 menuItem.dataset.action = item.action;
                 
                 // 角度から座標を計算（時計回り、0度を上として）
-                const angleRad = (item.angle - 90) * Math.PI / 180; // 0度を上として計算（-90度で時計の12時を上に）
+                // 360度は0度として扱う
+                const normalizedAngle = item.angle === 360 ? 0 : item.angle;
+                const angleRad = (normalizedAngle - 90) * Math.PI / 180; // 0度を上として計算（-90度で時計の12時を上に）
                 const x = Math.cos(angleRad) * radius;
                 const y = Math.sin(angleRad) * radius;
                 
