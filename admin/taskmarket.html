@@ -3339,8 +3339,8 @@
                         <div class="urgent-confirm-bubble" id="urgentConfirmBubble" style="display: none;">
                             <div class="urgent-confirm-message">緊急タスクを作成しますか？</div>
                             <div class="urgent-confirm-buttons">
-                                <button class="urgent-confirm-yes" onclick="confirmUrgentTask(true)">はい</button>
-                                <button class="urgent-confirm-no" onclick="confirmUrgentTask(false)">いいえ</button>
+                                <button class="urgent-confirm-yes" onclick="confirmUrgentTask(true); event.stopPropagation();">はい</button>
+                                <button class="urgent-confirm-no" onclick="confirmUrgentTask(false); event.stopPropagation();">いいえ</button>
                             </div>
                         </div>
                     </button>
@@ -5488,7 +5488,10 @@
         const URGENT_BUTTON_CLICK_TIMEOUT = 2000; // 2秒以内に6回クリック
 
         // 緊急タスクボタンのクリック処理
-        function handleUrgentTaskButtonClick() {
+        function handleUrgentTaskButtonClick(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
             urgentButtonClickCount++;
             
             // タイマーをリセット
@@ -5544,6 +5547,10 @@
             const bubble = document.getElementById('urgentConfirmBubble');
             const button = document.getElementById('urgentTaskButton');
             if (bubble && bubble.style.display === 'block') {
+                // 吹き出し内のボタンクリックは処理済みなので無視
+                if (e.target.classList.contains('urgent-confirm-yes') || e.target.classList.contains('urgent-confirm-no')) {
+                    return;
+                }
                 if (!bubble.contains(e.target) && !button.contains(e.target)) {
                     hideUrgentTaskConfirmBubble();
                     urgentButtonClickCount = 0;
@@ -10386,7 +10393,8 @@
             // 緊急タスクボタンのイベントリスナーを設定
             setTimeout(() => {
                 const urgentTaskButton = document.getElementById('urgentTaskButton');
-                if (urgentTaskButton) {
+                if (urgentTaskButton && !urgentTaskButton.hasAttribute('data-click-setup')) {
+                    urgentTaskButton.setAttribute('data-click-setup', 'true');
                     urgentTaskButton.addEventListener('click', handleUrgentTaskButtonClick);
                 }
             }, 200);
