@@ -4590,7 +4590,7 @@
             updateMenuItemsPosition();
         }
         
-        // 完了ボタンの位置を更新（メニューと反対の方向に配置、重なりを回避）
+        // 完了ボタンの位置を更新（設定に基づいて配置、重なりを回避）
         function updateCompleteButtonPosition() {
             const completeButton = document.getElementById('completeButton');
             if (!completeButton) return;
@@ -4598,39 +4598,46 @@
             const menuIcon = document.getElementById('menuIcon');
             if (!menuIcon) return;
             
-            const isBottomLeft = menuIcon.classList.contains('position-bottom-left');
-            const isBottomRight = menuIcon.classList.contains('position-bottom-right');
+            // 設定から完了ボタンの位置を取得
+            const completePosition = settings.completeButtonPosition || 'bottom-right';
             
             // SP版かどうかを判定
             const isSP = window.innerWidth <= 768;
             
             // メニューボタンのサイズと位置を取得
             const menuIconSize = isSP ? 80 : 120; // SP: 80px, PC: 120px
-            const menuIconOffset = isSP ? 16 : 50; // SP: 16px, PC: 50px
+            const menuIconOffset = isSP ? 8 : 50; // SP: 8px（角に詰める）, PC: 50px
             
             // 完了ボタンのサイズ
             const completeButtonSize = isSP ? 48 : 64; // SP: 48px, PC: 64px
             
-            // メニューボタンと完了ボタンの間隔（重なりを避けるため）
-            // メニューボタンの中心から完了ボタンの中心までの距離を計算
-            const spacing = Math.max(20, (menuIconSize / 2) + (completeButtonSize / 2) + 20);
+            // 完了ボタンの位置オフセット
+            const completeOffset = isSP ? 8 : 50; // SP: 8px（角に詰める）, PC: 50px
             
-            // メニューが左下の場合、完了ボタンは右下に配置
-            if (isBottomLeft) {
-                const bottomValue = menuIconOffset + spacing;
-                const rightValue = menuIconOffset;
-                completeButton.style.bottom = `${bottomValue}px`;
-                completeButton.style.left = 'auto';
-                completeButton.style.right = `${rightValue}px`;
-                completeButton.style.top = 'auto';
+            // メニューボタンと完了ボタンが同じ側にある場合、間隔を確保
+            const isBottomLeft = menuIcon.classList.contains('position-bottom-left');
+            const isBottomRight = menuIcon.classList.contains('position-bottom-right');
+            
+            let bottomValue = completeOffset;
+            
+            // メニューボタンと完了ボタンが同じ側にある場合、重なりを避ける
+            if ((isBottomLeft && completePosition === 'bottom-left') || 
+                (isBottomRight && completePosition === 'bottom-right')) {
+                // メニューボタンの中心から完了ボタンの中心までの距離を計算
+                const spacing = Math.max(20, (menuIconSize / 2) + (completeButtonSize / 2) + 20);
+                bottomValue = menuIconOffset + spacing;
             }
-            // メニューが右下の場合、完了ボタンは左下に配置
-            else if (isBottomRight) {
-                const bottomValue = menuIconOffset + spacing;
-                const leftValue = menuIconOffset;
+            
+            // 完了ボタンの位置を設定
+            if (completePosition === 'bottom-left') {
                 completeButton.style.bottom = `${bottomValue}px`;
+                completeButton.style.left = `${completeOffset}px`;
                 completeButton.style.right = 'auto';
-                completeButton.style.left = `${leftValue}px`;
+                completeButton.style.top = 'auto';
+            } else if (completePosition === 'bottom-right') {
+                completeButton.style.bottom = `${bottomValue}px`;
+                completeButton.style.right = `${completeOffset}px`;
+                completeButton.style.left = 'auto';
                 completeButton.style.top = 'auto';
             }
         }
