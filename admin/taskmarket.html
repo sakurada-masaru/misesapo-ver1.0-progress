@@ -855,6 +855,72 @@
             color: var(--color-text-primary);
         }
 
+        /* 緊急タスクボタン */
+        .urgent-task-button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--border-radius-md);
+            transition: var(--transition-normal);
+            opacity: 0.8;
+        }
+
+        .urgent-task-button:hover {
+            opacity: 1;
+            background: var(--color-background-secondary);
+            transform: scale(1.1);
+        }
+
+        .urgent-task-button img {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        /* 緊急タスクフォーム（赤系の配色） */
+        .urgent-task-form {
+            border: 2px solid #ef4444;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+        }
+
+        .urgent-task-form-header {
+            border-bottom: 2px solid #ef4444;
+        }
+
+        .urgent-task-form-title {
+            color: #dc2626;
+        }
+
+        .urgent-task-form .form-group label {
+            color: #991b1b;
+            font-weight: var(--font-weight-semibold);
+        }
+
+        .urgent-task-form .form-group input,
+        .urgent-task-form .form-group textarea,
+        .urgent-task-form .form-group select {
+            border: 1px solid #fca5a5;
+        }
+
+        .urgent-task-form .form-group input:focus,
+        .urgent-task-form .form-group textarea:focus,
+        .urgent-task-form .form-group select:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+
+        .urgent-btn-primary {
+            background: #ef4444 !important;
+            border-color: #ef4444 !important;
+        }
+
+        .urgent-btn-primary:hover {
+            background: #dc2626 !important;
+            border-color: #dc2626 !important;
+        }
+
         /* スライドインパネル（左から右にスライドイン、最前面に表示） */
         .slide-panel-overlay {
             position: fixed;
@@ -2288,6 +2354,49 @@
             border-color: rgba(127, 140, 141, 0.5);
         }
 
+        /* 緊急タスクカード（赤系の配色） */
+        .task-card.urgent {
+            border: 3px solid #ef4444;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+            position: absolute;
+            z-index: 1000; /* 常に最前面に表示 */
+        }
+
+        .task-card.urgent::before {
+            opacity: 0.15;
+        }
+
+        .task-card.urgent:hover {
+            border-color: #dc2626;
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+            transform: translateY(-2px) rotate(0deg) !important;
+        }
+
+        .task-card.urgent .task-card-title {
+            color: #dc2626;
+            font-weight: var(--font-weight-bold);
+        }
+
+        .task-card.urgent .task-card-priority {
+            color: #ef4444;
+        }
+
+        .task-card.urgent .task-card-footer {
+            border-top: 2px solid #fca5a5;
+        }
+
+        /* 緊急タスクカードの左上固定マーカー */
+        .task-card.urgent::after {
+            content: '🚨';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            font-size: 24px;
+            z-index: 1001;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
         .task-card.selected {
             border: 2px solid var(--color-primary);
             box-shadow: 0 0 15px rgba(255, 103, 156, 0.4);
@@ -3139,7 +3248,12 @@
         <div class="task-form" onclick="event.stopPropagation()">
             <div class="task-form-header">
                 <h3 class="task-form-title">新しいタスクを作成</h3>
-                <button class="modal-close-button" onclick="cancelTaskForm()" title="閉じる">×</button>
+                <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <button class="urgent-task-button" onclick="openUrgentTaskForm()" title="緊急タスクを作成">
+                        <img src="images/Key.svg" alt="緊急タスク" style="width: 24px; height: 24px;">
+                    </button>
+                    <button class="modal-close-button" onclick="cancelTaskForm()" title="閉じる">×</button>
+                </div>
             </div>
             <form id="taskInputForm">
                 <div class="form-group">
@@ -3198,6 +3312,75 @@
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" onclick="cancelTaskForm()">キャンセル</button>
                     <button type="submit" class="btn btn-primary">作成</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- モーダル：緊急タスク入力フォーム -->
+    <div class="modal-overlay" id="urgentTaskFormModal" onclick="closeUrgentTaskFormOnOverlay(event)">
+        <div class="task-form urgent-task-form" onclick="event.stopPropagation()">
+            <div class="task-form-header urgent-task-form-header">
+                <h3 class="task-form-title urgent-task-form-title">緊急タスクを作成</h3>
+                <button class="modal-close-button" onclick="cancelUrgentTaskForm()" title="閉じる">×</button>
+            </div>
+            <form id="urgentTaskInputForm">
+                <div class="form-group">
+                    <label for="urgentTaskTitle">タスクタイトル *</label>
+                    <input type="text" id="urgentTaskTitle" name="title" required placeholder="タスクのタイトルを入力">
+                </div>
+                <div class="form-group">
+                    <label for="urgentTaskDescription">説明</label>
+                    <textarea id="urgentTaskDescription" name="description" placeholder="タスクの詳細を入力"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="urgentTaskCategory">カテゴリー</label>
+                    <select id="urgentTaskCategory" name="category">
+                        <option value="design">デザイン</option>
+                        <option value="frontend">フロントエンド</option>
+                        <option value="backend">バックエンド</option>
+                        <option value="database">データベース</option>
+                        <option value="media">メディア</option>
+                        <option value="other">その他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="urgentTaskPriority">難易度</label>
+                    <select id="urgentTaskPriority" name="priority">
+                        <option value="1">⭐️1 (10コイン)</option>
+                        <option value="2" selected>⭐️2 (30コイン)</option>
+                        <option value="3">⭐️3 (50コイン)</option>
+                        <option value="4">⭐️4 (100コイン)</option>
+                        <option value="5">⭐️5 (150コイン)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="urgentTaskEstimatedTime">予想作業時間</label>
+                    <select id="urgentTaskEstimatedTime" name="estimatedTime">
+                        <option value="">未設定</option>
+                        <option value="10">10分</option>
+                        <option value="20">20分</option>
+                        <option value="30">30分</option>
+                        <option value="40">40分</option>
+                        <option value="50">50分</option>
+                        <option value="60">1時間</option>
+                        <option value="70">1時間10分</option>
+                        <option value="80">1時間20分</option>
+                        <option value="90">1時間30分</option>
+                        <option value="100">1時間40分</option>
+                        <option value="110">1時間50分</option>
+                        <option value="120">2時間</option>
+                        <option value="150">2時間30分</option>
+                        <option value="180">3時間</option>
+                        <option value="240">4時間</option>
+                        <option value="300">5時間</option>
+                        <option value="360">6時間</option>
+                        <option value="480">8時間</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="cancelUrgentTaskForm()">キャンセル</button>
+                    <button type="submit" class="btn btn-primary urgent-btn-primary">作成</button>
                 </div>
             </form>
         </div>
@@ -5207,12 +5390,50 @@
             }
         }
 
+        // 緊急タスクフォームを開く
+        function openUrgentTaskForm() {
+            // 通常のタスクフォームを閉じる
+            cancelTaskForm();
+            
+            // 緊急タスクフォームを開く
+            const modal = document.getElementById('urgentTaskFormModal');
+            if (!modal) return;
+            
+            modal.classList.add('active');
+            document.getElementById('urgentTaskInputForm').reset();
+            
+            // フォーカスを最初の入力欄に
+            setTimeout(() => {
+                const titleInput = document.getElementById('urgentTaskTitle');
+                if (titleInput) {
+                    titleInput.focus();
+                }
+            }, 100);
+        }
+
+        // 緊急タスクフォームキャンセル
+        function cancelUrgentTaskForm() {
+            const modal = document.getElementById('urgentTaskFormModal');
+            modal.classList.remove('active');
+            document.getElementById('urgentTaskInputForm').reset();
+        }
+
+        // 緊急タスクフォームオーバーレイクリック
+        function closeUrgentTaskFormOnOverlay(event) {
+            if (event.target.id === 'urgentTaskFormModal') {
+                cancelUrgentTaskForm();
+            }
+        }
+
         // ESCキーでモーダルを閉じる
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 const taskModal = document.getElementById('taskFormModal');
+                const urgentTaskModal = document.getElementById('urgentTaskFormModal');
                 const badgeModal = document.getElementById('badgeFormModal');
-                if (taskModal && taskModal.classList.contains('active')) {
+                if (urgentTaskModal && urgentTaskModal.classList.contains('active')) {
+                    cancelUrgentTaskForm();
+                } else if (taskModal && taskModal.classList.contains('active')) {
                     cancelTaskForm();
                 } else if (badgeModal && badgeModal.classList.contains('active')) {
                     cancelBadgeForm();
@@ -5239,6 +5460,7 @@
                 supportCoins: 0, // 応援コイン（初期値は0）
                 createdBy: currentUser ? currentUser.id : null, // 作成者ID
                 status: 'pending',
+                isUrgent: false, // 通常タスク
                 createdAt: new Date().toISOString()
             };
 
@@ -5248,6 +5470,37 @@
             // モーダルを閉じる
             cancelTaskForm();
         });
+        }
+
+        // 緊急タスク作成
+        const urgentTaskInputForm = document.getElementById('urgentTaskInputForm');
+        if (urgentTaskInputForm) {
+            urgentTaskInputForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const estimatedTime = formData.get('estimatedTime');
+                const priority = formData.get('priority');
+                const task = {
+                    id: Date.now(),
+                    title: formData.get('title'),
+                    description: formData.get('description'),
+                    category: formData.get('category'),
+                    priority: priority ? parseInt(priority) : 2, // 難易度（1-5、デフォルトは⭐️2）
+                    estimatedTime: estimatedTime ? parseInt(estimatedTime) : null, // 分単位
+                    supportCoins: 0, // 応援コイン（初期値は0）
+                    createdBy: currentUser ? currentUser.id : null, // 作成者ID
+                    status: 'pending',
+                    isUrgent: true, // 緊急タスク
+                    createdAt: new Date().toISOString()
+                };
+
+                tasks.push(task);
+                updateTaskGrid();
+                saveTaskMarketData(); // Firebaseに保存
+                // モーダルを閉じる
+                cancelUrgentTaskForm();
+            });
         }
 
         // バッジ作成フォーム表示
@@ -5494,10 +5747,96 @@
 
             // 完了していないタスクのみ表示（pendingタスクのみ）
             const pendingTasks = tasks.filter(task => task.status !== 'completed');
+            
+            // 緊急タスクと通常タスクを分離
+            const urgentTasks = pendingTasks.filter(task => task.isUrgent === true);
+            const normalTasks = pendingTasks.filter(task => !task.isUrgent || task.isUrgent === false);
 
-            // 各タスクカードをランダムな位置に配置（または保存された位置を使用）
+            // 緊急タスクを左上に固定配置
+            let urgentCardY = 24; // 上から24px
+            urgentTasks.forEach((task, index) => {
+                const card = document.createElement('div');
+                card.className = `task-card category-${task.category} urgent`;
+                card.draggable = true;
+                card.dataset.taskId = task.id;
+                card.dataset.isDragging = 'false';
+                card.dataset.hasDragged = 'false';
+                
+                // ダブルクリックイベント（右パネルを展開）
+                card.addEventListener('dblclick', function(e) {
+                    if (this.dataset.hasDragged === 'false' && this.dataset.isDragging === 'false') {
+                        e.stopPropagation();
+                        showTaskDetail(task.id);
+                    }
+                });
+                
+                // 緊急タスクは左上に固定配置（縦に並べる）
+                const left = 24; // 左から24px
+                const top = urgentCardY;
+                const rotation = 0; // 回転なし
+                const zIndex = 1000 + index; // 最前面に表示
+                
+                // カードの高さを考慮して次の位置を計算
+                urgentCardY += cardHeight + 16; // カード高さ + 16pxの間隔
+                
+                card.style.top = top + 'px';
+                card.style.left = left + 'px';
+                card.style.transform = `rotate(${rotation}deg)`;
+                card.style.zIndex = zIndex;
+                
+                // カテゴリアイコンのパスを取得して背景画像として設定
+                const categoryIconPath = getCategoryIconPath(task.category);
+                if (categoryIconPath) {
+                    card.style.setProperty('--category-icon-url', `url(${categoryIconPath})`);
+                }
+                
+                // 難易度（priority）に応じた基本報酬を計算
+                const difficulty = typeof task.priority === 'number' ? task.priority : 
+                                   (task.priority === 'low' ? 1 : task.priority === 'medium' ? 2 : task.priority === 'high' ? 3 : 2);
+                const baseReward = rankRewards[difficulty] || rankRewards[2] || 0;
+                const supportCoins = task.supportCoins || 0;
+                
+                card.innerHTML = `
+                    <span class="tooltip-text task-card-tooltip">ダブルクリックで詳細を表示</span>
+                    <div class="task-card-header">
+                        <div class="task-card-title">${task.title}</div>
+                        <div class="task-card-priority">${getDifficultyStars(difficulty)}</div>
+                    </div>
+                    <div class="task-card-description">${task.description || '説明なし'}</div>
+                    <div class="task-card-footer">
+                        <div class="task-card-category">
+                        </div>
+                        <div class="task-card-reward" style="margin-top: var(--spacing-xs); font-size: var(--font-size-xs); color: var(--color-text-secondary);">
+                            <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
+                                <span>💰</span>
+                                <span class="reward-label">報酬:</span><span class="reward-value">${baseReward}コイン</span>
+                                ${supportCoins > 0 ? `<span class="support-label">応援:</span><span class="support-value" style="color: var(--panel-5-color);">+${supportCoins}コイン</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // カードに吸着したバッジを表示
+                if (taskBadges[task.id] && taskBadges[task.id].length > 0) {
+                    taskBadges[task.id].forEach((badgeId, badgeIndex) => {
+                        const badge = badges.find(b => b.id === badgeId);
+                        if (badge && badge.attachedToTaskId === task.id) {
+                            const badgeElement = createAttachedBadgeElement(badge, badgeIndex);
+                            card.appendChild(badgeElement);
+                            card.classList.add('badge-attached');
+                        }
+                    });
+                }
+                
+                taskGrid.appendChild(card);
+                
+                // カードへのバッジ吸着機能を設定
+                setupTaskCardBadgeDrop(card, task);
+            });
+
+            // 通常タスクをランダムな位置に配置（または保存された位置を使用）
             let hasPositionUpdates = false;
-            pendingTasks.forEach((task, index) => {
+            normalTasks.forEach((task, index) => {
                 const card = document.createElement('div');
                 card.className = `task-card category-${task.category}`;
                 card.draggable = true;
