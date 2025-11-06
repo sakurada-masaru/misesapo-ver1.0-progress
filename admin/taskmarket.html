@@ -5072,15 +5072,16 @@
             const existingItems = addTaskButton.querySelectorAll('.menu-item');
             existingItems.forEach(item => item.remove());
             
-            // メニュー項目の定義（3つのメニュー項目を均等に配置）
-            // 8時30分 = 255度（時計回り、0度を上として）
+            // メニュー項目の定義（順番：1.バッジ、2.タスク、3.緊急タスク）
+            // 角度を5度広げて配置（間隔を35度に）
+            // 8時40分 = 260度（時計回り、0度を上として）
             // 7時30分 = 225度（時計回り、0度を上として）
-            // 6時30分 = 195度（時計回り、0度を上として）
+            // 6時20分 = 190度（時計回り、0度を上として）
             const radius = 88; // メニュー項目の距離（56pxのメニュー項目 + 32pxのマージン）
             const menuItems = [
-                { angle: 255, icon: 'images/BADGE.svg', action: 'badge', label: 'バッジ作成' }, // 8時30分方向
-                { angle: 225, icon: 'images/Key.svg', action: 'urgent', label: '緊急タスク作成' }, // 7時30分方向
-                { angle: 195, icon: 'images/task.svg', action: 'task', label: 'タスク作成' } // 6時30分方向
+                { angle: 260, icon: 'images/BADGE.svg', action: 'badge', label: 'バッジ作成', urgent: false }, // 8時40分方向
+                { angle: 190, icon: 'images/task.svg', action: 'task', label: 'タスク作成', urgent: false }, // 6時20分方向
+                { angle: 225, icon: 'images/Key.svg', action: 'urgent', label: '緊急タスク作成', urgent: true } // 7時30分方向
             ];
             
             // メニュー項目を生成
@@ -5100,7 +5101,12 @@
                 menuItem.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(0) rotate(0deg)`;
                 menuItem.style.transformOrigin = 'center';
                 
-                // アイコンを設定
+                // アイコンを設定（緊急タスクの場合は薄い赤の背景を追加）
+                if (item.urgent) {
+                    menuItem.style.background = 'rgba(239, 68, 68, 0.15)'; // 薄い赤の背景
+                    menuItem.style.borderRadius = '50%';
+                    menuItem.style.padding = '8px';
+                }
                 menuItem.innerHTML = `<img src="${item.icon}" alt="${item.label}" style="width: 40px; height: 40px; object-fit: contain;">`;
                 menuItem.title = item.label;
                 
