@@ -699,9 +699,9 @@
         .menu-circular-text {
             position: fixed;
             pointer-events: none;
-            z-index: 999;
-            width: 200px;
-            height: 200px;
+            z-index: 99;
+            width: 300px;
+            height: 300px;
         }
 
         .menu-circular-text span {
@@ -4543,6 +4543,68 @@
                 updateMenuIconPosition();
             }
             
+            // 円形テキスト「メインメニュー」を常時表示（メニューボタンとメニュー項目の間、0度から90度の範囲）
+            let circularText = document.querySelector('.menu-circular-text');
+            if (!circularText) {
+                circularText = document.createElement('div');
+                circularText.className = 'menu-circular-text';
+                
+                // メニューボタンの位置を取得（初期化時とリサイズ時に更新）
+                function updateCircularTextPosition() {
+                    const menuIconRect = menuIcon.getBoundingClientRect();
+                    const menuIconCenterX = menuIconRect.left + menuIconRect.width / 2;
+                    const menuIconCenterY = menuIconRect.top + menuIconRect.height / 2;
+                    
+                    const text = 'メインメニュー';
+                    const menuIconRadius = 60; // メニューボタンの半径（120px / 2）
+                    const menuRadius = 112; // メニュー項目の距離
+                    const textRadius = (menuIconRadius + menuRadius) / 2; // メニューボタンとメニュー項目の中間（約86px）
+                    const startAngle = 0; // 0度（上）
+                    const endAngle = 90; // 90度（右）
+                    const angleRange = endAngle - startAngle; // 90度
+                    const charCount = text.length; // 5文字
+                    
+                    // 円形テキストの位置をメニューボタンの中心に設定
+                    circularText.style.left = `${menuIconCenterX}px`;
+                    circularText.style.top = `${menuIconCenterY}px`;
+                    circularText.style.transform = 'translate(-50%, -50%)';
+                    
+                    // 既存の文字を削除
+                    circularText.innerHTML = '';
+                    
+                    // 各文字を円周上に配置
+                    for (let i = 0; i < charCount; i++) {
+                        const char = text[i];
+                        const angle = startAngle + (angleRange / (charCount - 1)) * i; // 0度から90度まで均等に配置
+                        const angleRad = (angle - 90) * Math.PI / 180; // 0度を上として計算（-90度で時計の12時を上に）
+                        const x = Math.cos(angleRad) * textRadius;
+                        const y = Math.sin(angleRad) * textRadius;
+                        
+                        const charSpan = document.createElement('span');
+                        charSpan.textContent = char;
+                        charSpan.style.left = `calc(50% + ${x}px)`;
+                        charSpan.style.top = `calc(50% + ${y}px)`;
+                        charSpan.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+                        circularText.appendChild(charSpan);
+                    }
+                }
+                
+                // 初期位置を設定
+                updateCircularTextPosition();
+                
+                // リサイズ時に位置を更新
+                window.addEventListener('resize', updateCircularTextPosition);
+                
+                // メニュー項目が開かれた時にも位置を更新
+                const originalOpenMenuItems = window.openMenuItems;
+                window.openMenuItems = function() {
+                    if (originalOpenMenuItems) originalOpenMenuItems();
+                    setTimeout(updateCircularTextPosition, 100);
+                };
+                
+                document.body.appendChild(circularText);
+            }
+            
             const taskGrid = document.getElementById('taskGrid');
             
             // 位置固定モードの場合はドラッグ関連のイベントリスナーをスキップ
@@ -5081,49 +5143,6 @@
             if (addTaskButton.hasAttribute('data-menu-initialized')) return;
             addTaskButton.setAttribute('data-menu-initialized', 'true');
             
-            // 円形テキスト「メインメニュー」を常時表示（メニューボタンとメニュー項目の間、0度から90度の範囲）
-            let circularText = document.querySelector('.menu-circular-text');
-            if (!circularText) {
-                circularText = document.createElement('div');
-                circularText.className = 'menu-circular-text';
-                
-                // ボタンの位置を取得
-                const buttonRect = addTaskButton.getBoundingClientRect();
-                const buttonCenterX = buttonRect.left + buttonRect.width / 2;
-                const buttonCenterY = buttonRect.top + buttonRect.height / 2;
-                
-                const text = 'メインメニュー';
-                const buttonRadius = 32; // ボタンの半径（64px / 2）
-                const menuRadius = 88; // メニュー項目の距離
-                const textRadius = (buttonRadius + menuRadius) / 2; // メニューボタンとメニュー項目の中間（約60px）
-                const startAngle = 0; // 0度（上）
-                const endAngle = 90; // 90度（右）
-                const angleRange = endAngle - startAngle; // 90度
-                const charCount = text.length; // 5文字
-                
-                // 円形テキストの位置をボタンの中心に設定
-                circularText.style.left = `${buttonCenterX}px`;
-                circularText.style.top = `${buttonCenterY}px`;
-                circularText.style.transform = 'translate(-50%, -50%)';
-                
-                // 各文字を円周上に配置
-                for (let i = 0; i < charCount; i++) {
-                    const char = text[i];
-                    const angle = startAngle + (angleRange / (charCount - 1)) * i; // 0度から90度まで均等に配置
-                    const angleRad = (angle - 90) * Math.PI / 180; // 0度を上として計算（-90度で時計の12時を上に）
-                    const x = Math.cos(angleRad) * textRadius;
-                    const y = Math.sin(angleRad) * textRadius;
-                    
-                    const charSpan = document.createElement('span');
-                    charSpan.textContent = char;
-                    charSpan.style.left = `calc(50% + ${x}px)`;
-                    charSpan.style.top = `calc(50% + ${y}px)`;
-                    charSpan.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
-                    circularText.appendChild(charSpan);
-                }
-                
-                document.body.appendChild(circularText);
-            }
             
             // ダブルクリック/ダブルタップでメニュー項目を表示
             let clickTimeout = null;
