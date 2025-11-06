@@ -543,11 +543,11 @@
             visibility: visible;
         }
 
-        /* 新規追加ボタン（ボード内の可動域の上から50px・円形デザイン） */
+        /* 新規追加ボタン（ボード内の可動域の上から80px・円形デザイン） */
         .add-task-button {
             position: absolute;
-            top: 50px;
-            right: 50px;
+            top: 80px;
+            right: 80px;
             bottom: auto;
             left: auto;
             width: 64px;
@@ -572,53 +572,18 @@
             touch-action: manipulation;
         }
         
-        /* 完了ボタン（メニューと反対の方向に固定・円形デザイン） */
-        /* デフォルトは左下（メニューが右下の場合に表示） */
-        .complete-button {
-            position: fixed !important;
-            bottom: 96px !important;
-            left: 96px !important;
-            top: auto !important;
-            right: auto !important;
-        }
-        
-        /* メニューが左下の場合、完了ボタンは右下に配置 */
-        .menu-icon.position-bottom-left ~ .complete-button,
-        body .menu-icon.position-bottom-left ~ .complete-button {
-            bottom: 96px !important;
-            left: auto !important;
-            right: 96px !important;
-        }
-        
-        /* メニューが右下の場合、完了ボタンは左下に配置（デフォルト） */
-        .menu-icon.position-bottom-right ~ .complete-button,
-        body .menu-icon.position-bottom-right ~ .complete-button {
-            bottom: 96px !important;
-            right: auto !important;
-            left: 96px !important;
-        }
-        
-        /* SP版：完了ボタンを角に寄せる */
+        /* SP版：新規追加ボタンの位置調整（角から50px） */
         @media (max-width: 768px) {
-            .complete-button {
-                bottom: 16px !important;
+            .add-task-button {
+                top: 50px;
+                right: 50px;
             }
-            
-            /* メニューが左下の場合、完了ボタンは右下に配置 */
-            .menu-icon.position-bottom-left ~ .complete-button,
-            body .menu-icon.position-bottom-left ~ .complete-button {
-                bottom: 16px !important;
-                right: 16px !important;
-                left: auto !important;
-            }
-            
-            /* メニューが右下の場合、完了ボタンは左下に配置 */
-            .menu-icon.position-bottom-right ~ .complete-button,
-            body .menu-icon.position-bottom-right ~ .complete-button {
-                bottom: 16px !important;
-                left: 16px !important;
-                right: auto !important;
-            }
+        }
+        
+        /* 完了ボタン（設定に基づいて配置・円形デザイン） */
+        /* デフォルトスタイルは削除し、JavaScriptで動的に設定 */
+        .complete-button {
+            position: fixed;
         }
         
         .complete-button {
@@ -2779,7 +2744,7 @@
                 font-size: 24px;
             }
 
-            /* 新規追加ボタン：ボード内の可動域の上から50px */
+            /* 新規追加ボタン：ボード内の可動域の上から50px（SP版） */
             .add-task-button {
                 position: absolute;
                 top: 50px;
@@ -4038,6 +4003,9 @@
                 document.body.classList.remove('dark-mode');
             }
             
+            // 完了ボタンの位置を更新
+            updateCompleteButtonPosition();
+            
             // カードサイズの適用
             document.body.classList.remove('card-size-large', 'card-size-medium', 'card-size-small');
             document.body.classList.add(`card-size-${settings.cardSize}`);
@@ -4628,17 +4596,17 @@
                 bottomValue = menuIconOffset + spacing;
             }
             
-            // 完了ボタンの位置を設定
+            // 完了ボタンの位置を設定（!importantを使用してCSSを上書き）
             if (completePosition === 'bottom-left') {
-                completeButton.style.bottom = `${bottomValue}px`;
-                completeButton.style.left = `${completeOffset}px`;
-                completeButton.style.right = 'auto';
-                completeButton.style.top = 'auto';
+                completeButton.style.setProperty('bottom', `${bottomValue}px`, 'important');
+                completeButton.style.setProperty('left', `${completeOffset}px`, 'important');
+                completeButton.style.setProperty('right', 'auto', 'important');
+                completeButton.style.setProperty('top', 'auto', 'important');
             } else if (completePosition === 'bottom-right') {
-                completeButton.style.bottom = `${bottomValue}px`;
-                completeButton.style.right = `${completeOffset}px`;
-                completeButton.style.left = 'auto';
-                completeButton.style.top = 'auto';
+                completeButton.style.setProperty('bottom', `${bottomValue}px`, 'important');
+                completeButton.style.setProperty('right', `${completeOffset}px`, 'important');
+                completeButton.style.setProperty('left', 'auto', 'important');
+                completeButton.style.setProperty('top', 'auto', 'important');
             }
         }
         
