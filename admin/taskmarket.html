@@ -5149,12 +5149,22 @@
         
         // 新規追加ボタンのメニュー展開機能を設定
         function setupAddTaskButtonMenu() {
+            console.log('setupAddTaskButtonMenu()が呼ばれました');
             const addTaskButton = document.getElementById('addTaskButton');
-            if (!addTaskButton) return;
+            if (!addTaskButton) {
+                console.error('新規追加ボタンが見つかりません');
+                return;
+            }
+            
+            console.log('新規追加ボタンが見つかりました:', addTaskButton);
             
             // 既に設定されている場合はスキップ
-            if (addTaskButton.hasAttribute('data-menu-initialized')) return;
+            if (addTaskButton.hasAttribute('data-menu-initialized')) {
+                console.log('新規追加ボタンは既に初期化されています');
+                return;
+            }
             addTaskButton.setAttribute('data-menu-initialized', 'true');
+            console.log('新規追加ボタンのメニュー機能を設定しました');
             
             
             // [PC] ダブルクリックでメニュー項目を表示
