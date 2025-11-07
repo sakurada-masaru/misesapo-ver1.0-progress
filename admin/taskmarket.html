@@ -2196,11 +2196,11 @@
             background-repeat: no-repeat; /* 画像の繰り返しを防止 */
             border: 2px solid var(--color-border);
             border-radius: var(--border-radius-lg);
-            padding: 50px 0 0 0; /* カードの上に50pxのマージン（パディングとして実装） */
+            padding: 30px 0 0 0; /* カードの上に30pxのマージン（パディングとして実装） */
             transition: var(--transition-normal);
             cursor: grab;
             width: 270px; /* rank1~5の画像サイズ（270px）に合わせて調整 */
-            height: 305px; /* 画像高さ（255px）+ 50px上部マージン */
+            height: 220px; /* カード高さを220pxに変更 */
             box-shadow: var(--shadow-md);
             display: flex;
             flex-direction: column;
@@ -2211,7 +2211,7 @@
         /* 緊急タスク（rank10）用のカードサイズ */
         .task-card.urgent {
             width: 295px; /* rank10の画像サイズ（294.76px）に合わせて295px */
-            height: 343px; /* rank10の画像高さ（293px）+ 50px上部マージン */
+            height: 220px; /* カード高さを220pxに変更 */
         }
         
         /* ランク画像のスタイル（背景画像として使用） */
@@ -2365,9 +2365,8 @@
 
         .task-card-header {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: flex-start;
-            gap: var(--spacing-sm);
             padding: var(--spacing-sm) var(--spacing-md);
             background: transparent; /* 背景色を削除 */
             border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
@@ -2406,11 +2405,9 @@
             line-height: 1.5;
             margin: 0;
             padding: var(--spacing-sm) var(--spacing-md); /* 説明文のパディングを追加 */
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 4;
-            -webkit-box-orient: vertical;
-            text-overflow: ellipsis;
+            overflow-wrap: break-word; /* 単語の折り返しを許可 */
+            word-wrap: break-word; /* 互換性のため */
+            white-space: normal; /* 折り返しを許可 */
         }
 
         .task-card-footer {
@@ -5935,7 +5932,7 @@
             // 5列グリッドレイアウトで配置
             const columns = 5;
             const cardWidth = 270; // rank1~5の画像サイズ（270px）に合わせて調整
-            const cardHeight = 305; // カードの高さ（画像高さ255px + 50px上部マージン）
+            const cardHeight = 220; // カード高さを220pxに変更
             const margin = 20;
             
             // SP版かどうかを判定して左端の位置を調整
@@ -6130,7 +6127,7 @@
             // カードサイズを設定に応じて決定
             // カードサイズを統一（rank1~5: 270px x 305px - 画像のアスペクト比に合わせる）
             const cardWidth = 270; // rank1~5の画像サイズ（270px）に合わせて調整
-            const cardHeight = 305; // カードの高さ（画像高さ255px + 50px上部マージン）
+            const cardHeight = 220; // カード高さを220pxに変更
 
             // カードをクリア（ボタンは残す）
             const addButton = taskGrid.querySelector('.add-task-button');
@@ -6231,7 +6228,7 @@
                 const zIndex = 1000 + index; // 最前面に表示
                 
                 // カードの高さを考慮して次の位置を計算（緊急タスクはrank10なので343px）
-                urgentCardY += 343 + 16; // カード高さ（343px）+ 16pxの間隔
+                urgentCardY += 220 + 16; // カード高さ（220px）+ 16pxの間隔
                 
                 card.style.top = top + 'px';
                 card.style.left = left + 'px';
@@ -6260,7 +6257,6 @@
                     <span class="tooltip-text task-card-tooltip">ダブルクリックで詳細を表示</span>
                     <div class="task-card-header">
                         <div class="task-card-title">${task.title}</div>
-                        <div class="task-card-priority">${getDifficultyStars(difficulty)}</div>
                     </div>
                     <div class="task-card-description">${task.description || '説明なし'}</div>
                     <div class="task-card-footer">
@@ -6431,7 +6427,6 @@
                     <span class="tooltip-text task-card-tooltip">ダブルクリックで詳細を表示</span>
                     <div class="task-card-header">
                         <div class="task-card-title">${task.title}</div>
-                        <div class="task-card-priority">${getDifficultyStars(difficulty)}</div>
                     </div>
                     <div class="task-card-description">${task.description || '説明なし'}</div>
                     <div class="task-card-footer">
