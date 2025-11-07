@@ -1996,6 +1996,20 @@
                 transform: translate(-50%, -50%) scale(1.02); /* PC版より控えめに */
             }
 
+            /* [SP] ホバー時も回転を維持 */
+            .menu-icon:hover .menu-circular-text.active {
+                animation: rotateCircularText 20s linear infinite, scaleCircularTextSP 0.3s ease;
+            }
+
+            @keyframes scaleCircularTextSP {
+                from {
+                    transform: translate(-50%, -50%) scale(1);
+                }
+                to {
+                    transform: translate(-50%, -50%) scale(1.02);
+                }
+            }
+
             /* [SP] 円形テキストの文字サイズ調整 */
             .menu-circular-text span {
                 font-size: 10px; /* PC版: 12px → SP版: 10px */
