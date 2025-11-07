@@ -2296,6 +2296,19 @@
             height: 150px; /* カードサイズを固定 */
             padding: 10px; /* 10pxのパディング */
         }
+        
+        /* [SP] カードサイズとパディングの調整（max-width: 768px） */
+        @media (max-width: 768px) {
+            .task-card {
+                width: 300px; /* 横幅を20px広く（280px + 20px） */
+                padding: 20px; /* 10pxのパディングを追加（10px + 10px） */
+            }
+            
+            .task-card-header {
+                margin: -20px -20px 20px -20px; /* パディング20pxに合わせて調整 */
+                background: transparent; /* 白いマスクを削除 */
+            }
+        }
 
         .card-size-small .task-card-title {
             font-size: var(--font-size-sm);
@@ -2480,7 +2493,7 @@
             align-items: flex-start;
             gap: var(--spacing-sm);
             padding: var(--spacing-sm) var(--spacing-md);
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.15) 100%); /* ヘッダー背景の不透明度0.15 */
+            background: transparent; /* 白いマスクを削除 */
             border-radius: 6px 6px 0 0; /* 付箋のような角の丸み */
             border-bottom: 1px solid rgba(0, 0, 0, 0.06); /* より薄いボーダー */
             margin: -10px -10px 10px -10px; /* パディング10pxに合わせて調整 */
@@ -2489,7 +2502,7 @@
         .task-card-title {
             font-size: 14px; /* 適切なフォントサイズ */
             font-weight: var(--font-weight-bold);
-            color: var(--color-text-primary);
+            color: #000000; /* 黒文字（緊急タスク以外） */
             line-height: 1.3;
             margin: 0;
             flex: 1;
@@ -2497,6 +2510,11 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap; /* 1行表示 */
+        }
+        
+        /* 緊急タスク以外のカードの文字色を黒に */
+        .task-card:not(.urgent) .task-card-title {
+            color: #000000 !important;
         }
 
         .task-card-priority {
@@ -2517,7 +2535,7 @@
         .task-card-body {
             flex: 1;
             font-size: 12px; /* 適切なフォントサイズ */
-            color: var(--color-text-secondary);
+            color: #000000; /* 黒文字（緊急タスク以外） */
             line-height: 1.5;
             margin: 0;
             padding: var(--spacing-sm);
@@ -2528,11 +2546,16 @@
             text-overflow: ellipsis;
         }
         
+        /* 緊急タスク以外のカードの文字色を黒に */
+        .task-card:not(.urgent) .task-card-body {
+            color: #000000 !important;
+        }
+        
         /* 後方互換性のため残す */
         .task-card-description {
             flex: 1;
             font-size: 12px;
-            color: var(--color-text-secondary);
+            color: #000000; /* 黒文字（緊急タスク以外） */
             line-height: 1.5;
             margin: 0;
             overflow: hidden;
@@ -2540,6 +2563,11 @@
             -webkit-line-clamp: 4;
             -webkit-box-orient: vertical;
             text-overflow: ellipsis;
+        }
+        
+        /* 緊急タスク以外のカードの文字色を黒に */
+        .task-card:not(.urgent) .task-card-description {
+            color: #000000 !important;
         }
 
         .task-card-footer {
@@ -2550,8 +2578,13 @@
             padding-top: var(--spacing-sm);
             border-top: 1px solid rgba(0, 0, 0, 0.08); /* より薄いボーダー */
             font-size: var(--font-size-sm);
-            color: var(--color-text-secondary);
+            color: #000000; /* 黒文字（緊急タスク以外） */
             position: relative;
+        }
+        
+        /* 緊急タスク以外のカードの文字色を黒に */
+        .task-card:not(.urgent) .task-card-footer {
+            color: #000000 !important;
         }
 
         .task-card-badge-attachment {
@@ -2567,10 +2600,15 @@
 
         .task-card-badge-attachment .badge-count {
             font-size: var(--font-size-xs);
-            color: var(--color-text-secondary);
+            color: #000000; /* 黒文字（緊急タスク以外） */
             display: flex;
             align-items: center;
             gap: 4px;
+        }
+        
+        /* 緊急タスク以外のカードの文字色を黒に */
+        .task-card:not(.urgent) .task-card-badge-attachment .badge-count {
+            color: #000000 !important;
         }
 
         .task-card-reward {
@@ -2580,6 +2618,24 @@
             justify-content: flex-end;
             display: flex;
             align-items: center;
+            color: #000000; /* 黒文字（緊急タスク以外） */
+        }
+        
+        /* 緊急タスク以外のカードの文字色を黒に */
+        .task-card:not(.urgent) .task-card-reward {
+            color: #000000 !important;
+        }
+        
+        .task-card:not(.urgent) .task-card-reward * {
+            color: #000000 !important;
+        }
+        
+        .task-card:not(.urgent) .task-card-reward .reward-value {
+            color: #000000 !important;
+        }
+        
+        .task-card:not(.urgent) .task-card-reward .support-value {
+            color: #000000 !important;
         }
 
         .task-card-reward .reward-unit {
@@ -6402,7 +6458,7 @@
                         <div class="task-card-badge-attachment">
                             ${attachedBadgeCount > 0 ? `<span class="badge-count">🏷️ ${attachedBadgeCount}</span>` : ''}
                         </div>
-                        <div class="task-card-reward" style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">
+                        <div class="task-card-reward" style="font-size: var(--font-size-xs);">
                             <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
                                 <span>💰</span>
                                 <span class="reward-value">${baseReward}</span>
@@ -6577,7 +6633,7 @@
                         <div class="task-card-badge-attachment">
                             ${attachedBadgeCount > 0 ? `<span class="badge-count">🏷️ ${attachedBadgeCount}</span>` : ''}
                         </div>
-                        <div class="task-card-reward" style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">
+                        <div class="task-card-reward" style="font-size: var(--font-size-xs);">
                             <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
                                 <span>💰</span>
                                 <span class="reward-value">${baseReward}</span>
