@@ -2199,13 +2199,19 @@
             padding: 50px 0 0 0; /* カードの上に50pxのマージン（パディングとして実装） */
             transition: var(--transition-normal);
             cursor: grab;
-            width: 295px; /* 最大画像サイズ（rank10: 294.76px）に合わせて295px */
-            height: 343px; /* 最大画像高さ（rank10: 293px）+ 50px上部マージン */
+            width: 270px; /* rank1~5の画像サイズ（270px）に合わせて調整 */
+            height: 305px; /* 画像高さ（255px）+ 50px上部マージン */
             box-shadow: var(--shadow-md);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             overflow: hidden;
+        }
+        
+        /* 緊急タスク（rank10）用のカードサイズ */
+        .task-card.urgent {
+            width: 295px; /* rank10の画像サイズ（294.76px）に合わせて295px */
+            height: 343px; /* rank10の画像高さ（293px）+ 50px上部マージン */
         }
         
         /* ランク画像のスタイル（背景画像として使用） */
@@ -5928,8 +5934,8 @@
             
             // 5列グリッドレイアウトで配置
             const columns = 5;
-            const cardWidth = 295; // 最大画像サイズ（rank10: 294.76px）に合わせて295px
-            const cardHeight = 343; // カードの高さ（最大画像高さ293px + 50px上部マージン）
+            const cardWidth = 270; // rank1~5の画像サイズ（270px）に合わせて調整
+            const cardHeight = 305; // カードの高さ（画像高さ255px + 50px上部マージン）
             const margin = 20;
             
             // SP版かどうかを判定して左端の位置を調整
@@ -6122,9 +6128,9 @@
             const gridHeight = Math.max(800, taskGrid.offsetHeight - 48);
             
             // カードサイズを設定に応じて決定
-            // カードサイズを統一（280px x 280px - 画像のアスペクト比に合わせる）
-            const cardWidth = 295; // 最大画像サイズ（rank10: 294.76px）に合わせて295px
-            const cardHeight = 280;
+            // カードサイズを統一（rank1~5: 270px x 305px - 画像のアスペクト比に合わせる）
+            const cardWidth = 270; // rank1~5の画像サイズ（270px）に合わせて調整
+            const cardHeight = 305; // カードの高さ（画像高さ255px + 50px上部マージン）
 
             // カードをクリア（ボタンは残す）
             const addButton = taskGrid.querySelector('.add-task-button');
@@ -6224,8 +6230,8 @@
                 const rotation = 0; // 回転なし
                 const zIndex = 1000 + index; // 最前面に表示
                 
-                // カードの高さを考慮して次の位置を計算
-                urgentCardY += 280 + 16; // カード高さ（280px）+ 16pxの間隔
+                // カードの高さを考慮して次の位置を計算（緊急タスクはrank10なので343px）
+                urgentCardY += 343 + 16; // カード高さ（343px）+ 16pxの間隔
                 
                 card.style.top = top + 'px';
                 card.style.left = left + 'px';
