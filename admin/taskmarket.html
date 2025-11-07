@@ -2475,7 +2475,7 @@
             position: relative;
         }
 
-        .task-card-category {
+        .task-card-badge-attachment {
             display: flex;
             align-items: center;
             gap: var(--spacing-xs);
@@ -2486,6 +2486,14 @@
             justify-content: flex-start;
         }
 
+        .task-card-badge-attachment .badge-count {
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         .task-card-reward {
             flex: 1;
             width: 50%;
@@ -2493,6 +2501,11 @@
             justify-content: flex-end;
             display: flex;
             align-items: center;
+        }
+
+        .task-card-reward .reward-unit {
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
         }
 
         .task-card-footer-icon {
@@ -2871,10 +2884,29 @@
                 font-size: calc(var(--font-size-sm) * 0.85);
             }
             
-            /* SP版：報酬ラベル（「報酬:」「応援:」）を非表示 */
-            .task-card-reward .reward-label,
-            .task-card-reward .support-label {
-                display: none;
+            /* [SP] タスクカードフッターのスタイル調整 */
+            .task-card-footer {
+                font-size: calc(var(--font-size-sm) * 0.85);
+            }
+
+            /* [SP] バッジ吸着数の表示 */
+            .task-card-badge-attachment .badge-count {
+                font-size: calc(var(--font-size-xs) * 0.9);
+            }
+
+            /* [SP] 報酬の表示（アイコン + コイン数 + 単位） */
+            .task-card-reward {
+                font-size: calc(var(--font-size-xs) * 0.9);
+            }
+
+            .task-card-reward .reward-value,
+            .task-card-reward .support-value {
+                font-weight: var(--font-weight-semibold);
+            }
+
+            .task-card-reward .reward-unit {
+                font-size: calc(var(--font-size-xs) * 0.9);
+                margin-left: 2px;
             }
             
             /* SP版：報酬のフォントサイズを少し小さく */
@@ -6282,6 +6314,10 @@
                 const baseReward = rankRewards[difficulty] || rankRewards[2] || 0;
                 const supportCoins = task.supportCoins || 0;
                 
+                // バッジの吸着数を取得
+                const attachedBadgeCount = taskBadges[task.id] && taskBadges[task.id].length > 0 ? taskBadges[task.id].length : 0;
+                const isSP = window.innerWidth <= 768;
+                
                 card.innerHTML = `
                     <span class="tooltip-text task-card-tooltip">ダブルクリックで詳細を表示</span>
                     <div class="task-card-header">
@@ -6290,14 +6326,25 @@
                     </div>
                     <div class="task-card-description">${task.description || '説明なし'}</div>
                     <div class="task-card-footer">
-                        <div class="task-card-category">
+                        <div class="task-card-badge-attachment">
+                            ${attachedBadgeCount > 0 ? `<span class="badge-count">🏷️ ${attachedBadgeCount}</span>` : ''}
                         </div>
                         <div class="task-card-reward" style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">
-                            <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
-                                <span>💰</span>
-                                <span class="reward-label">報酬:</span><span class="reward-value">${baseReward}コイン</span>
-                                ${supportCoins > 0 ? `<span class="support-label">応援:</span><span class="support-value" style="color: var(--panel-5-color);">+${supportCoins}コイン</span>` : ''}
-                            </div>
+                            ${isSP ? `
+                                <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
+                                    <span>💰</span>
+                                    <span class="reward-value">${baseReward}</span>
+                                    ${supportCoins > 0 ? `<span class="support-value" style="color: var(--panel-5-color);">+${supportCoins}</span>` : ''}
+                                    <span class="reward-unit">C</span>
+                                </div>
+                            ` : `
+                                <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
+                                    <span>💰</span>
+                                    <span class="reward-value">${baseReward}</span>
+                                    ${supportCoins > 0 ? `<span class="support-value" style="color: var(--panel-5-color);">+${supportCoins}</span>` : ''}
+                                    <span class="reward-unit">C</span>
+                                </div>
+                            `}
                         </div>
                     </div>
                 `;
@@ -6446,6 +6493,10 @@
                 const baseReward = rankRewards[difficulty] || rankRewards[2] || 0;
                 const supportCoins = task.supportCoins || 0;
                 
+                // バッジの吸着数を取得
+                const attachedBadgeCount = taskBadges[task.id] && taskBadges[task.id].length > 0 ? taskBadges[task.id].length : 0;
+                const isSP = window.innerWidth <= 768;
+                
                 card.innerHTML = `
                     <span class="tooltip-text task-card-tooltip">ダブルクリックで詳細を表示</span>
                     <div class="task-card-header">
@@ -6454,14 +6505,25 @@
                     </div>
                     <div class="task-card-description">${task.description || '説明なし'}</div>
                     <div class="task-card-footer">
-                        <div class="task-card-category">
+                        <div class="task-card-badge-attachment">
+                            ${attachedBadgeCount > 0 ? `<span class="badge-count">🏷️ ${attachedBadgeCount}</span>` : ''}
                         </div>
                         <div class="task-card-reward" style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">
-                            <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
-                                <span>💰</span>
-                                <span class="reward-label">報酬:</span><span class="reward-value">${baseReward}コイン</span>
-                                ${supportCoins > 0 ? `<span class="support-label">応援:</span><span class="support-value" style="color: var(--panel-5-color);">+${supportCoins}コイン</span>` : ''}
-                            </div>
+                            ${isSP ? `
+                                <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
+                                    <span>💰</span>
+                                    <span class="reward-value">${baseReward}</span>
+                                    ${supportCoins > 0 ? `<span class="support-value" style="color: var(--panel-5-color);">+${supportCoins}</span>` : ''}
+                                    <span class="reward-unit">C</span>
+                                </div>
+                            ` : `
+                                <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
+                                    <span>💰</span>
+                                    <span class="reward-value">${baseReward}</span>
+                                    ${supportCoins > 0 ? `<span class="support-value" style="color: var(--panel-5-color);">+${supportCoins}</span>` : ''}
+                                    <span class="reward-unit">C</span>
+                                </div>
+                            `}
                         </div>
                     </div>
                 `;
