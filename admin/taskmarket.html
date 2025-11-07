@@ -6409,10 +6409,7 @@
                 const badgeElement = createBadgeElement(badge);
                 taskGrid.appendChild(badgeElement);
                 setupBadgeDragAndDrop(badgeElement, badge);
-                console.log('updateTaskGrid: バッジを再追加:', badge.id);
             });
-            
-            console.log('updateTaskGrid: バッジ再追加完了。表示中のバッジ数:', taskGrid.querySelectorAll('.badge:not(.attached)').length);
             
             
             // taskGrid内には追加しない
@@ -7291,6 +7288,11 @@
             
             // グリッド上のドラッグオーバー
             taskGrid.addEventListener('dragover', function(e) {
+                // バッジがドラッグ中の場合は処理をスキップ（バッジのdragoverハンドラーで処理）
+                if (draggedBadgeGlobal && !draggedBadgeGlobal.attachedToTaskId) {
+                    return;
+                }
+                
                 e.preventDefault();
                 e.dataTransfer.dropEffect = 'move';
                 this.classList.add('drag-over');
@@ -7330,6 +7332,11 @@
             
             // ドロップ
             taskGrid.addEventListener('drop', function(e) {
+                // バッジがドラッグ中の場合は処理をスキップ（バッジのdropハンドラーで処理）
+                if (draggedBadgeGlobal && !draggedBadgeGlobal.attachedToTaskId) {
+                    return;
+                }
+                
                 e.preventDefault();
                 this.classList.remove('drag-over');
                 
@@ -7379,11 +7386,8 @@
                     const badgeElement = createBadgeElement(badge);
                     taskGrid.appendChild(badgeElement);
                     setupBadgeDragAndDrop(badgeElement, badge);
-                    console.log('バッジを追加:', badge.id, badge.name);
                 }
             });
-            
-            console.log('バッジ更新完了。表示中のバッジ数:', taskGrid.querySelectorAll('.badge:not(.attached)').length);
             
             // カードに吸着したバッジは、updateTaskGrid()で個別に更新されるため、ここでは呼び出さない
             // updateTaskGrid()を呼び出すとカードが再生成されてしまうため、バッジドロップ時のみ手動で呼び出す
@@ -7395,16 +7399,8 @@
             badgeDiv.className = 'badge';
             badgeDiv.dataset.badgeId = badge.id;
             badgeDiv.style.background = badge.color;
-            
-            // バッジの位置情報を初期化（存在しない場合）
-            if (!badge.position) {
-                badge.position = { top: 100, left: 100 };
-            }
-            
             badgeDiv.style.top = badge.position.top + 'px';
             badgeDiv.style.left = badge.position.left + 'px';
-            
-            console.log('バッジ要素を作成:', badge.id, badge.position);
             
             // Googleアカウントの画像を使用する場合
             let iconHtml = badge.icon;
@@ -7495,13 +7491,6 @@
         function setupBadgeDragAndDrop(badgeElement, badge) {
             const taskGrid = document.getElementById('taskGrid');
             
-            if (!taskGrid) {
-                console.error('taskGridが見つかりません');
-                return;
-            }
-            
-            console.log('バッジのドラッグ機能を設定:', badge.id);
-            
             // タッチイベント用の変数（スマホ対応）
             let touchStartX = 0;
             let touchStartY = 0;
@@ -7524,7 +7513,6 @@
             
             // タッチ開始（スマホ対応）
             badgeElement.addEventListener('touchstart', function(e) {
-                console.log('バッジ touchstart:', badge.id);
                 // 5回タップのイベントリスナーに到達しないようにする
                 e.stopPropagation();
                 
@@ -7533,7 +7521,6 @@
                     touchStartX = touch.clientX;
                     touchStartY = touch.clientY;
                     currentTouchedBadge = this;
-                    console.log('バッジ touchstart: 位置を記録', touchStartX, touchStartY);
                     
                     // バッジの現在位置を取得
                     const rect = this.getBoundingClientRect();
@@ -7547,7 +7534,7 @@
                         isBadgeDragging = true;
                         this.classList.add('dragging');
                         this.style.transition = 'none';
-                        this.style.zIndex = '500'; /* 階層5: ドラッグ中はボタンと同じレベル */
+                        this.style.zIndex = '1000';
                         this.style.opacity = '0.8';
                         this.style.transform += ' scale(1.1)';
                     } else {
@@ -7587,7 +7574,7 @@
                         isBadgeDragging = true;
                         this.classList.add('dragging');
                         this.style.transition = 'none';
-                        this.style.zIndex = '500'; /* 階層5: ドラッグ中はボタンと同じレベル */
+                        this.style.zIndex = '1000';
                         this.style.opacity = '0.8';
                         this.style.transform += ' scale(1.1)';
                     }
@@ -7825,7 +7812,6 @@
             
             // ドラッグ開始（PC対応）
             badgeElement.addEventListener('dragstart', function(e) {
-                console.log('バッジ dragstart:', badge.id);
                 draggedBadgeGlobal = badge;
                 this.classList.add('dragging');
                 
@@ -7839,32 +7825,32 @@
                 
                 e.dataTransfer.effectAllowed = 'move';
                 e.dataTransfer.setData('badgeId', badge.id.toString());
+                
+                // バッジドラッグハンドラーを設定（一度だけ）
+                setupBadgeDragHandler();
             });
             
             // ドラッグ終了（PC対応）
             badgeElement.addEventListener('dragend', function(e) {
-                console.log('バッジ dragend:', badge.id);
                 // 元のバッジを再度表示
                 this.style.visibility = 'visible';
                 this.classList.remove('dragging');
                 
                 // ドロップ先がカードでない場合、位置を更新
                 if (draggedBadgeGlobal && !draggedBadgeGlobal.attachedToTaskId) {
-                    // 現在の位置を取得（setupBadgeDragHandler()で更新された位置を使用）
-                    const currentLeft = parseInt(this.style.left) || 0;
-                    const currentTop = parseInt(this.style.top) || 0;
+                    const rect = this.getBoundingClientRect();
+                    const gridRect = taskGrid.getBoundingClientRect();
+                    const newLeft = parseInt(this.style.left) || badge.position.left;
+                    const newTop = parseInt(this.style.top) || badge.position.top;
                     
                     // バッジデータの位置を更新
-                    if (!draggedBadgeGlobal.position) {
-                        draggedBadgeGlobal.position = {};
-                    }
-                    draggedBadgeGlobal.position.left = currentLeft;
-                    draggedBadgeGlobal.position.top = currentTop;
-                    
-                    console.log('バッジの位置を更新しました（PC）:', badge.id, draggedBadgeGlobal.position);
+                    badge.position.left = newLeft;
+                    badge.position.top = newTop;
                     
                     // Firebaseに保存
                     saveTaskMarketData();
+                    
+                    console.log('バッジの位置を更新しました（PC）:', badge.id, badge.position);
                 }
                 
                 draggedBadgeGlobal = null;
@@ -9248,26 +9234,53 @@
             
             const taskGrid = document.getElementById('taskGrid');
             if (taskGrid) {
+                // グリッド上のドラッグオーバー（バッジの位置をリアルタイムに更新）
                 taskGrid.addEventListener('dragover', function(e) {
-                    e.preventDefault(); // ドロップを許可するために必要
-                    
+                    // バッジがドラッグ中の場合は位置を更新
                     if (draggedBadgeGlobal && !draggedBadgeGlobal.attachedToTaskId) {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+                        
                         const draggingElement = taskGrid.querySelector(`.badge[data-badge-id="${draggedBadgeGlobal.id}"].dragging`);
                         if (draggingElement) {
                             const gridRect = taskGrid.getBoundingClientRect();
+                            const badgeWidth = draggingElement.offsetWidth;
+                            const badgeHeight = draggingElement.offsetHeight;
+                            
+                            // グリッド内の相対位置を計算（マウス位置からオフセットを引く）
                             let newLeft = e.clientX - gridRect.left - draggedBadgeOffset.x;
                             let newTop = e.clientY - gridRect.top - draggedBadgeOffset.y;
                             
                             // グリッド内に制限
-                            const badgeWidth = draggingElement.offsetWidth || 60;
-                            const badgeHeight = draggingElement.offsetHeight || 60;
-                            newLeft = Math.max(0, Math.min(newLeft, gridRect.width - badgeWidth));
-                            newTop = Math.max(0, Math.min(newTop, gridRect.height - badgeHeight));
+                            const maxX = taskGrid.offsetWidth - badgeWidth;
+                            const maxY = Math.max(800, taskGrid.offsetHeight) - badgeHeight;
+                            newLeft = Math.max(0, Math.min(newLeft, maxX));
+                            newTop = Math.max(0, Math.min(newTop, maxY));
                             
                             draggingElement.style.left = newLeft + 'px';
                             draggingElement.style.top = newTop + 'px';
+                        }
+                    }
+                });
+                
+                // グリッド上でのドロップ（バッジの位置を保存）
+                taskGrid.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    
+                    if (draggedBadgeGlobal && !draggedBadgeGlobal.attachedToTaskId) {
+                        const draggingElement = taskGrid.querySelector(`.badge[data-badge-id="${draggedBadgeGlobal.id}"].dragging`);
+                        if (draggingElement) {
+                            const newLeft = parseInt(draggingElement.style.left);
+                            const newTop = parseInt(draggingElement.style.top);
                             
-                            console.log('バッジドラッグ中: 位置を更新', newLeft, newTop);
+                            // バッジデータの位置を更新
+                            draggedBadgeGlobal.position.left = newLeft;
+                            draggedBadgeGlobal.position.top = newTop;
+                            
+                            // Firebaseに保存
+                            saveTaskMarketData();
+                            
+                            console.log('バッジの位置を更新しました（ドロップ）:', draggedBadgeGlobal.id, draggedBadgeGlobal.position);
                         }
                     }
                 });
