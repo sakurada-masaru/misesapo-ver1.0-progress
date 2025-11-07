@@ -5186,8 +5186,8 @@
             
             // [SP] タッチイベント
             addTaskButton.addEventListener('touchend', function(e) {
-                e.stopPropagation();
                 e.preventDefault();
+                e.stopPropagation();
                 if (touchClickTimeout) {
                     clearTimeout(touchClickTimeout);
                     touchClickTimeout = null;
