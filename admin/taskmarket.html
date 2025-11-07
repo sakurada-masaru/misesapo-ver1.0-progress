@@ -6126,19 +6126,24 @@
             // カードをクリア（ボタンは残す）
             const addButton = taskGrid.querySelector('.add-task-button');
             const completeButton = taskGrid.querySelector('.complete-button');
+            
+            // ボタンを一時的に保存（innerHTMLでクリアすると削除されるため）
+            const addButtonClone = addButton ? addButton.cloneNode(true) : null;
+            const completeButtonClone = completeButton ? completeButton.cloneNode(true) : null;
+            
             taskGrid.innerHTML = '';
             
             // ボタンを再追加
-            if (addButton) {
-                taskGrid.appendChild(addButton);
-                // 既存のボタンにもメニュー機能を設定（まだ設定されていない場合、または再設定が必要な場合）
-                if (!addButton.hasAttribute('data-menu-initialized')) {
-                    addButton.setAttribute('data-menu-setup', 'true');
-                    console.log('updateTaskGrid: 新規追加ボタンのメニュー機能を再設定します');
-                    setupAddTaskButtonMenu();
-                } else {
-                    console.log('updateTaskGrid: 新規追加ボタンは既に初期化されています');
-                }
+            if (addButtonClone) {
+                // クローンしたボタンを追加
+                const newAddButton = addButtonClone;
+                newAddButton.id = 'addTaskButton';
+                taskGrid.appendChild(newAddButton);
+                // イベントリスナーを再設定（innerHTMLでクリアしたため、イベントリスナーが失われている）
+                newAddButton.removeAttribute('data-menu-initialized'); // 再設定のため属性を削除
+                newAddButton.setAttribute('data-menu-setup', 'true');
+                console.log('updateTaskGrid: 新規追加ボタンのメニュー機能を再設定します');
+                setupAddTaskButtonMenu();
             } else {
                 const button = document.createElement('button');
                 button.className = 'add-task-button';
@@ -6149,8 +6154,10 @@
             }
             
             // 完了ボタンを再追加
-            if (completeButton) {
-                taskGrid.appendChild(completeButton);
+            if (completeButtonClone) {
+                const newCompleteButton = completeButtonClone;
+                newCompleteButton.id = 'completeButton';
+                taskGrid.appendChild(newCompleteButton);
             } else {
                 const complete = document.createElement('div');
                 complete.className = 'complete-button';
@@ -6161,6 +6168,7 @@
                 completeButtonHandlerSet = false;
                 setupCompleteButtonDrop(); // ドロップ処理を再設定
             }
+            
             
             // taskGrid内には追加しない
             
