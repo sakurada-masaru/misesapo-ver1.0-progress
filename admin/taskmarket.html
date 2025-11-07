@@ -2438,6 +2438,20 @@
             display: flex;
             align-items: center;
             gap: var(--spacing-xs);
+            flex: 1;
+            width: 50%;
+            padding-right: var(--spacing-sm);
+            border-right: 1px solid var(--color-border);
+            justify-content: flex-start;
+        }
+
+        .task-card-reward {
+            flex: 1;
+            width: 50%;
+            padding-left: var(--spacing-sm);
+            justify-content: flex-end;
+            display: flex;
+            align-items: center;
         }
 
         .task-card-footer-icon {
@@ -6202,7 +6216,7 @@
                     <div class="task-card-footer">
                         <div class="task-card-category">
                         </div>
-                        <div class="task-card-reward" style="margin-top: var(--spacing-xs); font-size: var(--font-size-xs); color: var(--color-text-secondary);">
+                        <div class="task-card-reward" style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">
                             <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
                                 <span>💰</span>
                                 <span class="reward-label">報酬:</span><span class="reward-value">${baseReward}コイン</span>
@@ -6366,7 +6380,7 @@
                     <div class="task-card-footer">
                         <div class="task-card-category">
                         </div>
-                        <div class="task-card-reward" style="margin-top: var(--spacing-xs); font-size: var(--font-size-xs); color: var(--color-text-secondary);">
+                        <div class="task-card-reward" style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">
                             <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
                                 <span>💰</span>
                                 <span class="reward-label">報酬:</span><span class="reward-value">${baseReward}コイン</span>
