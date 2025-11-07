@@ -129,6 +129,7 @@
         }
 
         /* スプラッシュスクリーン */
+        /* 階層9: スプラッシュスクリーン（最上層） */
         .splash-screen {
             position: fixed;
             top: 0;
@@ -139,7 +140,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 10000;
+            z-index: 10000; /* 階層9: スプラッシュスクリーン（最上層） */
             opacity: 1;
             /* 白画面を消す: ロゴが消えた後（約3秒後）に開始 */
             animation: fadeOutScreen 0.5s ease-out 3s forwards;
@@ -196,6 +197,7 @@
         }
 
         /* ヘッダー */
+        /* 階層8: ヘッダー */
         .header {
             height: 60px;
             background: var(--color-background);
@@ -206,7 +208,7 @@
             padding: 0 var(--spacing-lg);
             box-shadow: var(--shadow-sm);
             position: relative;
-            z-index: 1000;
+            z-index: 3000; /* 階層8: ヘッダー */
         }
 
         .header-left {
@@ -332,6 +334,7 @@
         /* メインボードの幅調整はJavaScriptで制御 */
 
         /* カラム3: 詳細ボード（右からスライドインするパネル） */
+        /* 階層6: 各種コンテンツパネル */
         .detail-board-overlay {
             position: fixed;
             top: 0;
@@ -339,7 +342,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.3);
-            z-index: 1500;
+            z-index: 1500; /* 階層6: 各種コンテンツパネル */
             display: none;
             animation: fadeIn 0.3s ease;
         }
@@ -356,7 +359,7 @@
             height: 100%;
             background: var(--color-background-secondary);
             box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
-            z-index: 1501;
+            z-index: 1501; /* 階層6: 各種コンテンツパネル */
             transform: translateX(100%);
             transition: transform 0.3s ease;
             overflow-y: auto;
@@ -369,6 +372,7 @@
         }
         
         /* タイムレコードパネル（右からスライドイン、タスク詳細パネルの上に表示） */
+        /* 階層6: 各種コンテンツパネル */
         .time-record-panel-overlay {
             position: fixed;
             top: 0;
@@ -376,7 +380,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.3);
-            z-index: 1600;
+            z-index: 1600; /* 階層6: 各種コンテンツパネル */
             display: none;
             animation: fadeIn 0.3s ease;
         }
@@ -393,7 +397,7 @@
             height: 100%;
             background: var(--color-background-secondary);
             box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
-            z-index: 1601;
+            z-index: 1601; /* 階層6: 各種コンテンツパネル */
             transform: translateX(100%);
             transition: transform 0.3s ease;
             overflow-y: auto;
@@ -565,6 +569,7 @@
            ======================================== */
         
         /* 新規追加ボタン（親要素） */
+        /* 階層5: メニューボタン/新規追加ボタン/完了ボタン */
         /* [PC] 画面端から50px下・20px右・円形デザイン */
         .add-task-button {
             position: fixed;
@@ -586,7 +591,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            z-index: 500; /* 階層5: メニューボタン/新規追加ボタン/完了ボタン */
             line-height: 1;
             padding: 0;
             user-select: none;
@@ -606,6 +611,7 @@
         }
         
         /* 完了ボタン（設定に基づいて配置・円形デザイン） */
+        /* 階層5: メニューボタン/新規追加ボタン/完了ボタン */
         .complete-button {
             position: fixed;
             width: 64px;
@@ -618,7 +624,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 1000;
+            z-index: 500; /* 階層5: メニューボタン/新規追加ボタン/完了ボタン */
             box-shadow: var(--shadow-lg);
             transition: all 0.3s ease;
             opacity: 0.8;
@@ -763,6 +769,7 @@
 
 
         /* モーダルオーバーレイ */
+        /* 階層7: 各種モーダル */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -773,7 +780,7 @@
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            z-index: 2000; /* 階層7: 各種モーダル */
             animation: fadeIn 0.3s ease;
         }
 
@@ -978,6 +985,7 @@
         }
 
         /* スライドインパネル（左から右にスライドイン、最前面に表示） */
+        /* 階層7: 各種モーダル */
         .slide-panel-overlay {
             position: fixed;
             top: 0;
@@ -985,7 +993,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.3);
-            z-index: 2000;
+            z-index: 2000; /* 階層7: 各種モーダル */
             display: none;
             animation: fadeIn 0.3s ease;
         }
@@ -1002,7 +1010,7 @@
             height: 100%;
             background: var(--color-background);
             box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
-            z-index: 2001;
+            z-index: 2001; /* 階層7: 各種モーダル */
             transform: translateX(-100%);
             transition: transform 0.3s ease;
             overflow-y: auto;
@@ -1748,6 +1756,7 @@
            ======================================== */
         
         /* メニューボタン（親要素）のスタイル */
+        /* 階層5: メニューボタン/新規追加ボタン/完了ボタン */
         /* [PC] デフォルトスタイル */
         .menu-icon {
             position: fixed;
@@ -1760,7 +1769,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 100;
+            z-index: 500; /* 階層5: メニューボタン/新規追加ボタン/完了ボタン */
             box-shadow: var(--shadow-md);
             transition: var(--transition-normal);
             user-select: none;
@@ -1814,7 +1823,7 @@
 
         .menu-icon.dragging {
             opacity: 0.7;
-            z-index: 1000;
+            z-index: 500; /* 階層5: メニューボタン/新規追加ボタン/完了ボタン */
         }
 
         .menu-icon img {
@@ -1856,6 +1865,7 @@
         }
 
         /* メニューボタンのコンテンツボタン（子要素） */
+        /* 階層4: メニューコンテンツボタン/新規追加コンテンツボタン */
         .menu-item {
             position: absolute;
             width: 56px;
@@ -1867,7 +1877,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 1000;
+            z-index: 100; /* 階層4: メニューコンテンツボタン/新規追加コンテンツボタン */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             opacity: 0;
             transform: scale(0) rotate(0deg);
@@ -1896,13 +1906,14 @@
         }
 
         /* メニューボタンのテキスト（子要素：コンテンツボタンと同列） */
+        /* 階層4: メニューコンテンツボタン/新規追加コンテンツボタン */
         .menu-circular-text {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             pointer-events: none;
-            z-index: 99;
+            z-index: 99; /* 階層4: メニューコンテンツボタン/新規追加コンテンツボタン（コンテンツボタンより少し下） */
             width: 300px;
             height: 300px;
             opacity: 0;
@@ -2092,6 +2103,7 @@
         }
 
         /* タスクカードグリッド（掲示板風のランダム配置） */
+        /* 階層1: タスクボード（最下層） */
         .task-grid {
             position: relative;
             height: 100%; /* 親要素（main-board）の高さを継承して画面下まで表示 */
@@ -2102,6 +2114,7 @@
             /* [PC] 上部と下部の隙間を統一 */
             padding-top: var(--spacing-lg);
             padding-bottom: var(--spacing-lg);
+            z-index: 1; /* 階層1: 最下層 */
             padding-left: var(--spacing-lg);
             padding-right: var(--spacing-lg);
             overflow-y: auto;
@@ -2650,6 +2663,7 @@
         }
 
         /* バッジスタイル */
+        /* 階層3: バッジ */
         .badge {
             position: absolute;
             width: 60px;
@@ -2662,7 +2676,7 @@
             justify-content: center;
             cursor: grab;
             box-shadow: var(--shadow-md);
-            z-index: 100;
+            z-index: 10; /* 階層3: バッジ */
             transition: var(--transition-normal);
             padding: var(--spacing-xs);
             border: 3px solid var(--color-background);
@@ -2671,13 +2685,13 @@
         .badge:hover {
             transform: scale(1.1);
             box-shadow: var(--shadow-lg);
-            z-index: 101;
+            z-index: 10; /* 階層3: バッジ */
         }
 
         .badge.dragging {
             opacity: 1;
             cursor: grabbing;
-            z-index: 1000 !important;
+            z-index: 500 !important; /* ドラッグ中は階層5（ボタン）と同じレベル */
         }
 
         .badge-icon {
@@ -3079,7 +3093,7 @@
                 bottom: auto !important;
                 left: auto !important;
                 transform: none;
-                z-index: 1000;
+                z-index: 500; /* 階層5: メニューボタン/新規追加ボタン/完了ボタン */
             }
             
             .add-task-button:hover {
@@ -3103,7 +3117,7 @@
                 left: 16px !important;
                 top: auto !important;
                 right: auto !important;
-                z-index: 1001;
+                z-index: 500; /* 階層5: メニューボタン/新規追加ボタン/完了ボタン */
             }
             
             /* [SP] メニューが左下の場合、完了ボタンは右下に配置（max-width: 430px） */
@@ -6135,7 +6149,8 @@
                 const left = startX + col * columnWidth + (columnWidth - adjustedCardWidth) / 2;
                 const top = startY + row * (cardHeight + margin);
                 const rotation = 0; // 整列時は回転なし
-                const zIndex = rank; // ランクに応じてz-indexを設定（ランクが高いほど上に重なる）
+                // 階層2: タスクカード（rank 1-5 → z-index 2-6）
+                const zIndex = rank + 1; // rank 1 → z-index 2, rank 5 → z-index 6
                 
                 // タスクデータに位置情報を保存
                 if (!task.position) {
@@ -6166,7 +6181,8 @@
                     card.style.top = top + 'px';
                     card.style.left = left + 'px';
                     card.style.transform = 'rotate(0deg)';
-                    card.style.zIndex = rank; // ランクに応じてz-indexを設定（ランクが高いほど上に重なる）
+                    // 階層2: タスクカード（rank 1-5 → z-index 2-6）
+                    card.style.zIndex = rank + 1; // rank 1 → z-index 2, rank 5 → z-index 6
                 }
             });
             
@@ -6199,6 +6215,12 @@
                 target.closest('.pull-refresh-hint') ||
                 target.closest('.menu-circular-text')) {
                 // カウントをリセット（イベントの伝播は妨げない）
+                backgroundClickCount = 0;
+                return;
+            }
+            
+            // バッジがドラッグ中の場合も無視
+            if (target.closest('.badge.dragging') || document.querySelector('.badge.dragging')) {
                 backgroundClickCount = 0;
                 return;
             }
@@ -6439,6 +6461,7 @@
                 const left = 24; // 左から24px
                 const top = urgentCardY;
                 const rotation = 0; // 回転なし
+                // 階層2: タスクカード（緊急タスクは最前面に表示）
                 const zIndex = 1000 + index; // 緊急タスクは最前面に表示（z-index 1000以上）
                 
                 // カードの高さを考慮して次の位置を計算
@@ -6447,7 +6470,8 @@
                 card.style.top = top + 'px';
                 card.style.left = left + 'px';
                 card.style.transform = `rotate(${rotation}deg)`;
-                card.style.zIndex = zIndex;
+                    // 階層2: タスクカード（rank 1-5 → z-index 2-6）
+                    card.style.zIndex = zIndex;
                 
                 // 難易度（priority）に応じた基本報酬を計算
                 const difficulty = typeof task.priority === 'number' ? task.priority : 
@@ -6594,7 +6618,8 @@
                     } while (attempts < maxAttempts);
                     
                     // z-indexはランクに応じて設定（ランクが高いほど上に重なる）
-                    zIndex = rank;
+                    // 階層2: タスクカード（rank 1-5 → z-index 2-6）
+                    zIndex = rank + 1; // rank 1 → z-index 2, rank 5 → z-index 6
                     
                     // タスクデータに位置情報を保存（相対位置（%）で保存）
                     if (!task.position) {
@@ -6624,7 +6649,8 @@
                 card.style.top = top + 'px';
                 card.style.left = left + 'px';
                 card.style.transform = `rotate(${rotation}deg)`;
-                card.style.zIndex = zIndex;
+                    // 階層2: タスクカード（rank 1-5 → z-index 2-6）
+                    card.style.zIndex = zIndex;
                 
                 // 難易度（priority）に応じた基本報酬を計算（既に定義されたrankを使用）
                 const baseReward = rankRewards[rank] || rankRewards[2] || 0;
@@ -7477,6 +7503,9 @@
             
             // タッチ開始（スマホ対応）
             badgeElement.addEventListener('touchstart', function(e) {
+                // 5回タップのイベントリスナーに到達しないようにする
+                e.stopPropagation();
+                
                 if (e.touches.length === 1) {
                     const touch = e.touches[0];
                     touchStartX = touch.clientX;
@@ -7495,7 +7524,7 @@
                         isBadgeDragging = true;
                         this.classList.add('dragging');
                         this.style.transition = 'none';
-                        this.style.zIndex = '1000';
+                        this.style.zIndex = '500'; /* 階層5: ドラッグ中はボタンと同じレベル */
                         this.style.opacity = '0.8';
                         this.style.transform += ' scale(1.1)';
                     } else {
@@ -7521,6 +7550,9 @@
             
             // タッチ移動（スマホ対応）
             badgeElement.addEventListener('touchmove', function(e) {
+                // 5回タップのイベントリスナーに到達しないようにする
+                e.stopPropagation();
+                
                 // 選択済みバッジが移動した場合は即座にドラッグ開始
                 if (this.classList.contains('selected') && selectedBadge === this && !isBadgeDragging) {
                     const touch = e.touches[0];
@@ -7532,7 +7564,7 @@
                         isBadgeDragging = true;
                         this.classList.add('dragging');
                         this.style.transition = 'none';
-                        this.style.zIndex = '1000';
+                        this.style.zIndex = '500'; /* 階層5: ドラッグ中はボタンと同じレベル */
                         this.style.opacity = '0.8';
                         this.style.transform += ' scale(1.1)';
                     }
@@ -7598,6 +7630,9 @@
             
                 // タッチ終了（スマホ対応）
                 badgeElement.addEventListener('touchend', function(e) {
+                    // 5回タップのイベントリスナーに到達しないようにする
+                    e.stopPropagation();
+                    
                     clearTimeout(badgeTouchTimeout);
                     badgeTouchTimeout = null;
                     
@@ -7746,6 +7781,9 @@
             
             // タッチキャンセル（スマホ対応）
             badgeElement.addEventListener('touchcancel', function(e) {
+                // 5回タップのイベントリスナーに到達しないようにする
+                e.stopPropagation();
+                
                 clearTimeout(badgeTouchTimeout);
                 badgeTouchTimeout = null;
                 isBadgeDragging = false;
