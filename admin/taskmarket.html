@@ -464,12 +464,69 @@
         
         /* タスク詳細セクションのスタイル */
         .task-detail-section {
-            background: transparent;
-            border: none;
-            border-radius: 0;
+            background: var(--panel-background);
+            border: 3px solid var(--panel-border);
+            border-radius: var(--border-radius-lg);
             padding: var(--spacing-lg);
             margin-bottom: var(--spacing-lg);
-            box-shadow: none;
+            box-shadow: 0 4px 12px var(--color-primary-shadow);
+        }
+        
+        .task-detail-section h3,
+        .task-detail-section h4,
+        .task-detail-section h2 {
+            color: var(--panel-heading);
+        }
+        
+        .task-detail-section p,
+        .task-detail-section div,
+        .task-detail-section span {
+            color: var(--panel-text);
+        }
+        
+        /* タスク基本情報セクション */
+        .task-basic-info-section {
+            background: var(--panel-background);
+            border: 3px solid var(--panel-border);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: 0 4px 12px var(--color-primary-shadow);
+        }
+        
+        .task-basic-info-section h3,
+        .task-basic-info-section h4,
+        .task-basic-info-section h2 {
+            color: var(--panel-heading);
+        }
+        
+        .task-basic-info-section p,
+        .task-basic-info-section div,
+        .task-basic-info-section span {
+            color: var(--panel-text);
+        }
+        
+        /* タスク情報編集セクション */
+        .task-edit-section {
+            background: var(--panel-background);
+            border: 3px solid var(--panel-border);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: 0 4px 12px var(--color-primary-shadow);
+        }
+        
+        .task-edit-section h3,
+        .task-edit-section h4,
+        .task-edit-section h2 {
+            color: var(--panel-heading);
+        }
+        
+        .task-edit-section p,
+        .task-edit-section div,
+        .task-edit-section span,
+        .task-edit-section label {
+            color: var(--panel-text);
         }
         
         .task-comment-section {
@@ -852,7 +909,7 @@
             padding-bottom: var(--spacing-md);
             border: none;
             border-bottom: 3px solid rgba(0, 0, 0, 0.1);
-            background: transparent;
+            background: #ffffff;
             position: sticky;
             top: 0;
             z-index: 10;
@@ -3685,7 +3742,7 @@
                 <h2 class="time-record-panel-title">タイムレコード</h2>
                 <button class="time-record-panel-close-button" onclick="closeTimeRecordPanel()" title="閉じる">×</button>
             </div>
-            <div id="timeRecordContent">
+            <div id="timeRecordContent" class="time-record-panel-content">
                 <div style="text-align: center; padding: var(--spacing-xl); color: var(--color-text-secondary);">
                     <p>読み込み中...</p>
                 </div>
@@ -7991,51 +8048,51 @@
             
             sortedDates.forEach(dateKey => {
                 const dateReports = reportsByDate[dateKey];
-                html += `<div style="margin-bottom: var(--spacing-lg); padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); border-left: 4px solid var(--panel-4-color);">`;
-                html += `<h4 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">${dateKey}</h4>`;
+                html += `<div style="margin-bottom: var(--spacing-lg); padding: var(--spacing-md); background: #ffffff; border-radius: var(--border-radius-md); border-left: 4px solid var(--panel-border); max-width: 100%; overflow: hidden; word-wrap: break-word;">`;
+                html += `<h4 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--panel-heading);">${dateKey}</h4>`;
                 
                 dateReports.forEach(report => {
-                    const userAvatar = report.userPicture ? `<img src="${report.userPicture}" alt="${report.userName}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: var(--spacing-sm);">` : '<div style="width: 32px; height: 32px; border-radius: 50%; background: var(--panel-4-color); display: flex; align-items: center; justify-content: center; color: white; font-weight: var(--font-weight-bold); margin-right: var(--spacing-sm);">' + (report.userName.charAt(0).toUpperCase() || 'U') + '</div>';
+                    const userAvatar = report.userPicture ? `<img src="${report.userPicture}" alt="${report.userName}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: var(--spacing-sm);">` : '<div style="width: 32px; height: 32px; border-radius: 50%; background: var(--panel-border); display: flex; align-items: center; justify-content: center; color: white; font-weight: var(--font-weight-bold); margin-right: var(--spacing-sm);">' + (report.userName.charAt(0).toUpperCase() || 'U') + '</div>';
                     
-                    html += `<div style="margin-bottom: var(--spacing-md); padding: var(--spacing-md); background: var(--color-background); border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">`;
+                    html += `<div style="margin-bottom: var(--spacing-md); padding: var(--spacing-md); background: #ffffff; border-radius: var(--border-radius-md); border: 1px solid var(--color-border); max-width: 100%; overflow: hidden; word-wrap: break-word; box-sizing: border-box;">`;
                     
                     // 日報ヘッダー（ユーザー情報）
-                    html += `<div style="display: flex; align-items: center; margin-bottom: var(--spacing-md); padding-bottom: var(--spacing-sm); border-bottom: 1px solid var(--color-border);">`;
+                    html += `<div style="display: flex; align-items: center; margin-bottom: var(--spacing-md); padding-bottom: var(--spacing-sm); border-bottom: 1px solid var(--color-border); max-width: 100%; overflow: hidden;">`;
                     html += userAvatar;
-                    html += `<div style="flex: 1;">`;
-                    html += `<div style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">${escapeHtml(report.userName)}</div>`;
-                    html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">${new Date(report.createdAt).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}</div>`;
+                    html += `<div style="flex: 1; min-width: 0; overflow: hidden;">`;
+                    html += `<div style="font-weight: var(--font-weight-semibold); color: var(--panel-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(report.userName)}</div>`;
+                    html += `<div style="font-size: var(--font-size-xs); color: var(--panel-text);">${new Date(report.createdAt).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}</div>`;
                     html += `</div>`;
                     html += `</div>`;
                     
                     // 日報内容
-                    html += `<div style="margin-bottom: var(--spacing-md); color: var(--color-text-primary); white-space: pre-wrap; line-height: 1.6;">${escapeHtml(report.content)}</div>`;
+                    html += `<div style="margin-bottom: var(--spacing-md); color: var(--panel-text); white-space: pre-wrap; line-height: 1.6; max-width: 100%; overflow-wrap: break-word; word-wrap: break-word;">${escapeHtml(report.content)}</div>`;
                     
                     // コメントセクション
-                    html += `<div style="margin-top: var(--spacing-md); padding-top: var(--spacing-md); border-top: 1px solid var(--color-border);">`;
-                    html += `<div style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">コメント (${report.comments ? report.comments.length : 0})</div>`;
+                    html += `<div style="margin-top: var(--spacing-md); padding-top: var(--spacing-md); border-top: 1px solid var(--color-border); max-width: 100%; overflow: hidden;">`;
+                    html += `<div style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-sm); color: var(--panel-heading);">コメント (${report.comments ? report.comments.length : 0})</div>`;
                     
                     // コメント入力フォーム
-                    html += `<div style="margin-bottom: var(--spacing-md);">`;
-                    html += `<label for="mypageCommentInput_${report.id}" style="display: block; font-size: var(--font-size-xs); margin-bottom: var(--spacing-xs); color: var(--color-text-secondary);">コメントを入力</label>`;
-                    html += `<textarea id="mypageCommentInput_${report.id}" rows="3" style="width: 100%; padding: var(--spacing-sm); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm); font-family: var(--font-family-primary); resize: vertical; background: var(--color-background); color: var(--color-text-primary);" placeholder="コメントを入力..."></textarea>`;
-                    html += `<button onclick="addComment(${report.id})" style="margin-top: var(--spacing-xs); padding: var(--spacing-xs) var(--spacing-md); background: var(--panel-4-color); color: white; border: none; border-radius: var(--border-radius-sm); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer;">コメントを投稿</button>`;
+                    html += `<div style="margin-bottom: var(--spacing-md); max-width: 100%; overflow: hidden;">`;
+                    html += `<label for="mypageCommentInput_${report.id}" style="display: block; font-size: var(--font-size-xs); margin-bottom: var(--spacing-xs); color: var(--panel-text);">コメントを入力</label>`;
+                    html += `<textarea id="mypageCommentInput_${report.id}" rows="3" style="width: 100%; padding: var(--spacing-sm); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm); font-family: var(--font-family-primary); resize: vertical; background: #ffffff; color: var(--color-text-primary); box-sizing: border-box; max-width: 100%;" placeholder="コメントを入力..."></textarea>`;
+                    html += `<button onclick="addComment(${report.id})" style="margin-top: var(--spacing-xs); padding: var(--spacing-xs) var(--spacing-md); background: var(--panel-border); color: white; border: none; border-radius: var(--border-radius-sm); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer;">コメントを投稿</button>`;
                     html += `</div>`;
                     
                     // コメント一覧
                     if (report.comments && report.comments.length > 0) {
                         report.comments.forEach(comment => {
-                            const commentAvatar = comment.userPicture ? `<img src="${comment.userPicture}" alt="${comment.userName}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: var(--spacing-xs);">` : '<div style="width: 24px; height: 24px; border-radius: 50%; background: var(--panel-4-color); display: flex; align-items: center; justify-content: center; color: white; font-size: var(--font-size-xs); font-weight: var(--font-weight-bold); margin-right: var(--spacing-xs);">' + (comment.userName.charAt(0).toUpperCase() || 'U') + '</div>';
+                            const commentAvatar = comment.userPicture ? `<img src="${comment.userPicture}" alt="${comment.userName}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: var(--spacing-xs);">` : '<div style="width: 24px; height: 24px; border-radius: 50%; background: var(--panel-border); display: flex; align-items: center; justify-content: center; color: white; font-size: var(--font-size-xs); font-weight: var(--font-weight-bold); margin-right: var(--spacing-xs);">' + (comment.userName.charAt(0).toUpperCase() || 'U') + '</div>';
                             
-                            html += `<div style="margin-bottom: var(--spacing-sm); padding: var(--spacing-sm); background: var(--color-background-secondary); border-radius: var(--border-radius-sm);">`;
-                            html += `<div style="display: flex; align-items: center; margin-bottom: var(--spacing-xs);">`;
+                            html += `<div style="margin-bottom: var(--spacing-sm); padding: var(--spacing-sm); background: #ffffff; border-radius: var(--border-radius-sm); max-width: 100%; overflow: hidden; box-sizing: border-box;">`;
+                            html += `<div style="display: flex; align-items: center; margin-bottom: var(--spacing-xs); max-width: 100%; overflow: hidden;">`;
                             html += commentAvatar;
-                            html += `<div style="flex: 1;">`;
-                            html += `<div style="font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">${escapeHtml(comment.userName)}</div>`;
-                            html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">${new Date(comment.createdAt).toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}</div>`;
+                            html += `<div style="flex: 1; min-width: 0; overflow: hidden;">`;
+                            html += `<div style="font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); color: var(--panel-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(comment.userName)}</div>`;
+                            html += `<div style="font-size: var(--font-size-xs); color: var(--panel-text);">${new Date(comment.createdAt).toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}</div>`;
                             html += `</div>`;
                             html += `</div>`;
-                            html += `<div style="font-size: var(--font-size-sm); color: var(--color-text-primary); white-space: pre-wrap; line-height: 1.5; margin-left: calc(24px + var(--spacing-xs));">${escapeHtml(comment.content)}</div>`;
+                            html += `<div style="font-size: var(--font-size-sm); color: var(--panel-text); white-space: pre-wrap; line-height: 1.5; margin-left: calc(24px + var(--spacing-xs)); max-width: 100%; overflow-wrap: break-word; word-wrap: break-word;">${escapeHtml(comment.content)}</div>`;
                             html += `</div>`;
                         });
                     }
@@ -8417,6 +8474,12 @@
             const overlay = document.getElementById('timeRecordPanelOverlay');
             const panel = document.getElementById('timeRecordPanel');
             const content = document.getElementById('timeRecordContent');
+            if (!content) return;
+            
+            // クラスを追加（既にHTMLに追加済みだが、念のため）
+            if (!content.classList.contains('time-record-panel-content')) {
+                content.classList.add('time-record-panel-content');
+            }
             
             function formatDateTime(isoString) {
                 if (!isoString) return '-';
@@ -8521,10 +8584,8 @@
             }
             
             content.innerHTML = `
-                <div style="background: var(--color-background); border-radius: var(--border-radius-lg); padding: var(--spacing-md);">
-                    ${currentInfoHTML}
-                    ${historyHTML}
-                </div>
+                ${currentInfoHTML}
+                ${historyHTML}
             `;
             
             // パネルを開く
@@ -8817,7 +8878,7 @@
             }
             
             detailContent.innerHTML = `
-                <!-- タスク情報セクション（視認性を向上） -->
+                <!-- タスク情報セクション（タイトル/作業開始/作業休止/予想作業時間/作業時間） -->
                 <div class="task-detail-section">
                     <!-- タイトルと作業ボタン -->
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--spacing-md); flex-wrap: wrap; gap: var(--spacing-sm);">
@@ -8840,11 +8901,19 @@
                     </div>
                     </div>
                     
+                    ${task.estimatedTime ? `
+                        <div style="margin-bottom: var(--spacing-md); padding: var(--spacing-sm); background: #ffffff; border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">
+                            <div style="font-size: var(--font-size-xs); color: var(--panel-text); margin-bottom: var(--spacing-xs);">予想作業時間</div>
+                            <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); color: var(--panel-text);">${formatEstimatedTime(task.estimatedTime)}</div>
+                        </div>
+                    ` : ''}
+                    
                     <!-- タイムレコード表示領域 -->
                     ${timeRecordHTML}
+                </div>
                     
-                    <!-- 基本情報 -->
-                    <div class="task-basic-info">
+                <!-- 基本情報セクション（カテゴリー/ランク（難易度）/ステータス/報酬情報/説明） -->
+                <div class="task-basic-info-section">
                         <div class="task-info-grid">
                             <div class="task-info-card">
                                 <div class="task-info-label">カテゴリー</div>
@@ -8883,20 +8952,12 @@
                             </div>
                         </div>
                         
-                    ${task.estimatedTime ? `
-                        <div class="task-info-card" style="margin-bottom: var(--spacing-md);">
-                            <div class="task-info-label">予想作業時間</div>
-                            <div class="task-info-value">${formatEstimatedTime(task.estimatedTime)}</div>
-                    </div>
-                    ` : ''}
-                        
                         ${task.description ? `
-                        <div class="task-description-card">
-                            <div style="font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); color: var(--color-text-primary); margin-bottom: var(--spacing-sm);">📝 説明</div>
-                            <p style="color: var(--color-text-primary); line-height: 1.8; margin: 0; white-space: pre-wrap;">${escapeHtml(task.description)}</p>
+                        <div style="margin-top: var(--spacing-md); padding: var(--spacing-md); background: #ffffff; border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">
+                            <div style="font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); color: var(--panel-heading); margin-bottom: var(--spacing-sm);">📝 説明</div>
+                            <p style="color: var(--panel-text); line-height: 1.8; margin: 0; white-space: pre-wrap;">${escapeHtml(task.description)}</p>
                         </div>
                         ` : ''}
-                    </div>
                 </div>
                 
                 <!-- コメントセクション（視認性を向上） -->
@@ -8986,7 +9047,7 @@
             const detailContent = document.getElementById('detailContent');
             
             detailContent.innerHTML = `
-                <div style="background: var(--color-background); border-radius: var(--border-radius-lg); padding: var(--spacing-md);">
+                <div class="task-edit-section">
                     <form id="taskEditForm">
                         <div class="form-group">
                             <label for="editTaskTitle">タイトル *</label>
