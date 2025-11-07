@@ -2185,6 +2185,10 @@
             }
         }
 
+        /* ============================================
+           タスクカード関連スタイル
+           ============================================ */
+        
         .task-card {
             position: absolute;
             background: var(--color-background);
@@ -2194,7 +2198,7 @@
             transition: var(--transition-normal);
             cursor: grab;
             width: 280px;
-            min-height: 180px;
+            height: 200px; /* 固定高さに統一 */
             box-shadow: var(--shadow-md);
             display: flex;
             flex-direction: column;
@@ -2202,7 +2206,7 @@
             overflow: hidden;
         }
         
-        /* カテゴリアイコンをカードの背景に設定 */
+        /* ランク画像をカードの背景に設定 */
         .task-card::before {
             content: '';
             position: absolute;
@@ -2210,11 +2214,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: var(--category-icon-url, none);
-            background-size: contain;
+            background-image: var(--rank-image-url, none);
+            background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
-            opacity: 0.1;
+            opacity: 0.15;
             z-index: 0;
             pointer-events: none;
         }
@@ -2222,57 +2226,6 @@
         .task-card > * {
             position: relative;
             z-index: 1;
-        }
-
-        /* カードサイズ：大 */
-        .card-size-large .task-card {
-            width: 320px;
-            min-height: 220px;
-            padding: var(--spacing-lg);
-        }
-
-        .card-size-large .task-card-title {
-            font-size: var(--font-size-lg);
-        }
-
-        .card-size-large .task-card-description {
-            font-size: var(--font-size-md);
-            -webkit-line-clamp: 5;
-        }
-
-        .card-size-large .task-card-footer {
-            font-size: var(--font-size-sm);
-        }
-
-        /* カードサイズ：中（デフォルト） */
-        .card-size-medium .task-card {
-            width: 280px;
-            min-height: 180px;
-            padding: var(--spacing-md);
-        }
-
-        /* カードサイズ：小 */
-        .card-size-small .task-card {
-            width: 240px;
-            min-height: 150px;
-            padding: var(--spacing-sm);
-        }
-
-        .card-size-small .task-card-title {
-            font-size: var(--font-size-sm);
-        }
-
-        .card-size-small .task-card-description {
-            font-size: var(--font-size-xs);
-            -webkit-line-clamp: 3;
-        }
-
-        .card-size-small .task-card-footer {
-            font-size: 10px;
-        }
-
-        .card-size-small .task-card-priority {
-            font-size: 8px;
         }
 
         /* カードサイズボタンのスタイル */
@@ -5978,13 +5931,13 @@
             // 緊急タスクの高さを計算
             let urgentCardY = 24;
             urgentTasks.forEach(() => {
-                urgentCardY += 180 + 16; // カード高さ + 間隔
+                urgentCardY += 200 + 16; // カード高さ（200px）+ 間隔
             });
             
             // 5列グリッドレイアウトで配置
             const columns = 5;
             const cardWidth = 280;
-            const cardHeight = 180;
+            const cardHeight = 200; // カードの高さを統一（200px）
             const margin = 20;
             
             // SP版かどうかを判定して左端の位置を調整
@@ -6177,14 +6130,9 @@
             const gridHeight = Math.max(800, taskGrid.offsetHeight - 48);
             
             // カードサイズを設定に応じて決定
-            const cardSizes = {
-                large: { width: 320, height: 220 },
-                medium: { width: 280, height: 180 },
-                small: { width: 240, height: 150 }
-            };
-            const currentCardSize = cardSizes[settings.cardSize] || cardSizes.medium;
-            const cardWidth = currentCardSize.width;
-            const cardHeight = currentCardSize.height;
+            // カードサイズを統一（280px x 200px）
+            const cardWidth = 280;
+            const cardHeight = 200;
 
             // カードをクリア（ボタンは残す）
             const addButton = taskGrid.querySelector('.add-task-button');
@@ -6285,24 +6233,24 @@
                 const zIndex = 1000 + index; // 最前面に表示
                 
                 // カードの高さを考慮して次の位置を計算
-                urgentCardY += cardHeight + 16; // カード高さ + 16pxの間隔
+                urgentCardY += 200 + 16; // カード高さ（200px）+ 16pxの間隔
                 
                 card.style.top = top + 'px';
                 card.style.left = left + 'px';
                 card.style.transform = `rotate(${rotation}deg)`;
                 card.style.zIndex = zIndex;
                 
-                // カテゴリアイコンのパスを取得して背景画像として設定
-                const categoryIconPath = getCategoryIconPath(task.category);
-                if (categoryIconPath) {
-                    card.style.setProperty('--category-icon-url', `url(${categoryIconPath})`);
-                }
-                
                 // 難易度（priority）に応じた基本報酬を計算
                 const difficulty = typeof task.priority === 'number' ? task.priority : 
                                    (task.priority === 'low' ? 1 : task.priority === 'medium' ? 2 : task.priority === 'high' ? 3 : 2);
                 const baseReward = rankRewards[difficulty] || rankRewards[2] || 0;
                 const supportCoins = task.supportCoins || 0;
+                
+                // ランク画像のパスを取得して背景画像として設定
+                const rankImagePath = getRankImagePath(difficulty);
+                if (rankImagePath) {
+                    card.style.setProperty('--rank-image-url', `url(${rankImagePath})`);
+                }
                 
                 // バッジの吸着数を取得
                 const attachedBadgeCount = taskBadges[task.id] && taskBadges[task.id].length > 0 ? taskBadges[task.id].length : 0;
@@ -6460,18 +6408,18 @@
                 card.style.transform = `rotate(${rotation}deg)`;
                 card.style.zIndex = zIndex;
                 
-                // カテゴリアイコンのパスを取得して背景画像として設定
-                const categoryIconPath = getCategoryIconPath(task.category);
-                if (categoryIconPath) {
-                    card.style.setProperty('--category-icon-url', `url(${categoryIconPath})`);
-                }
-                
                 // 難易度（priority）に応じた基本報酬を計算
                 // priorityが数値（1-5）の場合はそのまま、文字列の場合は互換性のため変換
                 const difficulty = typeof task.priority === 'number' ? task.priority : 
                                    (task.priority === 'low' ? 1 : task.priority === 'medium' ? 2 : task.priority === 'high' ? 3 : 2);
                 const baseReward = rankRewards[difficulty] || rankRewards[2] || 0;
                 const supportCoins = task.supportCoins || 0;
+                
+                // ランク画像のパスを取得して背景画像として設定
+                const rankImagePath = getRankImagePath(difficulty);
+                if (rankImagePath) {
+                    card.style.setProperty('--rank-image-url', `url(${rankImagePath})`);
+                }
                 
                 // バッジの吸着数を取得
                 const attachedBadgeCount = taskBadges[task.id] && taskBadges[task.id].length > 0 ? taskBadges[task.id].length : 0;
@@ -7106,7 +7054,7 @@
                     const gridWidth = this.offsetWidth - 48;
                     const gridHeight = Math.max(800, this.offsetHeight - 48);
                     const cardWidth = 280;
-                    const cardHeight = 180;
+                    const cardHeight = 200; // カードの高さを統一（200px）
                     
                     // グリッド内の相対位置を計算（マウス位置からオフセットを引く）
                     let left = e.clientX - gridRect.left - draggedOffset.x - 24; // padding分を考慮
@@ -9170,11 +9118,30 @@
             return '⭐️'.repeat(count);
         }
         
-        // 難易度を⭐️で表示（1-5）
+        /* ============================================
+           タスクカード関連関数
+           ============================================ */
+        
+        // ランク画像のパスを取得
+        function getRankImagePath(rank) {
+            const rankNum = typeof rank === 'number' ? rank : parseInt(rank) || 2;
+            const normalizedRank = Math.max(1, Math.min(5, rankNum)); // 1-5の範囲に制限
+            
+            if (normalizedRank === 5) {
+                return 'images/ランク５.svg';
+            } else {
+                return `images/ランク${normalizedRank}.png`;
+            }
+        }
+        
+        // 難易度を⭐️数字で表示（1-5）
         function getDifficultyStars(difficulty) {
             const difficultyNum = typeof difficulty === 'number' ? difficulty : parseInt(difficulty) || 2;
             const count = Math.max(1, Math.min(5, difficultyNum)); // 1-5の範囲に制限
-            return '⭐️'.repeat(count);
+            
+            // 数字を全角に変換
+            const fullWidthNumbers = ['１', '２', '３', '４', '５'];
+            return `⭐️${fullWidthNumbers[count - 1]}`;
         }
         
         // 予想作業時間をフォーマット（分単位を日本語表記に変換）
