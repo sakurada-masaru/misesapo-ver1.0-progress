@@ -2194,7 +2194,7 @@
             background: transparent; /* 背景を透明にして画像を表示 */
             border: 2px solid var(--color-border);
             border-radius: var(--border-radius-lg);
-            padding: var(--spacing-md);
+            padding: 0; /* パディングを削除して画像が端まで表示されるように */
             transition: var(--transition-normal);
             cursor: grab;
             width: 280px;
@@ -2372,7 +2372,7 @@
             background: transparent; /* 背景を透明にして画像を表示 */
             border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
             border-bottom: 2px solid var(--color-border);
-            margin: calc(var(--spacing-md) * -1) calc(var(--spacing-md) * -1) var(--spacing-md) calc(var(--spacing-md) * -1);
+            margin: 0; /* マージンを削除 */
         }
 
         .task-card-title {
@@ -2405,6 +2405,7 @@
             color: var(--color-text-secondary);
             line-height: 1.5;
             margin: 0;
+            padding: var(--spacing-sm) var(--spacing-md); /* 説明文のパディングを追加 */
             overflow: hidden;
             display: -webkit-box;
             -webkit-line-clamp: 4;
@@ -2416,8 +2417,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: var(--spacing-md);
-            padding-top: var(--spacing-sm);
+            margin-top: 0; /* マージンを削除 */
+            padding: var(--spacing-sm) var(--spacing-md); /* フッターのパディングを追加 */
             border-top: 1px solid var(--color-border);
             font-size: var(--font-size-sm);
             color: var(--color-text-secondary);
