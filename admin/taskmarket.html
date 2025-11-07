@@ -10588,13 +10588,32 @@
             updateTaskGrid();
             }
             // 新規追加ボタンのメニュー機能を設定
-            setTimeout(() => {
-                const addTaskButton = document.getElementById('addTaskButton');
-                if (addTaskButton && !addTaskButton.hasAttribute('data-menu-setup')) {
+            console.log('新規追加ボタンの初期化を開始します');
+            const addTaskButton = document.getElementById('addTaskButton');
+            console.log('新規追加ボタン:', addTaskButton);
+            if (addTaskButton) {
+                if (!addTaskButton.hasAttribute('data-menu-setup')) {
                     addTaskButton.setAttribute('data-menu-setup', 'true');
+                    console.log('新規追加ボタンのメニュー機能を設定します');
                     setupAddTaskButtonMenu();
+                } else {
+                    console.log('新規追加ボタンは既に設定済みです');
                 }
-            }, 200);
+            } else {
+                console.error('新規追加ボタンが見つかりません。200ms後に再試行します');
+                setTimeout(() => {
+                    const retryButton = document.getElementById('addTaskButton');
+                    if (retryButton) {
+                        if (!retryButton.hasAttribute('data-menu-setup')) {
+                            retryButton.setAttribute('data-menu-setup', 'true');
+                            console.log('新規追加ボタンのメニュー機能を設定します（再試行）');
+                            setupAddTaskButtonMenu();
+                        }
+                    } else {
+                        console.error('新規追加ボタンが見つかりません（再試行失敗）');
+                    }
+                }, 200);
+            }
             if (badges.length > 0) {
             updateBadges(); // バッジを表示
             }
