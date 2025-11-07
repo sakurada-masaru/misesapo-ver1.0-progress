@@ -5162,10 +5162,12 @@
             
             // [PC] クリックイベント
             addTaskButton.addEventListener('click', function(e) {
+                console.log('新規追加ボタンがクリックされました');
                 if (clickTimeout) {
                     clearTimeout(clickTimeout);
                     clickTimeout = null;
                     // [PC] ダブルクリック
+                    console.log('ダブルクリック検出');
                     toggleAddTaskMenu();
                 } else {
                     clickTimeout = setTimeout(() => {
