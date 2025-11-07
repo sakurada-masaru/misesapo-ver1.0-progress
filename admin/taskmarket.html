@@ -6322,9 +6322,20 @@
             const cardWidth = currentCardSize.width;
             const cardHeight = currentCardSize.height;
 
-            // カードをクリア（ボタンは残す）
+            // カードをクリア（ボタンとバッジは残す）
             const addButton = taskGrid.querySelector('.add-task-button');
             const completeButton = taskGrid.querySelector('.complete-button');
+            
+            // バッジ要素を一時的に保存（innerHTMLでクリアすると削除されるため）
+            const existingBadges = taskGrid.querySelectorAll('.badge:not(.attached)');
+            const badgeData = [];
+            existingBadges.forEach(badgeElement => {
+                const badgeId = parseInt(badgeElement.dataset.badgeId);
+                const badge = badges.find(b => b.id === badgeId);
+                if (badge && !badge.attachedToTaskId) {
+                    badgeData.push(badge);
+                }
+            });
             
             // ボタンを一時的に保存（innerHTMLでクリアすると削除されるため）
             const addButtonClone = addButton ? addButton.cloneNode(true) : null;
@@ -6357,6 +6368,9 @@
                 const newCompleteButton = completeButtonClone;
                 newCompleteButton.id = 'completeButton';
                 taskGrid.appendChild(newCompleteButton);
+                // 完了ボタンのハンドラーをリセットして再設定
+                completeButtonHandlerSet = false;
+                setupCompleteButtonDrop(); // ドロップ処理を再設定
             } else {
                 const complete = document.createElement('div');
                 complete.className = 'complete-button';
@@ -6367,6 +6381,13 @@
                 completeButtonHandlerSet = false;
                 setupCompleteButtonDrop(); // ドロップ処理を再設定
             }
+            
+            // バッジを再追加（ドラッグ機能を再設定）
+            badgeData.forEach(badge => {
+                const badgeElement = createBadgeElement(badge);
+                taskGrid.appendChild(badgeElement);
+                setupBadgeDragAndDrop(badgeElement, badge);
+            });
             
             
             // taskGrid内には追加しない
