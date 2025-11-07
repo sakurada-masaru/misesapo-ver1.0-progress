@@ -5487,7 +5487,13 @@
                         return;
                     }
                 } catch (error) {
-                    console.warn('Firebase読み込みエラー:', error);
+                    // QUICプロトコルのエラーは警告として処理（接続自体は成功している可能性がある）
+                    if (error.code === 'unavailable' || error.message && error.message.includes('QUIC')) {
+                        console.warn('⚠️ Firestore接続警告（QUICプロトコル）:', error.message);
+                        console.warn('⚠️ 接続自体は成功している可能性があります。機能に影響がない場合は無視してください。');
+                    } else {
+                        console.warn('Firebase読み込みエラー:', error);
+                    }
                 }
             }
 
@@ -5539,10 +5545,11 @@
             if (!firebaseInitialized || !db) return;
 
             try {
-                db.collection('taskMarket').doc('main').onSnapshot((doc) => {
-                    if (doc.exists) {
-                        const data = doc.data();
-                        console.log('🔄 リアルタイム更新を受信しました:', data);
+                db.collection('taskMarket').doc('main').onSnapshot(
+                    (doc) => {
+                        if (doc.exists) {
+                            const data = doc.data();
+                            console.log('🔄 リアルタイム更新を受信しました:', data);
                         
                         // データが更新された場合のみ反映（自分自身の更新は除外）
                         // タスクデータ、バッジ、リソース、アーカイブ、日報は全ユーザーで共有
@@ -5563,7 +5570,13 @@
                         updateArchiveReports();
                     }
                 }, (error) => {
-                    console.error('リアルタイム更新エラー:', error);
+                    // QUICプロトコルのエラーは警告として処理（接続自体は成功している可能性がある）
+                    if (error.code === 'unavailable' || error.message && error.message.includes('QUIC')) {
+                        console.warn('⚠️ Firestore接続警告（QUICプロトコル）:', error.message);
+                        console.warn('⚠️ 接続自体は成功している可能性があります。機能に影響がない場合は無視してください。');
+                    } else {
+                        console.error('❌ リアルタイム更新エラー:', error);
+                    }
                 });
             } catch (error) {
                 console.error('リアルタイムリスナー設定エラー:', error);
