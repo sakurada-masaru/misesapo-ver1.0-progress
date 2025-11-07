@@ -31,17 +31,108 @@
          ========================================
         */
         :root {
-            /* カラーパレット */
-            --color-primary: #FF679C;
-            --color-primary-hover: #FF4081;
-            --color-primary-light: rgba(255, 103, 156, 0.1);
-            --color-primary-shadow: rgba(255, 103, 156, 0.2);
+            /* ========================================
+               カラーパレット
+               ======================================== */
+            /* ベースカラー */
+            --color-base: #FCF9EA;
             
+            /* アクセントカラー */
+            --color-accent: #BADFDB;
+            --color-accent-hover: #9dd0cb;
+            --color-accent-light: rgba(186, 223, 219, 0.1);
+            --color-accent-shadow: rgba(186, 223, 219, 0.2);
+            
+            /* アクセントカラー（ダーク） */
+            --color-accent-dark: #37353E;
+            --color-accent-dark-hover: #2d2b33;
+            --color-accent-dark-light: rgba(55, 53, 62, 0.1);
+            --color-accent-dark-shadow: rgba(55, 53, 62, 0.2);
+            
+            /* メインカラー（ピンク） */
+            --color-primary: #FFA4A4;
+            --color-primary-hover: #ff8a8a;
+            --color-primary-light: rgba(255, 164, 164, 0.1);
+            --color-primary-shadow: rgba(255, 164, 164, 0.2);
+            --color-primary-border: #FFA4A4;
+            
+            /* サブカラー（淡いピンク） */
+            --color-sub: #FFBDBD;
+            --color-sub-hover: #ffa8a8;
+            --color-sub-light: rgba(255, 189, 189, 0.1);
+            --color-sub-shadow: rgba(255, 189, 189, 0.2);
+            
+            /* サブカラー（グリーン） */
+            --color-sub-green: #A3DC9A;
+            --color-sub-green-hover: #8fd184;
+            --color-sub-green-light: rgba(163, 220, 154, 0.1);
+            --color-sub-green-shadow: rgba(163, 220, 154, 0.2);
+            
+            /* 背景色 */
             --color-background: #ffffff;
             --color-background-secondary: #fafafa;
-            --color-text-primary: #333333;
-            --color-text-secondary: #7f8c8d;
+            --color-background-panel: #FCF9EA;
+            --color-background-section: #FCF9EA;
+            --color-background-section-accent: #FFBDBD;
+            --color-background-card: #FCF9EA;
+            --color-background-reward: #FFBDBD;
+            --color-background-time-record: #BADFDB;
+            --color-background-empty: #FCF9EA;
+            
+            /* テキスト色 */
+            --color-text-primary: #37353E;
+            --color-text-secondary: #44444E;
+            --color-text-accent: #715A5A;
+            --color-text-accent-2: #D3DAD9;
+            --color-text-muted: #9ca3af;
+            
+            /* ボーダー色 */
             --color-border: #e1e8ed;
+            --color-border-panel: #FFA4A4;
+            --color-border-empty: #FFA4A4;
+            --color-border-accent: #BADFDB;
+            
+            /* H1タイトルテンプレート */
+            --h1-title-background: #FFA4A4;
+            --h1-title-border: #ff8a8a;
+            --h1-title-text: #FCF9EA;
+            
+            /* H2タイトルテンプレート */
+            --h2-title-background: #FCF9EA;
+            --h2-title-border: #BADFDB;
+            --h2-title-text: #715A5A;
+            
+            /* パネル共通テンプレート（セクション用） */
+            --panel-background: #FCF9EA;
+            --panel-border: #FFA4A4;
+            --panel-heading: #37353E;
+            --panel-text: #715A5A;
+            
+            /* セクション別配色テンプレート */
+            --section-1-background: #FCF9EA;
+            --section-1-border: #FFA4A4;
+            --section-2-background: #FCF9EA;
+            --section-2-border: #BADFDB;
+            --section-3-background: #FCF9EA;
+            --section-3-border: #A3DC9A;
+            --section-4-background: #FCF9EA;
+            --section-4-border: #FFBDBD;
+            
+            /* コメント入力フォームテンプレート */
+            --comment-form-border-top: 1px solid var(--color-border);
+            --comment-form-padding-top: var(--spacing-md);
+            --comment-form-label-font-weight: var(--font-weight-semibold);
+            --comment-form-label-color: var(--color-text-secondary);
+            --comment-form-label-margin-bottom: var(--spacing-xs);
+            --comment-form-label-font-size: var(--font-size-sm);
+            --comment-form-input-width: 100%;
+            --comment-form-input-padding: var(--spacing-xs);
+            --comment-form-input-border: 1px solid var(--color-border);
+            --comment-form-input-border-radius: var(--border-radius-sm);
+            --comment-form-input-background: var(--color-background);
+            --comment-form-input-color: var(--color-text-primary);
+            --comment-form-textarea-resize: vertical;
+            --comment-form-button-width: 100%;
             
             /* フォント設定 */
             --font-family-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -354,7 +445,14 @@
             right: 0;
             width: 40%;
             height: 100%;
-            background: var(--color-background-secondary);
+            background: #F9F8F6;
+            background-image: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 24px,
+                rgba(0, 0, 0, 0.05) 24px,
+                rgba(0, 0, 0, 0.05) 25px
+            );
             box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
             z-index: 1501;
             transform: translateX(100%);
@@ -362,6 +460,283 @@
             overflow-y: auto;
             border-left: 2px solid var(--color-border);
             padding: var(--spacing-lg);
+        }
+        
+        /* タスク詳細セクションのスタイル */
+        .task-detail-section {
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: none;
+        }
+        
+        .task-comment-section {
+            background: var(--section-1-background);
+            border: 3px solid var(--section-1-border);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: 0 4px 12px var(--color-primary-shadow);
+        }
+        
+        .task-comment-section h4,
+        .task-comment-section h3,
+        .task-comment-section h2 {
+            color: var(--panel-heading);
+        }
+        
+        .task-comment-section p,
+        .task-comment-section div,
+        .task-comment-section span {
+            color: var(--panel-text);
+        }
+        
+        .time-record-empty {
+            background: var(--color-background-empty);
+            border: 3px solid var(--color-primary);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-md);
+            text-align: center;
+            box-shadow: 0 2px 8px var(--color-primary-shadow);
+        }
+        
+        .time-record-active {
+            background: var(--color-background-time-record);
+            border: 3px solid var(--color-accent);
+            border-radius: var(--border-radius-md);
+            box-shadow: 0 4px 16px var(--color-accent-shadow);
+            padding: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+        
+        .time-record-total {
+            background: var(--color-sub);
+            border: 3px solid var(--color-primary);
+            border-radius: var(--border-radius-md);
+            box-shadow: 0 4px 16px var(--color-primary-shadow);
+            padding: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+        
+        /* 作業開始/休止ボタンのスタイル */
+        .work-start-button {
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-bold);
+            cursor: pointer;
+            box-shadow: 0 2px 8px var(--color-primary-shadow);
+            transition: all 0.3s;
+        }
+        
+        .work-start-button:hover:not(.disabled) {
+            transform: scale(1.05);
+            background: var(--color-primary-hover);
+        }
+        
+        .work-start-button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .work-stop-button {
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--color-sub-green);
+            color: white;
+            border: 2px solid var(--color-sub-green);
+            border-radius: var(--border-radius-md);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-bold);
+            cursor: pointer;
+            box-shadow: 0 2px 8px var(--color-sub-green-shadow);
+            transition: all 0.3s;
+        }
+        
+        .work-stop-button:hover:not(.disabled) {
+            transform: scale(1.05);
+            background: var(--color-sub-green-hover);
+            color: white;
+            box-shadow: 0 4px 12px var(--color-sub-green-shadow);
+        }
+        
+        /* タスク詳細パネル内の基本情報カード */
+        .task-info-card {
+            padding: var(--spacing-md);
+            background: var(--section-3-background);
+            border-radius: var(--border-radius-md);
+            border-left: 5px solid var(--section-3-border);
+            box-shadow: 0 2px 8px var(--color-accent-shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .task-info-card h4,
+        .task-info-card h3,
+        .task-info-card h2 {
+            color: var(--panel-heading);
+        }
+        
+        .task-info-card p,
+        .task-info-card div,
+        .task-info-card span {
+            color: var(--panel-text);
+        }
+        
+        .task-info-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--color-accent-shadow);
+            border-left-color: var(--color-primary);
+        }
+        
+        .task-info-label {
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--spacing-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .task-info-value {
+            font-size: var(--font-size-lg);
+            color: var(--color-primary);
+            font-weight: var(--font-weight-bold);
+        }
+        
+        .task-reward-section {
+            padding: var(--spacing-lg);
+            background: var(--section-2-background);
+            border-radius: var(--border-radius-md);
+            border: 3px solid var(--section-2-border);
+            margin-bottom: var(--spacing-md);
+            box-shadow: 0 4px 16px var(--color-primary-shadow);
+        }
+        
+        .task-reward-section h4,
+        .task-reward-section h3,
+        .task-reward-section h2 {
+            color: var(--panel-heading);
+        }
+        
+        .task-reward-section p,
+        .task-reward-section div,
+        .task-reward-section span {
+            color: var(--panel-text);
+        }
+        
+        .task-reward-header {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 3px solid var(--color-primary);
+        }
+        
+        .task-reward-item {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-md);
+            padding: var(--spacing-sm);
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .task-reward-value {
+            font-weight: var(--font-weight-bold);
+            font-size: var(--font-size-lg);
+            color: var(--color-primary);
+            text-shadow: 0 1px 2px var(--color-primary-shadow);
+        }
+        
+        .task-reward-total {
+            margin-top: var(--spacing-md);
+            padding: var(--spacing-md);
+            background: var(--color-primary);
+            border-radius: var(--border-radius-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px var(--color-primary-shadow);
+        }
+        
+        .task-reward-total-label {
+            font-weight: var(--font-weight-bold);
+            color: white;
+            font-size: var(--font-size-md);
+        }
+        
+        .task-reward-total-value {
+            font-weight: var(--font-weight-bold);
+            font-size: var(--font-size-xl);
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .task-basic-info {
+            margin-top: var(--spacing-lg);
+            padding: var(--spacing-lg);
+            border-top: 4px solid var(--color-accent);
+            background: var(--color-base);
+            border-radius: var(--border-radius-md);
+            box-shadow: 0 2px 8px var(--color-accent-shadow);
+        }
+        
+        .task-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .task-description-card {
+            margin-top: var(--spacing-md);
+            padding: var(--spacing-lg);
+            background: var(--section-4-background);
+            border-radius: var(--border-radius-md);
+            border-left: 5px solid var(--section-4-border);
+            box-shadow: 0 2px 8px var(--color-accent-shadow);
+        }
+        
+        .task-description-card h4,
+        .task-description-card h3,
+        .task-description-card h2 {
+            color: var(--panel-heading);
+        }
+        
+        .task-description-card p,
+        .task-description-card div,
+        .task-description-card span {
+            color: var(--panel-text);
+        }
+        
+        .task-detail-title {
+            font-size: var(--font-size-xl);
+            margin: 0;
+            color: var(--h1-title-text);
+            font-weight: var(--font-weight-bold);
+            flex: 1;
+            min-width: 200px;
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--h1-title-background);
+            border-radius: var(--border-radius-md);
+            border: 3px solid var(--h1-title-border);
+            box-shadow: none;
+        }
+        
+        .work-stop-button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .detail-board.active {
@@ -391,14 +766,33 @@
             right: 0;
             width: 40%;
             height: 100%;
-            background: var(--color-background-secondary);
+            background: #F9F8F6;
+            background-image: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 24px,
+                rgba(0, 0, 0, 0.05) 24px,
+                rgba(0, 0, 0, 0.05) 25px
+            );
             box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
             z-index: 1601;
             transform: translateX(100%);
             transition: transform 0.3s ease;
             overflow-y: auto;
-            border-left: 2px solid var(--color-border);
+            border-left: 2px solid var(--panel-border);
             padding: var(--spacing-lg);
+        }
+        
+        .time-record-panel h4,
+        .time-record-panel h3,
+        .time-record-panel h2 {
+            color: var(--panel-heading);
+        }
+        
+        .time-record-panel p,
+        .time-record-panel div,
+        .time-record-panel span {
+            color: var(--panel-text);
         }
 
         .time-record-panel.active {
@@ -453,13 +847,16 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: var(--spacing-lg);
+            padding: var(--spacing-md) var(--spacing-lg);
+            padding-left: var(--spacing-lg);
             padding-bottom: var(--spacing-md);
-            border-bottom: 2px solid var(--color-border);
+            border: none;
+            border-bottom: 3px solid rgba(0, 0, 0, 0.1);
+            background: transparent;
             position: sticky;
             top: 0;
-            background: var(--color-background-secondary);
             z-index: 10;
-            padding-top: var(--spacing-md);
+            box-shadow: none;
         }
 
         .detail-board-close-button {
@@ -610,7 +1007,7 @@
             position: fixed;
             width: 64px;
             height: 64px;
-            background: #4CAF50;
+            background: var(--color-sub-green);
             color: white;
             border: none;
             border-radius: 50%;
@@ -628,17 +1025,17 @@
         }
         
         .complete-button:hover {
-            background: #45a049;
+            background: var(--color-sub-green-hover);
             box-shadow: var(--shadow-xl);
             transform: translateY(-2px) scale(1.1);
             opacity: 1;
         }
         
         .complete-button.drag-over {
-            background: #45a049;
+            background: var(--color-sub-green-hover);
             transform: scale(1.2);
             opacity: 1;
-            box-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+            box-shadow: 0 0 20px var(--color-sub-green-shadow);
         }
         
         .complete-icon {
@@ -992,13 +1389,32 @@
             left: 0;
             width: 40%;
             height: 100%;
-            background: var(--color-background);
+            background: #F9F8F6;
+            background-image: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 24px,
+                rgba(0, 0, 0, 0.05) 24px,
+                rgba(0, 0, 0, 0.05) 25px
+            );
             box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
             z-index: 2001;
             transform: translateX(-100%);
             transition: transform 0.3s ease;
             overflow-y: auto;
-            border-right: 2px solid var(--color-border);
+            border-right: 2px solid var(--panel-border);
+        }
+        
+        .slide-panel h4,
+        .slide-panel h3,
+        .slide-panel h2 {
+            color: var(--panel-heading);
+        }
+        
+        .slide-panel p,
+        .slide-panel div,
+        .slide-panel span {
+            color: var(--panel-text);
         }
 
         .slide-panel.active {
@@ -1020,8 +1436,13 @@
         .slide-panel-title {
             font-size: var(--font-size-xl);
             font-weight: var(--font-weight-bold);
-            color: var(--color-text-primary);
+            color: var(--h1-title-text);
             margin: 0;
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--h1-title-background);
+            border-radius: var(--border-radius-md);
+            border: 3px solid var(--h1-title-border);
+            box-shadow: none;
         }
 
         .slide-panel-close-button {
@@ -1341,7 +1762,7 @@
         }
 
         .slide-panel-header.panel-4 {
-            border-bottom: 2px solid var(--panel-4-color);
+            border-bottom: none;
         }
 
         .slide-panel-header.panel-5 {
@@ -1455,9 +1876,12 @@
         }
 
         .mypage-tab.active {
-            color: var(--panel-4-color);
-            border-bottom-color: var(--panel-4-color);
+            color: var(--h2-title-text);
+            background: var(--h2-title-background);
+            border: 3px solid var(--h2-title-border);
+            border-radius: var(--border-radius-md);
             font-weight: var(--font-weight-bold);
+            border-bottom: 3px solid var(--h2-title-border);
         }
 
         .mypage-tab-content {
@@ -1466,6 +1890,28 @@
 
         .mypage-tab-content.active {
             display: block !important;
+        }
+        
+        /* マイページセクションコンテナ */
+        .mypage-section-container {
+            background: var(--panel-background);
+            border: 3px solid var(--panel-border);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: 0 4px 12px var(--color-primary-shadow);
+        }
+        
+        .mypage-section-container h3,
+        .mypage-section-container h4,
+        .mypage-section-container h2 {
+            color: var(--panel-heading);
+        }
+        
+        .mypage-section-container p,
+        .mypage-section-container div,
+        .mypage-section-container span {
+            color: var(--panel-text);
         }
 
         /* 設定パネルタブスタイル */
@@ -1929,7 +2375,7 @@
         /* ======================================== */
         @media (max-width: 768px) {
             /* [SP] メニューボタンの追加スタイル調整 */
-            /* サイズは既に上で定義済み（80px x 80px） */
+                /* サイズは既に上で定義済み（80px x 80px） */
 
             /* [SP] メニューボタンのホバー効果調整 */
             .menu-icon:hover {
@@ -2560,18 +3006,6 @@
             color: #000000 !important;
         }
 
-        .task-card-badge-attachment {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-            flex: 1;
-            width: 50%;
-            padding-right: var(--spacing-sm);
-            border-right: 1px solid rgba(0, 0, 0, 0.08); /* より薄いボーダー */
-            justify-content: flex-start;
-        }
-
-
         .task-card-reward {
             flex: 1;
             width: 50%;
@@ -2698,7 +3132,14 @@
             font-size: var(--font-size-xl);
             font-weight: var(--font-weight-bold);
             color: var(--color-text-primary);
+            margin: 0;
             margin-bottom: var(--spacing-sm);
+            padding-bottom: 0;
+            border-bottom: none;
+            display: inline-block;
+            width: 100%;
+            position: relative;
+            padding-left: 0;
         }
 
         /* レスポンシブ対応 */
@@ -3026,25 +3467,6 @@
                 width: 32px;
                 height: 32px;
                 font-size: 24px;
-            }
-
-            /* バッジ */
-            .badge {
-                width: 48px;
-                height: 48px;
-            }
-
-            .badge-icon {
-                font-size: 18px;
-            }
-
-            .badge-name {
-                font-size: 8px;
-            }
-
-            .task-card .badge {
-                width: 40px;
-                height: 40px;
             }
 
             /* ツールチップ（モバイルでは簡略表示または非表示） */
@@ -3577,18 +3999,18 @@
                 <!-- ステータスタブ -->
                 <div id="mypageStatusTab" class="mypage-tab-content active">
                     <!-- ステータス表示セクション -->
-                    <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
-                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-4-color); padding-bottom: var(--spacing-sm);">ステータス</h3>
+                    <div class="mypage-section-container" style="margin-bottom: var(--spacing-lg);">
+                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--panel-heading);">ステータス</h3>
                         <div id="myStatusContent" style="min-height: 200px;">
-                            <p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">データを読み込み中...</p>
+                            <p style="color: var(--panel-text); text-align: center; padding: var(--spacing-xl);">データを読み込み中...</p>
                         </div>
                     </div>
                     
                     <!-- 着手タスクとタイムレコードセクション -->
-                    <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
-                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-4-color); padding-bottom: var(--spacing-sm);">着手したタスク</h3>
+                    <div class="mypage-section-container" style="margin-bottom: var(--spacing-lg);">
+                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--panel-heading);">着手したタスク</h3>
                         <div id="myTasksContent" style="min-height: 200px;">
-                            <p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">データを読み込み中...</p>
+                            <p style="color: var(--panel-text); text-align: center; padding: var(--spacing-xl);">データを読み込み中...</p>
                         </div>
                     </div>
                 </div>
@@ -3597,10 +4019,10 @@
                 <div id="mypageReportTab" class="mypage-tab-content" style="display: none;">
                     <!-- 日報作成セクション -->
                     <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
-                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-4-color); padding-bottom: var(--spacing-sm);">日報作成</h3>
+                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--panel-heading);">日報作成</h3>
                         <div style="margin-bottom: var(--spacing-md);">
-                            <label for="dailyReportText" style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); display: block; margin-bottom: var(--spacing-xs);">日報内容</label>
-                            <textarea id="dailyReportText" rows="10" style="width: 100%; padding: var(--spacing-sm); border: 1px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-family: var(--font-family-primary); resize: vertical; min-height: 200px; background: var(--color-background); color: var(--color-text-primary);" placeholder="今日の作業内容や成果を記入してください..."></textarea>
+                            <label for="dailyReportText" style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--panel-text); display: block; margin-bottom: var(--spacing-xs);">日報内容</label>
+                            <textarea id="dailyReportText" rows="10" style="width: 100%; padding: var(--spacing-sm); border: 1px solid var(--color-border); border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-family: var(--font-family-primary); resize: vertical; min-height: 200px; background: #ffffff; color: var(--color-text-primary);" placeholder="今日の作業内容や成果を記入してください..."></textarea>
                             <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-sm);">
                                 <button id="saveDailyReportButton" class="settings-button" style="flex: 1; padding: var(--spacing-sm); background: var(--panel-4-color); color: white; border: none; border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer;">保存</button>
                                 <button id="submitDailyReportButton" class="settings-button" style="flex: 1; padding: var(--spacing-sm); background: var(--panel-5-color); color: white; border: none; border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer;">アーカイブに送信</button>
@@ -3958,9 +4380,9 @@
 
 
         
-        // タイムレコード（バッジがタスクに付けられた時間から完了までの時間を記録）
+        // タイムレコード（ユーザーがタスクに作業を開始した時間から完了までの時間を記録）
         let timeRecords = [];
-        // timeRecords構造: [{ id, taskId, badgeId, startTime, endTime, duration, status }]
+        // timeRecords構造: [{ id, taskId, userId, startTime, endTime, duration, status }]
 
         // メニューアイコンの位置データ（相対位置（%）で保存）
         let menuIconPosition = null;
@@ -4401,7 +4823,6 @@
             
             // [PC] ドラッグ終了
             menuIcon.addEventListener('dragend', function(e) {
-                // this.style.visibility = 'visible'; // ドラッグ中も表示しているため不要
                 this.classList.remove('dragging');
                 taskGrid.classList.remove('drag-over');
                 // メニュー項目が展開されている場合は位置を更新
@@ -5469,13 +5890,10 @@
             // 2) localStorageから読み込み（フォールバック）
             try {
                 const savedTasks = localStorage.getItem('taskMarketTasks');
-                const savedBadges = localStorage.getItem('taskMarketBadges');
-                const savedTaskBadges = localStorage.getItem('taskMarketTaskBadges');
                 const savedTimeRecords = localStorage.getItem('timeRecords');
                 const savedExternalLinks = localStorage.getItem('externalLinks');
 
                 if (savedTasks) tasks = JSON.parse(savedTasks);
-                if (savedBadges) badges = JSON.parse(savedBadges);
                 if (savedTimeRecords) timeRecords = JSON.parse(savedTimeRecords);
                 if (savedExternalLinks) externalLinks = JSON.parse(savedExternalLinks);
                 
@@ -6911,12 +7329,29 @@
             console.log('タスクを完了にしました:', task.title);
         }
         
-        // タイムレコードを作成（バッジがタスクに付けられた時）
-        function createTimeRecord(taskId, badgeId) {
+        // タイムレコードを開始（ユーザーが作業開始ボタンを押した時）
+        function startTimeRecordForUser(taskId) {
+            if (!currentUser || !currentUser.id) {
+                alert('ログインが必要です');
+                return null;
+            }
+            
+            // 既にアクティブなタイムレコードがあるかチェック
+            const existingActive = timeRecords.find(r => 
+                r.taskId === taskId && 
+                r.userId === currentUser.id && 
+                r.status === 'active'
+            );
+            
+            if (existingActive) {
+                alert('既に作業中のタイムレコードがあります');
+                return existingActive;
+            }
+            
             const timeRecord = {
                 id: Date.now(),
                 taskId: taskId,
-                badgeId: badgeId,
+                userId: currentUser.id,
                 startTime: new Date().toISOString(),
                 endTime: null,
                 duration: null, // 秒単位
@@ -6926,11 +7361,44 @@
             timeRecords.push(timeRecord);
             saveTimeRecords();
             
-            console.log('タイムレコードを作成しました:', timeRecord);
+            console.log('タイムレコードを開始しました:', timeRecord);
             return timeRecord;
         }
         
-        // タスクに紐づくすべてのアクティブなタイムレコードを終了
+        // タイムレコードを停止（ユーザーが作業休止ボタンを押した時）
+        function stopTimeRecordForUser(taskId) {
+            if (!currentUser || !currentUser.id) {
+                alert('ログインが必要です');
+                return;
+            }
+            
+            const endTime = new Date();
+            const endTimeISO = endTime.toISOString();
+            
+            let stopped = false;
+            timeRecords.forEach(record => {
+                if (record.taskId === taskId && 
+                    record.userId === currentUser.id && 
+                    record.status === 'active') {
+                    const startTime = new Date(record.startTime);
+                    const duration = Math.floor((endTime - startTime) / 1000); // 秒単位
+                    
+                    record.endTime = endTimeISO;
+                    record.duration = duration;
+                    record.status = 'completed';
+                    stopped = true;
+                }
+            });
+            
+            if (stopped) {
+            saveTimeRecords();
+                console.log('タイムレコードを停止しました:', taskId);
+            } else {
+                alert('停止するタイムレコードが見つかりません');
+            }
+        }
+        
+        // タスクに紐づくすべてのアクティブなタイムレコードを終了（タスク完了時など）
         function endTimeRecordsForTask(taskId) {
             const endTime = new Date();
             const endTimeISO = endTime.toISOString();
@@ -7020,7 +7488,7 @@
             if (!content) return;
             
             if (!currentUser) {
-                content.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">ログインしてください</p>';
+                content.innerHTML = '<p style="color: var(--panel-text); text-align: center; padding: var(--spacing-xl);">ログインしてください</p>';
                 return;
             }
             
@@ -7048,16 +7516,16 @@
             const professionOptions = ['デザイナー', 'コーダー', 'エンジニア', 'ディレクター', 'プランナー'];
             
             let html = '';
-            html += `<div style="margin-bottom: var(--spacing-md); padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">`;
+            html += `<div style="margin-bottom: var(--spacing-md); padding: var(--spacing-md); background: #ffffff; border-radius: var(--border-radius-md);">`;
             html += `<div style="display: flex; align-items: center; margin-bottom: var(--spacing-md);">`;
             if (currentUser.picture) {
                 html += `<img src="${currentUser.picture}" alt="${currentUser.name}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; margin-right: var(--spacing-sm);">`;
             }
             html += `<div style="flex: 1;">`;
-            html += `<div style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary); font-size: var(--font-size-md);">${escapeHtml(currentUser.name || currentUser.email || 'ユーザー')}</div>`;
+            html += `<div style="font-weight: var(--font-weight-semibold); color: var(--panel-heading); font-size: var(--font-size-md);">${escapeHtml(currentUser.name || currentUser.email || 'ユーザー')}</div>`;
             html += `<div style="margin-top: var(--spacing-xs);">`;
-            html += `<label for="professionSelect" style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-right: var(--spacing-xs);">職業:</label>`;
-            html += `<select id="professionSelect" style="padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm); background: var(--color-background); color: var(--color-text-primary);">`;
+            html += `<label for="professionSelect" style="font-size: var(--font-size-xs); color: var(--panel-text); margin-right: var(--spacing-xs);">職業:</label>`;
+            html += `<select id="professionSelect" style="padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm); background: #ffffff; color: var(--color-text-primary);">`;
             html += `<option value="">選択してください</option>`;
             professionOptions.forEach(prof => {
                 html += `<option value="${prof}" ${myPageData.profession === prof ? 'selected' : ''}>${prof}</option>`;
@@ -7069,27 +7537,27 @@
             html += `</div>`;
             
             html += `<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">`;
-            html += `<div style="padding: var(--spacing-sm); background: var(--color-background); border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">`;
-            html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--spacing-xs);">総獲得</div>`;
-            html += `<div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--panel-4-color);">💰 ${myPageData.totalCoins || 0}</div>`;
+            html += `<div style="padding: var(--spacing-sm); background: #ffffff; border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">`;
+            html += `<div style="font-size: var(--font-size-xs); color: var(--panel-text); margin-bottom: var(--spacing-xs);">総獲得</div>`;
+            html += `<div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--panel-text);">💰 ${myPageData.totalCoins || 0}</div>`;
             html += `</div>`;
-            html += `<div style="padding: var(--spacing-sm); background: var(--color-background); border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">`;
-            html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--spacing-xs);">今月の獲得</div>`;
-            html += `<div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--panel-4-color);">💰 ${myPageData.monthlyCoins || 0}</div>`;
+            html += `<div style="padding: var(--spacing-sm); background: #ffffff; border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">`;
+            html += `<div style="font-size: var(--font-size-xs); color: var(--panel-text); margin-bottom: var(--spacing-xs);">今月の獲得</div>`;
+            html += `<div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--panel-text);">💰 ${myPageData.monthlyCoins || 0}</div>`;
             html += `</div>`;
-            html += `<div style="padding: var(--spacing-sm); background: var(--color-background); border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">`;
-            html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--spacing-xs);">今月の完了タスク</div>`;
-            html += `<div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-text-primary);">✓ ${monthlyCompletedTasks.length}</div>`;
+            html += `<div style="padding: var(--spacing-sm); background: #ffffff; border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">`;
+            html += `<div style="font-size: var(--font-size-xs); color: var(--panel-text); margin-bottom: var(--spacing-xs);">今月の完了タスク</div>`;
+            html += `<div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--panel-text);">✓ ${monthlyCompletedTasks.length}</div>`;
             html += `</div>`;
-            html += `<div style="padding: var(--spacing-sm); background: var(--color-background); border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">`;
-            html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--spacing-xs);">今月の作業時間</div>`;
-            html += `<div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-text-primary);">⏱️ ${formatDuration(monthlyTotalTime)}</div>`;
+            html += `<div style="padding: var(--spacing-sm); background: #ffffff; border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">`;
+            html += `<div style="font-size: var(--font-size-xs); color: var(--panel-text); margin-bottom: var(--spacing-xs);">今月の作業時間</div>`;
+            html += `<div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--panel-text);">⏱️ ${formatDuration(monthlyTotalTime)}</div>`;
             html += `</div>`;
             html += `</div>`;
             
             // コイン履歴
             html += `<div style="margin-top: var(--spacing-md);">`;
-            html += `<div style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--spacing-sm);">履歴</div>`;
+            html += `<div style="font-weight: var(--font-weight-semibold); color: var(--panel-heading); margin-bottom: var(--spacing-sm);">履歴</div>`;
             const recentHistory = coinHistory
                 .filter(h => h.userId === currentUser.id)
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -7100,12 +7568,12 @@
                 recentHistory.forEach(entry => {
                     const date = new Date(entry.createdAt);
                     const typeLabel = entry.type === 'support' ? '応援' : '報酬';
-                    const typeColor = entry.type === 'support' ? 'var(--panel-5-color)' : 'var(--panel-4-color)';
-                    html += `<div style="padding: var(--spacing-sm); margin-bottom: var(--spacing-xs); background: var(--color-background); border-radius: var(--border-radius-sm); border-left: 3px solid ${typeColor};">`;
+                    const typeColor = entry.type === 'support' ? 'var(--panel-5-color)' : 'var(--panel-border)';
+                    html += `<div style="padding: var(--spacing-sm); margin-bottom: var(--spacing-xs); background: #ffffff; border-radius: var(--border-radius-sm); border-left: 3px solid ${typeColor};">`;
                     html += `<div style="display: flex; justify-content: space-between; align-items: center;">`;
                     html += `<div style="flex: 1;">`;
-                    html += `<div style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">${escapeHtml(entry.taskTitle || 'タスク')}</div>`;
-                    html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">${date.toLocaleString('ja-JP')} - ${typeLabel}</div>`;
+                    html += `<div style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--panel-text);">${escapeHtml(entry.taskTitle || 'タスク')}</div>`;
+                    html += `<div style="font-size: var(--font-size-xs); color: var(--panel-text);">${date.toLocaleString('ja-JP')} - ${typeLabel}</div>`;
                     html += `</div>`;
                     html += `<div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); color: ${typeColor};">+${entry.coins}</div>`;
                     html += `</div>`;
@@ -7113,7 +7581,7 @@
                 });
                 html += `</div>`;
             } else {
-                html += `<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-md);">履歴がありません</p>`;
+                html += `<p style="color: var(--panel-text); text-align: center; padding: var(--spacing-md);">履歴がありません</p>`;
             }
             html += `</div>`;
             
@@ -7173,7 +7641,7 @@
             
             // ログインしていない場合はメッセージを表示
             if (!currentUser || !currentUser.id) {
-                content.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">ログインが必要です</p>';
+                content.innerHTML = '<p style="color: var(--panel-text); text-align: center; padding: var(--spacing-xl);">ログインが必要です</p>';
                 return;
             }
             
@@ -7181,7 +7649,7 @@
             const userTimeRecords = timeRecords.filter(record => record.userId === currentUser.id);
             
             if (userTimeRecords.length === 0) {
-                content.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">着手したタスクがありません。</p>';
+                content.innerHTML = '<p style="color: var(--panel-text); text-align: center; padding: var(--spacing-xl);">着手したタスクがありません。</p>';
                 return;
             }
             
@@ -7209,8 +7677,8 @@
             
             sortedDates.forEach(dateKey => {
                 const dateRecords = recordsByDate[dateKey];
-                html += `<div style="margin-bottom: var(--spacing-lg); padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); border-left: 4px solid var(--panel-4-color);">`;
-                html += `<h4 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">${dateKey}</h4>`;
+                html += `<div style="margin-bottom: var(--spacing-lg); padding: var(--spacing-md); background: #ffffff; border-radius: var(--border-radius-md); border-left: 4px solid var(--panel-border);">`;
+                html += `<h4 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--panel-heading);">${dateKey}</h4>`;
                 
                 dateRecords.forEach(record => {
                     const task = taskMap[record.taskId];
@@ -7221,15 +7689,15 @@
                     const endTime = record.endTime ? new Date(record.endTime) : null;
                     const duration = record.duration ? formatDuration(record.duration) : (endTime ? formatDuration(Math.floor((endTime - startTime) / 1000)) : '作業中');
                     
-                    html += `<div style="margin-bottom: var(--spacing-md); padding: var(--spacing-sm); background: var(--color-background); border-radius: var(--border-radius-sm); border: 1px solid var(--color-border);">`;
+                    html += `<div style="margin-bottom: var(--spacing-md); padding: var(--spacing-sm); background: #ffffff; border-radius: var(--border-radius-sm); border: 1px solid var(--color-border);">`;
                     html += `<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--spacing-xs);">`;
                     html += `<div style="flex: 1;">`;
-                    html += `<div style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--spacing-xs);">${escapeHtml(task.title)}</div>`;
-                    html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">カテゴリ: ${getCategoryName(task.category)}</div>`;
+                    html += `<div style="font-weight: var(--font-weight-semibold); color: var(--panel-text); margin-bottom: var(--spacing-xs);">${escapeHtml(task.title)}</div>`;
+                    html += `<div style="font-size: var(--font-size-xs); color: var(--panel-text);">カテゴリ: ${getCategoryName(task.category)}</div>`;
                     html += `</div>`;
-                    html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary); text-align: right;">`;
+                    html += `<div style="font-size: var(--font-size-xs); color: var(--panel-text); text-align: right;">`;
                     html += `<div>${startTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })} - ${endTime ? endTime.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }) : '作業中'}</div>`;
-                    html += `<div style="font-weight: var(--font-weight-semibold); color: var(--panel-4-color); margin-top: var(--spacing-xs);">${duration}</div>`;
+                    html += `<div style="font-weight: var(--font-weight-semibold); color: var(--panel-text); margin-top: var(--spacing-xs);">${duration}</div>`;
                     html += `</div>`;
                     html += `</div>`;
                     html += `</div>`;
@@ -7902,7 +8370,7 @@
                     : 'ユーザー';
                 
                 currentInfoHTML = `
-                    <div style="background: var(--color-background); border: 2px solid #4CAF50; border-radius: var(--border-radius-md); padding: var(--spacing-md); margin-bottom: var(--spacing-lg);">
+                    <div style="background: var(--color-background); border: 2px solid var(--color-border-panel); border-radius: var(--border-radius-md); padding: var(--spacing-md); margin-bottom: var(--spacing-lg);">
                         <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">現在のタイムレコード</h3>
                         <div style="margin-bottom: var(--spacing-sm);">
                             <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">ユーザー: </span>
@@ -7919,7 +8387,7 @@
                         </div>
                         ` : ''}
                         <div style="margin-top: var(--spacing-md); padding-top: var(--spacing-md); border-top: 1px solid var(--color-border);">
-                            <span style="font-size: var(--font-size-sm); color: #4CAF50; font-weight: var(--font-weight-semibold);">● 作業中</span>
+                            <span style="font-size: var(--font-size-sm); color: var(--color-primary); font-weight: var(--font-weight-semibold);">● 作業中</span>
                         </div>
                     </div>
                 `;
@@ -8204,47 +8672,170 @@
             const supportCoins = task.supportCoins || 0;
             const difficultyStars = getDifficultyStars(difficulty);
             
-            detailContent.innerHTML = `
-                <!-- タスク情報セクション（枠で囲む） -->
-                <div style="background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-lg); padding: var(--spacing-md); margin-bottom: var(--spacing-lg);">
-                    <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">${task.title}</h3>
-                    <div style="margin-bottom: var(--spacing-sm);">
-                        <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">カテゴリー: </span>
-                        <span>${getCategoryName(task.category)}</span>
+            // 現在のユーザーのアクティブなタイムレコードを取得
+            const taskRecords = getTimeRecordsForTask(task.id);
+            const activeRecord = currentUser && currentUser.id 
+                ? taskRecords.find(r => r.userId === currentUser.id && r.status === 'active')
+                : null;
+            const isWorking = !!activeRecord;
+            
+            // タイムレコード表示用のHTMLを生成
+            let timeRecordHTML = '';
+            if (activeRecord) {
+                const startTime = new Date(activeRecord.startTime);
+                const elapsed = Math.floor((new Date() - startTime) / 1000); // 秒単位
+                const elapsedFormatted = formatDuration(elapsed);
+                
+                timeRecordHTML = `
+                    <div id="activeTimeRecordDisplay" class="time-record-active" style="margin-top: var(--spacing-md); padding: var(--spacing-md);">
+                        <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-sm);">
+                            <span style="font-size: 24px;">⏱️</span>
+                            <h4 style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); color: var(--color-primary); margin: 0;">作業中</h4>
                     </div>
-                    <div style="margin-bottom: var(--spacing-sm);">
-                        <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">難易度: </span>
-                        <span>${difficultyStars}</span>
+                        <div style="font-size: var(--font-size-sm); color: var(--color-text-primary); margin-bottom: var(--spacing-xs);">
+                            <div>開始時刻: ${startTime.toLocaleString('ja-JP', { hour: '2-digit', minute: '2-digit' })}</div>
+                            <div id="elapsedTimeDisplay" style="margin-top: var(--spacing-xs); font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-primary);">
+                                経過時間: ${elapsedFormatted}
                     </div>
-                    <div style="margin-bottom: var(--spacing-md); padding: var(--spacing-sm); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
-                        <div style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--spacing-xs);">💰 報酬</div>
-                        <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">
-                            <div style="margin-bottom: var(--spacing-xs);">報酬: <span style="color: var(--color-text-primary); font-weight: var(--font-weight-semibold);">${baseReward}</span></div>
-                            ${supportCoins > 0 ? `<div>追加報酬（応援）: <span style="color: var(--panel-5-color); font-weight: var(--font-weight-semibold);">+${supportCoins}</span></div>` : '<div style="color: var(--color-text-secondary);">追加報酬（応援）: 0</div>'}
-                            <div style="margin-top: var(--spacing-xs); padding-top: var(--spacing-xs); border-top: 1px solid var(--color-border);">
-                                <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">合計: ${baseReward + supportCoins}</span>
-                            </div>
                         </div>
                     </div>
-                    <div style="margin-bottom: var(--spacing-md); display: flex; align-items: center; gap: var(--spacing-sm);">
-                        <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">ステータス: </span>
-                        <span>${task.status === 'completed' ? '完了' : '未着手'}</span>
+                `;
+                
+                // 経過時間をリアルタイムで更新
+                if (window.activeTimeRecordInterval) {
+                    clearInterval(window.activeTimeRecordInterval);
+                }
+                window.activeTimeRecordInterval = setInterval(() => {
+                    const elapsedDisplay = document.getElementById('elapsedTimeDisplay');
+                    if (elapsedDisplay && activeRecord) {
+                        const now = new Date();
+                        const start = new Date(activeRecord.startTime);
+                        const elapsed = Math.floor((now - start) / 1000);
+                        elapsedDisplay.textContent = `経過時間: ${formatDuration(elapsed)}`;
+                    } else {
+                        clearInterval(window.activeTimeRecordInterval);
+                        window.activeTimeRecordInterval = null;
+                    }
+                }, 1000);
+            } else {
+                const completedRecords = taskRecords.filter(r => r.status === 'completed' && r.duration !== null);
+                const totalDuration = completedRecords.reduce((sum, r) => sum + (r.duration || 0), 0);
+                
+                if (totalDuration > 0) {
+                    timeRecordHTML = `
+                        <div class="time-record-total" style="margin-top: var(--spacing-md); padding: var(--spacing-md);">
+                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-sm);">
+                                <span style="font-size: 24px;">📊</span>
+                                <h4 style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); color: var(--color-primary); margin: 0;">累計作業時間</h4>
+                            </div>
+                            <div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-primary);">
+                                ${formatDuration(totalDuration)}
+                            </div>
+                            <div style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-top: var(--spacing-xs);">
+                                記録数: ${completedRecords.length}件
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    timeRecordHTML = `
+                        <div class="time-record-empty" style="margin-top: var(--spacing-md); padding: var(--spacing-md); background: var(--color-background-empty); border: 2px solid var(--color-border-empty); border-radius: var(--border-radius-md); text-align: center;">
+                        <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                                まだ作業記録がありません
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            detailContent.innerHTML = `
+                <!-- タスク情報セクション（視認性を向上） -->
+                <div class="task-detail-section">
+                    <!-- タイトルと作業ボタン -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--spacing-md); flex-wrap: wrap; gap: var(--spacing-sm);">
+                        <h3 class="task-detail-title">${escapeHtml(task.title)}</h3>
+                        <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
+                            <button onclick="handleStartWork(${task.id})" 
+                                    class="work-start-button ${isWorking ? 'disabled' : ''}"
+                                    ${isWorking ? 'disabled' : ''}
+                                    onmouseover="if (!this.disabled) this.style.transform='scale(1.05)'" 
+                                    onmouseout="if (!this.disabled) this.style.transform='scale(1)'">
+                                ▶ 作業開始
+                            </button>
+                            <button onclick="handleStopWork(${task.id})" 
+                                    class="work-stop-button ${!isWorking ? 'disabled' : ''}"
+                                    ${!isWorking ? 'disabled' : ''}
+                                    onmouseover="if (!this.disabled) this.style.transform='scale(1.05)'" 
+                                    onmouseout="if (!this.disabled) this.style.transform='scale(1)'">
+                                ⏸ 作業休止
+                            </button>
                     </div>
+                    </div>
+                    
+                    <!-- タイムレコード表示領域 -->
+                    ${timeRecordHTML}
+                    
+                    <!-- 基本情報 -->
+                    <div class="task-basic-info">
+                        <div class="task-info-grid">
+                            <div class="task-info-card">
+                                <div class="task-info-label">カテゴリー</div>
+                                <div class="task-info-value">${getCategoryName(task.category)}</div>
+                            </div>
+                            <div class="task-info-card">
+                                <div class="task-info-label">難易度</div>
+                                <div class="task-info-value">${difficultyStars}</div>
+                            </div>
+                            <div class="task-info-card">
+                                <div class="task-info-label">ステータス</div>
+                                <div class="task-info-value">${task.status === 'completed' ? '✅ 完了' : '⏳ 未着手'}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="task-reward-section">
+                            <div class="task-reward-header">
+                                <span>💰</span>
+                                <span>報酬情報</span>
+                            </div>
+                            <div style="font-size: var(--font-size-sm); color: var(--color-text-primary);">
+                                <div class="task-reward-item">
+                                    <span>基本報酬:</span>
+                                    <span class="task-reward-value">${baseReward} コイン</span>
+                                </div>
+                                ${supportCoins > 0 ? `
+                                <div class="task-reward-item">
+                                    <span>追加報酬（応援）:</span>
+                                    <span class="task-reward-value">+${supportCoins} コイン</span>
+                                </div>
+                                ` : ''}
+                                <div class="task-reward-total">
+                                    <span class="task-reward-total-label">合計:</span>
+                                    <span class="task-reward-total-value">${baseReward + supportCoins} コイン</span>
+                                </div>
+                            </div>
+                        </div>
+                        
                     ${task.estimatedTime ? `
-                    <div style="margin-bottom: var(--spacing-md);">
-                        <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">予想作業時間: </span>
-                        <span>${formatEstimatedTime(task.estimatedTime)}</span>
+                        <div class="task-info-card" style="margin-bottom: var(--spacing-md);">
+                            <div class="task-info-label">予想作業時間</div>
+                            <div class="task-info-value">${formatEstimatedTime(task.estimatedTime)}</div>
                     </div>
                     ` : ''}
-                    <div style="margin-top: var(--spacing-md); padding-top: var(--spacing-md); border-top: 1px solid var(--color-border);">
-                        <p style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary); margin-bottom: var(--spacing-sm);">説明:</p>
-                        <p style="color: var(--color-text-primary); line-height: 1.6;">${task.description || '説明なし'}</p>
+                        
+                        ${task.description ? `
+                        <div class="task-description-card">
+                            <div style="font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); color: var(--color-text-primary); margin-bottom: var(--spacing-sm);">📝 説明</div>
+                            <p style="color: var(--color-text-primary); line-height: 1.8; margin: 0; white-space: pre-wrap;">${escapeHtml(task.description)}</p>
+                        </div>
+                        ` : ''}
                     </div>
                 </div>
                 
-                <!-- コメントセクション（はっきり区別） -->
-                <div style="background: var(--color-background-secondary); border: 2px solid var(--color-border); border-radius: var(--border-radius-lg); padding: var(--spacing-md); margin-bottom: var(--spacing-lg);">
-                    <h4 style="font-weight: var(--font-weight-bold); color: var(--color-text-primary); margin-bottom: var(--spacing-md); font-size: var(--font-size-lg); border-bottom: 2px solid var(--color-border); padding-bottom: var(--spacing-sm);">💬 コメント</h4>
+                <!-- コメントセクション（視認性を向上） -->
+                <div class="task-comment-section">
+                    <h4 style="font-weight: var(--font-weight-bold); color: var(--color-text-primary); margin-bottom: var(--spacing-md); font-size: var(--font-size-xl); border-bottom: 3px solid var(--color-border-panel); padding-bottom: var(--spacing-sm); display: flex; align-items: center; gap: var(--spacing-xs);">
+                        <span>💬</span>
+                        <span>コメント</span>
+                    </h4>
                         
                         <!-- コメント一覧 -->
                         <div id="taskCommentsList" style="margin-bottom: var(--spacing-md); max-height: 300px; overflow-y: auto;">
@@ -8286,6 +8877,39 @@
                     </button>
                 </div>
             `;
+        }
+
+        // 作業開始ボタンのハンドラー
+        function handleStartWork(taskId) {
+            if (!currentUser || !currentUser.id) {
+                alert('ログインが必要です');
+                return;
+            }
+            
+            const result = startTimeRecordForUser(taskId);
+            if (result) {
+                // タスク詳細を再表示して更新
+                const task = tasks.find(t => t.id === taskId);
+                if (task) {
+                    renderTaskDetailView(task);
+                }
+            }
+        }
+        
+        // 作業休止ボタンのハンドラー
+        function handleStopWork(taskId) {
+            if (!currentUser || !currentUser.id) {
+                alert('ログインが必要です');
+                return;
+            }
+            
+            stopTimeRecordForUser(taskId);
+            
+            // タスク詳細を再表示して更新
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                renderTaskDetailView(task);
+            }
         }
 
         // タスク詳細の編集モード
@@ -8448,6 +9072,11 @@
 
         // 詳細パネルを閉じる
         function closeDetailBoard() {
+            // 経過時間の更新を停止
+            if (window.activeTimeRecordInterval) {
+                clearInterval(window.activeTimeRecordInterval);
+                window.activeTimeRecordInterval = null;
+            }
             const overlay = document.getElementById('detailBoardOverlay');
             const detailBoard = document.getElementById('detailBoard');
             const editButton = document.getElementById('detailEditButton');
@@ -8724,7 +9353,6 @@
             console.log('タスクデータをリフレッシュします...');
             
             // 実際のリフレッシュ処理（Firebaseなどから再読み込み）
-            // 今回は簡単にupdateTaskGridとupdateBadgesを呼び出す
             setTimeout(() => {
                 updateTaskGrid();
                 
@@ -9224,8 +9852,6 @@
                         this.style.left = clampedX + 'px';
                         this.style.top = clampedY + 'px';
                         
-                        // const panelTrashBin = document.getElementById('panelTrashBin1');
-                        // ...
                     }
                 }
             }, { passive: false });
