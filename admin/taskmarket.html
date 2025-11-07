@@ -7055,8 +7055,10 @@
                     const gridRect = this.getBoundingClientRect();
                     const gridWidth = this.offsetWidth - 48;
                     const gridHeight = Math.max(800, this.offsetHeight - 48);
-                    const cardWidth = 295; // 最大画像サイズ（rank10: 294.76px）に合わせて295px
-                    const cardHeight = 343; // カードの高さ（最大画像高さ293px + 50px上部マージン）
+                    // ドラッグ中のカードのサイズを取得（緊急タスクかどうかでサイズが異なる）
+                    const cardRect = draggedCard.getBoundingClientRect();
+                    const cardWidth = cardRect.width;
+                    const cardHeight = cardRect.height;
                     
                     // グリッド内の相対位置を計算（マウス位置からオフセットを引く）
                     let left = e.clientX - gridRect.left - draggedOffset.x - 24; // padding分を考慮
