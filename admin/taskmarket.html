@@ -5205,10 +5205,15 @@
         // コンテンツボタン（子要素）の表示/非表示を切り替え
         function toggleAddTaskMenu() {
             const addTaskButton = document.getElementById('addTaskButton');
-            if (!addTaskButton) return;
+            if (!addTaskButton) {
+                console.warn('新規追加ボタンが見つかりません');
+                return;
+            }
             
             const menuItems = addTaskButton.querySelectorAll('.menu-item');
             const isActive = menuItems.length > 0 && menuItems[0].classList.contains('active');
+            
+            console.log('新規追加ボタンのメニューを切り替え:', isActive ? '閉じる' : '開く');
             
             if (isActive) {
                 // メニューを閉じる
