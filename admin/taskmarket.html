@@ -6131,10 +6131,13 @@
             // ボタンを再追加
             if (addButton) {
                 taskGrid.appendChild(addButton);
-                // 既存のボタンにもメニュー機能を設定（まだ設定されていない場合）
-                if (!addButton.hasAttribute('data-menu-setup')) {
+                // 既存のボタンにもメニュー機能を設定（まだ設定されていない場合、または再設定が必要な場合）
+                if (!addButton.hasAttribute('data-menu-initialized')) {
                     addButton.setAttribute('data-menu-setup', 'true');
+                    console.log('updateTaskGrid: 新規追加ボタンのメニュー機能を再設定します');
                     setupAddTaskButtonMenu();
+                } else {
+                    console.log('updateTaskGrid: 新規追加ボタンは既に初期化されています');
                 }
             } else {
                 const button = document.createElement('button');
