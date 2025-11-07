@@ -2186,42 +2186,101 @@
         }
 
         /* ============================================
-           タスクカード関連スタイル
+           タスクカード関連スタイル（付箋風デザイン）
            ============================================ */
         
         .task-card {
             position: absolute;
-            background-size: contain; /* 画像全体を表示（切れないように） */
-            background-position: center top; /* 画像を中央上部に配置 */
-            background-repeat: no-repeat; /* 画像の繰り返しを防止 */
-            border: 2px solid var(--color-border);
-            border-radius: var(--border-radius-lg);
-            padding: 30px 0 0 0; /* カードの上に30pxのマージン（パディングとして実装） */
+            background: linear-gradient(135deg, #fffef7 0%, #fffef0 100%);
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px 8px 8px 2px; /* 付箋のような角の丸み */
+            padding: var(--spacing-md);
             transition: var(--transition-normal);
             cursor: grab;
-            width: 270px; /* rank1~5の画像サイズ（270px）に合わせて調整 */
-            height: 220px; /* カード高さを220pxに変更 */
-            box-shadow: var(--shadow-md);
+            width: 280px;
+            min-height: 180px;
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.1),
+                0 1px 3px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5); /* 付箋のような影とハイライト */
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             overflow: hidden;
+            transform-origin: top left; /* 付箋のような回転の基点 */
         }
         
-        /* 緊急タスク（rank10）用のカードサイズ */
-        .task-card.urgent {
-            width: 295px; /* rank10の画像サイズ（294.76px）に合わせて295px */
-            height: 220px; /* カード高さを220pxに変更 */
-        }
-        
-        /* ランク画像のスタイル（背景画像として使用） */
-        .task-card-rank-image {
-            display: none; /* imgタグは非表示（背景画像として使用） */
+        /* カテゴリアイコンをカードの背景に設定 */
+        .task-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: var(--category-icon-url, none);
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.1;
+            z-index: 0;
+            pointer-events: none;
         }
         
         .task-card > * {
             position: relative;
-            z-index: 1; /* コンテンツを画像の上に表示 */
+            z-index: 1;
+        }
+
+        /* カードサイズ：大 */
+        .card-size-large .task-card {
+            width: 320px;
+            min-height: 220px;
+            padding: var(--spacing-lg);
+        }
+
+        .card-size-large .task-card-title {
+            font-size: var(--font-size-lg);
+        }
+
+        .card-size-large .task-card-description {
+            font-size: var(--font-size-md);
+            -webkit-line-clamp: 5;
+        }
+
+        .card-size-large .task-card-footer {
+            font-size: var(--font-size-sm);
+        }
+
+        /* カードサイズ：中（デフォルト） */
+        .card-size-medium .task-card {
+            width: 280px;
+            min-height: 180px;
+            padding: var(--spacing-md);
+        }
+
+        /* カードサイズ：小 */
+        .card-size-small .task-card {
+            width: 240px;
+            min-height: 150px;
+            padding: var(--spacing-sm);
+        }
+
+        .card-size-small .task-card-title {
+            font-size: var(--font-size-sm);
+        }
+
+        .card-size-small .task-card-description {
+            font-size: var(--font-size-xs);
+            -webkit-line-clamp: 3;
+        }
+
+        .card-size-small .task-card-footer {
+            font-size: 10px;
+        }
+
+        .card-size-small .task-card-priority {
+            font-size: 8px;
         }
 
         /* カードサイズボタンのスタイル */
@@ -2242,7 +2301,10 @@
         }
 
         .task-card:hover {
-            box-shadow: var(--shadow-lg);
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.15),
+                0 2px 6px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6); /* ホバー時の影を強化 */
             transform: translateY(-2px) rotate(0deg) !important;
             z-index: 10;
         }
@@ -2365,19 +2427,20 @@
 
         .task-card-header {
             display: flex;
-            justify-content: flex-start;
+            justify-content: space-between;
             align-items: flex-start;
+            gap: var(--spacing-sm);
             padding: var(--spacing-sm) var(--spacing-md);
-            background: transparent; /* 背景色を削除 */
-            border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
-            border-bottom: 2px solid var(--color-border);
-            margin: 0; /* マージンを削除 */
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.3) 100%); /* 付箋のようなヘッダー背景 */
+            border-radius: 6px 6px 0 0; /* 付箋のような角の丸み */
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08); /* より薄いボーダー */
+            margin: calc(var(--spacing-md) * -1) calc(var(--spacing-md) * -1) var(--spacing-md) calc(var(--spacing-md) * -1);
         }
 
         .task-card-title {
             font-size: var(--font-size-md);
             font-weight: var(--font-weight-bold);
-            color: #000; /* 文字を黒に変更 */
+            color: var(--color-text-primary);
             line-height: 1.3;
             margin: 0;
             flex: 1;
@@ -2401,26 +2464,26 @@
         .task-card-description {
             flex: 1;
             font-size: var(--font-size-sm);
-            color: #000; /* 文字を黒に変更 */
+            color: var(--color-text-secondary);
             line-height: 1.5;
             margin: 0;
-            padding: var(--spacing-sm) var(--spacing-md); /* 説明文のパディングを追加 */
-            overflow-wrap: break-word; /* 単語の折り返しを許可 */
-            word-wrap: break-word; /* 互換性のため */
-            white-space: normal; /* 折り返しを許可 */
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            text-overflow: ellipsis;
         }
 
         .task-card-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 0; /* マージンを削除 */
-            padding: var(--spacing-sm) var(--spacing-md); /* フッターのパディングを追加 */
-            border-top: 1px solid var(--color-border);
+            margin-top: var(--spacing-md);
+            padding-top: var(--spacing-sm);
+            border-top: 1px solid rgba(0, 0, 0, 0.08); /* より薄いボーダー */
             font-size: var(--font-size-sm);
-            color: #000; /* 文字を黒に変更 */
+            color: var(--color-text-secondary);
             position: relative;
-            background: transparent; /* 背景色を削除 */
         }
 
         .task-card-badge-attachment {
@@ -2430,13 +2493,13 @@
             flex: 1;
             width: 50%;
             padding-right: var(--spacing-sm);
-            border-right: 1px solid var(--color-border);
+            border-right: 1px solid rgba(0, 0, 0, 0.08); /* より薄いボーダー */
             justify-content: flex-start;
         }
 
         .task-card-badge-attachment .badge-count {
             font-size: var(--font-size-xs);
-            color: #000; /* 文字を黒に変更 */
+            color: var(--color-text-secondary);
             display: flex;
             align-items: center;
             gap: 4px;
@@ -2453,7 +2516,7 @@
 
         .task-card-reward .reward-unit {
             font-size: var(--font-size-xs);
-            color: #000; /* 文字を黒に変更 */
+            color: var(--color-text-secondary);
         }
 
         .task-card-footer-icon {
@@ -2831,7 +2894,7 @@
             .task-card-footer {
                 font-size: calc(var(--font-size-sm) * 0.85);
             }
-
+            
             /* [SP] バッジ吸着数の表示 */
             .task-card-badge-attachment .badge-count {
                 font-size: calc(var(--font-size-xs) * 0.9);
@@ -5498,13 +5561,13 @@
                     console.warn('⚠️ Firestore保存警告（QUICプロトコル）:', error.message);
                     console.warn('⚠️ 接続自体は成功している可能性があります。機能に影響がない場合は無視してください。');
                 } else {
-                    console.error('❌ Firebase保存エラー:', error);
-                    // エラー時はlocalStorageにフォールバック
-                    localStorage.setItem('taskMarketTasks', JSON.stringify(tasks));
-                    localStorage.setItem('taskMarketBadges', JSON.stringify(badges));
-                    localStorage.setItem('taskMarketTaskBadges', JSON.stringify(taskBadges));
-                    localStorage.setItem('timeRecords', JSON.stringify(timeRecords));
-                    localStorage.setItem('externalLinks', JSON.stringify(externalLinks));
+                console.error('❌ Firebase保存エラー:', error);
+                // エラー時はlocalStorageにフォールバック
+                localStorage.setItem('taskMarketTasks', JSON.stringify(tasks));
+                localStorage.setItem('taskMarketBadges', JSON.stringify(badges));
+                localStorage.setItem('taskMarketTaskBadges', JSON.stringify(taskBadges));
+                localStorage.setItem('timeRecords', JSON.stringify(timeRecords));
+                localStorage.setItem('externalLinks', JSON.stringify(externalLinks));
                 }
             }
         }
@@ -5551,7 +5614,7 @@
                         console.warn('⚠️ Firestore接続警告（QUICプロトコル）:', error.message);
                         console.warn('⚠️ 接続自体は成功している可能性があります。機能に影響がない場合は無視してください。');
                     } else {
-                        console.warn('Firebase読み込みエラー:', error);
+                    console.warn('Firebase読み込みエラー:', error);
                     }
                 }
             }
@@ -5606,9 +5669,9 @@
             try {
                 db.collection('taskMarket').doc('main').onSnapshot(
                     (doc) => {
-                        if (doc.exists) {
-                            const data = doc.data();
-                            console.log('🔄 リアルタイム更新を受信しました:', data);
+                    if (doc.exists) {
+                        const data = doc.data();
+                        console.log('🔄 リアルタイム更新を受信しました:', data);
                         
                         // データが更新された場合のみ反映（自分自身の更新は除外）
                         // タスクデータ、バッジ、リソース、アーカイブ、日報は全ユーザーで共有
@@ -5926,13 +5989,13 @@
             // 緊急タスクの高さを計算
             let urgentCardY = 24;
             urgentTasks.forEach(() => {
-                urgentCardY += 220 + 16; // カード高さ（220px）+ 間隔
+                urgentCardY += 180 + 16; // カード高さ + 間隔
             });
             
             // 5列グリッドレイアウトで配置
             const columns = 5;
-            const cardWidth = 270; // rank1~5の画像サイズ（270px）に合わせて調整
-            const cardHeight = 220; // カード高さを220pxに変更
+            const cardWidth = 280;
+            const cardHeight = 180;
             const margin = 20;
             
             // SP版かどうかを判定して左端の位置を調整
@@ -6049,7 +6112,7 @@
                 alignTasksInGrid();
             }
         }
-        
+
         // タスクグリッド更新（掲示板風のランダム配置）
         function updateTaskGrid() {
             const taskGrid = document.getElementById('taskGrid');
@@ -6125,9 +6188,14 @@
             const gridHeight = Math.max(800, taskGrid.offsetHeight - 48);
             
             // カードサイズを設定に応じて決定
-            // カードサイズを統一（rank1~5: 270px x 305px - 画像のアスペクト比に合わせる）
-            const cardWidth = 270; // rank1~5の画像サイズ（270px）に合わせて調整
-            const cardHeight = 220; // カード高さを220pxに変更
+            const cardSizes = {
+                large: { width: 320, height: 220 },
+                medium: { width: 280, height: 180 },
+                small: { width: 240, height: 150 }
+            };
+            const currentCardSize = cardSizes[settings.cardSize] || cardSizes.medium;
+            const cardWidth = currentCardSize.width;
+            const cardHeight = currentCardSize.height;
 
             // カードをクリア（ボタンは残す）
             const addButton = taskGrid.querySelector('.add-task-button');
@@ -6227,27 +6295,25 @@
                 const rotation = 0; // 回転なし
                 const zIndex = 1000 + index; // 最前面に表示
                 
-                // カードの高さを考慮して次の位置を計算（緊急タスクはrank10なので343px）
-                urgentCardY += 220 + 16; // カード高さ（220px）+ 16pxの間隔
+                // カードの高さを考慮して次の位置を計算
+                urgentCardY += cardHeight + 16; // カード高さ + 16pxの間隔
                 
                 card.style.top = top + 'px';
                 card.style.left = left + 'px';
                 card.style.transform = `rotate(${rotation}deg)`;
                 card.style.zIndex = zIndex;
                 
+                // カテゴリアイコンのパスを取得して背景画像として設定
+                const categoryIconPath = getCategoryIconPath(task.category);
+                if (categoryIconPath) {
+                    card.style.setProperty('--category-icon-url', `url(${categoryIconPath})`);
+                }
+                
                 // 難易度（priority）に応じた基本報酬を計算
                 const difficulty = typeof task.priority === 'number' ? task.priority : 
                                    (task.priority === 'low' ? 1 : task.priority === 'medium' ? 2 : task.priority === 'high' ? 3 : 2);
                 const baseReward = rankRewards[difficulty] || rankRewards[2] || 0;
                 const supportCoins = task.supportCoins || 0;
-                
-                // ランク画像のパスを取得（緊急タスクの場合はrank10.svg）
-                const rankImagePath = getRankImagePath(difficulty, task.isUrgent);
-                
-                // 画像を背景として設定
-                if (rankImagePath) {
-                    card.style.backgroundImage = `url(${rankImagePath})`;
-                }
                 
                 // バッジの吸着数を取得
                 const attachedBadgeCount = taskBadges[task.id] && taskBadges[task.id].length > 0 ? taskBadges[task.id].length : 0;
@@ -6257,13 +6323,14 @@
                     <span class="tooltip-text task-card-tooltip">ダブルクリックで詳細を表示</span>
                     <div class="task-card-header">
                         <div class="task-card-title">${task.title}</div>
+                        <div class="task-card-priority">${getDifficultyStars(difficulty)}</div>
                     </div>
                     <div class="task-card-description">${task.description || '説明なし'}</div>
                     <div class="task-card-footer">
                         <div class="task-card-badge-attachment">
                             ${attachedBadgeCount > 0 ? `<span class="badge-count">🏷️ ${attachedBadgeCount}</span>` : ''}
                         </div>
-                        <div class="task-card-reward" style="font-size: var(--font-size-xs); color: #000;">
+                        <div class="task-card-reward" style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">
                             <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
                                 <span>💰</span>
                                 <span class="reward-value">${baseReward}</span>
@@ -6404,20 +6471,18 @@
                 card.style.transform = `rotate(${rotation}deg)`;
                 card.style.zIndex = zIndex;
                 
+                // カテゴリアイコンのパスを取得して背景画像として設定
+                const categoryIconPath = getCategoryIconPath(task.category);
+                if (categoryIconPath) {
+                    card.style.setProperty('--category-icon-url', `url(${categoryIconPath})`);
+                }
+                
                 // 難易度（priority）に応じた基本報酬を計算
                 // priorityが数値（1-5）の場合はそのまま、文字列の場合は互換性のため変換
                 const difficulty = typeof task.priority === 'number' ? task.priority : 
                                    (task.priority === 'low' ? 1 : task.priority === 'medium' ? 2 : task.priority === 'high' ? 3 : 2);
                 const baseReward = rankRewards[difficulty] || rankRewards[2] || 0;
                 const supportCoins = task.supportCoins || 0;
-                
-                // ランク画像のパスを取得（緊急タスクの場合はrank10.svg）
-                const rankImagePath = getRankImagePath(difficulty, task.isUrgent);
-                
-                // 画像を背景として設定
-                if (rankImagePath) {
-                    card.style.backgroundImage = `url(${rankImagePath})`;
-                }
                 
                 // バッジの吸着数を取得
                 const attachedBadgeCount = taskBadges[task.id] && taskBadges[task.id].length > 0 ? taskBadges[task.id].length : 0;
@@ -6427,13 +6492,14 @@
                     <span class="tooltip-text task-card-tooltip">ダブルクリックで詳細を表示</span>
                     <div class="task-card-header">
                         <div class="task-card-title">${task.title}</div>
+                        <div class="task-card-priority">${getDifficultyStars(difficulty)}</div>
                     </div>
                     <div class="task-card-description">${task.description || '説明なし'}</div>
                     <div class="task-card-footer">
                         <div class="task-card-badge-attachment">
                             ${attachedBadgeCount > 0 ? `<span class="badge-count">🏷️ ${attachedBadgeCount}</span>` : ''}
                         </div>
-                        <div class="task-card-reward" style="font-size: var(--font-size-xs); color: #000;">
+                        <div class="task-card-reward" style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">
                             <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
                                 <span>💰</span>
                                 <span class="reward-value">${baseReward}</span>
@@ -7050,10 +7116,8 @@
                     const gridRect = this.getBoundingClientRect();
                     const gridWidth = this.offsetWidth - 48;
                     const gridHeight = Math.max(800, this.offsetHeight - 48);
-                    // ドラッグ中のカードのサイズを取得（緊急タスクかどうかでサイズが異なる）
-                    const cardRect = draggedCard.getBoundingClientRect();
-                    const cardWidth = cardRect.width;
-                    const cardHeight = cardRect.height;
+                    const cardWidth = 280;
+                    const cardHeight = 180;
                     
                     // グリッド内の相対位置を計算（マウス位置からオフセットを引く）
                     let left = e.clientX - gridRect.left - draggedOffset.x - 24; // padding分を考慮
@@ -9120,20 +9184,6 @@
         /* ============================================
            タスクカード関連関数
            ============================================ */
-        
-        // ランク画像のパスを取得
-        function getRankImagePath(rank, isUrgent) {
-            // 緊急タスクの場合はrank10.svgを使用
-            if (isUrgent) {
-                return 'images/rank10.svg';
-            }
-            
-            const rankNum = typeof rank === 'number' ? rank : parseInt(rank) || 2;
-            const normalizedRank = Math.max(1, Math.min(5, rankNum)); // 1-5の範囲に制限
-            
-            // すべてのランク画像をSVGに統一
-            return `images/rank${normalizedRank}.svg`;
-        }
         
         // 難易度を⭐️数字で表示（1-5）
         function getDifficultyStars(difficulty) {
