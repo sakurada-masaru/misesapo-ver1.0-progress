@@ -7905,11 +7905,11 @@
             
             html += `<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">`;
             html += `<div style="padding: var(--spacing-sm); background: var(--color-background); border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">`;
-            html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--spacing-xs);">総獲得コイン</div>`;
+            html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--spacing-xs);">総獲得</div>`;
             html += `<div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--panel-4-color);">💰 ${myPageData.totalCoins || 0}</div>`;
             html += `</div>`;
             html += `<div style="padding: var(--spacing-sm); background: var(--color-background); border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">`;
-            html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--spacing-xs);">今月の獲得コイン</div>`;
+            html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-bottom: var(--spacing-xs);">今月の獲得</div>`;
             html += `<div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--panel-4-color);">💰 ${myPageData.monthlyCoins || 0}</div>`;
             html += `</div>`;
             html += `<div style="padding: var(--spacing-sm); background: var(--color-background); border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">`;
@@ -7924,7 +7924,7 @@
             
             // コイン履歴
             html += `<div style="margin-top: var(--spacing-md);">`;
-            html += `<div style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--spacing-sm);">コイン履歴</div>`;
+            html += `<div style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--spacing-sm);">履歴</div>`;
             const recentHistory = coinHistory
                 .filter(h => h.userId === currentUser.id)
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -7942,13 +7942,13 @@
                     html += `<div style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">${escapeHtml(entry.taskTitle || 'タスク')}</div>`;
                     html += `<div style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">${date.toLocaleString('ja-JP')} - ${typeLabel}</div>`;
                     html += `</div>`;
-                    html += `<div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); color: ${typeColor};">+${entry.coins}コイン</div>`;
+                    html += `<div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); color: ${typeColor};">+${entry.coins}</div>`;
                     html += `</div>`;
                     html += `</div>`;
                 });
                 html += `</div>`;
             } else {
-                html += `<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-md);">コイン履歴がありません</p>`;
+                html += `<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-md);">履歴がありません</p>`;
             }
             html += `</div>`;
             
@@ -9253,10 +9253,10 @@
                     <div style="margin-bottom: var(--spacing-md); padding: var(--spacing-sm); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
                         <div style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--spacing-xs);">💰 報酬</div>
                         <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">
-                            <div style="margin-bottom: var(--spacing-xs);">報酬: <span style="color: var(--color-text-primary); font-weight: var(--font-weight-semibold);">${baseReward}コイン</span></div>
-                            ${supportCoins > 0 ? `<div>追加報酬（応援）: <span style="color: var(--panel-5-color); font-weight: var(--font-weight-semibold);">+${supportCoins}コイン</span></div>` : '<div style="color: var(--color-text-secondary);">追加報酬（応援）: 0コイン</div>'}
+                            <div style="margin-bottom: var(--spacing-xs);">報酬: <span style="color: var(--color-text-primary); font-weight: var(--font-weight-semibold);">${baseReward}</span></div>
+                            ${supportCoins > 0 ? `<div>追加報酬（応援）: <span style="color: var(--panel-5-color); font-weight: var(--font-weight-semibold);">+${supportCoins}</span></div>` : '<div style="color: var(--color-text-secondary);">追加報酬（応援）: 0</div>'}
                             <div style="margin-top: var(--spacing-xs); padding-top: var(--spacing-xs); border-top: 1px solid var(--color-border);">
-                                <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">合計: ${baseReward + supportCoins}コイン</span>
+                                <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">合計: ${baseReward + supportCoins}</span>
                             </div>
                         </div>
                     </div>
