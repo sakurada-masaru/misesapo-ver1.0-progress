@@ -190,19 +190,110 @@
 
         /* ダークモード */
         .dark-mode {
+            /* 基本背景色 */
             --color-background: #1a1a1a;
             --color-background-secondary: #2d2d2d;
-            --color-text-primary: #e0e0e0;
-            --color-text-secondary: #a0a0a0;
+            --color-text-primary: #e8e8e8;
+            --color-text-secondary: #b0b0b0;
+            --color-text-muted: #808080;
             --color-border: #3d3d3d;
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
-            --category-design-border: rgba(255, 103, 156, 0.5);
-            --category-frontend-border: rgba(74, 144, 226, 0.5);
-            --category-backend-border: rgba(80, 200, 120, 0.5);
-            --category-media-border: rgba(255, 140, 66, 0.5);
-            --category-other-border: rgba(127, 140, 141, 0.5);
+            
+            /* シャドウ */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.6);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.7);
+            
+            /* ベースカラー（暗めのクリーム色） */
+            --color-base: #2a2a24;
+            
+            /* アクセントカラー（暗めのティール） */
+            --color-accent: #5a8a85;
+            --color-accent-hover: #6a9a95;
+            --color-accent-light: rgba(90, 138, 133, 0.2);
+            --color-accent-shadow: rgba(90, 138, 133, 0.3);
+            
+            /* アクセントカラー（ダーク） */
+            --color-accent-dark: #c0c0b8;
+            --color-accent-dark-hover: #d0d0c8;
+            --color-accent-dark-light: rgba(192, 192, 184, 0.2);
+            --color-accent-dark-shadow: rgba(192, 192, 184, 0.3);
+            
+            /* メインカラー（ピンク - 暗い背景でも見やすい明るめのピンク） */
+            --color-primary: #ff8a9a;
+            --color-primary-hover: #ff9aaa;
+            --color-primary-light: rgba(255, 138, 154, 0.2);
+            --color-primary-shadow: rgba(255, 138, 154, 0.3);
+            --color-primary-border: #ff7a8a;
+            
+            /* サブカラー（淡いピンク） */
+            --color-sub: #ff9a9a;
+            --color-sub-hover: #ffaaaa;
+            --color-sub-light: rgba(255, 154, 154, 0.2);
+            --color-sub-shadow: rgba(255, 154, 154, 0.3);
+            
+            /* サブカラー（グリーン） */
+            --color-sub-green: #7ab86f;
+            --color-sub-green-hover: #8ac87f;
+            --color-sub-green-light: rgba(122, 184, 111, 0.2);
+            --color-sub-green-shadow: rgba(122, 184, 111, 0.3);
+            
+            /* 背景色 */
+            --color-background-panel: #2a2a24;
+            --color-background-section: #2a2a24;
+            --color-background-section-accent: #3a3a34;
+            --color-background-card: #2a2a24;
+            --color-background-reward: #3a3a34;
+            --color-background-time-record: #3a4a48;
+            --color-background-empty: #2a2a24;
+            
+            /* フォントカラー */
+            --color-text-accent: #b0a0a0;
+            --color-text-accent-2: #808080;
+            
+            /* H1タイトルテンプレート */
+            --h1-title-background: #ff8a9a;
+            --h1-title-border: #ff7a8a;
+            --h1-title-text: #1a1a1a;
+            
+            /* H2タイトルテンプレート */
+            --h2-title-background: #2a2a24;
+            --h2-title-border: #5a8a85;
+            --h2-title-text: #c0c0b8;
+            
+            /* パネル共通テンプレート（セクション用） */
+            --panel-background: #2a2a24;
+            --panel-border: #ff8a9a;
+            --panel-heading: #e8e8e8;
+            --panel-text: #b0a0a0;
+            
+            /* セクション別配色テンプレート */
+            --section-1-background: #2a2a24;
+            --section-1-border: #ff8a9a;
+            --section-2-background: #2a2a24;
+            --section-2-border: #5a8a85;
+            --section-3-background: #2a2a24;
+            --section-3-border: #7ab86f;
+            --section-4-background: #2a2a24;
+            --section-4-border: #ff9a9a;
+            
+            /* パネルカラー */
+            --panel-1-color: #ff8a9a;
+            --panel-1-hover: #ff9aaa;
+            --panel-2-color: #6a9a95;
+            --panel-2-hover: #7aaa9f;
+            --panel-3-color: #7ab86f;
+            --panel-3-hover: #8ac87f;
+            --panel-4-color: #ff9a6a;
+            --panel-4-hover: #ffaa7a;
+            --panel-5-color: #7ab86f;
+            --panel-5-hover: #8ac87f;
+            
+            /* カテゴリごとの薄い枠線色（タスクカード用） */
+            --category-design-border: rgba(255, 138, 154, 0.6);
+            --category-frontend-border: rgba(106, 154, 149, 0.6);
+            --category-backend-border: rgba(122, 184, 111, 0.6);
+            --category-media-border: rgba(255, 154, 106, 0.6);
+            --category-other-border: rgba(160, 160, 160, 0.6);
         }
 
         * {
@@ -2648,6 +2739,30 @@
             transition: transform 0.3s ease-out;
         }
         
+        /* TIPS表示 */
+        .task-tips {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 1;
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-normal);
+            text-align: center;
+            padding: var(--spacing-md);
+            opacity: 0.15;
+            transition: opacity 0.3s ease;
+        }
+        
+        .task-tips.light-mode {
+            color: #44444E;
+        }
+        
+        .task-tips.dark-mode {
+            color: #FCF9EA;
+        }
+        
         /* プルリフレッシュ用のローディングインジケーター */
         .pull-refresh-indicator {
             position: absolute;
@@ -3685,6 +3800,9 @@
                     「更新」は画面を下にひいてください
                 </div>
                 
+                <!-- TIPS表示 -->
+                <div class="task-tips" id="taskTips"></div>
+                
                 <!-- 新規追加ボタン（右上に固定・メニュー展開機能付き） -->
                 <button class="add-task-button" type="button" id="addTaskButton">
                     +
@@ -4048,10 +4166,6 @@
                         </button>
                         <input type="file" id="importDataInput" accept=".json" style="display: none;">
                         
-                        <!-- データリセット -->
-                        <button class="settings-button" id="resetDataButton" style="width: 100%; padding: var(--spacing-sm); background: #ff4444; color: white; border: none; border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; margin-bottom: var(--spacing-sm);">
-                            🔄 データをリセット
-                        </button>
                     </div>
                 </div>
                 
@@ -4709,6 +4823,9 @@
 
         // 設定を適用
         function applySettings() {
+            // TIPSを更新（ダークモード変更時にも反映）
+            updateTaskTips();
+            
             // ツールチップの表示/非表示
             if (settings.tooltipEnabled) {
                 document.body.classList.remove('tooltips-disabled');
@@ -4815,15 +4932,6 @@
                 });
             }
             
-            // データリセット
-            const resetButton = document.getElementById('resetDataButton');
-            if (resetButton) {
-                resetButton.addEventListener('click', function() {
-                    if (confirm('⚠️ 警告: すべてのデータを削除しますか？\nこの操作は元に戻せません。')) {
-                        resetData();
-                    }
-                });
-            }
         }
 
         // マイページパネルのイベントリスナーを設定
@@ -4915,36 +5023,6 @@
             }
         }
 
-        // データをリセット
-        async function resetData() {
-            tasks = [];
-            timeRecords = [];
-            externalLinks = [];
-            menuIconPosition = null;
-            
-            // Firebaseから削除
-            if (firebaseInitialized && db) {
-                try {
-                    await db.collection('taskMarket').doc('main').delete();
-                    console.log('✅ Firebaseのデータを削除しました');
-                } catch (error) {
-                    console.error('Firebase削除エラー:', error);
-                }
-            }
-            
-            // localStorageから削除
-            localStorage.removeItem('taskMarketTasks');
-            localStorage.removeItem('timeRecords');
-            localStorage.removeItem('externalLinks');
-            localStorage.removeItem('menuIconPosition');
-            
-            // UIを更新
-            updateTaskGrid();
-            updateLinkIconGrid();
-            updateArchivePanel();
-            
-            alert('✅ データをリセットしました');
-        }
 
         // ========================================
         // メニューボタン関連関数
@@ -10577,6 +10655,41 @@
         }
 
 
+        // TIPSを更新（操作説明の各項目をランダムに表示）
+        function updateTaskTips() {
+            const tipsElement = document.getElementById('taskTips');
+            if (!tipsElement) return;
+            
+            // 操作説明の各項目を配列に格納
+            const tips = [
+                // PC版の操作方法
+                'タスクの作成：画面下部の「+」ボタンをクリック',
+                'タスクの移動：タスクカードをドラッグ&ドロップ',
+                'タスクの詳細表示：タスクカードをダブルクリック',
+                'タスクの完了：タスクカードを完了ボタンにドロップ',
+                'パネルの開閉：メニューアイコンから各パネルを開く',
+                // SP版の操作方法
+                'タスクの作成：画面下部中央の「+」ボタンをタップ',
+                'タスクの移動：タスクカードを長押ししてドラッグ',
+                'タスクの詳細表示：タスクカードをダブルタップ',
+                'タスクの完了：タスクカードを完了ボタンにドロップ',
+                '画面の更新：画面を下に引いてプルリフレッシュ',
+                'メニューの開閉：メニューアイコンをタップ',
+                // キーボードショートカット
+                'ESC：開いているパネルやモーダルを閉じる',
+                // 追加TIPS
+                '何もない画面を五回連続でタップ/クリックすると『タスクをソートできるらしい・・・』'
+            ];
+            
+            // ランダムに1つ選択
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            tipsElement.textContent = randomTip;
+            
+            // ダークモードかどうかを判定してクラスを設定
+            const isDarkMode = settings && settings.darkMode;
+            tipsElement.className = 'task-tips ' + (isDarkMode ? 'dark-mode' : 'light-mode');
+        }
+        
         // 初期化（ページロード時にも実行、スプラッシュ後に再実行される）
         setTimeout(async function() {
             // 設定を読み込み（最優先）
