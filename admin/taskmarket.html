@@ -2191,18 +2191,20 @@
         
         .task-card {
             position: absolute;
-            background: linear-gradient(135deg, #fffef7 0%, #fffef0 100%);
-            border: 2px solid rgba(0, 0, 0, 0.1);
-            border-radius: 8px 8px 8px 2px; /* 付箋のような角の丸み */
+            background: linear-gradient(135deg, #cde0b2 0%, #e8f4d8 50%, #f5f9ed 100%); /* rank1.svgの付箋のような緑がかったクリーム色 */
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: 8px 8px 8px 2px; /* 付箋のような角の丸み（左上が少し折れた感じ） */
             padding: var(--spacing-md);
             transition: var(--transition-normal);
             cursor: grab;
             width: 280px;
             min-height: 180px;
             box-shadow: 
-                0 2px 8px rgba(0, 0, 0, 0.1),
-                0 1px 3px rgba(0, 0, 0, 0.08),
-                inset 0 1px 0 rgba(255, 255, 255, 0.5); /* 付箋のような影とハイライト */
+                0 4px 12px rgba(0, 0, 0, 0.12),
+                0 2px 6px rgba(0, 0, 0, 0.08),
+                0 1px 2px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.05); /* 付箋のような多層の影とハイライト */
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -2302,9 +2304,11 @@
 
         .task-card:hover {
             box-shadow: 
-                0 4px 12px rgba(0, 0, 0, 0.15),
-                0 2px 6px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.6); /* ホバー時の影を強化 */
+                0 6px 16px rgba(0, 0, 0, 0.15),
+                0 3px 8px rgba(0, 0, 0, 0.1),
+                0 1px 3px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.06); /* ホバー時の影を強化 */
             transform: translateY(-2px) rotate(0deg) !important;
             z-index: 10;
         }
@@ -2431,9 +2435,9 @@
             align-items: flex-start;
             gap: var(--spacing-sm);
             padding: var(--spacing-sm) var(--spacing-md);
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.3) 100%); /* 付箋のようなヘッダー背景 */
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%); /* 付箋のようなヘッダー背景（より透明に） */
             border-radius: 6px 6px 0 0; /* 付箋のような角の丸み */
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08); /* より薄いボーダー */
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06); /* より薄いボーダー */
             margin: calc(var(--spacing-md) * -1) calc(var(--spacing-md) * -1) var(--spacing-md) calc(var(--spacing-md) * -1);
         }
 
