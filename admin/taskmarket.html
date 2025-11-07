@@ -2198,7 +2198,7 @@
             transition: var(--transition-normal);
             cursor: grab;
             width: 280px;
-            height: 200px; /* 固定高さに統一 */
+            height: 280px; /* 画像のアスペクト比（正方形）に合わせる */
             box-shadow: var(--shadow-md);
             display: flex;
             flex-direction: column;
@@ -2213,7 +2213,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain; /* 画像が切れないように全体を表示 */
             opacity: 1; /* 画像を完全に表示 */
             z-index: 0;
             pointer-events: none;
@@ -5927,13 +5927,13 @@
             // 緊急タスクの高さを計算
             let urgentCardY = 24;
             urgentTasks.forEach(() => {
-                urgentCardY += 200 + 16; // カード高さ（200px）+ 間隔
+                urgentCardY += 280 + 16; // カード高さ（280px）+ 間隔
             });
             
             // 5列グリッドレイアウトで配置
             const columns = 5;
             const cardWidth = 280;
-            const cardHeight = 200; // カードの高さを統一（200px）
+            const cardHeight = 280; // カードの高さを画像のアスペクト比（正方形）に合わせる
             const margin = 20;
             
             // SP版かどうかを判定して左端の位置を調整
@@ -6126,9 +6126,9 @@
             const gridHeight = Math.max(800, taskGrid.offsetHeight - 48);
             
             // カードサイズを設定に応じて決定
-            // カードサイズを統一（280px x 200px）
+            // カードサイズを統一（280px x 280px - 画像のアスペクト比に合わせる）
             const cardWidth = 280;
-            const cardHeight = 200;
+            const cardHeight = 280;
 
             // カードをクリア（ボタンは残す）
             const addButton = taskGrid.querySelector('.add-task-button');
@@ -6229,7 +6229,7 @@
                 const zIndex = 1000 + index; // 最前面に表示
                 
                 // カードの高さを考慮して次の位置を計算
-                urgentCardY += 200 + 16; // カード高さ（200px）+ 16pxの間隔
+                urgentCardY += 280 + 16; // カード高さ（280px）+ 16pxの間隔
                 
                 card.style.top = top + 'px';
                 card.style.left = left + 'px';
@@ -7046,7 +7046,7 @@
                     const gridWidth = this.offsetWidth - 48;
                     const gridHeight = Math.max(800, this.offsetHeight - 48);
                     const cardWidth = 280;
-                    const cardHeight = 200; // カードの高さを統一（200px）
+                    const cardHeight = 280; // カードの高さを画像のアスペクト比（正方形）に合わせる
                     
                     // グリッド内の相対位置を計算（マウス位置からオフセットを引く）
                     let left = e.clientX - gridRect.left - draggedOffset.x - 24; // padding分を考慮
