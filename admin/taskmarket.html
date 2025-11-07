@@ -129,7 +129,6 @@
         }
 
         /* スプラッシュスクリーン */
-        /* 階層9: スプラッシュスクリーン（最上層） */
         .splash-screen {
             position: fixed;
             top: 0;
@@ -140,7 +139,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 10000; /* 階層9: スプラッシュスクリーン（最上層） */
+            z-index: 10000;
             opacity: 1;
             /* 白画面を消す: ロゴが消えた後（約3秒後）に開始 */
             animation: fadeOutScreen 0.5s ease-out 3s forwards;
@@ -197,7 +196,6 @@
         }
 
         /* ヘッダー */
-        /* 階層8: ヘッダー */
         .header {
             height: 60px;
             background: var(--color-background);
@@ -208,7 +206,7 @@
             padding: 0 var(--spacing-lg);
             box-shadow: var(--shadow-sm);
             position: relative;
-            z-index: 3000; /* 階層8: ヘッダー */
+            z-index: 1000;
         }
 
         .header-left {
@@ -334,7 +332,6 @@
         /* メインボードの幅調整はJavaScriptで制御 */
 
         /* カラム3: 詳細ボード（右からスライドインするパネル） */
-        /* 階層6: 各種コンテンツパネル */
         .detail-board-overlay {
             position: fixed;
             top: 0;
@@ -342,7 +339,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.3);
-            z-index: 1500; /* 階層6: 各種コンテンツパネル */
+            z-index: 1500;
             display: none;
             animation: fadeIn 0.3s ease;
         }
@@ -359,7 +356,7 @@
             height: 100%;
             background: var(--color-background-secondary);
             box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
-            z-index: 1501; /* 階層6: 各種コンテンツパネル */
+            z-index: 1501;
             transform: translateX(100%);
             transition: transform 0.3s ease;
             overflow-y: auto;
@@ -372,7 +369,6 @@
         }
         
         /* タイムレコードパネル（右からスライドイン、タスク詳細パネルの上に表示） */
-        /* 階層6: 各種コンテンツパネル */
         .time-record-panel-overlay {
             position: fixed;
             top: 0;
@@ -380,7 +376,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.3);
-            z-index: 1600; /* 階層6: 各種コンテンツパネル */
+            z-index: 1600;
             display: none;
             animation: fadeIn 0.3s ease;
         }
@@ -397,7 +393,7 @@
             height: 100%;
             background: var(--color-background-secondary);
             box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
-            z-index: 1601; /* 階層6: 各種コンテンツパネル */
+            z-index: 1601;
             transform: translateX(100%);
             transition: transform 0.3s ease;
             overflow-y: auto;
@@ -569,7 +565,6 @@
            ======================================== */
         
         /* 新規追加ボタン（親要素） */
-        /* 階層5: メニューボタン/新規追加ボタン/完了ボタン */
         /* [PC] 画面端から50px下・20px右・円形デザイン */
         .add-task-button {
             position: fixed;
@@ -591,7 +586,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 500; /* 階層5: メニューボタン/新規追加ボタン/完了ボタン */
+            z-index: 1000;
             line-height: 1;
             padding: 0;
             user-select: none;
@@ -611,7 +606,6 @@
         }
         
         /* 完了ボタン（設定に基づいて配置・円形デザイン） */
-        /* 階層5: メニューボタン/新規追加ボタン/完了ボタン */
         .complete-button {
             position: fixed;
             width: 64px;
@@ -624,7 +618,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 500; /* 階層5: メニューボタン/新規追加ボタン/完了ボタン */
+            z-index: 1000;
             box-shadow: var(--shadow-lg);
             transition: all 0.3s ease;
             opacity: 0.8;
@@ -700,14 +694,6 @@
             box-shadow: var(--shadow-xl), 0 0 0 3px rgba(255, 103, 156, 0.3);
         }
 
-        /* バッジを作るボタン（右上に固定・◯デザイン） */
-
-        .badge-icon-text {
-            font-size: 28px;
-            line-height: 1;
-        }
-
-
         /* トグルスイッチ */
         .toggle-switch {
             position: relative;
@@ -769,7 +755,6 @@
 
 
         /* モーダルオーバーレイ */
-        /* 階層7: 各種モーダル */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -780,7 +765,7 @@
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 2000; /* 階層7: 各種モーダル */
+            z-index: 1000;
             animation: fadeIn 0.3s ease;
         }
 
@@ -985,7 +970,6 @@
         }
 
         /* スライドインパネル（左から右にスライドイン、最前面に表示） */
-        /* 階層7: 各種モーダル */
         .slide-panel-overlay {
             position: fixed;
             top: 0;
@@ -993,7 +977,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.3);
-            z-index: 2000; /* 階層7: 各種モーダル */
+            z-index: 2000;
             display: none;
             animation: fadeIn 0.3s ease;
         }
@@ -1010,7 +994,7 @@
             height: 100%;
             background: var(--color-background);
             box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
-            z-index: 2001; /* 階層7: 各種モーダル */
+            z-index: 2001;
             transform: translateX(-100%);
             transition: transform 0.3s ease;
             overflow-y: auto;
@@ -1156,29 +1140,6 @@
             white-space: pre-wrap;
         }
         
-        .archive-task-badges {
-            display: flex;
-            gap: var(--spacing-xs);
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        
-        .archive-task-badge {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 8px;
-            background: var(--color-background-secondary);
-            border-radius: var(--border-radius-sm);
-            font-size: var(--font-size-xs);
-        }
-        
-        .archive-task-badge-icon {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
         
         .archive-empty {
             text-align: center;
@@ -1756,7 +1717,6 @@
            ======================================== */
         
         /* メニューボタン（親要素）のスタイル */
-        /* 階層5: メニューボタン/新規追加ボタン/完了ボタン */
         /* [PC] デフォルトスタイル */
         .menu-icon {
             position: fixed;
@@ -1769,7 +1729,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 500; /* 階層5: メニューボタン/新規追加ボタン/完了ボタン */
+            z-index: 100;
             box-shadow: var(--shadow-md);
             transition: var(--transition-normal);
             user-select: none;
@@ -1823,7 +1783,7 @@
 
         .menu-icon.dragging {
             opacity: 0.7;
-            z-index: 500; /* 階層5: メニューボタン/新規追加ボタン/完了ボタン */
+            z-index: 1000;
         }
 
         .menu-icon img {
@@ -1865,7 +1825,6 @@
         }
 
         /* メニューボタンのコンテンツボタン（子要素） */
-        /* 階層4: メニューコンテンツボタン/新規追加コンテンツボタン */
         .menu-item {
             position: absolute;
             width: 56px;
@@ -1877,7 +1836,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 100; /* 階層4: メニューコンテンツボタン/新規追加コンテンツボタン */
+            z-index: 1000;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             opacity: 0;
             transform: scale(0) rotate(0deg);
@@ -1906,14 +1865,13 @@
         }
 
         /* メニューボタンのテキスト（子要素：コンテンツボタンと同列） */
-        /* 階層4: メニューコンテンツボタン/新規追加コンテンツボタン */
         .menu-circular-text {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             pointer-events: none;
-            z-index: 99; /* 階層4: メニューコンテンツボタン/新規追加コンテンツボタン（コンテンツボタンより少し下） */
+            z-index: 99;
             width: 300px;
             height: 300px;
             opacity: 0;
@@ -1971,9 +1929,7 @@
         /* ======================================== */
         @media (max-width: 768px) {
             /* [SP] メニューボタンの追加スタイル調整 */
-            .menu-icon {
-                /* サイズは既に上で定義済み（80px x 80px） */
-            }
+            /* サイズは既に上で定義済み（80px x 80px） */
 
             /* [SP] メニューボタンのホバー効果調整 */
             .menu-icon:hover {
@@ -2103,7 +2059,6 @@
         }
 
         /* タスクカードグリッド（掲示板風のランダム配置） */
-        /* 階層1: タスクボード（最下層） */
         .task-grid {
             position: relative;
             height: 100%; /* 親要素（main-board）の高さを継承して画面下まで表示 */
@@ -2114,7 +2069,6 @@
             /* [PC] 上部と下部の隙間を統一 */
             padding-top: var(--spacing-lg);
             padding-bottom: var(--spacing-lg);
-            z-index: 1; /* 階層1: 最下層 */
             padding-left: var(--spacing-lg);
             padding-right: var(--spacing-lg);
             overflow-y: auto;
@@ -2285,11 +2239,13 @@
         .card-size-large .task-card-body {
             font-size: var(--font-size-md);
             -webkit-line-clamp: 5;
+            line-clamp: 5;
         }
 
         .card-size-large .task-card-description {
             font-size: var(--font-size-md);
             -webkit-line-clamp: 5;
+            line-clamp: 5;
         }
 
         .card-size-large .task-card-footer {
@@ -2330,11 +2286,13 @@
         .card-size-small .task-card-body {
             font-size: var(--font-size-xs);
             -webkit-line-clamp: 3;
+            line-clamp: 3;
         }
 
         .card-size-small .task-card-description {
             font-size: var(--font-size-xs);
             -webkit-line-clamp: 3;
+            line-clamp: 3;
         }
 
         .card-size-small .task-card-footer {
@@ -2555,6 +2513,7 @@
             overflow: hidden;
             display: -webkit-box;
             -webkit-line-clamp: 4;
+            line-clamp: 4;
             -webkit-box-orient: vertical;
             text-overflow: ellipsis;
         }
@@ -2574,6 +2533,7 @@
             overflow: hidden;
             display: -webkit-box;
             -webkit-line-clamp: 4;
+            line-clamp: 4;
             -webkit-box-orient: vertical;
             text-overflow: ellipsis;
         }
@@ -2611,18 +2571,6 @@
             justify-content: flex-start;
         }
 
-        .task-card-badge-attachment .badge-count {
-            font-size: var(--font-size-xs);
-            color: #000000; /* 黒文字（緊急タスク以外） */
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        /* 緊急タスク以外のカードの文字色を黒に */
-        .task-card:not(.urgent) .task-card-badge-attachment .badge-count {
-            color: #000000 !important;
-        }
 
         .task-card-reward {
             flex: 1;
@@ -2662,170 +2610,8 @@
             opacity: 0.7;
         }
 
-        /* バッジスタイル */
-        /* 階層3: バッジ */
-        .badge {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            background: var(--color-primary);
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: grab;
-            box-shadow: var(--shadow-md);
-            z-index: 10; /* 階層3: バッジ */
-            transition: var(--transition-normal);
-            padding: var(--spacing-xs);
-            border: 3px solid var(--color-background);
-        }
 
-        .badge:hover {
-            transform: scale(1.1);
-            box-shadow: var(--shadow-lg);
-            z-index: 10; /* 階層3: バッジ */
-        }
 
-        .badge.dragging {
-            opacity: 1;
-            cursor: grabbing;
-            z-index: 500 !important; /* ドラッグ中は階層5（ボタン）と同じレベル */
-        }
-
-        .badge-icon {
-            font-size: 24px;
-            line-height: 1;
-            margin-bottom: 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .badge-icon img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            -webkit-touch-callout: none; /* iOSのロングタッチメニューを無効化 */
-            -webkit-user-select: none; /* 画像の選択を無効化 */
-            user-select: none;
-            pointer-events: none; /* 画像へのイベントを無効化 */
-        }
-
-        .badge-name {
-            font-size: 10px;
-            font-weight: var(--font-weight-semibold);
-            color: white;
-            text-align: center;
-            line-height: 1.2;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            max-width: 100%;
-        }
-
-        /* カードに吸着したバッジ - カードフッターの左、カードの左下に配置 */
-        .task-card .badge.attached {
-            position: absolute;
-            bottom: var(--spacing-sm);
-            left: var(--spacing-sm);
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            z-index: 10;
-            border: 2px solid var(--color-background);
-            padding: 2px;
-        }
-        
-        /* 吸着したバッジ内のアイコンと名前のサイズ調整 */
-        .task-card .badge.attached .badge-icon {
-            font-size: 14px;
-            margin-bottom: 0;
-        }
-        
-        .task-card .badge.attached .badge-name {
-            font-size: 6px;
-            line-height: 1;
-        }
-        
-        /* 複数のバッジがある場合、横方向に並べる（24pxバッジ + 4px間隔） */
-        .task-card .badge.attached:nth-of-type(2) {
-            left: calc(var(--spacing-sm) + 28px);
-        }
-        
-        .task-card .badge.attached:nth-of-type(3) {
-            left: calc(var(--spacing-sm) + 56px);
-        }
-        
-        .task-card .badge.attached:nth-of-type(4) {
-            left: calc(var(--spacing-sm) + 84px);
-        }
-        
-        .task-card .badge.attached:nth-of-type(5) {
-            left: calc(var(--spacing-sm) + 112px);
-        }
-        
-        /* スマホ版：吸着したバッジ内のアイコンと名前のサイズ調整 */
-        @media (max-width: 430px) {
-            .task-card .badge.attached .badge-icon {
-                font-size: 12px;
-                margin-bottom: 0;
-            }
-            
-            .task-card .badge.attached .badge-name {
-                font-size: 5px;
-                line-height: 1;
-            }
-        }
-
-        /* スマホ版（SP）：カードの左下に配置 */
-        @media (max-width: 430px) {
-            .task-card .badge.attached {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 20px;
-                height: 20px;
-                cursor: pointer;
-                z-index: 10;
-                border: 2px solid var(--color-background);
-                padding: 2px;
-                margin: 0;
-            }
-
-            /* 複数のバッジがある場合、横方向に並べる（20pxバッジ + 4px間隔） */
-            .task-card .badge.attached:nth-of-type(2) {
-                left: 24px;
-            }
-
-            .task-card .badge.attached:nth-of-type(3) {
-                left: 48px;
-            }
-
-            .task-card .badge.attached:nth-of-type(4) {
-                left: 72px;
-            }
-
-            .task-card .badge.attached:nth-of-type(5) {
-                left: 96px;
-            }
-        }
-
-        .task-card .badge:hover {
-            transform: scale(1.1);
-        }
-
-        .task-card.badge-attached {
-            border: 2px dashed var(--color-primary);
-        }
-
-        .task-card.drag-over-badge {
-            border: 3px solid var(--color-primary);
-            box-shadow: 0 0 20px rgba(255, 103, 156, 0.5);
-            transform: scale(1.05);
-        }
 
         /* タスクカードのツールチップ */
         .task-card-tooltip {
@@ -2991,6 +2777,7 @@
             .card-size-large .task-card-description {
                 font-size: 10px;
                 -webkit-line-clamp: 4;
+                line-clamp: 4;
             }
 
             /* スマホ版：カードサイズ：中（デフォルト） */
@@ -3014,6 +2801,7 @@
             .card-size-small .task-card-description {
                 font-size: 8px;
                 -webkit-line-clamp: 2;
+                line-clamp: 2;
             }
 
             .task-card-title {
@@ -3023,6 +2811,7 @@
             .task-card-description {
                 font-size: 9px; /* 11px * 0.8 ≈ 9px */
                 -webkit-line-clamp: 3;
+                line-clamp: 3;
             }
 
             .task-card-priority {
@@ -3033,10 +2822,6 @@
                 font-size: calc(var(--font-size-sm) * 0.85);
             }
             
-            /* [SP] バッジ吸着数の表示 */
-            .task-card-badge-attachment .badge-count {
-                font-size: calc(var(--font-size-xs) * 0.9);
-            }
 
             /* [SP] 報酬の表示（アイコン + コイン数 + 単位） */
             .task-card-reward {
@@ -3093,7 +2878,7 @@
                 bottom: auto !important;
                 left: auto !important;
                 transform: none;
-                z-index: 500; /* 階層5: メニューボタン/新規追加ボタン/完了ボタン */
+                z-index: 1000;
             }
             
             .add-task-button:hover {
@@ -3117,7 +2902,7 @@
                 left: 16px !important;
                 top: auto !important;
                 right: auto !important;
-                z-index: 500; /* 階層5: メニューボタン/新規追加ボタン/完了ボタン */
+                z-index: 1001;
             }
             
             /* [SP] メニューが左下の場合、完了ボタンは右下に配置（max-width: 430px） */
@@ -3556,34 +3341,6 @@
         </div>
     </div>
 
-    <!-- モーダル：バッジ作成フォーム -->
-    <div class="modal-overlay" id="badgeFormModal" onclick="closeBadgeFormOnOverlay(event)">
-        <div class="task-form" onclick="event.stopPropagation()">
-            <div class="task-form-header">
-                <h3 class="task-form-title">新しいバッジを作成</h3>
-                <button class="modal-close-button" onclick="cancelBadgeForm()" title="閉じる">×</button>
-            </div>
-            <form id="badgeInputForm">
-                <div class="form-group">
-                    <label for="badgeName">バッジ名（担当者名）*</label>
-                    <input type="text" id="badgeName" name="name" required placeholder="例: 田中太郎">
-                </div>
-                <div class="form-group">
-                    <label for="badgeIcon">アイコン（絵文字）</label>
-                    <input type="text" id="badgeIcon" name="icon" placeholder="例: 👤 🧑‍💻 👨‍💼">
-                </div>
-                <div class="form-group">
-                    <label for="badgeColor">カラー</label>
-                    <input type="color" id="badgeColor" name="color" value="#FF679C">
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="cancelBadgeForm()">キャンセル</button>
-                    <button type="button" class="btn btn-google" id="createFromGoogleBtn" onclick="createBadgeFromGoogle()" style="display: none; background: #4285F4; color: white; margin-right: 8px;">🔵 Googleアカウントから作成</button>
-                    <button type="submit" class="btn btn-primary">作成</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <!-- スライドインパネル（左から右にスライドイン、5つ） -->
     <!-- パネル2（ブルー：リソース管理） -->
@@ -3752,17 +3509,9 @@
                                 <li>タスクを完了ボタンにドロップして完了できます</li>
                             </ul>
                             
-                            <h4 style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-top: var(--spacing-md); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">🏷️ バッジシステム</h4>
-                            <ul style="margin: 0; padding-left: var(--spacing-lg); font-size: var(--font-size-sm); color: var(--color-text-secondary);">
-                                <li>バッジを作成してタスクに付与できます</li>
-                                <li>バッジをドラッグ&ドロップでタスクカードに付与できます</li>
-                                <li>バッジを外すとタイムレコードが停止します</li>
-                                <li>Googleアカウントから自動でバッジが作成されます</li>
-                            </ul>
-                            
                             <h4 style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-top: var(--spacing-md); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">⏱️ タイムレコード機能</h4>
                             <ul style="margin: 0; padding-left: var(--spacing-lg); font-size: var(--font-size-sm); color: var(--color-text-secondary);">
-                                <li>バッジをタスクに付与すると自動的にタイムレコードが開始されます</li>
+                                <li>タスク詳細画面で作業開始ボタンを押すとタイムレコードが開始されます</li>
                                 <li>タイムレコードパネルで作業時間を確認できます</li>
                                 <li>タイムレコードの履歴が保存されます</li>
                             </ul>
@@ -3787,7 +3536,6 @@
                                 <li><strong>タスクの移動</strong>：タスクカードをドラッグ&ドロップ</li>
                                 <li><strong>タスクの詳細表示</strong>：タスクカードをダブルクリック</li>
                                 <li><strong>タスクの完了</strong>：タスクカードを完了ボタンにドロップ</li>
-                                <li><strong>バッジの付与</strong>：バッジをタスクカードにドラッグ&ドロップ</li>
                                 <li><strong>パネルの開閉</strong>：メニューアイコンから各パネルを開く</li>
                             </ul>
                             
@@ -3797,7 +3545,6 @@
                                 <li><strong>タスクの移動</strong>：タスクカードを長押ししてドラッグ</li>
                                 <li><strong>タスクの詳細表示</strong>：タスクカードをダブルタップ</li>
                                 <li><strong>タスクの完了</strong>：タスクカードを完了ボタンにドロップ</li>
-                                <li><strong>バッジの付与</strong>：バッジをタスクカードにドラッグ</li>
                                 <li><strong>画面の更新</strong>：画面を下に引いてプルリフレッシュ</li>
                                 <li><strong>メニューの開閉</strong>：メニューアイコンをタップ</li>
                             </ul>
@@ -4209,11 +3956,7 @@
         // タスクデータ
         let tasks = [];
 
-        // バッジデータ
-        let badges = [];
 
-        // タスクに紐づくバッジ（タスクIDをキーに、バッジIDの配列を値に）
-        let taskBadges = {};
         
         // タイムレコード（バッジがタスクに付けられた時間から完了までの時間を記録）
         let timeRecords = [];
@@ -4526,8 +4269,6 @@
         function exportData() {
             const data = {
                 tasks: tasks,
-                badges: badges,
-                taskBadges: taskBadges,
                 timeRecords: timeRecords,
                 externalLinks: externalLinks,
                 menuIconPosition: menuIconPosition,
@@ -4558,8 +4299,6 @@
                 
                 if (confirm('⚠️ 警告: 現在のデータを上書きしますか？\nこの操作は元に戻せません。')) {
                     if (data.tasks) tasks = data.tasks;
-                    if (data.badges) badges = data.badges;
-                    if (data.taskBadges) taskBadges = data.taskBadges;
                     if (data.timeRecords) timeRecords = data.timeRecords;
                     if (data.externalLinks) externalLinks = data.externalLinks;
                     if (data.menuIconPosition) menuIconPosition = data.menuIconPosition;
@@ -4570,7 +4309,6 @@
                     updateSettingsUI();
                     applySettings();
                     updateTaskGrid();
-                    updateBadges();
                     updateLinkIconGrid();
                     updateArchivePanel();
                     
@@ -4585,8 +4323,6 @@
         // データをリセット
         async function resetData() {
             tasks = [];
-            badges = [];
-            taskBadges = {};
             timeRecords = [];
             externalLinks = [];
             menuIconPosition = null;
@@ -4603,15 +4339,12 @@
             
             // localStorageから削除
             localStorage.removeItem('taskMarketTasks');
-            localStorage.removeItem('taskMarketBadges');
-            localStorage.removeItem('taskMarketTaskBadges');
             localStorage.removeItem('timeRecords');
             localStorage.removeItem('externalLinks');
             localStorage.removeItem('menuIconPosition');
             
             // UIを更新
             updateTaskGrid();
-            updateBadges();
             updateLinkIconGrid();
             updateArchivePanel();
             
@@ -5459,14 +5192,12 @@
             // ========================================
             // コンテンツボタン（子要素）の生成
             // ========================================
-            // メニュー項目の定義（順番：1.バッジ、2.タスク、3.緊急タスク）
-            // 3つのメニュー項目を均等に配置（40度間隔）
-            // バッジ: 260度（8時40分方向）
+            // メニュー項目の定義（順番：1.タスク、2.緊急タスク）
+            // 2つのメニュー項目を均等に配置（40度間隔）
             // タスク: 220度（7時20分方向）
             // 緊急タスク: 180度（6時方向）
             const radius = 88; // メニュー項目の距離（56pxのメニュー項目 + 32pxのマージン）
             const menuItems = [
-                { angle: 260, icon: 'images/BADGE.svg', action: 'badge', label: 'バッジ作成', urgent: false }, // 260度
                 { angle: 220, icon: 'images/task.svg', action: 'task', label: 'タスク作成', urgent: false }, // 220度
                 { angle: 180, icon: 'images/Key.svg', action: 'urgent', label: '緊急タスク作成', urgent: true } // 180度
             ];
@@ -5548,10 +5279,6 @@
         // 新規追加ボタンのメニュー項目のクリック処理
         function handleAddTaskMenuItemClick(action) {
             switch(action) {
-                case 'badge':
-                    // バッジ作成フォームを開く
-                    openBadgeForm();
-                    break;
                 case 'task':
                     // タスク作成フォームを開く
                     toggleTaskForm();
@@ -5662,8 +5389,6 @@
                 console.warn('Firebaseが初期化されていません。localStorageに保存します。');
                 // Firebaseが初期化されていない場合はlocalStorageに保存
                 localStorage.setItem('taskMarketTasks', JSON.stringify(tasks));
-                localStorage.setItem('taskMarketBadges', JSON.stringify(badges));
-                localStorage.setItem('taskMarketTaskBadges', JSON.stringify(taskBadges));
                 localStorage.setItem('timeRecords', JSON.stringify(timeRecords));
                 localStorage.setItem('externalLinks', JSON.stringify(externalLinks));
                 return;
@@ -5672,8 +5397,6 @@
             try {
                 const payload = {
                     tasks: tasks,
-                    badges: badges,
-                    taskBadges: taskBadges,
                     timeRecords: timeRecords,
                     externalLinks: externalLinks,
                     menuIconPosition: menuIconPosition,
@@ -5693,8 +5416,6 @@
                 console.error('❌ Firebase保存エラー:', error);
                 // エラー時はlocalStorageにフォールバック
                 localStorage.setItem('taskMarketTasks', JSON.stringify(tasks));
-                localStorage.setItem('taskMarketBadges', JSON.stringify(badges));
-                localStorage.setItem('taskMarketTaskBadges', JSON.stringify(taskBadges));
                 localStorage.setItem('timeRecords', JSON.stringify(timeRecords));
                 localStorage.setItem('externalLinks', JSON.stringify(externalLinks));
                 }
@@ -5712,8 +5433,6 @@
                         console.log('🔥 Firebaseからタスクマーケットデータを読み込みました:', data);
                         
                         if (data.tasks) tasks = data.tasks;
-                        if (data.badges) badges = data.badges;
-                        if (data.taskBadges) taskBadges = data.taskBadges;
                         if (data.timeRecords) timeRecords = data.timeRecords;
                         if (data.externalLinks) externalLinks = data.externalLinks;
                         if (data.menuIconPosition) menuIconPosition = data.menuIconPosition;
@@ -5730,7 +5449,6 @@
                         
                         // UIを更新
                         updateTaskGrid();
-                        updateBadges();
                         updateLinkIconGrid();
                         updateArchivePanel();
                         updateArchiveReports();
@@ -5758,7 +5476,6 @@
 
                 if (savedTasks) tasks = JSON.parse(savedTasks);
                 if (savedBadges) badges = JSON.parse(savedBadges);
-                if (savedTaskBadges) taskBadges = JSON.parse(savedTaskBadges);
                 if (savedTimeRecords) timeRecords = JSON.parse(savedTimeRecords);
                 if (savedExternalLinks) externalLinks = JSON.parse(savedExternalLinks);
                 
@@ -5776,7 +5493,6 @@
 
                 // UIを更新
                 updateTaskGrid();
-                updateBadges();
                 updateLinkIconGrid();
                 updateArchivePanel();
                 updateArchiveReports();
@@ -5784,8 +5500,6 @@
                 console.warn('localStorage読み込みエラー:', error);
                 // デフォルトデータ（初回起動時）
                 tasks = [];
-                badges = [];
-                taskBadges = {};
                 timeRecords = [];
                 externalLinks = [];
             }
@@ -5805,8 +5519,6 @@
                         // データが更新された場合のみ反映（自分自身の更新は除外）
                         // タスクデータ、バッジ、リソース、アーカイブ、日報は全ユーザーで共有
                         if (data.tasks) tasks = data.tasks;
-                        if (data.badges) badges = data.badges;
-                        if (data.taskBadges) taskBadges = data.taskBadges;
                         if (data.timeRecords) timeRecords = data.timeRecords;
                         if (data.externalLinks) externalLinks = data.externalLinks;
                         if (data.menuIconPosition) menuIconPosition = data.menuIconPosition;
@@ -5815,7 +5527,6 @@
                         
                         // UIを更新
                         updateTaskGrid();
-                        updateBadges();
                         updateLinkIconGrid();
                         updateArchivePanel();
                         updateArchiveReports();
@@ -5834,9 +5545,6 @@
             }
         }
 
-        // バッジのドラッグ状態管理
-        let draggedBadgeGlobal = null;
-        let draggedBadgeOffset = { x: 0, y: 0 };
 
         // フォーム表示切り替え（モーダル表示）
         function toggleTaskForm(e) {
@@ -5922,13 +5630,10 @@
             if (e.key === 'Escape') {
                 const taskModal = document.getElementById('taskFormModal');
                 const urgentTaskModal = document.getElementById('urgentTaskFormModal');
-                const badgeModal = document.getElementById('badgeFormModal');
                 if (urgentTaskModal && urgentTaskModal.classList.contains('active')) {
                     cancelUrgentTaskForm();
                 } else if (taskModal && taskModal.classList.contains('active')) {
                     cancelTaskForm();
-                } else if (badgeModal && badgeModal.classList.contains('active')) {
-                    cancelBadgeForm();
                 }
             }
         });
@@ -5995,107 +5700,6 @@
         });
         }
 
-        // バッジ作成フォーム表示
-        function openBadgeForm() {
-            const modal = document.getElementById('badgeFormModal');
-            modal.classList.add('active');
-            document.getElementById('badgeInputForm').reset();
-            
-            // Googleアカウントでログインしている場合はボタンを表示
-            const googleBtn = document.getElementById('createFromGoogleBtn');
-            if (currentUser) {
-                googleBtn.style.display = 'inline-block';
-            } else {
-                googleBtn.style.display = 'none';
-            }
-            
-            setTimeout(() => {
-                document.getElementById('badgeName').focus();
-            }, 100);
-        }
-
-        // バッジ作成フォームキャンセル
-        function cancelBadgeForm() {
-            const modal = document.getElementById('badgeFormModal');
-            modal.classList.remove('active');
-            document.getElementById('badgeInputForm').reset();
-        }
-
-        // バッジ作成フォームオーバーレイクリック
-        function closeBadgeFormOnOverlay(event) {
-            if (event.target.id === 'badgeFormModal') {
-                cancelBadgeForm();
-            }
-        }
-
-        // Googleアカウントからバッジを作成
-        function createBadgeFromGoogle() {
-            if (!currentUser) {
-                alert('Googleアカウントでログインしてください。');
-                return;
-            }
-            
-            // 既に同じユーザーのバッジが存在するか確認
-            const existingBadge = badges.find(b => b.userId === currentUser.id);
-            if (existingBadge) {
-                if (confirm(`既に「${existingBadge.name}」のバッジが存在します。新しく作成しますか？`)) {
-                    // 既存のバッジを削除
-                    badges = badges.filter(b => b.id !== existingBadge.id);
-                } else {
-                    return;
-                }
-            }
-            
-            // Googleアカウント情報からバッジを作成
-            const badge = {
-                id: Date.now(),
-                userId: currentUser.id,
-                name: currentUser.name || currentUser.email || 'ユーザー',
-                icon: currentUser.picture ? `img:${currentUser.picture}` : '👤',
-                color: '#FF679C',
-                email: currentUser.email,
-                picture: currentUser.picture,
-                position: {
-                    top: Math.random() * 300 + 100,
-                    left: Math.random() * 300 + 100
-                },
-                attachedToTaskId: null,
-                createdAt: new Date().toISOString()
-            };
-            
-            badges.push(badge);
-            updateBadges();
-            saveTaskMarketData(); // Firebaseに保存
-            cancelBadgeForm();
-            
-            console.log('Googleアカウントからバッジを作成しました:', badge);
-        }
-
-        // バッジ作成
-        const badgeInputForm = document.getElementById('badgeInputForm');
-        if (badgeInputForm) {
-            badgeInputForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const badge = {
-                id: Date.now(),
-                name: formData.get('name'),
-                icon: formData.get('icon') || '👤',
-                color: formData.get('color') || '#FF679C',
-                position: {
-                    top: Math.random() * 300 + 100,
-                    left: Math.random() * 300 + 100
-                },
-                attachedToTaskId: null // カードに吸着していない場合はnull
-            };
-
-            badges.push(badge);
-            updateBadges();
-            saveTaskMarketData(); // Firebaseに保存
-            cancelBadgeForm();
-        });
-        }
 
         // 5列グリッドレイアウトでタスクカードを整列する関数
         function alignTasksInGrid() {
@@ -6149,8 +5753,7 @@
                 const left = startX + col * columnWidth + (columnWidth - adjustedCardWidth) / 2;
                 const top = startY + row * (cardHeight + margin);
                 const rotation = 0; // 整列時は回転なし
-                // 階層2: タスクカード（rank 1-5 → z-index 2-6）
-                const zIndex = rank + 1; // rank 1 → z-index 2, rank 5 → z-index 6
+                const zIndex = rank; // ランクに応じてz-indexを設定（ランクが高いほど上に重なる）
                 
                 // タスクデータに位置情報を保存
                 if (!task.position) {
@@ -6181,8 +5784,7 @@
                     card.style.top = top + 'px';
                     card.style.left = left + 'px';
                     card.style.transform = 'rotate(0deg)';
-                    // 階層2: タスクカード（rank 1-5 → z-index 2-6）
-                    card.style.zIndex = rank + 1; // rank 1 → z-index 2, rank 5 → z-index 6
+                    card.style.zIndex = rank; // ランクに応じてz-indexを設定（ランクが高いほど上に重なる）
                 }
             });
             
@@ -6211,16 +5813,9 @@
                 target.closest('.complete-button') || 
                 target.closest('.menu-icon') ||
                 target.closest('.menu-item') ||
-                target.closest('.badge') ||
                 target.closest('.pull-refresh-hint') ||
                 target.closest('.menu-circular-text')) {
                 // カウントをリセット（イベントの伝播は妨げない）
-                backgroundClickCount = 0;
-                return;
-            }
-            
-            // バッジがドラッグ中の場合も無視
-            if (target.closest('.badge.dragging') || document.querySelector('.badge.dragging')) {
                 backgroundClickCount = 0;
                 return;
             }
@@ -6344,20 +5939,9 @@
             const cardWidth = currentCardSize.width;
             const cardHeight = currentCardSize.height;
 
-            // カードをクリア（ボタンとバッジは残す）
+            // カードをクリア（ボタンは残す）
             const addButton = taskGrid.querySelector('.add-task-button');
             const completeButton = taskGrid.querySelector('.complete-button');
-            
-            // バッジ要素を一時的に保存（innerHTMLでクリアすると削除されるため）
-            const existingBadges = taskGrid.querySelectorAll('.badge:not(.attached)');
-            const badgeData = [];
-            existingBadges.forEach(badgeElement => {
-                const badgeId = parseInt(badgeElement.dataset.badgeId);
-                const badge = badges.find(b => b.id === badgeId);
-                if (badge && !badge.attachedToTaskId) {
-                    badgeData.push(badge);
-                }
-            });
             
             // ボタンを一時的に保存（innerHTMLでクリアすると削除されるため）
             const addButtonClone = addButton ? addButton.cloneNode(true) : null;
@@ -6390,9 +5974,6 @@
                 const newCompleteButton = completeButtonClone;
                 newCompleteButton.id = 'completeButton';
                 taskGrid.appendChild(newCompleteButton);
-                // 完了ボタンのハンドラーをリセットして再設定
-                completeButtonHandlerSet = false;
-                setupCompleteButtonDrop(); // ドロップ処理を再設定
             } else {
                 const complete = document.createElement('div');
                 complete.className = 'complete-button';
@@ -6403,13 +5984,6 @@
                 completeButtonHandlerSet = false;
                 setupCompleteButtonDrop(); // ドロップ処理を再設定
             }
-            
-            // バッジを再追加（ドラッグ機能を再設定）
-            badgeData.forEach(badge => {
-                const badgeElement = createBadgeElement(badge);
-                taskGrid.appendChild(badgeElement);
-                setupBadgeDragAndDrop(badgeElement, badge);
-            });
             
             
             // taskGrid内には追加しない
@@ -6461,7 +6035,6 @@
                 const left = 24; // 左から24px
                 const top = urgentCardY;
                 const rotation = 0; // 回転なし
-                // 階層2: タスクカード（緊急タスクは最前面に表示）
                 const zIndex = 1000 + index; // 緊急タスクは最前面に表示（z-index 1000以上）
                 
                 // カードの高さを考慮して次の位置を計算
@@ -6470,8 +6043,7 @@
                 card.style.top = top + 'px';
                 card.style.left = left + 'px';
                 card.style.transform = `rotate(${rotation}deg)`;
-                    // 階層2: タスクカード（rank 1-5 → z-index 2-6）
-                    card.style.zIndex = zIndex;
+                card.style.zIndex = zIndex;
                 
                 // 難易度（priority）に応じた基本報酬を計算
                 const difficulty = typeof task.priority === 'number' ? task.priority : 
@@ -6479,8 +6051,6 @@
                 const baseReward = rankRewards[difficulty] || rankRewards[2] || 0;
                 const supportCoins = task.supportCoins || 0;
                 
-                // バッジの吸着数を取得
-                const attachedBadgeCount = taskBadges[task.id] && taskBadges[task.id].length > 0 ? taskBadges[task.id].length : 0;
                 const isSP = window.innerWidth <= 768;
                 
                 // カテゴリアイコンのパスを取得してカード全体の背景として設定
@@ -6498,11 +6068,8 @@
                     </div>
                     <!-- ボディ：タスク内容 -->
                     <div class="task-card-body">${truncateText(task.description || '説明なし', 60)}</div>
-                    <!-- フッター：バッジ（アカウントアイコン吸着）/コイン報酬 -->
+                    <!-- フッター：コイン報酬 -->
                     <div class="task-card-footer">
-                        <div class="task-card-badge-attachment">
-                            ${attachedBadgeCount > 0 ? `<span class="badge-count">🏷️ ${attachedBadgeCount}</span>` : ''}
-                        </div>
                         <div class="task-card-reward" style="font-size: var(--font-size-xs);">
                             <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
                                 <span>💰</span>
@@ -6513,22 +6080,8 @@
                     </div>
                 `;
                 
-                // カードに吸着したバッジを表示
-                if (taskBadges[task.id] && taskBadges[task.id].length > 0) {
-                    taskBadges[task.id].forEach((badgeId, badgeIndex) => {
-                        const badge = badges.find(b => b.id === badgeId);
-                        if (badge && badge.attachedToTaskId === task.id) {
-                            const badgeElement = createAttachedBadgeElement(badge, badgeIndex);
-                            card.appendChild(badgeElement);
-                            card.classList.add('badge-attached');
-                        }
-                    });
-                }
-                
                 taskGrid.appendChild(card);
                 
-                // カードへのバッジ吸着機能を設定
-                setupTaskCardBadgeDrop(card, task);
             });
 
             // 通常タスクをランダムな位置に配置（または保存された位置を使用）
@@ -6618,8 +6171,7 @@
                     } while (attempts < maxAttempts);
                     
                     // z-indexはランクに応じて設定（ランクが高いほど上に重なる）
-                    // 階層2: タスクカード（rank 1-5 → z-index 2-6）
-                    zIndex = rank + 1; // rank 1 → z-index 2, rank 5 → z-index 6
+                    zIndex = rank;
                     
                     // タスクデータに位置情報を保存（相対位置（%）で保存）
                     if (!task.position) {
@@ -6649,15 +6201,12 @@
                 card.style.top = top + 'px';
                 card.style.left = left + 'px';
                 card.style.transform = `rotate(${rotation}deg)`;
-                    // 階層2: タスクカード（rank 1-5 → z-index 2-6）
-                    card.style.zIndex = zIndex;
+                card.style.zIndex = zIndex;
                 
                 // 難易度（priority）に応じた基本報酬を計算（既に定義されたrankを使用）
                 const baseReward = rankRewards[rank] || rankRewards[2] || 0;
                 const supportCoins = task.supportCoins || 0;
                 
-                // バッジの吸着数を取得
-                const attachedBadgeCount = taskBadges[task.id] && taskBadges[task.id].length > 0 ? taskBadges[task.id].length : 0;
                 const isSP = window.innerWidth <= 768;
                 
                 // カテゴリアイコンのパスを取得してカード全体の背景として設定
@@ -6675,11 +6224,8 @@
                     </div>
                     <!-- ボディ：タスク内容 -->
                     <div class="task-card-body">${truncateText(task.description || '説明なし', 60)}</div>
-                    <!-- フッター：バッジ（アカウントアイコン吸着）/コイン報酬 -->
+                    <!-- フッター：コイン報酬 -->
                     <div class="task-card-footer">
-                        <div class="task-card-badge-attachment">
-                            ${attachedBadgeCount > 0 ? `<span class="badge-count">🏷️ ${attachedBadgeCount}</span>` : ''}
-                        </div>
                         <div class="task-card-reward" style="font-size: var(--font-size-xs);">
                             <div style="display: flex; align-items: center; gap: var(--spacing-xs);">
                                 <span>💰</span>
@@ -6690,29 +6236,13 @@
                     </div>
                 `;
                 
-                // カードに吸着したバッジを表示
-                if (taskBadges[task.id] && taskBadges[task.id].length > 0) {
-                    taskBadges[task.id].forEach((badgeId, index) => {
-                        const badge = badges.find(b => b.id === badgeId);
-                        if (badge && badge.attachedToTaskId === task.id) {
-                            const badgeElement = createAttachedBadgeElement(badge, index);
-                            card.appendChild(badgeElement);
-                            card.classList.add('badge-attached');
-                        }
-                    });
-                }
-                
                 taskGrid.appendChild(card);
                 
-                // カードへのバッジ吸着機能を設定
-                setupTaskCardBadgeDrop(card, task);
             });
             
             // ドラッグ&ドロップイベントを設定
             setupDragAndDrop();
             
-            // バッジを更新（カードに吸着していないものを表示）
-            updateBadges();
         }
 
         // ドラッグ&ドロップ機能の設定
@@ -6732,8 +6262,6 @@
             let touchTimeout = null;
             let currentTouchedCard = null;
             let selectedCard = null;
-            let selectedBadge = null;
-            
             // 回転検知用の変数
             let rotationHistory = []; // 移動履歴 [{x, y, time}]
             let rotationCount = 0; // 回転回数（1回転=1コイン）
@@ -6758,15 +6286,6 @@
                     }
                 });
                 selectedCard = null;
-            }
-            
-            // バッジ選択を解除する関数
-            function deselectAllBadges() {
-                const allBadges = taskGrid.querySelectorAll('.badge');
-                allBadges.forEach(b => {
-                    b.classList.remove('selected');
-                });
-                selectedBadge = null;
             }
             
             // 回転検知を初期化
@@ -6884,24 +6403,20 @@
             
             // グリッド外をタップしたら選択解除とツールチップ非表示
             taskGrid.addEventListener('touchstart', function(e) {
-                if (!e.target.closest('.task-card') && !e.target.closest('.badge')) {
+                if (!e.target.closest('.task-card')) {
                     deselectAllCards();
-                    // バッジの選択も解除
-                    deselectAllBadges();
                 }
             }, { passive: true });
             
             // ページ全体で何もない場所をタッチした場合も選択解除
             document.addEventListener('touchstart', function(e) {
                 if (window.innerWidth <= 430) {
-                    // カード、バッジ、ボタン以外をタッチした場合
+                    // カード、ボタン以外をタッチした場合
                     if (!e.target.closest('.task-card') && 
-                        !e.target.closest('.badge') && 
                         !e.target.closest('button') &&
                         !e.target.closest('.modal') &&
                         !e.target.closest('.slide-panel')) {
                         deselectAllCards();
-                        deselectAllBadges();
                     }
                 }
             }, { passive: true });
@@ -7288,11 +6803,6 @@
             
             // グリッド上のドラッグオーバー
             taskGrid.addEventListener('dragover', function(e) {
-                // バッジがドラッグ中の場合は処理をスキップ（バッジのdragoverハンドラーで処理）
-                if (draggedBadgeGlobal && !draggedBadgeGlobal.attachedToTaskId) {
-                    return;
-                }
-                
                 e.preventDefault();
                 e.dataTransfer.dropEffect = 'move';
                 this.classList.add('drag-over');
@@ -7332,11 +6842,6 @@
             
             // ドロップ
             taskGrid.addEventListener('drop', function(e) {
-                // バッジがドラッグ中の場合は処理をスキップ（バッジのdropハンドラーで処理）
-                if (draggedBadgeGlobal && !draggedBadgeGlobal.attachedToTaskId) {
-                    return;
-                }
-                
                 e.preventDefault();
                 this.classList.remove('drag-over');
                 
@@ -7372,492 +6877,6 @@
             
         }
 
-        // バッジ表示と更新
-        function updateBadges() {
-            const taskGrid = document.getElementById('taskGrid');
-            
-            // 既存のバッジを削除（カードに吸着しているものを除く）
-            const existingBadges = taskGrid.querySelectorAll('.badge:not(.attached)');
-            existingBadges.forEach(badge => badge.remove());
-            
-            // バッジを表示（カードに吸着していないもの）
-            badges.forEach(badge => {
-                if (!badge.attachedToTaskId) {
-                    const badgeElement = createBadgeElement(badge);
-                    taskGrid.appendChild(badgeElement);
-                    setupBadgeDragAndDrop(badgeElement, badge);
-                }
-            });
-            
-            // カードに吸着したバッジは、updateTaskGrid()で個別に更新されるため、ここでは呼び出さない
-            // updateTaskGrid()を呼び出すとカードが再生成されてしまうため、バッジドロップ時のみ手動で呼び出す
-        }
-
-        // バッジ要素を作成（カードに吸着していないもの）
-        function createBadgeElement(badge) {
-            const badgeDiv = document.createElement('div');
-            badgeDiv.className = 'badge';
-            badgeDiv.dataset.badgeId = badge.id;
-            badgeDiv.style.background = badge.color;
-            badgeDiv.style.top = badge.position.top + 'px';
-            badgeDiv.style.left = badge.position.left + 'px';
-            
-            // Googleアカウントの画像を使用する場合
-            let iconHtml = badge.icon;
-            if (badge.icon && badge.icon.startsWith('img:')) {
-                const imageUrl = badge.icon.substring(4); // "img:"を削除
-                iconHtml = `<img src="${imageUrl}" alt="${badge.name}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
-            } else if (badge.picture) {
-                // pictureプロパティが直接ある場合
-                iconHtml = `<img src="${badge.picture}" alt="${badge.name}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
-            }
-            
-            badgeDiv.innerHTML = `
-                <div class="badge-icon">${iconHtml}</div>
-                <div class="badge-name">${badge.name}</div>
-            `;
-            
-            return badgeDiv;
-        }
-
-        // カードに吸着したバッジ要素を作成
-        function createAttachedBadgeElement(badge, index = 0) {
-            const badgeDiv = document.createElement('div');
-            badgeDiv.className = 'badge attached';
-            badgeDiv.dataset.badgeId = badge.id;
-            badgeDiv.style.background = badge.color;
-            badgeDiv.title = badge.name + 'が着手中（クリックで外す）';
-            
-            // 位置はCSSで制御される（カテゴリアイコンの隣に配置）
-            
-            // Googleアカウントの画像を使用する場合
-            let iconHtml = badge.icon;
-            if (badge.icon && badge.icon.startsWith('img:')) {
-                const imageUrl = badge.icon.substring(4); // "img:"を削除
-                iconHtml = `<img src="${imageUrl}" alt="${badge.name}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
-            } else if (badge.picture) {
-                // pictureプロパティが直接ある場合
-                iconHtml = `<img src="${badge.picture}" alt="${badge.name}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
-            }
-            
-            badgeDiv.innerHTML = `
-                <div class="badge-icon">${iconHtml}</div>
-                <div class="badge-name">${badge.name}</div>
-            `;
-            
-            // クリックでカードからバッジを外す
-            badgeDiv.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (badge.attachedToTaskId) {
-                    const taskId = badge.attachedToTaskId;
-                    
-                    // 確認ダイアログを表示
-                    const task = tasks.find(t => t.id === taskId);
-                    const taskTitle = task ? task.title : 'タスク';
-                    const badgeName = badge.name || 'バッジ';
-                    
-                    if (confirm(`作業を停止しますか？\nバッジを外すとタイムレコードが停止します。\n\nバッジ: ${badgeName}\nタスク: ${taskTitle}`)) {
-                        // このバッジに関連するアクティブなタイムレコードを停止
-                        endTimeRecordsForBadge(taskId, badge.id);
-                        
-                    // タスクからバッジを外す
-                    if (taskBadges[taskId]) {
-                        taskBadges[taskId] = taskBadges[taskId].filter(id => id !== badge.id);
-                        if (taskBadges[taskId].length === 0) {
-                            delete taskBadges[taskId];
-                            // カードからbadge-attachedクラスを削除
-                            const card = this.closest('.task-card');
-                            if (card) {
-                                card.classList.remove('badge-attached');
-                            }
-                        }
-                    }
-                    // バッジの吸着状態を解除
-                    badge.attachedToTaskId = null;
-                    // バッジ要素を削除
-                    this.remove();
-                    // Firebaseに保存
-                    saveTaskMarketData();
-                    // グリッド上にバッジを再表示
-                    updateBadges();
-                    }
-                }
-            });
-            
-            return badgeDiv;
-        }
-
-        // バッジのドラッグ&ドロップ機能を設定
-        function setupBadgeDragAndDrop(badgeElement, badge) {
-            const taskGrid = document.getElementById('taskGrid');
-            
-            // タッチイベント用の変数（スマホ対応）
-            let touchStartX = 0;
-            let touchStartY = 0;
-            let badgeStartX = 0;
-            let badgeStartY = 0;
-            let isBadgeDragging = false;
-            let badgeTouchTimeout = null;
-            let currentTouchedBadge = null;
-            
-            // コンテキストメニューを無効化（画像保存メニューなどを防ぐ）
-            badgeElement.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            });
-            
-            // 画像の選択を無効化
-            badgeElement.addEventListener('selectstart', function(e) {
-                e.preventDefault();
-            });
-            
-            // タッチ開始（スマホ対応）
-            badgeElement.addEventListener('touchstart', function(e) {
-                // 5回タップのイベントリスナーに到達しないようにする
-                e.stopPropagation();
-                
-                if (e.touches.length === 1) {
-                    const touch = e.touches[0];
-                    touchStartX = touch.clientX;
-                    touchStartY = touch.clientY;
-                    currentTouchedBadge = this;
-                    
-                    // バッジの現在位置を取得
-                    const rect = this.getBoundingClientRect();
-                    const gridRect = taskGrid.getBoundingClientRect();
-                    badgeStartX = rect.left - gridRect.left;
-                    badgeStartY = rect.top - gridRect.top;
-                    
-                    // 既に選択されているバッジの場合は即座にドラッグ可能にする
-                    if (this.classList.contains('selected') && selectedBadge === this) {
-                        // 選択済みの場合は即座にドラッグ可能にする
-                        isBadgeDragging = true;
-                        this.classList.add('dragging');
-                        this.style.transition = 'none';
-                        this.style.zIndex = '1000';
-                        this.style.opacity = '0.8';
-                        this.style.transform += ' scale(1.1)';
-                    } else {
-                        // 新規選択：まず選択状態にする
-                        deselectAllBadges();
-                        this.classList.add('selected');
-                        selectedBadge = this;
-                        
-                        // 選択後のドラッグ開始判定は短時間（50ms）にする
-                        badgeTouchTimeout = setTimeout(() => {
-                            if (this.classList.contains('selected') && selectedBadge === this) {
-                                isBadgeDragging = true;
-                                this.classList.add('dragging');
-                                this.style.transition = 'none';
-                                this.style.zIndex = '1000';
-                                this.style.opacity = '0.8';
-                                this.style.transform += ' scale(1.1)';
-                            }
-                        }, 50); // 限りなく短い時間に設定
-                    }
-                }
-            }, { passive: false });
-            
-            // タッチ移動（スマホ対応）
-            badgeElement.addEventListener('touchmove', function(e) {
-                // 5回タップのイベントリスナーに到達しないようにする
-                e.stopPropagation();
-                
-                // 選択済みバッジが移動した場合は即座にドラッグ開始
-                if (this.classList.contains('selected') && selectedBadge === this && !isBadgeDragging) {
-                    const touch = e.touches[0];
-                    const deltaX = Math.abs(touch.clientX - touchStartX);
-                    const deltaY = Math.abs(touch.clientY - touchStartY);
-                    if (deltaX > 5 || deltaY > 5) {
-                        // 移動が検出された場合は即座にドラッグ開始
-                        clearTimeout(badgeTouchTimeout);
-                        isBadgeDragging = true;
-                        this.classList.add('dragging');
-                        this.style.transition = 'none';
-                        this.style.zIndex = '1000';
-                        this.style.opacity = '0.8';
-                        this.style.transform += ' scale(1.1)';
-                    }
-                }
-                
-                if (isBadgeDragging && e.touches.length === 1 && currentTouchedBadge === this) {
-                    const touch = e.touches[0];
-                    const deltaX = touch.clientX - touchStartX;
-                    const deltaY = touch.clientY - touchStartY;
-                    
-                    // バッジの位置を更新
-                    const gridRect = taskGrid.getBoundingClientRect();
-                    const newX = badgeStartX + deltaX;
-                    const newY = badgeStartY + deltaY;
-                    
-                    // タスクグリッドの境界内に制限
-                    const badgeRect = this.getBoundingClientRect();
-                    const badgeWidth = badgeRect.width;
-                    const badgeHeight = badgeRect.height;
-                    
-                    const maxX = taskGrid.offsetWidth - badgeWidth;
-                    const maxY = Math.max(800, taskGrid.offsetHeight) - badgeHeight;
-                    
-                    const clampedX = Math.max(0, Math.min(newX, maxX));
-                    const clampedY = Math.max(0, Math.min(newY, maxY));
-                    
-                    this.style.left = clampedX + 'px';
-                    this.style.top = clampedY + 'px';
-                    
-                    // カードとの重なりをチェック（スマホ版：バッジ吸着機能）
-                    const taskCards = taskGrid.querySelectorAll('.task-card');
-                    taskCards.forEach(card => {
-                        const cardRect = card.getBoundingClientRect();
-                        const badgeCenterX = clampedX + badgeWidth / 2 + gridRect.left;
-                        const badgeCenterY = clampedY + badgeHeight / 2 + gridRect.top;
-                        
-                        // バッジの中心点がカードの範囲内にあるかチェック
-                        if (badgeCenterX >= cardRect.left && badgeCenterX <= cardRect.right &&
-                            badgeCenterY >= cardRect.top && badgeCenterY <= cardRect.bottom) {
-                            card.classList.add('drag-over-badge');
-                        } else {
-                            card.classList.remove('drag-over-badge');
-                        }
-                    });
-                    
-                    e.preventDefault();
-                } else if (badgeTouchTimeout && currentTouchedBadge === this) {
-                    // 移動が小さい場合はドラッグをキャンセル
-                    const touch = e.touches[0];
-                    const deltaX = Math.abs(touch.clientX - touchStartX);
-                    const deltaY = Math.abs(touch.clientY - touchStartY);
-                    
-                    if (deltaX < 5 && deltaY < 5) {
-                        // まだドラッグ開始していない
-                        return;
-                    } else {
-                        // 移動量が大きい場合はタイマーをクリア
-                        clearTimeout(badgeTouchTimeout);
-                        badgeTouchTimeout = null;
-                    }
-                }
-            }, { passive: false });
-            
-                // タッチ終了（スマホ対応）
-                badgeElement.addEventListener('touchend', function(e) {
-                    // 5回タップのイベントリスナーに到達しないようにする
-                    e.stopPropagation();
-                    
-                    clearTimeout(badgeTouchTimeout);
-                    badgeTouchTimeout = null;
-                    
-                    // すべてのカードからドラッグオーバー状態を解除
-                    const taskCards = taskGrid.querySelectorAll('.task-card');
-                    taskCards.forEach(card => {
-                        card.classList.remove('drag-over-badge');
-                    });
-                    
-                    if (isBadgeDragging && currentTouchedBadge === this) {
-                        // カードの上にドロップされたかチェック（スマホ版：バッジ吸着機能）
-                        const gridRect = taskGrid.getBoundingClientRect();
-                        const badgeRect = this.getBoundingClientRect();
-                        let droppedOnCard = null;
-                        
-                        taskCards.forEach(card => {
-                                const cardRect = card.getBoundingClientRect();
-                                const badgeCenterX = badgeRect.left + badgeRect.width / 2;
-                                const badgeCenterY = badgeRect.top + badgeRect.height / 2;
-                                
-                                // バッジの中心点がカードの範囲内にあるかチェック
-                                if (badgeCenterX >= cardRect.left && badgeCenterX <= cardRect.right &&
-                                    badgeCenterY >= cardRect.top && badgeCenterY <= cardRect.bottom) {
-                                    const taskId = parseInt(card.dataset.taskId);
-                                    if (taskId && badge.attachedToTaskId !== taskId) {
-                                        droppedOnCard = { card: card, taskId: taskId };
-                                    }
-                                }
-                            });
-                        
-                        if (droppedOnCard) {
-                            // カードにバッジを吸着（スマホ版）
-                            const taskId = droppedOnCard.taskId;
-                            const card = droppedOnCard.card;
-                            
-                            // 以前のカードからバッジを外す（別のカードに移動する時）
-                            if (badge.attachedToTaskId && badge.attachedToTaskId !== taskId) {
-                                const prevTaskId = badge.attachedToTaskId;
-                                
-                                // 確認ダイアログを表示（バッジを外す時のみ）
-                                const prevTask = tasks.find(t => t.id === prevTaskId);
-                                const prevTaskTitle = prevTask ? prevTask.title : 'タスク';
-                                const badgeName = badge.name || 'バッジ';
-                                
-                                if (confirm(`作業を停止しますか？\nバッジを外すとタイムレコードが停止します。\n\nバッジ: ${badgeName}\nタスク: ${prevTaskTitle}`)) {
-                                    // 以前のタスクからこのバッジに関連するアクティブなタイムレコードを停止
-                                    endTimeRecordsForBadge(prevTaskId, badge.id);
-                                    
-                                    if (taskBadges[prevTaskId]) {
-                                        taskBadges[prevTaskId] = taskBadges[prevTaskId].filter(id => id !== badge.id);
-                                        if (taskBadges[prevTaskId].length === 0) {
-                                            delete taskBadges[prevTaskId];
-                                        }
-                                    }
-                                    // Firebaseに保存
-                                    saveTaskMarketData();
-                                } else {
-                                    // キャンセルした場合は、新しいカードへの吸着を中止
-                                    e.preventDefault();
-                                    return;
-                                }
-                            }
-                            
-                            // 新しいカードにバッジを吸着
-                            badge.attachedToTaskId = taskId;
-                            if (!taskBadges[taskId]) {
-                                taskBadges[taskId] = [];
-                            }
-                            if (!taskBadges[taskId].includes(badge.id)) {
-                                taskBadges[taskId].push(badge.id);
-                                // タイムレコード起動の確認ダイアログ
-                                const taskObj = tasks.find(t => t.id === taskId);
-                                const taskTitle = taskObj ? taskObj.title : 'タスク';
-                                const badgeName = badge.name || 'バッジ';
-                                
-                                if (confirm(`${badgeName}：タイムレコードを起動し、タスク「${taskTitle}」を実行します。`)) {
-                                    // タイムレコードを作成（バッジがタスクに付けられた時）
-                                    createTimeRecord(taskId, badge.id);
-                                }
-                                // Firebaseに保存
-                                saveTaskMarketData();
-                            }
-                            
-                            // カードに直接バッジを追加
-                            const existingBadges = card.querySelectorAll('.badge.attached');
-                            const badgeIndex = existingBadges.length;
-                            const attachedBadgeElement = createAttachedBadgeElement(badge, badgeIndex);
-                            card.appendChild(attachedBadgeElement);
-                            card.classList.add('badge-attached');
-                            
-                            // グリッド上のバッジを削除
-                            this.remove();
-                            
-                            // バッジを更新（グリッド上のバッジを更新）
-                            updateBadges();
-                            
-                            console.log('バッジをカードに吸着しました:', badge.id, taskId);
-                        } else {
-                            // バッジの位置情報を更新
-                            const newLeft = badgeRect.left - gridRect.left;
-                            const newTop = badgeRect.top - gridRect.top;
-                            
-                            // バッジデータの位置を更新（カードに吸着していない場合のみ）
-                            if (!badge.attachedToTaskId) {
-                                badge.position.left = newLeft;
-                                badge.position.top = newTop;
-                            }
-                            
-                            this.style.transition = '';
-                            this.style.zIndex = '10';
-                            this.style.opacity = '1';
-                            this.style.transform = this.style.transform.replace(' scale(1.1)', '');
-                            this.classList.remove('dragging');
-                            
-                            console.log('バッジの位置を更新しました:', badge.id, badge.position);
-                            // Firebaseに保存
-                            saveTaskMarketData();
-                        }
-                        
-                        isBadgeDragging = false;
-                        currentTouchedBadge = null;
-                        
-                        // ドラッグ終了後も選択状態を維持
-                        this.classList.add('selected');
-                        selectedBadge = this;
-                    } else if (currentTouchedBadge === this) {
-                        // タップ判定（移動量が少ない場合）
-                        const touch = e.changedTouches[0];
-                        const deltaX = Math.abs(touch.clientX - touchStartX);
-                        const deltaY = Math.abs(touch.clientY - touchStartY);
-                        
-                        if (deltaX < 10 && deltaY < 10) {
-                            // タップ：選択状態を切り替え
-                            if (this.classList.contains('selected')) {
-                                this.classList.remove('selected');
-                                selectedBadge = null;
-                            } else {
-                                deselectAllBadges();
-                                this.classList.add('selected');
-                                selectedBadge = this;
-                            }
-                        }
-                        currentTouchedBadge = null;
-                    }
-                });
-            
-            // タッチキャンセル（スマホ対応）
-            badgeElement.addEventListener('touchcancel', function(e) {
-                // 5回タップのイベントリスナーに到達しないようにする
-                e.stopPropagation();
-                
-                clearTimeout(badgeTouchTimeout);
-                badgeTouchTimeout = null;
-                isBadgeDragging = false;
-                this.classList.remove('dragging');
-                this.style.transition = '';
-                this.style.opacity = '1';
-                this.style.transform = this.style.transform.replace(' scale(1.1)', '');
-                currentTouchedBadge = null;
-                
-                // すべてのカードからドラッグオーバー状態を解除
-                const taskCards = taskGrid.querySelectorAll('.task-card');
-                taskCards.forEach(card => {
-                    card.classList.remove('drag-over-badge');
-                });
-            });
-            
-            // ドラッグ開始（PC対応）
-            badgeElement.addEventListener('dragstart', function(e) {
-                draggedBadgeGlobal = badge;
-                this.classList.add('dragging');
-                
-                const rect = this.getBoundingClientRect();
-                const gridRect = taskGrid.getBoundingClientRect();
-                draggedBadgeOffset.x = e.clientX - rect.left;
-                draggedBadgeOffset.y = e.clientY - rect.top;
-                
-                // 元のバッジを一時的に非表示にして残像を防止
-                this.style.visibility = 'hidden';
-                
-                e.dataTransfer.effectAllowed = 'move';
-                e.dataTransfer.setData('badgeId', badge.id.toString());
-                
-                // バッジドラッグハンドラーを設定（一度だけ）
-                setupBadgeDragHandler();
-            });
-            
-            // ドラッグ終了（PC対応）
-            badgeElement.addEventListener('dragend', function(e) {
-                // 元のバッジを再度表示
-                this.style.visibility = 'visible';
-                this.classList.remove('dragging');
-                
-                // ドロップ先がカードでない場合、位置を更新
-                if (draggedBadgeGlobal && !draggedBadgeGlobal.attachedToTaskId) {
-                    const rect = this.getBoundingClientRect();
-                    const gridRect = taskGrid.getBoundingClientRect();
-                    const newLeft = parseInt(this.style.left) || badge.position.left;
-                    const newTop = parseInt(this.style.top) || badge.position.top;
-                    
-                    // バッジデータの位置を更新
-                    badge.position.left = newLeft;
-                    badge.position.top = newTop;
-                    
-                    // Firebaseに保存
-                    saveTaskMarketData();
-                    
-                    console.log('バッジの位置を更新しました（PC）:', badge.id, badge.position);
-                }
-                
-                draggedBadgeGlobal = null;
-            });
-            
-            badgeElement.setAttribute('draggable', 'true');
-        }
         
         
         // タスクを完了にする
@@ -7876,62 +6895,7 @@
             // タイムレコードを終了（このタスクに紐づくすべてのアクティブなタイムレコード）
             endTimeRecordsForTask(taskId);
             
-            // 担当者に報酬を追加
-            const assigneeBadges = getAssignedBadgesForTask(taskId);
-            if (assigneeBadges.length > 0) {
-                // 基本報酬を計算
-                const baseReward = rankRewards[task.priority] || 0;
-                
-                if (baseReward > 0) {
-                    // 複数担当者の場合、作業時間で配分
-                    if (assigneeBadges.length > 1) {
-                        // 各担当者の作業時間を計算
-                        const assigneeWorkTimes = assigneeBadges.map(badge => {
-                            const badgeTimeRecords = timeRecords.filter(tr => tr.badgeId === badge.id && tr.taskId === taskId && tr.duration !== null);
-                            const totalTime = badgeTimeRecords.reduce((sum, tr) => sum + tr.duration, 0);
-                            return { badge, totalTime };
-                        });
-                        
-                        // 合計作業時間を計算
-                        const totalWorkTime = assigneeWorkTimes.reduce((sum, item) => sum + item.totalTime, 0);
-                        
-                        if (totalWorkTime > 0) {
-                            // 作業時間の比率に応じて配分
-                            let remainingCoins = baseReward;
-                            assigneeWorkTimes.forEach((item, index) => {
-                                if (index === assigneeWorkTimes.length - 1) {
-                                    // 最後の人は残りをすべて受け取る（端数処理）
-                                    grantCoinsToUser(item.badge.userId, remainingCoins, taskId, task.title, 'reward');
-                                } else {
-                                    const coins = Math.floor(baseReward * (item.totalTime / totalWorkTime));
-                                    grantCoinsToUser(item.badge.userId, coins, taskId, task.title, 'reward');
-                                    remainingCoins -= coins;
-                                }
-                            });
-                        } else {
-                            // 作業時間がない場合は均等配分
-                            const coinsPerPerson = Math.floor(baseReward / assigneeBadges.length);
-                            let remainingCoins = baseReward;
-                            assigneeBadges.forEach((badge, index) => {
-                                if (index === assigneeBadges.length - 1) {
-                                    grantCoinsToUser(badge.userId, remainingCoins, taskId, task.title, 'reward');
-                                } else {
-                                    grantCoinsToUser(badge.userId, coinsPerPerson, taskId, task.title, 'reward');
-                                    remainingCoins -= coinsPerPerson;
-                                }
-                            });
-                        }
-                    } else {
-                        // 単一担当者の場合、全額付与
-                        grantCoinsToUser(assigneeBadges[0].userId, baseReward, taskId, task.title, 'reward');
-                    }
-                    
-                    // マイページの表示を更新（パネルが開いている場合）
-                    if (document.getElementById('slidePanelOverlay4') && document.getElementById('slidePanelOverlay4').classList.contains('active')) {
-                        updateMyStatusDisplay();
-                    }
-                }
-            }
+            // バッジシステム削除のため、報酬配分機能は削除されました
             
             // グリッドを更新（完了タスクは表示から除外）
             updateTaskGrid();
@@ -7986,25 +6950,6 @@
             console.log('タイムレコードを終了しました:', taskId);
         }
         
-        // 特定のバッジに紐づくアクティブなタイムレコードを終了（バッジを外した時）
-        function endTimeRecordsForBadge(taskId, badgeId) {
-            const endTime = new Date();
-            const endTimeISO = endTime.toISOString();
-            
-            timeRecords.forEach(record => {
-                if (record.taskId === taskId && record.badgeId === badgeId && record.status === 'active') {
-                    const startTime = new Date(record.startTime);
-                    const duration = Math.floor((endTime - startTime) / 1000); // 秒単位
-                    
-                    record.endTime = endTimeISO;
-                    record.duration = duration;
-                    record.status = 'completed';
-                }
-            });
-            
-            saveTimeRecords();
-            console.log('タイムレコードを停止しました（バッジを外した）:', taskId, badgeId);
-        }
         
         // タイムレコードを保存
         function saveTimeRecords() {
@@ -8084,10 +7029,6 @@
             const currentMonth = now.getMonth();
             const currentYear = now.getFullYear();
             
-            // ユーザーのバッジを取得
-            const userBadges = badges.filter(b => b.userId === currentUser.id);
-            const userBadgeIds = userBadges.map(b => b.id);
-            
             // 今月完了したタスクを取得
             const monthlyCompletedTasks = tasks.filter(task => {
                 if (task.status !== 'completed' || !task.completedAt) return false;
@@ -8095,11 +7036,11 @@
                 return completedDate.getMonth() === currentMonth && completedDate.getFullYear() === currentYear;
             });
             
-            // 今月の作業時間を計算
+            // 今月の作業時間を計算（バッジシステム削除のため、ユーザーIDでフィルタリング）
             const monthlyTimeRecords = timeRecords.filter(tr => {
                 if (!tr.duration || !tr.startTime) return false;
                 const recordDate = new Date(tr.startTime);
-                return recordDate.getMonth() === currentMonth && recordDate.getFullYear() === currentYear && userBadgeIds.includes(tr.badgeId);
+                return recordDate.getMonth() === currentMonth && recordDate.getFullYear() === currentYear && tr.userId === currentUser.id;
             });
             const monthlyTotalTime = monthlyTimeRecords.reduce((sum, tr) => sum + (tr.duration || 0), 0);
             
@@ -8236,17 +7177,8 @@
                 return;
             }
             
-            // 現在のユーザーのバッジを取得
-            const userBadges = badges.filter(b => b.userId === currentUser.id);
-            if (userBadges.length === 0) {
-                content.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">バッジが作成されていません。バッジを作成してください。</p>';
-                return;
-            }
-            
-            const userBadgeIds = userBadges.map(b => b.id);
-            
-            // ユーザーのバッジに紐づくタイムレコードを取得
-            const userTimeRecords = timeRecords.filter(record => userBadgeIds.includes(record.badgeId));
+            // ユーザーのタイムレコードを取得（バッジシステム削除のため、ユーザーIDでフィルタリング）
+            const userTimeRecords = timeRecords.filter(record => record.userId === currentUser.id);
             
             if (userTimeRecords.length === 0) {
                 content.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">着手したタスクがありません。</p>';
@@ -8257,12 +7189,6 @@
             const taskMap = {};
             tasks.forEach(task => {
                 taskMap[task.id] = task;
-            });
-            
-            // バッジ情報を取得
-            const badgeMap = {};
-            badges.forEach(badge => {
-                badgeMap[badge.id] = badge;
             });
             
             // 日付でグループ化
@@ -8288,7 +7214,6 @@
                 
                 dateRecords.forEach(record => {
                     const task = taskMap[record.taskId];
-                    const badge = badgeMap[record.badgeId];
                     
                     if (!task) return;
                     
@@ -8758,12 +7683,6 @@
                 return;
             }
             
-            // バッジが付いているか確認
-            if (!taskBadges[taskId] || taskBadges[taskId].length === 0) {
-                console.log('バッジが付いていないタスクには応援できません');
-                return;
-            }
-            
             // 1日10回制限をチェック
             const today = new Date().toLocaleDateString('ja-JP');
             const todaySupport = supportHistory.find(sh => sh.taskId === taskId && sh.date === today);
@@ -8785,43 +7704,7 @@
                 supportHistory.push({ taskId: taskId, date: today, count: 1 });
             }
             
-            // 担当者にコインを配分
-            const assigneeBadges = taskBadges[taskId].map(badgeId => badges.find(b => b.id === badgeId)).filter(b => b);
-            
-            if (assigneeBadges.length === 0) {
-                console.log('担当者バッジが見つかりません');
-                return;
-            }
-            
-            // 複数担当者の場合、作業時間で配分
-            if (assigneeBadges.length > 1) {
-                // 各担当者の作業時間を計算
-                const assigneeWorkTimes = assigneeBadges.map(badge => {
-                    const badgeTimeRecords = timeRecords.filter(tr => tr.badgeId === badge.id && tr.taskId === taskId && tr.duration !== null);
-                    const totalTime = badgeTimeRecords.reduce((sum, tr) => sum + tr.duration, 0);
-                    return { badge, totalTime };
-                });
-                
-                // 作業時間でソート（降順）
-                assigneeWorkTimes.sort((a, b) => b.totalTime - a.totalTime);
-                
-                // 作業時間が長い人に6割、短い人に4割
-                const longTimeWorker = assigneeWorkTimes[0];
-                const shortTimeWorker = assigneeWorkTimes[1];
-                
-                const longTimeCoins = Math.floor(coinsToGrant * 0.6);
-                const shortTimeCoins = coinsToGrant - longTimeCoins;
-                
-                // コインを付与
-                grantCoinsToUser(longTimeWorker.badge.userId, longTimeCoins, taskId, task.title, 'support');
-                
-                if (shortTimeWorker) {
-                    grantCoinsToUser(shortTimeWorker.badge.userId, shortTimeCoins, taskId, task.title, 'support');
-                }
-            } else {
-                // 単一担当者の場合、全額付与
-                grantCoinsToUser(assigneeBadges[0].userId, coinsToGrant, taskId, task.title, 'support');
-            }
+            // バッジシステム削除のため、応援コインはタスクに直接追加されます
             
             // タスクグリッドを更新
             updateTaskGrid();
@@ -8998,12 +7881,6 @@
             const panel = document.getElementById('timeRecordPanel');
             const content = document.getElementById('timeRecordContent');
             
-            // バッジ情報を取得
-            const badgeMap = {};
-            badges.forEach(badge => {
-                badgeMap[badge.id] = badge;
-            });
-            
             function formatDateTime(isoString) {
                 if (!isoString) return '-';
                 const date = new Date(isoString);
@@ -9020,15 +7897,16 @@
             // 現在のタイムレコード情報を表示
             let currentInfoHTML = '';
             if (activeRecord) {
-                const badge = badgeMap[activeRecord.badgeId];
-                const badgeName = badge ? badge.name : '不明なバッジ';
+                const userName = activeRecord.userId && currentUser && activeRecord.userId === currentUser.id 
+                    ? (currentUser.name || currentUser.email || '現在のユーザー')
+                    : 'ユーザー';
                 
                 currentInfoHTML = `
                     <div style="background: var(--color-background); border: 2px solid #4CAF50; border-radius: var(--border-radius-md); padding: var(--spacing-md); margin-bottom: var(--spacing-lg);">
                         <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">現在のタイムレコード</h3>
                         <div style="margin-bottom: var(--spacing-sm);">
-                            <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">担当者: </span>
-                            <span style="color: var(--color-text-primary);">${escapeHtml(badgeName)}</span>
+                            <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">ユーザー: </span>
+                            <span style="color: var(--color-text-primary);">${escapeHtml(userName)}</span>
                         </div>
                         <div style="margin-bottom: var(--spacing-sm);">
                             <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">開始時間: </span>
@@ -9061,13 +7939,14 @@
             
             if (completedRecords.length > 0) {
                 const historyItems = completedRecords.map(record => {
-                    const badge = badgeMap[record.badgeId];
-                    const badgeName = badge ? badge.name : '不明なバッジ';
+                    const userName = record.userId && currentUser && record.userId === currentUser.id 
+                        ? (currentUser.name || currentUser.email || '現在のユーザー')
+                        : 'ユーザー';
                     
                     return `
                         <div style="background: var(--color-background); border: 1px solid var(--color-border); border-radius: var(--border-radius-md); padding: var(--spacing-md); margin-bottom: var(--spacing-sm);">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-xs);">
-                                <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">${escapeHtml(badgeName)}</span>
+                                <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">${escapeHtml(userName)}</span>
                                 <span style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">完了</span>
                             </div>
                             <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">
@@ -9159,16 +8038,6 @@
             // タスクを削除
             tasks = tasks.filter(t => t.id !== taskId);
             
-            // タスクに紐づくバッジも削除
-            if (taskBadges[taskId]) {
-                taskBadges[taskId].forEach(badgeId => {
-                    const badge = badges.find(b => b.id === badgeId);
-                    if (badge) {
-                        badge.attachedToTaskId = null;
-                    }
-                });
-                delete taskBadges[taskId];
-            }
             
             // グリッドを更新
             updateTaskGrid();
@@ -9182,193 +8051,8 @@
             isDeletingTask = false;
         }
         
-        // バッジを削除
-        function deleteBadge(badgeId) {
-            const badge = badges.find(b => b.id === badgeId);
-            if (!badge) return;
-            
-            // バッジがタスクに吸着している場合は、タイムレコードを停止
-            if (badge.attachedToTaskId) {
-                const taskId = badge.attachedToTaskId;
-                const task = tasks.find(t => t.id === taskId);
-                const taskTitle = task ? task.title : 'タスク';
-                const badgeName = badge.name || 'バッジ';
-                
-                if (confirm(`作業を停止しますか？\nバッジを削除するとタイムレコードが停止します。\n\nバッジ: ${badgeName}\nタスク: ${taskTitle}`)) {
-                    // このバッジに関連するアクティブなタイムレコードを停止
-                    endTimeRecordsForBadge(taskId, badgeId);
-                } else {
-                    // キャンセルした場合は削除を中止
-                    return;
-                }
-            }
-            
-            // バッジを削除
-            badges = badges.filter(b => b.id !== badgeId);
-            
-            // タスクからバッジの紐付けを削除
-            if (badge.attachedToTaskId) {
-                const taskId = badge.attachedToTaskId;
-                if (taskBadges[taskId]) {
-                    taskBadges[taskId] = taskBadges[taskId].filter(id => id !== badgeId);
-                    if (taskBadges[taskId].length === 0) {
-                        delete taskBadges[taskId];
-                    }
-                }
-            }
-            
-            // バッジ表示を更新
-            updateBadges();
-            
-            // Firebaseに保存
-            saveTaskMarketData();
-            
-            console.log('バッジを削除しました:', badgeId);
-        }
 
-        // グリッド上でのバッジドラッグ中に位置を更新（一度だけ設定）
-        let badgeDragHandlerSet = false;
-        function setupBadgeDragHandler() {
-            if (badgeDragHandlerSet) return;
-            badgeDragHandlerSet = true;
-            
-            const taskGrid = document.getElementById('taskGrid');
-            if (taskGrid) {
-                // グリッド上のドラッグオーバー（バッジの位置をリアルタイムに更新）
-                taskGrid.addEventListener('dragover', function(e) {
-                    // バッジがドラッグ中の場合は位置を更新
-                    if (draggedBadgeGlobal && !draggedBadgeGlobal.attachedToTaskId) {
-                        e.preventDefault();
-                        e.dataTransfer.dropEffect = 'move';
-                        
-                        const draggingElement = taskGrid.querySelector(`.badge[data-badge-id="${draggedBadgeGlobal.id}"].dragging`);
-                        if (draggingElement) {
-                            const gridRect = taskGrid.getBoundingClientRect();
-                            const badgeWidth = draggingElement.offsetWidth;
-                            const badgeHeight = draggingElement.offsetHeight;
-                            
-                            // グリッド内の相対位置を計算（マウス位置からオフセットを引く）
-                            let newLeft = e.clientX - gridRect.left - draggedBadgeOffset.x;
-                            let newTop = e.clientY - gridRect.top - draggedBadgeOffset.y;
-                            
-                            // グリッド内に制限
-                            const maxX = taskGrid.offsetWidth - badgeWidth;
-                            const maxY = Math.max(800, taskGrid.offsetHeight) - badgeHeight;
-                            newLeft = Math.max(0, Math.min(newLeft, maxX));
-                            newTop = Math.max(0, Math.min(newTop, maxY));
-                            
-                            draggingElement.style.left = newLeft + 'px';
-                            draggingElement.style.top = newTop + 'px';
-                        }
-                    }
-                });
-                
-                // グリッド上でのドロップ（バッジの位置を保存）
-                taskGrid.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                    
-                    if (draggedBadgeGlobal && !draggedBadgeGlobal.attachedToTaskId) {
-                        const draggingElement = taskGrid.querySelector(`.badge[data-badge-id="${draggedBadgeGlobal.id}"].dragging`);
-                        if (draggingElement) {
-                            const newLeft = parseInt(draggingElement.style.left);
-                            const newTop = parseInt(draggingElement.style.top);
-                            
-                            // バッジデータの位置を更新
-                            draggedBadgeGlobal.position.left = newLeft;
-                            draggedBadgeGlobal.position.top = newTop;
-                            
-                            // Firebaseに保存
-                            saveTaskMarketData();
-                            
-                            console.log('バッジの位置を更新しました（ドロップ）:', draggedBadgeGlobal.id, draggedBadgeGlobal.position);
-                        }
-                    }
-                });
-            }
-        }
 
-        // カードへのバッジ吸着機能を設定
-        function setupTaskCardBadgeDrop(cardElement, task) {
-            cardElement.addEventListener('dragover', function(e) {
-                const badgeId = e.dataTransfer.getData('badgeId');
-                if (badgeId) {
-                    e.preventDefault();
-                    e.dataTransfer.dropEffect = 'move';
-                    this.classList.add('drag-over-badge');
-                }
-            });
-            
-            cardElement.addEventListener('dragleave', function(e) {
-                this.classList.remove('drag-over-badge');
-            });
-            
-            cardElement.addEventListener('drop', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                this.classList.remove('drag-over-badge');
-                
-                const badgeId = parseInt(e.dataTransfer.getData('badgeId'));
-                if (badgeId) {
-                    const badge = badges.find(b => b.id === badgeId);
-                    if (badge && badge.attachedToTaskId !== task.id) {
-                        // 以前のカードからバッジを外す（別のカードに移動する時）
-                        if (badge.attachedToTaskId) {
-                            const prevTaskId = badge.attachedToTaskId;
-                            
-                            // 確認ダイアログを表示（バッジを外す時のみ）
-                            const prevTask = tasks.find(t => t.id === prevTaskId);
-                            const prevTaskTitle = prevTask ? prevTask.title : 'タスク';
-                            const badgeName = badge.name || 'バッジ';
-                            
-                            if (confirm(`作業を停止しますか？\nバッジを外すとタイムレコードが停止します。\n\nバッジ: ${badgeName}\nタスク: ${prevTaskTitle}`)) {
-                                // 以前のタスクからこのバッジに関連するアクティブなタイムレコードを停止
-                                endTimeRecordsForBadge(prevTaskId, badge.id);
-                                
-                            if (taskBadges[prevTaskId]) {
-                                taskBadges[prevTaskId] = taskBadges[prevTaskId].filter(id => id !== badge.id);
-                                }
-                            } else {
-                                // キャンセルした場合は、新しいカードへの吸着を中止
-                                e.preventDefault();
-                                e.stopPropagation();
-                                return;
-                            }
-                        }
-                        
-                        // 新しいカードにバッジを吸着
-                        badge.attachedToTaskId = task.id;
-                        if (!taskBadges[task.id]) {
-                            taskBadges[task.id] = [];
-                        }
-                        if (!taskBadges[task.id].includes(badge.id)) {
-                            taskBadges[task.id].push(badge.id);
-                            // Firebaseに保存
-                            saveTaskMarketData();
-                            // タイムレコード起動の確認ダイアログ
-                            const taskObj = tasks.find(t => t.id === task.id);
-                            const taskTitle = taskObj ? taskObj.title : 'タスク';
-                            const badgeName = badge.name || 'バッジ';
-                            
-                            if (confirm(`${badgeName}：タイムレコードを起動し、タスク「${taskTitle}」を実行します。`)) {
-                                // タイムレコードを作成（バッジがタスクに付けられた時）
-                                createTimeRecord(task.id, badge.id);
-                            }
-                        }
-                        
-                        // カードに直接バッジを追加（updateTaskGrid()を呼ばない）
-                        // 既存のバッジの数を取得してインデックスを設定
-                        const existingBadges = this.querySelectorAll('.badge.attached');
-                        const badgeIndex = existingBadges.length;
-                        const badgeElement = createAttachedBadgeElement(badge, badgeIndex);
-                        this.appendChild(badgeElement);
-                        this.classList.add('badge-attached');
-                        
-                        // バッジを更新（グリッド上のバッジを更新）
-                        updateBadges();
-                    }
-                }
-            });
-        }
 
         // カテゴリー名取得
         function getCategoryName(category) {
@@ -10043,7 +8727,6 @@
             // 今回は簡単にupdateTaskGridとupdateBadgesを呼び出す
             setTimeout(() => {
                 updateTaskGrid();
-                updateBadges();
                 
                 // リフレッシュ完了
                 const pullRefreshIndicator = document.getElementById('pullRefreshIndicator');
@@ -10120,8 +8803,6 @@
                 minute: '2-digit'
             });
             
-            // 担当バッジ
-            const assignedBadges = getAssignedBadgesForTask(task.id);
             
             // タイムレコードの合計作業時間を計算
             const taskRecords = getTimeRecordsForTask(task.id);
@@ -10147,7 +8828,6 @@
                             <span>📅 ${dateStr}</span>
                             <span>|</span>
                             <span>${categoryNames[task.category] || '未分類'}</span>
-                            ${assignedBadges.length > 0 ? `<span>|</span><span>担当: ${assignedBadges.length}人</span>` : ''}
                             ${totalDuration > 0 ? `<span>|</span><span>⏱️ ${totalDurationFormatted}</span>` : ''}
                         </div>
                     </div>
@@ -10156,19 +8836,6 @@
                 <div class="archive-task-content">
                     <div class="archive-task-body">
                         ${task.description ? `<div class="archive-task-description">${escapeHtml(task.description)}</div>` : ''}
-                        ${assignedBadges.length > 0 ? `
-                            <div class="archive-task-badges">
-                                <span style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-right: var(--spacing-xs);">担当者:</span>
-                                ${assignedBadges.map(badge => `
-                                    <div class="archive-task-badge">
-                                        ${badge.picture ? `<img src="${badge.picture}" alt="${escapeHtml(badge.name)}" class="archive-task-badge-icon">` : 
-                                          badge.icon && badge.icon.startsWith('img:') ? `<img src="${badge.icon.substring(4)}" alt="${escapeHtml(badge.name)}" class="archive-task-badge-icon">` :
-                                          `<span>${badge.icon || '👤'}</span>`}
-                                        <span>${escapeHtml(badge.name)}</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        ` : ''}
                     </div>
                 </div>
             `;
@@ -10176,14 +8843,6 @@
             return item;
         }
         
-        // タスクに割り当てられたバッジを取得
-        function getAssignedBadgesForTask(taskId) {
-            if (!taskBadges[taskId] || taskBadges[taskId].length === 0) {
-                return [];
-            }
-            
-            return badges.filter(badge => taskBadges[taskId].includes(badge.id));
-        }
         
         // HTMLエスケープ
         function escapeHtml(text) {
@@ -10232,12 +8891,7 @@
             }
             
             // 担当者フィルター
-            if (archiveFilters.assignee !== 'all') {
-                filtered = filtered.filter(task => {
-                    const assignedBadges = getAssignedBadgesForTask(task.id);
-                    return assignedBadges.some(badge => badge.id.toString() === archiveFilters.assignee);
-                });
-            }
+            // バッジシステム削除のため、担当者フィルターは無効
             
             // カテゴリフィルター
             if (archiveFilters.category !== 'all') {
@@ -10295,21 +8949,13 @@
             updateAssigneeFilterOptions();
         }
         
-        // 担当者フィルターのオプションを更新
+        // 担当者フィルターのオプションを更新（バッジシステム削除のため、すべてのみ）
         function updateAssigneeFilterOptions() {
             const filterAssignee = document.getElementById('archiveFilterAssignee');
             if (!filterAssignee) return;
             
             // 現在のオプションを保持（「すべて」のみ）
             filterAssignee.innerHTML = '<option value="all">すべて</option>';
-            
-            // すべてのバッジを取得
-            badges.forEach(badge => {
-                const option = document.createElement('option');
-                option.value = badge.id.toString();
-                option.textContent = badge.name;
-                filterAssignee.appendChild(option);
-            });
         }
         
         // 外部リンクを追加
@@ -10688,108 +9334,12 @@
             }
         }
 
-        // メンバー一覧を更新
+        // メンバー一覧を更新（バッジシステム削除のため、空のメッセージを表示）
         function updateResourceMembers() {
             const content = document.getElementById('resourceMembersContent');
             if (!content) return;
 
-            if (badges.length === 0) {
-                content.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">メンバーが登録されていません。</p>';
-                return;
-            }
-
-            // 各メンバーの情報を計算
-            const membersData = badges.map(badge => {
-                // 現在のタスク数
-                const currentTasks = Object.keys(taskBadges).filter(taskId => 
-                    taskBadges[taskId] && taskBadges[taskId].includes(badge.id)
-                ).length;
-
-                // アクティブなタイムレコード数（稼働率）
-                const activeTimeRecords = timeRecords.filter(tr => 
-                    tr.badgeId === badge.id && tr.status === 'active'
-                ).length;
-
-                // 総作業時間（秒）を計算
-                const totalDuration = timeRecords
-                    .filter(tr => tr.badgeId === badge.id && tr.duration !== null)
-                    .reduce((sum, tr) => sum + tr.duration, 0);
-
-                // 負荷状態を判定（タスク数とアクティブなタイムレコード数から）
-                let loadLevel = 'low';
-                if (currentTasks >= 5 || activeTimeRecords >= 3) {
-                    loadLevel = 'high';
-                } else if (currentTasks >= 3 || activeTimeRecords >= 2) {
-                    loadLevel = 'medium';
-                }
-
-                return {
-                    badge,
-                    currentTasks,
-                    activeTimeRecords,
-                    totalDuration,
-                    loadLevel
-                };
-            });
-
-            // HTMLを生成
-            const html = membersData.map(member => {
-                const badgeIcon = member.badge.icon && member.badge.icon.startsWith('img:') 
-                    ? `<img src="${member.badge.icon.substring(4)}" alt="${member.badge.name}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`
-                    : member.badge.picture 
-                        ? `<img src="${member.badge.picture}" alt="${member.badge.name}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`
-                        : member.badge.icon || '👤';
-
-                function formatDuration(seconds) {
-                    if (!seconds || seconds === 0) return '0分';
-                    const hours = Math.floor(seconds / 3600);
-                    const minutes = Math.floor((seconds % 3600) / 60);
-                    if (hours > 0) {
-                        return `${hours}時間${minutes}分`;
-                    }
-                    return `${minutes}分`;
-                }
-
-                const loadPercent = Math.min((member.currentTasks / 5) * 100, 100);
-
-                return `
-                    <div class="member-card">
-                        <div class="member-header">
-                            <div class="member-icon" style="background: ${member.badge.color || '#FF679C'};">
-                                ${badgeIcon}
-                            </div>
-                            <div class="member-info">
-                                <div class="member-name">${escapeHtml(member.badge.name)}</div>
-                                <div class="load-indicator">
-                                    <div class="load-bar ${member.loadLevel}" style="width: ${loadPercent}%;"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="member-stats">
-                            <div class="stat-item">
-                                <div class="stat-label">現在のタスク</div>
-                                <div class="stat-value">${member.currentTasks}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">稼働中</div>
-                                <div class="stat-value">${member.activeTimeRecords}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">総作業時間</div>
-                                <div class="stat-value">${formatDuration(member.totalDuration)}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">負荷状態</div>
-                                <div class="stat-value" style="color: ${member.loadLevel === 'high' ? '#ef4444' : member.loadLevel === 'medium' ? '#f59e0b' : '#10b981'};">
-                                    ${member.loadLevel === 'high' ? '高' : member.loadLevel === 'medium' ? '中' : '低'}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            content.innerHTML = html;
+            content.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">メンバー管理機能は削除されました。</p>';
         }
 
         // 週次・月次計画の表示期間管理
@@ -10858,34 +9408,7 @@
                     </div>
             `;
 
-            // 各メンバーの行を生成
-            badges.forEach(badge => {
-                html += `<div class="schedule-member-row">
-                    <div class="schedule-member-name">${escapeHtml(badge.name)}</div>
-                `;
-                
-                weekDays.forEach(date => {
-                    // その日のタスクを取得
-                    const dayTasks = tasks.filter(task => {
-                        if (task.status === 'completed') return false;
-                        const taskDate = task.createdAt ? new Date(task.createdAt) : null;
-                        if (!taskDate) return false;
-                        const taskBadgeIds = taskBadges[task.id] || [];
-                        const hasBadge = taskBadgeIds.includes(badge.id);
-                        return hasBadge && 
-                               taskDate.getDate() === date.getDate() &&
-                               taskDate.getMonth() === date.getMonth() &&
-                               taskDate.getFullYear() === date.getFullYear();
-                    });
-
-                    const taskCount = dayTasks.length;
-                    html += `<div class="schedule-cell ${taskCount > 0 ? 'has-task' : ''}" title="${taskCount > 0 ? taskCount + '件のタスク' : 'なし'}">
-                        ${taskCount > 0 ? taskCount + '件' : ''}
-                    </div>`;
-                });
-
-                html += `</div>`;
-            });
+            // バッジシステム削除のため、スケジュール表示は空
 
             html += `</div>`;
             content.innerHTML = html;
@@ -10912,27 +9435,7 @@
                 <div class="schedule-calendar">
             `;
 
-            // 各週を表示（簡略版：週ごとのタスク数を表示）
-            badges.forEach(badge => {
-                const badgeTasks = tasks.filter(task => {
-                    if (task.status === 'completed') return false;
-                    const taskBadgeIds = taskBadges[task.id] || [];
-                    return taskBadgeIds.includes(badge.id);
-                });
-
-                const monthTasks = badgeTasks.filter(task => {
-                    const taskDate = task.createdAt ? new Date(task.createdAt) : null;
-                    if (!taskDate) return false;
-                    return taskDate.getFullYear() === year && taskDate.getMonth() === month;
-                });
-
-                html += `
-                    <div style="padding: var(--spacing-sm); background: var(--color-background-secondary); border-radius: var(--border-radius-sm); margin-bottom: var(--spacing-xs);">
-                        <div style="font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-xs);">${escapeHtml(badge.name)}</div>
-                        <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">${monthTasks.length}件のタスク</div>
-                    </div>
-                `;
-            });
+            // バッジシステム削除のため、スケジュール表示は空
 
             html += `</div>`;
             content.innerHTML = html;
@@ -10962,95 +9465,12 @@
             updateScheduleView();
         }
 
-        // タイムライン表示を更新
+        // タイムライン表示を更新（バッジシステム削除のため、空のメッセージを表示）
         function updateTimelineView() {
-            const filterSelect = document.getElementById('timelineFilter');
-            const selectedBadgeId = filterSelect ? parseInt(filterSelect.value) : null;
             const content = document.getElementById('timelineContent');
             if (!content) return;
 
-            // フィルター用のメンバーオプションを更新
-            if (filterSelect) {
-                const existingOptions = filterSelect.querySelectorAll('option:not([value="all"])');
-                existingOptions.forEach(opt => opt.remove());
-                
-                badges.forEach(badge => {
-                    const option = document.createElement('option');
-                    option.value = badge.id;
-                    option.textContent = badge.name;
-                    if (selectedBadgeId === badge.id) {
-                        option.selected = true;
-                    }
-                    filterSelect.appendChild(option);
-                });
-            }
-
-            // 表示するメンバーをフィルター
-            const displayBadges = selectedBadgeId === null || isNaN(selectedBadgeId) 
-                ? badges 
-                : badges.filter(b => b.id === selectedBadgeId);
-
-            if (displayBadges.length === 0) {
-                content.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">メンバーが選択されていません。</p>';
-                return;
-            }
-
-            let html = '<div class="timeline-container">';
-
-            displayBadges.forEach(badge => {
-                // このメンバーに関連するタスクを取得
-                const memberTasks = tasks.filter(task => {
-                    if (task.status === 'completed') return false;
-                    const taskBadgeIds = taskBadges[task.id] || [];
-                    return taskBadgeIds.includes(badge.id);
-                });
-
-                // タイムレコードからアクティブなタスクを取得
-                const activeRecords = timeRecords.filter(tr => 
-                    tr.badgeId === badge.id && tr.status === 'active'
-                );
-
-                html += `
-                    <div class="timeline-member">
-                        <div class="timeline-member-header">${escapeHtml(badge.name)}</div>
-                `;
-
-                // アクティブなタスクを表示
-                activeRecords.forEach(record => {
-                    const task = tasks.find(t => t.id === record.taskId);
-                    if (task) {
-                        const startTime = new Date(record.startTime);
-                        html += `
-                            <div class="timeline-task">
-                                <div class="timeline-task-title">${escapeHtml(task.title)}</div>
-                                <div class="timeline-task-time">
-                                    開始: ${startTime.toLocaleString('ja-JP')} (稼働中)
-                                </div>
-                            </div>
-                        `;
-                    }
-                });
-
-                // その他のタスクを表示
-                memberTasks.forEach(task => {
-                    if (!activeRecords.find(r => r.taskId === task.id)) {
-                        const createdDate = task.createdAt ? new Date(task.createdAt) : null;
-                        html += `
-                            <div class="timeline-task">
-                                <div class="timeline-task-title">${escapeHtml(task.title)}</div>
-                                <div class="timeline-task-time">
-                                    ${createdDate ? '作成: ' + createdDate.toLocaleString('ja-JP') : '日付不明'}
-                                </div>
-                            </div>
-                        `;
-                    }
-                });
-
-                html += `</div>`;
-            });
-
-            html += '</div>';
-            content.innerHTML = html;
+            content.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">タイムライン機能は削除されました。</p>';
         }
 
         // HTMLエスケープ関数
@@ -11080,7 +9500,6 @@
             // 設定パネルのイベントリスナーを設定
             setupSettingsPanel();
             
-            setupBadgeDragHandler(); // バッジドラッグハンドラーを設定
             setupCompleteButtonDrop(); // 完了ボタンのドロップ処理を初期化
             // データ読み込み時に既にupdateTaskGrid()が呼ばれているため、重複を避ける
             if (!document.getElementById('taskGrid').hasChildNodes() || document.getElementById('taskGrid').childElementCount === 0) {
@@ -11112,9 +9531,6 @@
                         console.error('新規追加ボタンが見つかりません（再試行失敗）');
                     }
                 }, 200);
-            }
-            if (badges.length > 0) {
-            updateBadges(); // バッジを表示
             }
             // アーカイブパネルの初期化
             setupArchiveFilters();
