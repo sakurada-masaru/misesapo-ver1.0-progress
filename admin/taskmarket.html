@@ -2206,18 +2206,14 @@
             overflow: hidden;
         }
         
-        /* ランク画像をカードの背景に設定 */
-        .task-card::before {
-            content: '';
+        /* ランク画像のスタイル */
+        .task-card-rank-image {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: var(--rank-image-url, none);
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
+            object-fit: cover;
             opacity: 0.15;
             z-index: 0;
             pointer-events: none;
@@ -6246,11 +6242,8 @@
                 const baseReward = rankRewards[difficulty] || rankRewards[2] || 0;
                 const supportCoins = task.supportCoins || 0;
                 
-                // ランク画像のパスを取得して背景画像として設定
+                // ランク画像のパスを取得
                 const rankImagePath = getRankImagePath(difficulty);
-                if (rankImagePath) {
-                    card.style.setProperty('--rank-image-url', `url(${rankImagePath})`);
-                }
                 
                 // バッジの吸着数を取得
                 const attachedBadgeCount = taskBadges[task.id] && taskBadges[task.id].length > 0 ? taskBadges[task.id].length : 0;
@@ -6258,6 +6251,7 @@
                 
                 card.innerHTML = `
                     <span class="tooltip-text task-card-tooltip">ダブルクリックで詳細を表示</span>
+                    ${rankImagePath ? `<img src="${rankImagePath}" alt="ランク${difficulty}" class="task-card-rank-image">` : ''}
                     <div class="task-card-header">
                         <div class="task-card-title">${task.title}</div>
                         <div class="task-card-priority">${getDifficultyStars(difficulty)}</div>
@@ -6415,11 +6409,8 @@
                 const baseReward = rankRewards[difficulty] || rankRewards[2] || 0;
                 const supportCoins = task.supportCoins || 0;
                 
-                // ランク画像のパスを取得して背景画像として設定
+                // ランク画像のパスを取得
                 const rankImagePath = getRankImagePath(difficulty);
-                if (rankImagePath) {
-                    card.style.setProperty('--rank-image-url', `url(${rankImagePath})`);
-                }
                 
                 // バッジの吸着数を取得
                 const attachedBadgeCount = taskBadges[task.id] && taskBadges[task.id].length > 0 ? taskBadges[task.id].length : 0;
@@ -6427,6 +6418,7 @@
                 
                 card.innerHTML = `
                     <span class="tooltip-text task-card-tooltip">ダブルクリックで詳細を表示</span>
+                    ${rankImagePath ? `<img src="${rankImagePath}" alt="ランク${difficulty}" class="task-card-rank-image">` : ''}
                     <div class="task-card-header">
                         <div class="task-card-title">${task.title}</div>
                         <div class="task-card-priority">${getDifficultyStars(difficulty)}</div>
