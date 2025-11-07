@@ -9119,14 +9119,10 @@
             const rankNum = typeof rank === 'number' ? rank : parseInt(rank) || 2;
             const normalizedRank = Math.max(1, Math.min(5, rankNum)); // 1-5の範囲に制限
             
-            // 全角数字に変換
-            const fullWidthNumbers = ['１', '２', '３', '４', '５'];
-            const fullWidthRank = fullWidthNumbers[normalizedRank - 1];
-            
             if (normalizedRank === 5) {
-                return 'images/ランク５.svg';
+                return 'images/rank5.svg';
             } else {
-                return `images/ランク${fullWidthRank}.png`;
+                return `images/rank${normalizedRank}.png`;
             }
         }
         
