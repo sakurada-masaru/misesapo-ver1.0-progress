@@ -3712,7 +3712,10 @@
         <div class="detail-board" id="detailBoard" onclick="event.stopPropagation()">
             <div class="detail-board-header">
                 <div>
-                    <h2 class="detail-title">タスク情報</h2>
+                    <h2 class="detail-title" style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                        <img src="images/task.svg" alt="タスク" style="width: 24px; height: 24px;">
+                        <span>タスク情報</span>
+                    </h2>
                     <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm); margin: 0;">モード切り替えボタンで詳細の「編集」が行えます。</p>
                 </div>
                 <div style="display: flex; gap: var(--spacing-sm); align-items: center;">
@@ -3739,7 +3742,10 @@
     <div class="time-record-panel-overlay" id="timeRecordPanelOverlay" onclick="closeTimeRecordPanelOnOverlay(event)">
         <div class="time-record-panel" id="timeRecordPanel" onclick="event.stopPropagation()">
             <div class="time-record-panel-header">
-                <h2 class="time-record-panel-title">タイムレコード</h2>
+                <h2 class="time-record-panel-title" style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <span style="font-size: 24px;">🕐</span>
+                    <span>タイムレコード</span>
+                </h2>
                 <button class="time-record-panel-close-button" onclick="closeTimeRecordPanel()" title="閉じる">×</button>
             </div>
             <div id="timeRecordContent" class="time-record-panel-content">
@@ -3895,7 +3901,10 @@
     <div class="slide-panel-overlay" id="slidePanelOverlay2" onclick="closeSlidePanelOnOverlay(event, 2)">
         <div class="slide-panel panel-2" id="slidePanel2" onclick="event.stopPropagation()">
             <div class="slide-panel-header panel-2">
-                <h2 class="slide-panel-title">リソース管理</h2>
+                <h2 class="slide-panel-title" style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <img src="images/resource.svg" alt="リソース" style="width: 24px; height: 24px;">
+                    <span>リソース管理</span>
+                </h2>
                 <button class="slide-panel-close-button" onclick="closeSlidePanel(2)" title="閉じる">×</button>
             </div>
             <div class="slide-panel-content">
@@ -3954,7 +3963,10 @@
     <div class="slide-panel-overlay" id="slidePanelOverlay3" onclick="closeSlidePanelOnOverlay(event, 3)">
         <div class="slide-panel panel-3" id="slidePanel3" onclick="event.stopPropagation()">
             <div class="slide-panel-header panel-3">
-                <h2 class="slide-panel-title">設定</h2>
+                <h2 class="slide-panel-title" style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <img src="images/setup.svg" alt="設定" style="width: 24px; height: 24px;">
+                    <span>設定</span>
+                </h2>
                 <button class="slide-panel-close-button" onclick="closeSlidePanel(3)" title="閉じる">×</button>
             </div>
             <div class="slide-panel-content">
@@ -4112,7 +4124,10 @@
     <div class="slide-panel-overlay" id="slidePanelOverlay4" onclick="closeSlidePanelOnOverlay(event, 4)">
         <div class="slide-panel panel-4" id="slidePanel4" onclick="event.stopPropagation()">
             <div class="slide-panel-header panel-4">
-                <h2 class="slide-panel-title">マイページ</h2>
+                <h2 class="slide-panel-title" style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <img src="images/mypage.svg" alt="マイページ" style="width: 24px; height: 24px;">
+                    <span>マイページ</span>
+                </h2>
                 <button class="slide-panel-close-button" onclick="closeSlidePanel(4)" title="閉じる">×</button>
             </div>
             <div class="slide-panel-content">
@@ -4173,7 +4188,10 @@
     <div class="slide-panel-overlay" id="slidePanelOverlay5" onclick="closeSlidePanelOnOverlay(event, 5)">
         <div class="slide-panel panel-5" id="slidePanel5" onclick="event.stopPropagation()">
             <div class="slide-panel-header panel-5">
-                <h2 class="slide-panel-title">アーカイブ</h2>
+                <h2 class="slide-panel-title" style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <img src="images/archive.svg" alt="アーカイブ" style="width: 24px; height: 24px;">
+                    <span>アーカイブ</span>
+                </h2>
                 <button class="slide-panel-close-button" onclick="closeSlidePanel(5)" title="閉じる">×</button>
             </div>
             <div class="slide-panel-content">
@@ -4414,6 +4432,31 @@
             // ローカルストレージに保存
             localStorage.setItem('googleUser', JSON.stringify(currentUser));
             
+            // 登録済みユーザーリストに追加または更新
+            const existingUser = registeredUsers.find(u => u.id === currentUser.id);
+            const now = new Date().toISOString();
+            
+            if (existingUser) {
+                // 既存ユーザーの情報を更新
+                existingUser.name = currentUser.name;
+                existingUser.email = currentUser.email;
+                existingUser.picture = currentUser.picture;
+                existingUser.lastLoginAt = now;
+            } else {
+                // 新規ユーザーを追加
+                registeredUsers.push({
+                    id: currentUser.id,
+                    name: currentUser.name,
+                    email: currentUser.email,
+                    picture: currentUser.picture,
+                    firstLoginAt: now,
+                    lastLoginAt: now
+                });
+            }
+            
+            // 登録済みユーザーを保存
+            saveRegisteredUsers();
+            
             // ユーザー情報を表示
             displayUserInfo(currentUser);
             
@@ -4509,6 +4552,10 @@
         // タイムレコード（ユーザーがタスクに作業を開始した時間から完了までの時間を記録）
         let timeRecords = [];
         // timeRecords構造: [{ id, taskId, userId, startTime, endTime, duration, status }]
+        
+        // 登録済みユーザー（リソース管理用）
+        let registeredUsers = [];
+        // registeredUsers構造: [{ id, name, email, picture, firstLoginAt, lastLoginAt }]
 
         // メニューアイコンの位置データ（相対位置（%）で保存）
         let menuIconPosition = null;
@@ -5948,6 +5995,7 @@
                     externalLinks: externalLinks,
                     menuIconPosition: menuIconPosition,
                     dailyReports: dailyReports,
+                    registeredUsers: registeredUsers,
                     // settingsは個別にusers/{userId}/settingsに保存するため、ここには含めない
                     _updatedAt: Date.now()
                 };
@@ -5989,6 +6037,7 @@
                             // 日報データがない場合は空配列を初期化
                             dailyReports = [];
                         }
+                        if (data.registeredUsers) registeredUsers = data.registeredUsers;
                         // settingsは個別にusers/{userId}/settingsから読み込むため、ここでは読み込まない
                         
                         // リアルタイム更新を設定
@@ -6028,6 +6077,9 @@
                 
                 const savedDailyReports = localStorage.getItem('dailyReports');
                 if (savedDailyReports) dailyReports = JSON.parse(savedDailyReports);
+                
+                const savedRegisteredUsers = localStorage.getItem('registeredUsers');
+                if (savedRegisteredUsers) registeredUsers = JSON.parse(savedRegisteredUsers);
                 
                 // 設定を読み込み・適用
                 loadSettings();
@@ -8515,25 +8567,25 @@
             // 現在のタイムレコード情報を表示
             let currentInfoHTML = '';
             if (activeRecord) {
-                const userName = activeRecord.userId && currentUser && activeRecord.userId === currentUser.id 
+                const userName = activeRecord.userName || (activeRecord.userId && currentUser && activeRecord.userId === currentUser.id 
                     ? (currentUser.name || currentUser.email || '現在のユーザー')
-                    : 'ユーザー';
+                    : 'ユーザー');
                 
                 currentInfoHTML = `
-                    <div style="background: var(--color-background); border: 2px solid var(--color-border-panel); border-radius: var(--border-radius-md); padding: var(--spacing-md); margin-bottom: var(--spacing-lg);">
-                        <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">現在のタイムレコード</h3>
+                    <div class="time-record-current-section" style="background: var(--panel-background); border: 3px solid var(--panel-border); border-radius: var(--border-radius-lg); padding: var(--spacing-md); margin-bottom: var(--spacing-lg); box-shadow: 0 4px 12px var(--color-primary-shadow);">
+                        <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--spacing-md); color: var(--panel-heading);">現在のタイムレコード</h3>
                         <div style="margin-bottom: var(--spacing-sm);">
-                            <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">ユーザー: </span>
-                            <span style="color: var(--color-text-primary);">${escapeHtml(userName)}</span>
+                            <span style="font-weight: var(--font-weight-semibold); color: var(--panel-text);">ユーザー: </span>
+                            <span style="color: var(--panel-text);">${escapeHtml(userName)}</span>
                         </div>
                         <div style="margin-bottom: var(--spacing-sm);">
-                            <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">開始時間: </span>
-                            <span style="color: var(--color-text-primary);">${formatDateTime(activeRecord.startTime)}</span>
+                            <span style="font-weight: var(--font-weight-semibold); color: var(--panel-text);">開始時間: </span>
+                            <span style="color: var(--panel-text);">${formatDateTime(activeRecord.startTime)}</span>
                         </div>
                         ${task.estimatedTime ? `
                         <div style="margin-bottom: var(--spacing-sm);">
-                            <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">予想作業時間: </span>
-                            <span style="color: var(--color-text-primary);">${formatEstimatedTime(task.estimatedTime)}</span>
+                            <span style="font-weight: var(--font-weight-semibold); color: var(--panel-text);">予想作業時間: </span>
+                            <span style="color: var(--panel-text);">${formatEstimatedTime(task.estimatedTime)}</span>
                         </div>
                         ` : ''}
                         <div style="margin-top: var(--spacing-md); padding-top: var(--spacing-md); border-top: 1px solid var(--color-border);">
@@ -8543,8 +8595,8 @@
                 `;
             } else {
                 currentInfoHTML = `
-                    <div style="background: var(--color-background); border: 1px solid var(--color-border); border-radius: var(--border-radius-md); padding: var(--spacing-md); margin-bottom: var(--spacing-lg);">
-                        <p style="color: var(--color-text-secondary); text-align: center;">
+                    <div class="time-record-current-section" style="background: var(--panel-background); border: 3px solid var(--panel-border); border-radius: var(--border-radius-lg); padding: var(--spacing-md); margin-bottom: var(--spacing-lg); box-shadow: 0 4px 12px var(--color-primary-shadow);">
+                        <p style="color: var(--panel-text); text-align: center;">
                             現在実行中のタイムレコードはありません
                         </p>
                     </div>
@@ -8556,22 +8608,58 @@
             let historyHTML = '';
             
             if (completedRecords.length > 0) {
-                const historyItems = completedRecords.map(record => {
-                    const userName = record.userId && currentUser && record.userId === currentUser.id 
+                const historyItems = completedRecords.map((record, index) => {
+                    const userName = record.userName || (record.userId && currentUser && record.userId === currentUser.id 
                         ? (currentUser.name || currentUser.email || '現在のユーザー')
-                        : 'ユーザー';
+                        : 'ユーザー');
+                    
+                    // 日時を編集可能な形式に変換
+                    function formatDateTimeForInput(isoString) {
+                        if (!isoString) return '';
+                        const date = new Date(isoString);
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        const hours = String(date.getHours()).padStart(2, '0');
+                        const minutes = String(date.getMinutes()).padStart(2, '0');
+                        return `${year}-${month}-${day}T${hours}:${minutes}`;
+                    }
+                    
+                    // 作業時間を分単位で編集可能な形式に変換
+                    const durationMinutes = record.duration ? Math.floor(record.duration / 60) : 0;
                     
                     return `
-                        <div style="background: var(--color-background); border: 1px solid var(--color-border); border-radius: var(--border-radius-md); padding: var(--spacing-md); margin-bottom: var(--spacing-sm);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-xs);">
-                                <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">${escapeHtml(userName)}</span>
-                                <span style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">完了</span>
+                        <div class="time-record-history-item" data-record-id="${record.id}" style="background: var(--panel-background); border: 3px solid var(--panel-border); border-radius: var(--border-radius-lg); padding: var(--spacing-md); margin-bottom: var(--spacing-sm); box-shadow: 0 4px 12px var(--color-primary-shadow);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-sm);">
+                                <h4 class="time-record-history-title" style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); color: var(--h2-title-text); margin: 0; padding: var(--spacing-xs) var(--spacing-sm); background: var(--h2-title-background); border-radius: var(--border-radius-md); border: 3px solid var(--h2-title-border);">${escapeHtml(userName)}</h4>
+                                <div style="display: flex; gap: var(--spacing-xs); align-items: center;">
+                                    <button class="edit-time-record-btn" onclick="editTimeRecord(${record.id})" style="padding: var(--spacing-xs) var(--spacing-sm); background: var(--color-accent); color: white; border: none; border-radius: var(--border-radius-sm); cursor: pointer; font-size: var(--font-size-xs);">編集</button>
+                                    <span style="font-size: var(--font-size-xs); color: var(--panel-text);">完了</span>
+                                </div>
                             </div>
-                            <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                            <div class="time-record-history-display" style="font-size: var(--font-size-sm); color: var(--panel-text);">
                                 <div>開始: ${formatDateTime(record.startTime)}</div>
                                 ${record.endTime ? `<div>終了: ${formatDateTime(record.endTime)}</div>` : ''}
-                                <div style="margin-top: var(--spacing-xs); font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">
+                                <div style="margin-top: var(--spacing-xs); font-weight: var(--font-weight-semibold); color: var(--panel-text);">
                                     作業時間: ${formatDuration(record.duration)}
+                                </div>
+                            </div>
+                            <div class="time-record-history-edit" style="display: none;">
+                                <div style="margin-bottom: var(--spacing-sm);">
+                                    <label style="display: block; font-weight: var(--font-weight-semibold); color: var(--panel-text); margin-bottom: var(--spacing-xs);">開始時間:</label>
+                                    <input type="datetime-local" class="edit-start-time" value="${formatDateTimeForInput(record.startTime)}" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); background: #ffffff;">
+                                </div>
+                                <div style="margin-bottom: var(--spacing-sm);">
+                                    <label style="display: block; font-weight: var(--font-weight-semibold); color: var(--panel-text); margin-bottom: var(--spacing-xs);">終了時間:</label>
+                                    <input type="datetime-local" class="edit-end-time" value="${record.endTime ? formatDateTimeForInput(record.endTime) : ''}" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); background: #ffffff;">
+                                </div>
+                                <div style="margin-bottom: var(--spacing-sm);">
+                                    <label style="display: block; font-weight: var(--font-weight-semibold); color: var(--panel-text); margin-bottom: var(--spacing-xs);">作業時間（分）:</label>
+                                    <input type="number" class="edit-duration" value="${durationMinutes}" min="0" step="10" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); background: #ffffff;">
+                                </div>
+                                <div style="display: flex; gap: var(--spacing-xs); margin-top: var(--spacing-sm);">
+                                    <button onclick="saveTimeRecord(${record.id})" style="flex: 1; padding: var(--spacing-xs) var(--spacing-sm); background: var(--color-sub-green); color: white; border: none; border-radius: var(--border-radius-sm); cursor: pointer; font-size: var(--font-size-sm);">保存</button>
+                                    <button onclick="cancelEditTimeRecord(${record.id})" style="flex: 1; padding: var(--spacing-xs) var(--spacing-sm); background: var(--color-text-muted); color: white; border: none; border-radius: var(--border-radius-sm); cursor: pointer; font-size: var(--font-size-sm);">キャンセル</button>
                                 </div>
                             </div>
                         </div>
@@ -8585,12 +8673,12 @@
                 
                 historyHTML = `
                     <div style="margin-top: var(--spacing-lg); padding-top: var(--spacing-lg); border-top: 2px solid var(--color-border);">
-                        <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">履歴</h3>
-                        <div style="margin-bottom: var(--spacing-md); padding: var(--spacing-sm); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
-                            <div style="font-weight: var(--font-weight-semibold); color: var(--color-text-primary);">
+                        <h3 class="time-record-history-header" style="font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--h2-title-text); margin: 0 0 var(--spacing-md) 0; padding: var(--spacing-sm) var(--spacing-md); background: var(--h2-title-background); border-radius: var(--border-radius-md); border: 3px solid var(--h2-title-border);">履歴</h3>
+                        <div class="time-record-total-section" style="margin-bottom: var(--spacing-md); padding: var(--spacing-md); background: var(--h1-title-background); border-radius: var(--border-radius-md); border: 3px solid var(--h1-title-border);">
+                            <div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--h1-title-text);">
                                 合計作業時間: ${formatDuration(totalDuration)}
                             </div>
-                            <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-top: 4px;">
+                            <div style="font-size: var(--font-size-sm); color: var(--h1-title-text); margin-top: 4px; opacity: 0.9;">
                                 記録数: ${completedRecords.length}件
                             </div>
                         </div>
@@ -8629,6 +8717,91 @@
             if (event.target.id === 'timeRecordPanelOverlay') {
                 closeTimeRecordPanel();
             }
+        }
+        
+        // タイムレコードを編集
+        function editTimeRecord(recordId) {
+            const item = document.querySelector(`.time-record-history-item[data-record-id="${recordId}"]`);
+            if (!item) return;
+            
+            const display = item.querySelector('.time-record-history-display');
+            const edit = item.querySelector('.time-record-history-edit');
+            
+            if (display && edit) {
+                display.style.display = 'none';
+                edit.style.display = 'block';
+            }
+        }
+        
+        // タイムレコードの編集をキャンセル
+        function cancelEditTimeRecord(recordId) {
+            const item = document.querySelector(`.time-record-history-item[data-record-id="${recordId}"]`);
+            if (!item) return;
+            
+            const display = item.querySelector('.time-record-history-display');
+            const edit = item.querySelector('.time-record-history-edit');
+            
+            if (display && edit) {
+                display.style.display = 'block';
+                edit.style.display = 'none';
+            }
+            
+            // パネルを再表示して元の値を復元
+            showTimeRecords();
+        }
+        
+        // タイムレコードを保存
+        function saveTimeRecord(recordId) {
+            const item = document.querySelector(`.time-record-history-item[data-record-id="${recordId}"]`);
+            if (!item) return;
+            
+            const record = timeRecords.find(r => r.id === recordId);
+            if (!record) {
+                alert('タイムレコードが見つかりません');
+                return;
+            }
+            
+            const startTimeInput = item.querySelector('.edit-start-time');
+            const endTimeInput = item.querySelector('.edit-end-time');
+            const durationInput = item.querySelector('.edit-duration');
+            
+            if (!startTimeInput || !durationInput) {
+                alert('入力フィールドが見つかりません');
+                return;
+            }
+            
+            // 開始時間を更新
+            const startTimeValue = startTimeInput.value;
+            if (startTimeValue) {
+                record.startTime = new Date(startTimeValue).toISOString();
+            }
+            
+            // 終了時間を更新
+            const endTimeValue = endTimeInput.value;
+            if (endTimeValue) {
+                record.endTime = new Date(endTimeValue).toISOString();
+            } else {
+                record.endTime = null;
+            }
+            
+            // 作業時間を更新（分から秒に変換、10分単位に丸める）
+            const durationMinutes = parseInt(durationInput.value) || 0;
+            const durationSeconds = durationMinutes * 60;
+            // 10分単位に丸める（600秒 = 10分）
+            record.duration = Math.floor(durationSeconds / 600) * 600;
+            
+            // 終了時間が設定されていない場合は、開始時間 + 作業時間から計算
+            if (!endTimeValue && record.duration > 0) {
+                const startTime = new Date(record.startTime);
+                const endTime = new Date(startTime.getTime() + record.duration * 1000);
+                record.endTime = endTime.toISOString();
+            }
+            
+            // 保存
+            saveTimeRecords();
+            
+            // パネルを再表示
+            showTimeRecords();
         }
         
         // タスクを削除（重複実行を防ぐ）
@@ -9655,6 +9828,20 @@
                 'other': 'その他'
             };
             
+            // タイムレコードから作業担当者を取得
+            const assignees = [];
+            const assigneeMap = new Map();
+            
+            completedRecords.forEach(record => {
+                const userName = record.userName || 'ユーザー';
+                if (!assigneeMap.has(userName)) {
+                    assigneeMap.set(userName, true);
+                    assignees.push(userName);
+                }
+            });
+            
+            const assigneeText = assignees.length > 0 ? assignees.join(', ') : '担当者なし';
+            
             item.innerHTML = `
                 <div class="archive-task-header" onclick="toggleArchiveTask(this)">
                     <div style="flex: 1;">
@@ -9664,6 +9851,7 @@
                             <span>|</span>
                             <span>${categoryNames[task.category] || '未分類'}</span>
                             ${totalDuration > 0 ? `<span>|</span><span>⏱️ ${totalDurationFormatted}</span>` : ''}
+                            ${assignees.length > 0 ? `<span>|</span><span>👤 ${escapeHtml(assigneeText)}</span>` : ''}
                         </div>
                     </div>
                     <span class="archive-task-arrow">▼</span>
@@ -10167,12 +10355,87 @@
             }
         }
 
-        // メンバー一覧を更新（バッジシステム削除のため、空のメッセージを表示）
+        // メンバー一覧を更新（登録済みGoogleアカウントの名前を表示）
         function updateResourceMembers() {
             const content = document.getElementById('resourceMembersContent');
             if (!content) return;
 
-            content.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: var(--spacing-xl);">メンバー管理機能は削除されました。</p>';
+            if (registeredUsers.length === 0) {
+                content.innerHTML = `
+                    <div style="background: var(--panel-background); border: 3px solid var(--panel-border); border-radius: var(--border-radius-lg); padding: var(--spacing-md); box-shadow: 0 4px 12px var(--color-primary-shadow);">
+                        <p style="color: var(--panel-text); text-align: center; padding: var(--spacing-xl);">登録済みのユーザーがありません。</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // 最終ログイン日時でソート（新しい順）
+            const sortedUsers = [...registeredUsers].sort((a, b) => {
+                const dateA = new Date(a.lastLoginAt || a.firstLoginAt || 0);
+                const dateB = new Date(b.lastLoginAt || b.firstLoginAt || 0);
+                return dateB - dateA;
+            });
+
+            let membersHTML = `
+                <div style="background: var(--panel-background); border: 3px solid var(--panel-border); border-radius: var(--border-radius-lg); padding: var(--spacing-md); box-shadow: 0 4px 12px var(--color-primary-shadow);">
+                    <h3 style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--panel-heading); margin-bottom: var(--spacing-md);">登録済みユーザー一覧</h3>
+                    <div style="display: flex; flex-direction: column; gap: var(--spacing-sm);">
+            `;
+
+            sortedUsers.forEach(user => {
+                const firstLoginDate = user.firstLoginAt ? new Date(user.firstLoginAt).toLocaleString('ja-JP') : '-';
+                const lastLoginDate = user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString('ja-JP') : '-';
+                
+                membersHTML += `
+                    <div style="background: #ffffff; border: 2px solid var(--panel-border); border-radius: var(--border-radius-md); padding: var(--spacing-md); display: flex; align-items: center; gap: var(--spacing-sm);">
+                        ${user.picture ? `
+                            <img src="${escapeHtml(user.picture)}" alt="${escapeHtml(user.name)}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid var(--panel-border);">
+                        ` : `
+                            <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--panel-border); display: flex; align-items: center; justify-content: center; color: white; font-weight: var(--font-weight-bold); font-size: var(--font-size-lg);">
+                                ${escapeHtml(user.name.charAt(0).toUpperCase() || 'U')}
+                            </div>
+                        `}
+                        <div style="flex: 1;">
+                            <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); color: var(--panel-heading); margin-bottom: var(--spacing-xs);">
+                                ${escapeHtml(user.name)}
+                            </div>
+                            <div style="font-size: var(--font-size-sm); color: var(--panel-text); margin-bottom: var(--spacing-xs);">
+                                ${escapeHtml(user.email)}
+                            </div>
+                            <div style="font-size: var(--font-size-xs); color: var(--color-text-muted);">
+                                初回ログイン: ${firstLoginDate} | 最終ログイン: ${lastLoginDate}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            membersHTML += `
+                    </div>
+                </div>
+            `;
+
+            content.innerHTML = membersHTML;
+        }
+        
+        // 登録済みユーザーを保存
+        function saveRegisteredUsers() {
+            localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+            // Firebaseにも保存
+            saveTaskMarketData();
+        }
+        
+        // 登録済みユーザーを読み込み
+        function loadRegisteredUsers() {
+            const saved = localStorage.getItem('registeredUsers');
+            if (saved) {
+                try {
+                    registeredUsers = JSON.parse(saved);
+                } catch (e) {
+                    console.error('登録済みユーザーの読み込みエラー:', e);
+                    registeredUsers = [];
+                }
+            }
         }
 
         // 週次・月次計画の表示期間管理
@@ -10409,6 +10672,10 @@
             setTimeout(function() {
                 panel.classList.add('active');
                 
+                // パネル2（リソース管理）が開かれたときにメンバー一覧を更新
+                if (panelNumber === 2) {
+                    updateResourceMembers();
+                }
                 // パネル4（マイページ）が開かれたときにデータを読み込む
                 if (panelNumber === 4) {
                     loadMyPageData();
