@@ -9119,11 +9119,8 @@
             const rankNum = typeof rank === 'number' ? rank : parseInt(rank) || 2;
             const normalizedRank = Math.max(1, Math.min(5, rankNum)); // 1-5の範囲に制限
             
-            if (normalizedRank === 5) {
-                return 'images/rank5.svg';
-            } else {
-                return `images/rank${normalizedRank}.png`;
-            }
+            // すべてのランク画像をSVGに統一
+            return `images/rank${normalizedRank}.svg`;
         }
         
         // 難易度を⭐️数字で表示（1-5）
