@@ -6243,8 +6243,8 @@
                 const baseReward = rankRewards[difficulty] || rankRewards[2] || 0;
                 const supportCoins = task.supportCoins || 0;
                 
-                // ランク画像のパスを取得
-                const rankImagePath = getRankImagePath(difficulty);
+                // ランク画像のパスを取得（緊急タスクの場合はrank10.svg）
+                const rankImagePath = getRankImagePath(difficulty, task.isUrgent);
                 
                 // バッジの吸着数を取得
                 const attachedBadgeCount = taskBadges[task.id] && taskBadges[task.id].length > 0 ? taskBadges[task.id].length : 0;
@@ -6410,8 +6410,8 @@
                 const baseReward = rankRewards[difficulty] || rankRewards[2] || 0;
                 const supportCoins = task.supportCoins || 0;
                 
-                // ランク画像のパスを取得
-                const rankImagePath = getRankImagePath(difficulty);
+                // ランク画像のパスを取得（緊急タスクの場合はrank10.svg）
+                const rankImagePath = getRankImagePath(difficulty, task.isUrgent);
                 
                 // バッジの吸着数を取得
                 const attachedBadgeCount = taskBadges[task.id] && taskBadges[task.id].length > 0 ? taskBadges[task.id].length : 0;
@@ -9116,7 +9116,12 @@
            ============================================ */
         
         // ランク画像のパスを取得
-        function getRankImagePath(rank) {
+        function getRankImagePath(rank, isUrgent) {
+            // 緊急タスクの場合はrank10.svgを使用
+            if (isUrgent) {
+                return 'images/rank10.svg';
+            }
+            
             const rankNum = typeof rank === 'number' ? rank : parseInt(rank) || 2;
             const normalizedRank = Math.max(1, Math.min(5, rankNum)); // 1-5の範囲に制限
             
