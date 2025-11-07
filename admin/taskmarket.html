@@ -2191,7 +2191,9 @@
         
         .task-card {
             position: absolute;
-            background: transparent; /* 背景を透明にして画像を表示 */
+            background-size: cover; /* 画像をカード全体に表示 */
+            background-position: center; /* 画像を中央に配置 */
+            background-repeat: no-repeat; /* 画像の繰り返しを防止 */
             border: 2px solid var(--color-border);
             border-radius: var(--border-radius-lg);
             padding: 0; /* パディングを削除して画像が端まで表示されるように */
@@ -2206,22 +2208,14 @@
             overflow: hidden;
         }
         
-        /* ランク画像のスタイル */
+        /* ランク画像のスタイル（背景画像として使用） */
         .task-card-rank-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: contain; /* 画像が切れないように全体を表示 */
-            opacity: 1; /* 画像を完全に表示 */
-            z-index: 0;
-            pointer-events: none;
+            display: none; /* imgタグは非表示（背景画像として使用） */
         }
         
         .task-card > * {
             position: relative;
-            z-index: 1;
+            z-index: 1; /* コンテンツを画像の上に表示 */
         }
 
         /* カードサイズボタンのスタイル */
@@ -2369,10 +2363,11 @@
             align-items: flex-start;
             gap: var(--spacing-sm);
             padding: var(--spacing-sm) var(--spacing-md);
-            background: transparent; /* 背景を透明にして画像を表示 */
+            background: rgba(255, 255, 255, 0.9); /* 半透明の白背景でテキストを読みやすく */
             border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
             border-bottom: 2px solid var(--color-border);
             margin: 0; /* マージンを削除 */
+            backdrop-filter: blur(4px); /* ぼかし効果で画像の上に表示 */
         }
 
         .task-card-title {
@@ -2383,6 +2378,7 @@
             margin: 0;
             flex: 1;
             min-width: 0; /* テキストの折り返しを許可 */
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); /* テキストシャドウで読みやすく */
         }
 
         .task-card-priority {
@@ -2402,7 +2398,7 @@
         .task-card-description {
             flex: 1;
             font-size: var(--font-size-sm);
-            color: var(--color-text-secondary);
+            color: var(--color-text-primary);
             line-height: 1.5;
             margin: 0;
             padding: var(--spacing-sm) var(--spacing-md); /* 説明文のパディングを追加 */
@@ -2411,6 +2407,7 @@
             -webkit-line-clamp: 4;
             -webkit-box-orient: vertical;
             text-overflow: ellipsis;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); /* テキストシャドウで読みやすく */
         }
 
         .task-card-footer {
@@ -2421,8 +2418,10 @@
             padding: var(--spacing-sm) var(--spacing-md); /* フッターのパディングを追加 */
             border-top: 1px solid var(--color-border);
             font-size: var(--font-size-sm);
-            color: var(--color-text-secondary);
+            color: var(--color-text-primary);
             position: relative;
+            background: rgba(255, 255, 255, 0.9); /* 半透明の白背景でテキストを読みやすく */
+            backdrop-filter: blur(4px); /* ぼかし効果で画像の上に表示 */
         }
 
         .task-card-badge-attachment {
@@ -6246,13 +6245,17 @@
                 // ランク画像のパスを取得（緊急タスクの場合はrank10.svg）
                 const rankImagePath = getRankImagePath(difficulty, task.isUrgent);
                 
+                // 画像を背景として設定
+                if (rankImagePath) {
+                    card.style.backgroundImage = `url(${rankImagePath})`;
+                }
+                
                 // バッジの吸着数を取得
                 const attachedBadgeCount = taskBadges[task.id] && taskBadges[task.id].length > 0 ? taskBadges[task.id].length : 0;
                 const isSP = window.innerWidth <= 768;
                 
                 card.innerHTML = `
                     <span class="tooltip-text task-card-tooltip">ダブルクリックで詳細を表示</span>
-                    ${rankImagePath ? `<img src="${rankImagePath}" alt="ランク${difficulty}" class="task-card-rank-image">` : ''}
                     <div class="task-card-header">
                         <div class="task-card-title">${task.title}</div>
                         <div class="task-card-priority">${getDifficultyStars(difficulty)}</div>
@@ -6413,13 +6416,17 @@
                 // ランク画像のパスを取得（緊急タスクの場合はrank10.svg）
                 const rankImagePath = getRankImagePath(difficulty, task.isUrgent);
                 
+                // 画像を背景として設定
+                if (rankImagePath) {
+                    card.style.backgroundImage = `url(${rankImagePath})`;
+                }
+                
                 // バッジの吸着数を取得
                 const attachedBadgeCount = taskBadges[task.id] && taskBadges[task.id].length > 0 ? taskBadges[task.id].length : 0;
                 const isSP = window.innerWidth <= 768;
                 
                 card.innerHTML = `
                     <span class="tooltip-text task-card-tooltip">ダブルクリックで詳細を表示</span>
-                    ${rankImagePath ? `<img src="${rankImagePath}" alt="ランク${difficulty}" class="task-card-rank-image">` : ''}
                     <div class="task-card-header">
                         <div class="task-card-title">${task.title}</div>
                         <div class="task-card-priority">${getDifficultyStars(difficulty)}</div>
