@@ -2188,17 +2188,17 @@
         /* ============================================
            タスクカード関連スタイル（付箋風デザイン）
            ============================================ */
-        
+
         .task-card {
             position: absolute;
-            background: linear-gradient(135deg, #cde0b2 0%, #e8f4d8 50%, #f5f9ed 100%); /* rank1.svgの付箋のような緑がかったクリーム色 */
+            background: linear-gradient(135deg, #a8d082 0%, #c4e0a4 50%, #d8ecc0 100%); /* ランク1のデフォルト色（緑がかったクリーム色 - 濃い） */
             border: 2px solid rgba(0, 0, 0, 0.08);
             border-radius: 8px 8px 8px 2px; /* 付箋のような角の丸み（左上が少し折れた感じ） */
-            padding: var(--spacing-md);
+            padding: 10px; /* 10pxのパディング */
             transition: var(--transition-normal);
             cursor: grab;
             width: 280px;
-            min-height: 180px;
+            height: 180px; /* カードサイズを固定 */
             box-shadow: 
                 0 4px 12px rgba(0, 0, 0, 0.12),
                 0 2px 6px rgba(0, 0, 0, 0.08),
@@ -2210,7 +2210,32 @@
             transform-origin: top left; /* 付箋のような回転の基点 */
         }
         
-        /* カテゴリアイコンをカードの背景に設定 */
+        /* ランク1（緑がかったクリーム色 - 濃い） */
+        .task-card.rank-1 {
+            background: linear-gradient(135deg, #a8d082 0%, #c4e0a4 50%, #d8ecc0 100%);
+        }
+        
+        /* ランク2（青系 - 濃い） */
+        .task-card.rank-2 {
+            background: linear-gradient(135deg, #7eb8e8 0%, #a0c8f0 50%, #c4daf8 100%);
+        }
+        
+        /* ランク3（紫系 - 濃い） */
+        .task-card.rank-3 {
+            background: linear-gradient(135deg, #b88de8 0%, #c8a8f0 50%, #dcc4f8 100%);
+        }
+        
+        /* ランク4（オレンジ系 - 濃い） */
+        .task-card.rank-4 {
+            background: linear-gradient(135deg, #e8a87e 0%, #f0c0a0 50%, #f8d8c4 100%);
+        }
+        
+        /* ランク5（ピンク系 - 濃い） */
+        .task-card.rank-5 {
+            background: linear-gradient(135deg, #e882a8 0%, #f0a0c0 50%, #f8c4d8 100%);
+        }
+        
+        /* カテゴリ画像をカード全体の背景として設定 */
         .task-card::before {
             content: '';
             position: absolute;
@@ -2219,10 +2244,11 @@
             width: 100%;
             height: 100%;
             background-image: var(--category-icon-url, none);
-            background-size: contain;
+            background-size: 80%;
             background-repeat: no-repeat;
             background-position: center;
-            opacity: 0.1;
+            opacity: 0.05; /* うっすらわかる程度 */
+            transform: rotate(5deg); /* 5度回転 */
             z-index: 0;
             pointer-events: none;
         }
@@ -2235,12 +2261,17 @@
         /* カードサイズ：大 */
         .card-size-large .task-card {
             width: 320px;
-            min-height: 220px;
-            padding: var(--spacing-lg);
+            height: 220px; /* カードサイズを固定 */
+            padding: 10px; /* 10pxのパディング */
         }
 
         .card-size-large .task-card-title {
             font-size: var(--font-size-lg);
+        }
+
+        .card-size-large .task-card-body {
+            font-size: var(--font-size-md);
+            -webkit-line-clamp: 5;
         }
 
         .card-size-large .task-card-description {
@@ -2255,19 +2286,24 @@
         /* カードサイズ：中（デフォルト） */
         .card-size-medium .task-card {
             width: 280px;
-            min-height: 180px;
-            padding: var(--spacing-md);
+            height: 180px; /* カードサイズを固定 */
+            padding: 10px; /* 10pxのパディング */
         }
 
         /* カードサイズ：小 */
         .card-size-small .task-card {
             width: 240px;
-            min-height: 150px;
-            padding: var(--spacing-sm);
+            height: 150px; /* カードサイズを固定 */
+            padding: 10px; /* 10pxのパディング */
         }
 
         .card-size-small .task-card-title {
             font-size: var(--font-size-sm);
+        }
+
+        .card-size-small .task-card-body {
+            font-size: var(--font-size-xs);
+            -webkit-line-clamp: 3;
         }
 
         .card-size-small .task-card-description {
@@ -2355,47 +2391,60 @@
             border-color: rgba(127, 140, 141, 0.5);
         }
 
-        /* 緊急タスクカード（赤系の配色） */
+        /* 緊急タスクカード（赤背景に白文字） */
         .task-card.urgent {
-            border: 3px solid #ef4444;
-            background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+            border: 3px solid #dc2626;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
             position: absolute;
             z-index: 1000; /* 常に最前面に表示 */
+            color: #ffffff; /* 白文字 */
         }
 
         .task-card.urgent::before {
-            opacity: 0.15;
+            opacity: 0.1; /* カテゴリ画像をより薄く */
         }
 
         .task-card.urgent:hover {
-            border-color: #dc2626;
-            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+            border-color: #b91c1c;
+            box-shadow: 0 6px 16px rgba(220, 38, 38, 0.5);
             transform: translateY(-2px) rotate(0deg) !important;
         }
 
         .task-card.urgent .task-card-title {
-            color: #dc2626;
+            color: #ffffff; /* 白文字 */
             font-weight: var(--font-weight-bold);
+        }
+        
+        /* 緊急タスクのタイトルアイコンを削除 */
+        .task-card.urgent .task-card-title::before,
+        .task-card.urgent .task-card-title::after {
+            content: none;
         }
 
         .task-card.urgent .task-card-priority {
-            color: #ef4444;
+            color: #ffffff; /* 白文字 */
+        }
+        
+        .task-card.urgent .task-card-body {
+            color: #ffffff; /* 白文字 */
         }
 
         .task-card.urgent .task-card-footer {
-            border-top: 2px solid #fca5a5;
+            border-top: 2px solid rgba(255, 255, 255, 0.3); /* 白の半透明ボーダー */
+        }
+        
+        .task-card.urgent .task-card-reward {
+            color: #ffffff; /* 白文字 */
+        }
+        
+        .task-card.urgent .task-card-header {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%); /* 白の半透明背景 */
         }
 
-        /* 緊急タスクカードの左上固定マーカー */
+        /* 緊急タスクカードの左上固定マーカー（削除） */
         .task-card.urgent::after {
-            content: '🚨';
-            position: absolute;
-            top: -8px;
-            left: -8px;
-            font-size: 24px;
-            z-index: 1001;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+            content: none;
         }
 
         .task-card.selected {
@@ -2431,20 +2480,23 @@
             align-items: flex-start;
             gap: var(--spacing-sm);
             padding: var(--spacing-sm) var(--spacing-md);
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%); /* 付箋のようなヘッダー背景（より透明に） */
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.15) 100%); /* ヘッダー背景の不透明度0.15 */
             border-radius: 6px 6px 0 0; /* 付箋のような角の丸み */
             border-bottom: 1px solid rgba(0, 0, 0, 0.06); /* より薄いボーダー */
-            margin: calc(var(--spacing-md) * -1) calc(var(--spacing-md) * -1) var(--spacing-md) calc(var(--spacing-md) * -1);
+            margin: -10px -10px 10px -10px; /* パディング10pxに合わせて調整 */
         }
 
         .task-card-title {
-            font-size: var(--font-size-md);
+            font-size: 14px; /* 適切なフォントサイズ */
             font-weight: var(--font-weight-bold);
             color: var(--color-text-primary);
             line-height: 1.3;
             margin: 0;
             flex: 1;
             min-width: 0; /* テキストの折り返しを許可 */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap; /* 1行表示 */
         }
 
         .task-card-priority {
@@ -2461,9 +2513,25 @@
             filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
         }
 
+        /* カードボディ（タスク内容） */
+        .task-card-body {
+            flex: 1;
+            font-size: 12px; /* 適切なフォントサイズ */
+            color: var(--color-text-secondary);
+            line-height: 1.5;
+            margin: 0;
+            padding: var(--spacing-sm);
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            text-overflow: ellipsis;
+        }
+        
+        /* 後方互換性のため残す */
         .task-card-description {
             flex: 1;
-            font-size: var(--font-size-sm);
+            font-size: 12px;
             color: var(--color-text-secondary);
             line-height: 1.5;
             margin: 0;
@@ -3241,7 +3309,7 @@
         <div class="detail-board" id="detailBoard" onclick="event.stopPropagation()">
             <div class="detail-board-header">
                 <div>
-                    <h2 class="detail-title">タスク詳細</h2>
+                    <h2 class="detail-title">タスク情報</h2>
                     <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm); margin: 0;">モード切り替えボタンで詳細の「編集」が行えます。</p>
                 </div>
                 <div style="display: flex; gap: var(--spacing-sm); align-items: center;">
@@ -3252,10 +3320,6 @@
                     <button class="detail-edit-button" id="detailEditButton" onclick="toggleTaskEditMode()" style="display: none;">
                         <img src="images/リロードアイコン.svg" alt="編集" class="detail-edit-icon">
                         <span class="tooltip-text">タスク情報の編集はこちらから</span>
-                    </button>
-                    <button class="detail-delete-button" id="detailDeleteButton" onclick="deleteTaskFromDetail()" style="display: none;">
-                        <span style="font-size: 20px;">🗑️</span>
-                        <span class="tooltip-text">タスクを削除</span>
                     </button>
                 <button class="detail-board-close-button" onclick="closeDetailBoard()" title="閉じる">×</button>
                 </div>
@@ -3289,12 +3353,7 @@
         <div class="task-form" onclick="event.stopPropagation()">
             <div class="task-form-header">
                 <h3 class="task-form-title">新しいタスクを作成</h3>
-                <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
-                    <button class="urgent-task-button" onclick="openUrgentTaskForm()" title="緊急タスクを作成">
-                        <img src="images/Key.svg" alt="緊急タスク" style="width: 32px; height: 32px;">
-                    </button>
                 <button class="modal-close-button" onclick="cancelTaskForm()" title="閉じる">×</button>
-                </div>
             </div>
             <form id="taskInputForm">
                 <div class="form-group">
@@ -6009,13 +6068,18 @@
             
             // 通常タスクの位置情報を更新
             normalTasks.forEach((task, index) => {
+                // 難易度（priority）を取得してランクを決定
+                const difficulty = typeof task.priority === 'number' ? task.priority : 
+                                   (task.priority === 'low' ? 1 : task.priority === 'medium' ? 2 : task.priority === 'high' ? 3 : 2);
+                const rank = Math.max(1, Math.min(5, difficulty)); // 1-5の範囲に制限
+                
                 const col = index % columns;
                 const row = Math.floor(index / columns);
                 
                 const left = startX + col * columnWidth + (columnWidth - adjustedCardWidth) / 2;
                 const top = startY + row * (cardHeight + margin);
                 const rotation = 0; // 整列時は回転なし
-                const zIndex = 1; // 整列時はz-indexを統一
+                const zIndex = rank; // ランクに応じてz-indexを設定（ランクが高いほど上に重なる）
                 
                 // タスクデータに位置情報を保存
                 if (!task.position) {
@@ -6030,6 +6094,11 @@
             // 既存のカードの位置を直接更新
             const taskCards = taskGrid.querySelectorAll('.task-card:not(.urgent)');
             normalTasks.forEach((task, index) => {
+                // 難易度（priority）を取得してランクを決定
+                const difficulty = typeof task.priority === 'number' ? task.priority : 
+                                   (task.priority === 'low' ? 1 : task.priority === 'medium' ? 2 : task.priority === 'high' ? 3 : 2);
+                const rank = Math.max(1, Math.min(5, difficulty)); // 1-5の範囲に制限
+                
                 const card = Array.from(taskCards).find(card => card.dataset.taskId == task.id);
                 if (card) {
                     const col = index % columns;
@@ -6041,7 +6110,7 @@
                     card.style.top = top + 'px';
                     card.style.left = left + 'px';
                     card.style.transform = 'rotate(0deg)';
-                    card.style.zIndex = '1';
+                    card.style.zIndex = rank; // ランクに応じてz-indexを設定（ランクが高いほど上に重なる）
                 }
             });
             
@@ -6293,7 +6362,7 @@
                 const left = 24; // 左から24px
                 const top = urgentCardY;
                 const rotation = 0; // 回転なし
-                const zIndex = 1000 + index; // 最前面に表示
+                const zIndex = 1000 + index; // 緊急タスクは最前面に表示（z-index 1000以上）
                 
                 // カードの高さを考慮して次の位置を計算
                 urgentCardY += cardHeight + 16; // カード高さ + 16pxの間隔
@@ -6302,12 +6371,6 @@
                 card.style.left = left + 'px';
                 card.style.transform = `rotate(${rotation}deg)`;
                 card.style.zIndex = zIndex;
-                
-                // カテゴリアイコンのパスを取得して背景画像として設定
-                const categoryIconPath = getCategoryIconPath(task.category);
-                if (categoryIconPath) {
-                    card.style.setProperty('--category-icon-url', `url(${categoryIconPath})`);
-                }
                 
                 // 難易度（priority）に応じた基本報酬を計算
                 const difficulty = typeof task.priority === 'number' ? task.priority : 
@@ -6319,13 +6382,22 @@
                 const attachedBadgeCount = taskBadges[task.id] && taskBadges[task.id].length > 0 ? taskBadges[task.id].length : 0;
                 const isSP = window.innerWidth <= 768;
                 
+                // カテゴリアイコンのパスを取得してカード全体の背景として設定
+                const categoryIconPath = getCategoryIconPath(task.category);
+                if (categoryIconPath) {
+                    card.style.setProperty('--category-icon-url', `url(${categoryIconPath})`);
+                }
+                
                 card.innerHTML = `
                     <span class="tooltip-text task-card-tooltip">ダブルクリックで詳細を表示</span>
+                    <!-- ヘッダー：タイトル/⭐️の数 -->
                     <div class="task-card-header">
-                        <div class="task-card-title">${task.title}</div>
+                        <div class="task-card-title">${truncateText(task.title, 20)}</div>
                         <div class="task-card-priority">${getDifficultyStars(difficulty)}</div>
                     </div>
-                    <div class="task-card-description">${task.description || '説明なし'}</div>
+                    <!-- ボディ：タスク内容 -->
+                    <div class="task-card-body">${truncateText(task.description || '説明なし', 60)}</div>
+                    <!-- フッター：バッジ（アカウントアイコン吸着）/コイン報酬 -->
                     <div class="task-card-footer">
                         <div class="task-card-badge-attachment">
                             ${attachedBadgeCount > 0 ? `<span class="badge-count">🏷️ ${attachedBadgeCount}</span>` : ''}
@@ -6362,8 +6434,13 @@
             let hasPositionUpdates = false;
             
             normalTasks.forEach((task, index) => {
+                // 難易度（priority）を取得してランクを決定
+                const difficulty = typeof task.priority === 'number' ? task.priority : 
+                                   (task.priority === 'low' ? 1 : task.priority === 'medium' ? 2 : task.priority === 'high' ? 3 : 2);
+                const rank = Math.max(1, Math.min(5, difficulty)); // 1-5の範囲に制限
+                
                 const card = document.createElement('div');
-                card.className = `task-card category-${task.category}`;
+                card.className = `task-card category-${task.category} rank-${rank}`; // ランククラスを追加
                 card.draggable = true;
                 card.dataset.taskId = task.id;
                 card.dataset.isDragging = 'false';
@@ -6406,7 +6483,8 @@
                         top = undefined;
                     }
                     rotation = task.position.rotation || (Math.random() - 0.5) * 8;
-                    zIndex = task.position.zIndex || Math.floor(Math.random() * 11);
+                    // z-indexはランクに応じて設定（ランクが高いほど上に重なる）
+                    zIndex = task.position.zIndex || rank;
                 }
                 
                 if (left === undefined || top === undefined) {
@@ -6438,8 +6516,8 @@
                         if (!overlaps || attempts >= maxAttempts) break;
                     } while (attempts < maxAttempts);
                     
-                    // ランダムなz-indexを設定（0〜10の範囲）
-                    zIndex = Math.floor(Math.random() * 11);
+                    // z-indexはランクに応じて設定（ランクが高いほど上に重なる）
+                    zIndex = rank;
                     
                     // タスクデータに位置情報を保存（相対位置（%）で保存）
                     if (!task.position) {
@@ -6471,30 +6549,30 @@
                 card.style.transform = `rotate(${rotation}deg)`;
                 card.style.zIndex = zIndex;
                 
-                // カテゴリアイコンのパスを取得して背景画像として設定
-                const categoryIconPath = getCategoryIconPath(task.category);
-                if (categoryIconPath) {
-                    card.style.setProperty('--category-icon-url', `url(${categoryIconPath})`);
-                }
-                
-                // 難易度（priority）に応じた基本報酬を計算
-                // priorityが数値（1-5）の場合はそのまま、文字列の場合は互換性のため変換
-                const difficulty = typeof task.priority === 'number' ? task.priority : 
-                                   (task.priority === 'low' ? 1 : task.priority === 'medium' ? 2 : task.priority === 'high' ? 3 : 2);
-                const baseReward = rankRewards[difficulty] || rankRewards[2] || 0;
+                // 難易度（priority）に応じた基本報酬を計算（既に定義されたrankを使用）
+                const baseReward = rankRewards[rank] || rankRewards[2] || 0;
                 const supportCoins = task.supportCoins || 0;
                 
                 // バッジの吸着数を取得
                 const attachedBadgeCount = taskBadges[task.id] && taskBadges[task.id].length > 0 ? taskBadges[task.id].length : 0;
                 const isSP = window.innerWidth <= 768;
                 
+                // カテゴリアイコンのパスを取得してカード全体の背景として設定
+                const categoryIconPath = getCategoryIconPath(task.category);
+                if (categoryIconPath) {
+                    card.style.setProperty('--category-icon-url', `url(${categoryIconPath})`);
+                }
+                
                 card.innerHTML = `
                     <span class="tooltip-text task-card-tooltip">ダブルクリックで詳細を表示</span>
+                    <!-- ヘッダー：タイトル/⭐️の数 -->
                     <div class="task-card-header">
-                        <div class="task-card-title">${task.title}</div>
-                        <div class="task-card-priority">${getDifficultyStars(difficulty)}</div>
+                        <div class="task-card-title">${truncateText(task.title, 20)}</div>
+                        <div class="task-card-priority">${getDifficultyStars(rank)}</div>
                     </div>
-                    <div class="task-card-description">${task.description || '説明なし'}</div>
+                    <!-- ボディ：タスク内容 -->
+                    <div class="task-card-body">${truncateText(task.description || '説明なし', 60)}</div>
+                    <!-- フッター：バッジ（アカウントアイコン吸着）/コイン報酬 -->
                     <div class="task-card-footer">
                         <div class="task-card-badge-attachment">
                             ${attachedBadgeCount > 0 ? `<span class="badge-count">🏷️ ${attachedBadgeCount}</span>` : ''}
@@ -9195,6 +9273,13 @@
             return `⭐️${fullWidthNumbers[count - 1]}`;
         }
         
+        // テキストを最大文字数で制限し、「......」で省略する関数
+        function truncateText(text, maxLength) {
+            if (!text) return '';
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength) + '......';
+        }
+        
         // 予想作業時間をフォーマット（分単位を日本語表記に変換）
         function formatEstimatedTime(minutes) {
             if (!minutes && minutes !== 0) return '-';
@@ -9226,17 +9311,27 @@
             const detailContent = document.getElementById('detailContent');
             const editButton = document.getElementById('detailEditButton');
             const timeRecordButton = document.getElementById('detailTimeRecordButton');
-            const deleteButton = document.getElementById('detailDeleteButton');
             
             // 修正ボタンを表示
+            if (editButton) {
             editButton.style.display = 'flex';
+            }
             // タイムレコードボタンを表示
+            if (timeRecordButton) {
             timeRecordButton.style.display = 'flex';
-            // 削除ボタンを表示
-                deleteButton.style.display = 'flex';
+            }
             
             // 表示モードで詳細を表示
             renderTaskDetailView(task);
+            
+            // 削除ボタンを表示（パネル最下部に配置される）
+            // renderTaskDetailView内で削除ボタンが作成されるため、その後に表示設定
+            setTimeout(() => {
+                const deleteButton = document.getElementById('detailDeleteButton');
+                if (deleteButton) {
+                    deleteButton.style.display = 'block';
+                }
+            }, 0);
             
             // パネルを開く
             overlay.classList.add('active');
@@ -9258,7 +9353,8 @@
             const difficultyStars = getDifficultyStars(difficulty);
             
             detailContent.innerHTML = `
-                <div style="background: var(--color-background); border-radius: var(--border-radius-lg); padding: var(--spacing-md);">
+                <!-- タスク情報セクション（枠で囲む） -->
+                <div style="background: var(--color-background); border: 2px solid var(--color-border); border-radius: var(--border-radius-lg); padding: var(--spacing-md); margin-bottom: var(--spacing-lg);">
                     <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--spacing-md); color: var(--color-text-primary);">${task.title}</h3>
                     <div style="margin-bottom: var(--spacing-sm);">
                         <span style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary);">カテゴリー: </span>
@@ -9292,6 +9388,50 @@
                         <p style="font-weight: var(--font-weight-semibold); color: var(--color-text-secondary); margin-bottom: var(--spacing-sm);">説明:</p>
                         <p style="color: var(--color-text-primary); line-height: 1.6;">${task.description || '説明なし'}</p>
                     </div>
+                </div>
+                
+                <!-- コメントセクション（はっきり区別） -->
+                <div style="background: var(--color-background-secondary); border: 2px solid var(--color-border); border-radius: var(--border-radius-lg); padding: var(--spacing-md); margin-bottom: var(--spacing-lg);">
+                    <h4 style="font-weight: var(--font-weight-bold); color: var(--color-text-primary); margin-bottom: var(--spacing-md); font-size: var(--font-size-lg); border-bottom: 2px solid var(--color-border); padding-bottom: var(--spacing-sm);">💬 コメント</h4>
+                        
+                        <!-- コメント一覧 -->
+                        <div id="taskCommentsList" style="margin-bottom: var(--spacing-md); max-height: 300px; overflow-y: auto;">
+                            ${task.comments && task.comments.length > 0 ? task.comments.map((comment, index) => {
+                                const commentDate = comment.createdAt ? new Date(comment.createdAt).toLocaleString('ja-JP') : '日時不明';
+                                return `
+                                    <div style="margin-bottom: var(--spacing-md); padding: var(--spacing-sm); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
+                                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--spacing-xs);">
+                                            <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                                                ${escapeHtml(comment.author || '匿名')} - ${commentDate}
+                                            </div>
+                                        </div>
+                                        <div style="color: var(--color-text-primary); line-height: 1.6; white-space: pre-wrap;">${escapeHtml(comment.text || '')}</div>
+                                    </div>
+                                `;
+                            }).join('') : '<p style="color: var(--color-text-secondary); font-size: var(--font-size-sm);">コメントはまだありません</p>'}
+                        </div>
+                        
+                        <!-- コメント入力フォーム -->
+                        <div style="border-top: 1px solid var(--color-border); padding-top: var(--spacing-md);">
+                            <form id="taskCommentForm" onsubmit="submitTaskComment(event)">
+                                <div style="margin-bottom: var(--spacing-sm);">
+                                    <label for="commentAuthor" style="display: block; font-weight: var(--font-weight-semibold); color: var(--color-text-secondary); margin-bottom: var(--spacing-xs); font-size: var(--font-size-sm);">名前</label>
+                                    <input type="text" id="commentAuthor" name="author" placeholder="あなたの名前（任意）" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); background: var(--color-background); color: var(--color-text-primary);">
+                                </div>
+                                <div style="margin-bottom: var(--spacing-sm);">
+                                    <label for="commentText" style="display: block; font-weight: var(--font-weight-semibold); color: var(--color-text-secondary); margin-bottom: var(--spacing-xs); font-size: var(--font-size-sm);">コメント *</label>
+                                    <textarea id="commentText" name="text" rows="3" placeholder="コメントを入力してください" required style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); background: var(--color-background); color: var(--color-text-primary); resize: vertical;"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="width: 100%;">コメントを投稿</button>
+                            </form>
+                        </div>
+                    </div>
+                
+                <!-- 削除ボタン（パネル最下部） -->
+                <div style="margin-top: var(--spacing-lg); padding-top: var(--spacing-md); border-top: 2px solid var(--color-border); text-align: center;">
+                    <button class="detail-delete-button" id="detailDeleteButton" onclick="deleteTaskFromDetail()" style="display: none; width: auto; min-width: 120px; padding: var(--spacing-sm) var(--spacing-md); background: #ef4444; color: #ffffff; border: none; border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; transition: var(--transition-normal);">
+                        削除
+                    </button>
                 </div>
             `;
         }
@@ -9471,13 +9611,15 @@
             currentDetailTaskId = null;
             
             // 修正ボタンを非表示
+            if (editButton) {
             editButton.style.display = 'none';
+            }
             // タイムレコードボタンを非表示
             const timeRecordButton = document.getElementById('detailTimeRecordButton');
             if (timeRecordButton) {
                 timeRecordButton.style.display = 'none';
             }
-            // 削除ボタンを非表示
+            // 削除ボタンを非表示（パネル最下部に配置される）
             const deleteButton = document.getElementById('detailDeleteButton');
             if (deleteButton) {
                 deleteButton.style.display = 'none';
@@ -9487,6 +9629,76 @@
             setTimeout(function() {
                 overlay.classList.remove('active');
             }, 300);
+        }
+        
+        // コメント送信関数
+        function submitTaskComment(event) {
+            event.preventDefault();
+            
+            if (!currentDetailTaskId) return;
+            
+            const task = tasks.find(t => t.id === currentDetailTaskId);
+            if (!task) return;
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            const author = formData.get('author') || '匿名';
+            const text = formData.get('text');
+            
+            if (!text || !text.trim()) {
+                alert('コメントを入力してください');
+                return;
+            }
+            
+            // コメントを追加
+            if (!task.comments) {
+                task.comments = [];
+            }
+            
+            const comment = {
+                id: Date.now(), // 簡易的なID生成
+                author: author.trim() || '匿名',
+                text: text.trim(),
+                createdAt: new Date().toISOString()
+            };
+            
+            task.comments.push(comment);
+            task.updatedAt = new Date().toISOString();
+            
+            // フォームをリセット
+            form.reset();
+            
+            // コメント一覧を更新
+            updateTaskCommentsList(task);
+            
+            // Firebaseに保存
+            saveTaskMarketData();
+            
+            console.log('コメントを追加しました:', comment);
+        }
+        
+        // コメント一覧を更新
+        function updateTaskCommentsList(task) {
+            const commentsList = document.getElementById('taskCommentsList');
+            if (!commentsList) return;
+            
+            if (task.comments && task.comments.length > 0) {
+                commentsList.innerHTML = task.comments.map((comment, index) => {
+                    const commentDate = comment.createdAt ? new Date(comment.createdAt).toLocaleString('ja-JP') : '日時不明';
+                    return `
+                        <div style="margin-bottom: var(--spacing-md); padding: var(--spacing-sm); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--spacing-xs);">
+                                <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">
+                                    ${escapeHtml(comment.author || '匿名')} - ${commentDate}
+                                </div>
+                            </div>
+                            <div style="color: var(--color-text-primary); line-height: 1.6; white-space: pre-wrap;">${escapeHtml(comment.text || '')}</div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                commentsList.innerHTML = '<p style="color: var(--color-text-secondary); font-size: var(--font-size-sm);">コメントはまだありません</p>';
+            }
         }
         
         // タスク詳細パネルからタスクを削除
