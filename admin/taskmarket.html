@@ -1913,11 +1913,36 @@
         .menu-circular-text.active {
             opacity: 0.8;
             visibility: visible;
+            animation: rotateCircularText 20s linear infinite;
+        }
+
+        /* 円形テキストの回転アニメーション */
+        @keyframes rotateCircularText {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
         }
 
         /* メニューボタンのホバーアクションに連動 */
         .menu-icon:hover .menu-circular-text {
             transform: translate(-50%, -50%) scale(1.05);
+        }
+
+        /* ホバー時も回転を維持 */
+        .menu-icon:hover .menu-circular-text.active {
+            animation: rotateCircularText 20s linear infinite, scaleCircularText 0.3s ease;
+        }
+
+        @keyframes scaleCircularText {
+            from {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            to {
+                transform: translate(-50%, -50%) scale(1.05);
+            }
         }
 
         .menu-circular-text span {
