@@ -1926,22 +1926,23 @@
             }
         }
 
-        /* メニューボタンのホバーアクションに連動 */
-        .menu-icon:hover .menu-circular-text {
+        /* メニューボタンのホバーアクションに連動（非アクティブ時） */
+        .menu-icon:hover .menu-circular-text:not(.active) {
             transform: translate(-50%, -50%) scale(1.05);
         }
 
-        /* ホバー時も回転を維持 */
+        /* ホバー時も回転を維持（アクティブ時） */
         .menu-icon:hover .menu-circular-text.active {
-            animation: rotateCircularText 20s linear infinite, scaleCircularText 0.3s ease;
+            animation: rotateCircularTextHover 20s linear infinite;
         }
 
-        @keyframes scaleCircularText {
+        /* 回転とスケールを同時に行うアニメーション（ホバー時） */
+        @keyframes rotateCircularTextHover {
             from {
-                transform: translate(-50%, -50%) scale(1);
+                transform: translate(-50%, -50%) rotate(0deg) scale(1.05);
             }
             to {
-                transform: translate(-50%, -50%) scale(1.05);
+                transform: translate(-50%, -50%) rotate(360deg) scale(1.05);
             }
         }
 
@@ -1991,22 +1992,23 @@
                 height: 198px;
             }
 
-            /* [SP] 円形テキストのホバー効果調整 */
-            .menu-icon:hover .menu-circular-text {
+            /* [SP] 円形テキストのホバー効果調整（非アクティブ時） */
+            .menu-icon:hover .menu-circular-text:not(.active) {
                 transform: translate(-50%, -50%) scale(1.02); /* PC版より控えめに */
             }
 
-            /* [SP] ホバー時も回転を維持 */
+            /* [SP] ホバー時も回転を維持（アクティブ時） */
             .menu-icon:hover .menu-circular-text.active {
-                animation: rotateCircularText 20s linear infinite, scaleCircularTextSP 0.3s ease;
+                animation: rotateCircularTextHoverSP 20s linear infinite;
             }
 
-            @keyframes scaleCircularTextSP {
+            /* [SP] 回転とスケールを同時に行うアニメーション（ホバー時） */
+            @keyframes rotateCircularTextHoverSP {
                 from {
-                    transform: translate(-50%, -50%) scale(1);
+                    transform: translate(-50%, -50%) rotate(0deg) scale(1.02);
                 }
                 to {
-                    transform: translate(-50%, -50%) scale(1.02);
+                    transform: translate(-50%, -50%) rotate(360deg) scale(1.02);
                 }
             }
 
