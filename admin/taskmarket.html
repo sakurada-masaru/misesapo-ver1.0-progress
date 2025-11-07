@@ -1181,17 +1181,30 @@
 
         /* タスク入力フォーム（モーダル） */
         .task-form {
-            background: var(--color-background);
-            border: 2px solid var(--color-border);
+            background: var(--panel-background);
+            border: 3px solid var(--panel-border);
             border-radius: var(--border-radius-xl);
             padding: var(--spacing-xl);
-            box-shadow: var(--shadow-xl);
+            box-shadow: 0 4px 12px var(--color-primary-shadow);
             width: 90%;
             max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
             animation: slideUp 0.3s ease;
+        }
+        
+        .task-form h3,
+        .task-form h4,
+        .task-form h2 {
+            color: var(--panel-heading);
+        }
+        
+        .task-form p,
+        .task-form div,
+        .task-form span,
+        .task-form label {
+            color: var(--panel-text);
         }
 
         @keyframes slideUp {
@@ -1217,7 +1230,7 @@
         .task-form-title {
             font-size: var(--font-size-xl);
             font-weight: var(--font-weight-bold);
-            color: var(--color-text-primary);
+            color: var(--panel-heading);
             margin: 0;
         }
 
@@ -1312,23 +1325,29 @@
         /* 確認吹き出し（緊急タスク作成用） */
         .confirm-bubble {
             position: fixed;
-            background: var(--color-background);
-            border: 2px solid var(--color-primary);
+            background: var(--panel-background);
+            border: 3px solid var(--panel-border);
             border-radius: var(--border-radius-lg);
-            padding: var(--spacing-md);
-            box-shadow: var(--shadow-lg);
+            padding: var(--spacing-lg);
+            box-shadow: 0 4px 12px var(--color-primary-shadow);
             z-index: 10000;
             min-width: 200px;
             max-width: 300px;
             animation: slideUp 0.3s ease;
         }
-
+        
         .confirm-bubble-title {
             font-size: var(--font-size-md);
             font-weight: var(--font-weight-bold);
-            color: var(--color-text-primary);
+            color: var(--panel-heading);
             margin-bottom: var(--spacing-md);
             text-align: center;
+        }
+        
+        .confirm-bubble p,
+        .confirm-bubble div,
+        .confirm-bubble span {
+            color: var(--panel-text);
         }
 
         .confirm-bubble-buttons {
@@ -1513,7 +1532,11 @@
         .archive-task-title {
             font-size: var(--font-size-md);
             font-weight: var(--font-weight-semibold);
-            color: var(--color-text-primary);
+            color: var(--h2-title-text);
+            background: var(--h2-title-background);
+            border: 3px solid var(--h2-title-border);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-xs) var(--spacing-sm);
             flex: 1;
             margin-right: var(--spacing-sm);
         }
@@ -1566,6 +1589,29 @@
             text-align: center;
             padding: var(--spacing-xl);
             color: var(--color-text-secondary);
+        }
+        
+        /* アーカイブフィルターセクション */
+        .archive-filter {
+            background: var(--panel-background);
+            border: 3px solid var(--panel-border);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: 0 4px 12px var(--color-primary-shadow);
+        }
+        
+        .archive-filter h3,
+        .archive-filter h4,
+        .archive-filter h2 {
+            color: var(--panel-heading);
+        }
+        
+        .archive-filter p,
+        .archive-filter div,
+        .archive-filter span,
+        .archive-filter label {
+            color: var(--panel-text);
         }
 
         /* スライドインパネルのハンドル（左端に固定、5つのパネル用） */
@@ -1952,6 +1998,29 @@
 
         .settings-tab-content.active {
             display: block !important;
+        }
+        
+        /* 設定セクション */
+        .settings-section {
+            background: var(--panel-background);
+            border: 3px solid var(--panel-border);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: 0 4px 12px var(--color-primary-shadow);
+        }
+        
+        .settings-section h3,
+        .settings-section h4,
+        .settings-section h2 {
+            color: var(--panel-heading);
+        }
+        
+        .settings-section p,
+        .settings-section div,
+        .settings-section span,
+        .settings-section label {
+            color: var(--panel-text);
         }
 
         /* メンバーカードスタイル */
@@ -3841,8 +3910,8 @@
                 <!-- 設定タブ -->
                 <div id="settingsTab" class="settings-tab-content active">
                     <!-- 表示設定セクション -->
-                    <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
-                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-3-color); padding-bottom: var(--spacing-sm);">表示設定</h3>
+                    <div class="settings-section">
+                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md);">表示設定</h3>
                         
                         <!-- ツールチップの表示/非表示（必須） -->
                         <div class="settings-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: var(--spacing-sm);">
@@ -3896,8 +3965,8 @@
                     </div>
                     
                     <!-- データ管理セクション -->
-                    <div class="settings-section" style="margin-bottom: var(--spacing-lg);">
-                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md); color: var(--color-text-primary); border-bottom: 2px solid var(--panel-3-color); padding-bottom: var(--spacing-sm);">データ管理</h3>
+                    <div class="settings-section">
+                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-md);">データ管理</h3>
                         
                         <!-- データエクスポート -->
                         <button class="settings-button" id="exportDataButton" style="width: 100%; padding: var(--spacing-sm); background: var(--color-primary); color: white; border: none; border-radius: var(--border-radius-md); font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); cursor: pointer; margin-bottom: var(--spacing-sm);">
@@ -4060,12 +4129,12 @@
                 <!-- 完了タスクタブ -->
                 <div id="archiveTasksTab" class="archive-tab-content active">
                     <!-- フィルター機能 -->
-                    <div class="archive-filter" style="padding: var(--spacing-md); margin-bottom: var(--spacing-md); background: var(--color-background-secondary); border-radius: var(--border-radius-md);">
-                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-sm); color: var(--color-text-primary);">フィルター</h3>
+                    <div class="archive-filter">
+                        <h3 style="font-size: var(--font-size-md); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-sm);">フィルター</h3>
                         <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
                             <div style="flex: 1; min-width: 120px;">
-                                <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">日付</label>
-                                <select id="archiveFilterDate" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
+                                <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px;">日付</label>
+                                <select id="archiveFilterDate" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm); background: #ffffff;">
                                     <option value="all">すべて</option>
                                     <option value="today">今日</option>
                                     <option value="week">今週</option>
@@ -4074,14 +4143,14 @@
                                 </select>
                 </div>
                             <div style="flex: 1; min-width: 120px;">
-                                <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">担当者</label>
-                                <select id="archiveFilterAssignee" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
+                                <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px;">担当者</label>
+                                <select id="archiveFilterAssignee" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm); background: #ffffff;">
                                     <option value="all">すべて</option>
                                 </select>
             </div>
                             <div style="flex: 1; min-width: 120px;">
-                                <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">カテゴリ</label>
-                                <select id="archiveFilterCategory" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
+                                <label style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px;">カテゴリ</label>
+                                <select id="archiveFilterCategory" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm); background: #ffffff;">
                                     <option value="all">すべて</option>
                                     <option value="design">デザイン</option>
                                     <option value="frontend">フロントエンド</option>
@@ -4092,8 +4161,8 @@
                                 </select>
                             </div>
                             <div style="flex: 1; min-width: 120px;">
-                            <label for="archiveFilterSearch" style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px; color: var(--color-text-secondary);">検索</label>
-                            <input type="text" id="archiveFilterSearch" placeholder="タイトルで検索" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm);">
+                            <label for="archiveFilterSearch" style="display: block; font-size: var(--font-size-xs); margin-bottom: 4px;">検索</label>
+                            <input type="text" id="archiveFilterSearch" placeholder="タイトルで検索" style="width: 100%; padding: var(--spacing-xs); border: 1px solid var(--color-border); border-radius: var(--border-radius-sm); font-size: var(--font-size-sm); background: #ffffff;">
                             </div>
                         </div>
                     </div>
