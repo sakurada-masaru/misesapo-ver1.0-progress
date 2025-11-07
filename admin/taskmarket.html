@@ -5171,8 +5171,10 @@
             let clickTimeout = null;
             
             // [PC] クリックイベント
-            addTaskButton.addEventListener('click', function(e) {
-                console.log('新規追加ボタンがクリックされました');
+            addTaskButton.onclick = function(e) {
+                console.log('新規追加ボタンがクリックされました（onclick）');
+                e.preventDefault();
+                e.stopPropagation();
                 if (clickTimeout) {
                     clearTimeout(clickTimeout);
                     clickTimeout = null;
@@ -5184,7 +5186,12 @@
                         clickTimeout = null;
                     }, 300);
                 }
-            });
+            };
+            
+            // イベントリスナーも追加（念のため）
+            addTaskButton.addEventListener('click', function(e) {
+                console.log('新規追加ボタンがクリックされました（addEventListener）');
+            }, true);
             
             // [PC] ダブルクリックイベント
             addTaskButton.addEventListener('dblclick', function(e) {
