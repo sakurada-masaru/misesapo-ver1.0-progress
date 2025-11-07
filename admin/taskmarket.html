@@ -7478,9 +7478,11 @@
                 id: Date.now(),
                 taskId: taskId,
                 userId: currentUser.id,
+                userName: currentUser.name || currentUser.email || 'ユーザー',
+                userPicture: currentUser.picture || '',
                 startTime: new Date().toISOString(),
                 endTime: null,
-                duration: null, // 秒単位
+                duration: null, // 10分単位（600秒単位）
                 status: 'active' // 'active' or 'completed'
             };
             
@@ -7507,11 +7509,16 @@
                     record.userId === currentUser.id && 
                     record.status === 'active') {
                     const startTime = new Date(record.startTime);
-                    const duration = Math.floor((endTime - startTime) / 1000); // 秒単位
+                    const durationSeconds = Math.floor((endTime - startTime) / 1000); // 秒単位
+                    // 10分単位に変換（600秒 = 10分、切り捨て）
+                    const duration = Math.floor(durationSeconds / 600) * 600; // 10分単位
                     
                     record.endTime = endTimeISO;
                     record.duration = duration;
                     record.status = 'completed';
+                    // ユーザー情報を更新（最新の情報を保存）
+                    record.userName = currentUser.name || currentUser.email || 'ユーザー';
+                    record.userPicture = currentUser.picture || '';
                     stopped = true;
                 }
             });
@@ -7532,7 +7539,9 @@
             timeRecords.forEach(record => {
                 if (record.taskId === taskId && record.status === 'active') {
                     const startTime = new Date(record.startTime);
-                    const duration = Math.floor((endTime - startTime) / 1000); // 秒単位
+                    const durationSeconds = Math.floor((endTime - startTime) / 1000); // 秒単位
+                    // 10分単位に変換（600秒 = 10分、切り捨て）
+                    const duration = Math.floor(durationSeconds / 600) * 600; // 10分単位
                     
                     record.endTime = endTimeISO;
                     record.duration = duration;
@@ -8246,15 +8255,24 @@
         function formatDuration(seconds) {
             if (!seconds && seconds !== 0) return '-';
             if (seconds === 0) return '0分';
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            const secs = seconds % 60;
+            // 10分単位に変換（600秒 = 10分）
+            const tenMinuteUnits = Math.floor(seconds / 600);
+            const remainingMinutes = Math.floor((seconds % 600) / 60);
+            const hours = Math.floor(tenMinuteUnits / 6); // 10分×6 = 60分 = 1時間
+            const tenMinutes = tenMinuteUnits % 6;
+            
             if (hours > 0) {
-                return `${hours}時間 ${minutes}分 ${secs}秒`;
-            } else if (minutes > 0) {
-                return `${minutes}分 ${secs}秒`;
+                if (tenMinutes > 0) {
+                    return `${hours}時間${tenMinutes * 10}分`;
+                } else {
+                    return `${hours}時間`;
+                }
+            } else if (tenMinuteUnits > 0) {
+                return `${tenMinuteUnits * 10}分`;
+            } else if (remainingMinutes > 0) {
+                return `${remainingMinutes}分`;
             } else {
-                return `${secs}秒`;
+                return '0分';
             }
         }
 
@@ -8813,25 +8831,37 @@
             let timeRecordHTML = '';
             if (activeRecord) {
                 const startTime = new Date(activeRecord.startTime);
-                const elapsed = Math.floor((new Date() - startTime) / 1000); // 秒単位
+                const elapsedSeconds = Math.floor((new Date() - startTime) / 1000); // 秒単位
+                // 10分単位に変換（600秒 = 10分、切り捨て）
+                const elapsed = Math.floor(elapsedSeconds / 600) * 600;
                 const elapsedFormatted = formatDuration(elapsed);
+                
+                // 作業中のユーザー情報を取得
+                const activeUserName = activeRecord.userName || (currentUser && (currentUser.name || currentUser.email || 'ユーザー')) || 'ユーザー';
+                const activeUserPicture = activeRecord.userPicture || (currentUser && currentUser.picture) || '';
+                const activeUserAvatar = activeUserPicture 
+                    ? `<img src="${activeUserPicture}" alt="${escapeHtml(activeUserName)}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: var(--spacing-sm);">`
+                    : `<div style="width: 32px; height: 32px; border-radius: 50%; background: var(--panel-border); display: flex; align-items: center; justify-content: center; color: white; font-weight: var(--font-weight-bold); font-size: var(--font-size-xs); margin-right: var(--spacing-sm);">${escapeHtml(activeUserName.charAt(0).toUpperCase() || 'U')}</div>`;
                 
                 timeRecordHTML = `
                     <div id="activeTimeRecordDisplay" class="time-record-active" style="margin-top: var(--spacing-md); padding: var(--spacing-md);">
                         <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-sm);">
-                            <span style="font-size: 24px;">⏱️</span>
-                            <h4 style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); color: var(--color-primary); margin: 0;">作業中</h4>
+                            ${activeUserAvatar}
+                            <div style="flex: 1;">
+                                <h4 style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); color: var(--panel-heading); margin: 0;">作業中</h4>
+                                <div style="font-size: var(--font-size-xs); color: var(--panel-text); margin-top: var(--spacing-xs);">${escapeHtml(activeUserName)}</div>
+                            </div>
                     </div>
-                        <div style="font-size: var(--font-size-sm); color: var(--color-text-primary); margin-bottom: var(--spacing-xs);">
+                        <div style="font-size: var(--font-size-sm); color: var(--panel-text); margin-bottom: var(--spacing-xs);">
                             <div>開始時刻: ${startTime.toLocaleString('ja-JP', { hour: '2-digit', minute: '2-digit' })}</div>
-                            <div id="elapsedTimeDisplay" style="margin-top: var(--spacing-xs); font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-primary);">
+                            <div id="elapsedTimeDisplay" style="margin-top: var(--spacing-xs); font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--panel-text);">
                                 経過時間: ${elapsedFormatted}
                     </div>
                         </div>
                     </div>
                 `;
                 
-                // 経過時間をリアルタイムで更新
+                // 経過時間をリアルタイムで更新（10分単位なので10分ごとに更新）
                 if (window.activeTimeRecordInterval) {
                     clearInterval(window.activeTimeRecordInterval);
                 }
@@ -8840,29 +8870,76 @@
                     if (elapsedDisplay && activeRecord) {
                         const now = new Date();
                         const start = new Date(activeRecord.startTime);
-                        const elapsed = Math.floor((now - start) / 1000);
+                        const elapsedSeconds = Math.floor((now - start) / 1000);
+                        // 10分単位に変換（600秒 = 10分、切り捨て）
+                        const elapsed = Math.floor(elapsedSeconds / 600) * 600;
                         elapsedDisplay.textContent = `経過時間: ${formatDuration(elapsed)}`;
                     } else {
                         clearInterval(window.activeTimeRecordInterval);
                         window.activeTimeRecordInterval = null;
                     }
-                }, 1000);
+                }, 600000); // 10分ごとに更新（600000ミリ秒 = 10分）
             } else {
                 const completedRecords = taskRecords.filter(r => r.status === 'completed' && r.duration !== null);
-                const totalDuration = completedRecords.reduce((sum, r) => sum + (r.duration || 0), 0);
                 
-                if (totalDuration > 0) {
+                if (completedRecords.length > 0) {
+                    // ユーザー毎にグループ化
+                    const recordsByUser = {};
+                    completedRecords.forEach(record => {
+                        const userId = record.userId || 'unknown';
+                        if (!recordsByUser[userId]) {
+                            recordsByUser[userId] = {
+                                userId: userId,
+                                userName: record.userName || 'ユーザー',
+                                userPicture: record.userPicture || '',
+                                records: [],
+                                totalDuration: 0
+                            };
+                        }
+                        recordsByUser[userId].records.push(record);
+                        recordsByUser[userId].totalDuration += (record.duration || 0);
+                    });
+                    
+                    // ユーザー毎の作業時間を表示
+                    let userTimeHTML = '';
+                    Object.values(recordsByUser).forEach(userData => {
+                        const userAvatar = userData.userPicture 
+                            ? `<img src="${userData.userPicture}" alt="${escapeHtml(userData.userName)}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: var(--spacing-sm);">`
+                            : `<div style="width: 32px; height: 32px; border-radius: 50%; background: var(--panel-border); display: flex; align-items: center; justify-content: center; color: white; font-weight: var(--font-weight-bold); font-size: var(--font-size-xs); margin-right: var(--spacing-sm);">${escapeHtml(userData.userName.charAt(0).toUpperCase() || 'U')}</div>`;
+                        
+                        userTimeHTML += `
+                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-sm); padding: var(--spacing-sm); background: #ffffff; border-radius: var(--border-radius-md); border: 1px solid var(--color-border);">
+                                ${userAvatar}
+                                <div style="flex: 1;">
+                                    <div style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: var(--panel-text);">${escapeHtml(userData.userName)}</div>
+                                    <div style="font-size: var(--font-size-xs); color: var(--panel-text);">記録数: ${userData.records.length}件</div>
+                                </div>
+                                <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); color: var(--panel-text);">
+                                    ${formatDuration(userData.totalDuration)}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    // 合計時間を計算
+                    const totalDuration = completedRecords.reduce((sum, r) => sum + (r.duration || 0), 0);
+                    
                     timeRecordHTML = `
                         <div class="time-record-total" style="margin-top: var(--spacing-md); padding: var(--spacing-md);">
-                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-sm);">
+                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
                                 <span style="font-size: 24px;">📊</span>
-                                <h4 style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); color: var(--color-primary); margin: 0;">累計作業時間</h4>
+                                <h4 style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); color: #ffffff; margin: 0;">累計作業時間</h4>
                             </div>
-                            <div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-primary);">
-                                ${formatDuration(totalDuration)}
+                            <div style="margin-bottom: var(--spacing-md);">
+                                ${userTimeHTML}
                             </div>
-                            <div style="font-size: var(--font-size-xs); color: var(--color-text-secondary); margin-top: var(--spacing-xs);">
-                                記録数: ${completedRecords.length}件
+                            <div style="padding-top: var(--spacing-sm); border-top: 2px solid var(--color-border);">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); color: #ffffff;">合計</div>
+                                    <div style="font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: #ffffff;">
+                                        ${formatDuration(totalDuration)}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     `;
